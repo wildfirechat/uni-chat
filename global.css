@@ -1,0 +1,58 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-app-region: no-drag;
+}
+
+.tippy-tooltip.light-theme {
+    /* todo */
+    background-color: white;
+    border: 2px solid white;
+    /*width: 350px;*/
+    /*height: 350px;*/
+}
+
+.tippy-arrow {
+    border-right: 8px solid white !important;
+}
+
+.vue-notification-group {
+    margin: var(--main-margin-top) var(--main-margin-right) 0 0;
+}
+
+
+img.emoji {
+    height: 1em !important;
+    width: 1em !important;
+    margin: 0 .05em 0 .1em;
+    vertical-align: -0.1em;
+    user-select: none;
+}
+
+.single-line {
+    max-width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+div,
+button,
+img,
+video {
+    outline: none;
+}
+
+p,
+div {
+    word-break: break-all;
+    user-select: none;
+}
+

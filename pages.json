@@ -1,0 +1,82 @@
+{
+	"pages": [
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/conversationList/ConversationListView",
+			"style": {
+				"navigationBarTitleText": "会话列表"
+			}
+		},
+        {
+            "path": "pages/conversation/ConversationView",
+            "style": {
+                "navigationBarTitleText": "会话 详情"
+            }
+        },
+		{
+			"path": "pages/contact/UserDetailView",
+			"style": {
+				"navigationBarTitleText": " 用户信息"
+			}
+		},
+		{
+			"path": "pages/chat-input/chat-input",
+			"style": {}
+		},
+		{
+			"path": "pages/contact/ContactListView",
+			"style": {
+				"navigationBarTitleText": "好友"
+			}
+		},
+        {
+            "path": "pages/test/testPage",
+            "style": {
+                "navigationBarTitleText": " 测试"
+            }
+        },
+        {
+            "path": "pages/test/testWebrtc",
+            "style": {
+                "navigationBarTitleText": " 测试 webrtc"
+            }
+        }
+    ],
+	"tabBar": {
+		"selectedColor": "#35c8fb",
+		"color": "#7f8389",
+		"list": [
+			{
+				"pagePath": "pages/conversationList/ConversationListView",
+				"text": "会话列表",
+				"iconPath": "static/image/tabbar/chat_list_unselected.png",
+				"selectedIconPath": "static/image/tabbar/chat_list.png"
+			},
+			{
+				"pagePath": "pages/contact/ContactListView",
+				"text": "好友列表",
+				"iconPath": "static/image/tabbar/friend_unselected.png",
+				"selectedIconPath": "static/image/tabbar/friend.png"
+			},
+            {
+                "pagePath": "pages/test/testPage",
+                "text": "测试",
+                "iconPath": "static/image/tabbar/friend_unselected.png",
+                "selectedIconPath": "static/image/tabbar/friend.png"
+            }
+		]
+	},
+	"sitemapLocation": "sitemap.json",
+	"globalStyle": {
+		"backgroundTextStyle": "light",
+		"navigationBarBackgroundColor": "#fff",
+		"navigationBarTitleText": "WeChat",
+		"navigationBarTextStyle": "black"
+	},
+	"subPackages": []
+}

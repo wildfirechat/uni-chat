@@ -1,0 +1,13 @@
+<template>
+<view>
+<template name="chat-page-status">
+    <view :style="'background-color: ' + (chatStatue==='open'?'#40c9ff':'#888888') + ';'" class="chat-page-status-style">
+        {{chatStatusContent}}
+    </view>
+</template>
+</view>
+</template>
+
+<style>
+@import "./chat-page-status.css";
+</style>
