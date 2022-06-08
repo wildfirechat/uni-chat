@@ -16,3 +16,16 @@ static IM_SERVER_HOST = 'wildfirechat.net';
 
 ## 移植到其它应用
 如果要在现有项目中使用野火原生插件，需要把[wfc](./wfc)目录和[config.js](./config.js)配置文件一同拷贝到现有项目，然后添加***野火UniApp原生插件***。现有项目使用[wfc](./wfc)目录下的[wfc.js](./wfc/client/wfc.js)接口文件。
+
+## 应用截图
+会话列表
+![会话列表](./screenshots/uniapp_conversation_list.jpeg)
+
+联系人列表
+![联系人列表](./screenshots/uniapp_contact_tab.jpeg)
+
+会话界面
+![会话界面](./screenshots/uniapp_conversation.jpeg)
+
+用户详情界面
+![用户详情界面](./screenshots/uniapp_user_profile.jpeg)
