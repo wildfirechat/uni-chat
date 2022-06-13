@@ -13,5 +13,5 @@
 </template>
 
 <style>
-@import "./extra.css";
+@import "extra.css";
 </style>

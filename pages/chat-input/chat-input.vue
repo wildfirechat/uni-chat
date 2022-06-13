@@ -8,7 +8,7 @@ import Toast from "../../utils/toast";
 /**
  * 聊天输入组件展示页面
  */
-import chatInput from "../../components/chat-input/chat-input";
+import chatInput from "../../components/wx-chat-bk/chat-input/chat-input";
 
 export default {
   data() {

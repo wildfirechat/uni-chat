@@ -1,33 +1,27 @@
 <template>
-    <div class="conversation-item-container"
-         @dragover="dragEvent($event, 'dragover')"
-         @dragleave="dragEvent($event, 'dragleave')"
-         @dragenter="dragEvent($event,'dragenter')"
-         @drop="dragEvent($event, 'drop')"
-         v-bind:class="{drag: dragAndDropEnterCount > 0}"
-    >
-        <div class="conversation-item">
-            <div class="header">
+    <view class="conversation-item-container">
+        <view class="conversation-item">
+            <view class="header">
                 <img class="avatar" draggable="false" :src="conversationInfo.conversation._target.portrait" alt=""
                      @error="imgUrlAlt"/>
                 <em v-if="unread > 0" class="badge" v-bind:class="{silent:conversationInfo.isSilent}">{{ unread }}</em>
-            </div>
-            <div class="content-container">
-                <div class="title-time-container">
+            </view>
+            <view class="content-container">
+                <view class="title-time-container">
                     <h2 class="title single-line">{{ conversationTitle }}</h2>
                     <p class="time">{{ conversationInfo._timeStr }}</p>
-                </div>
-                <div class="content">
+                </view>
+                <view class="content">
                     <p class="draft single-line" v-if="shouldShowDraft" v-html="draft"></p>
                     <p class="last-message-desc single-line" v-else>
                         <i v-if="unreadMention > 0">[有人@我]</i>
                         {{ lastMessageContent }}
                     </p>
                     <i v-if="conversationInfo.isSilent" class="icon-ion-android-notifications-off"></i>
-                </div>
-            </div>
-        </div>
-    </div>
+                </view>
+            </view>
+        </view>
+    </view>
 </template>
 
 <script>
@@ -51,46 +45,11 @@ export default {
     },
     data() {
         return {
-            dragAndDropEnterCount: 0,
             shareConversationState: store.state.conversation,
         };
     },
     methods: {
-        dragEvent(e, v) {
-            if (v === 'dragenter') {
-                this.dragAndDropEnterCount++;
-            } else if (v === 'dragleave') {
-                this.dragAndDropEnterCount--;
-            } else if (v === 'drop') {
-                this.dragAndDropEnterCount--;
-                let length = e.dataTransfer.files.length;
-                if (length > 0 && length < 5) {
-                    for (let i = 0; i < length; i++) {
-                        this.$eventBus.$emit('uploadFile', e.dataTransfer.files[i])
-                        store.sendFile(this.conversationInfo.conversation, e.dataTransfer.files[i]);
-                    }
-                } else {
-                    // TODO
-                    let url = e.dataTransfer.getData('URL');
-                    if (url) {
-                        store.sendFile(this.conversationInfo.conversation, url);
-                    } else {
-                        let text = e.dataTransfer.getData('text');
-                        if (text.startsWith('{')) {
-                            let obj = JSON.parse(text);
-                            let file = new FileMessageContent(null, obj.url, obj.name, obj.size)
-                            let message = new Message(this.conversationInfo.conversation, file)
-                            wfc.sendMessage(message);
-                        }
-                    }
-                    console.log(this.$t('conversation.drag_to_send_limit_tip'), e.dataTransfer, e.dataTransfer.getData('URL'));
-                }
-            } else if (v === 'dragover') {
-                // If not st as 'copy', electron will open the drop file
-                e.dataTransfer.dropEffect = 'copy';
-            }
-        },
-        imgUrlAlt(e){
+        imgUrlAlt(e) {
             e.target.src = Config.DEFAULT_PORTRAIT_URL;
         }
     },
@@ -158,10 +117,6 @@ export default {
 <style scoped>
 .conversation-item-container {
     padding-left: 12px;
-}
-
-.conversation-item-container.drag {
-    border: 1px solid #d6d6d6;
 }
 
 .conversation-item {

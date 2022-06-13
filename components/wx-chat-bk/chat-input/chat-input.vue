@@ -516,5 +516,5 @@ export default {
 };
 </script>
 <style>
-@import "./chat-input.css";
+@import "chat-input.css";
 </style>

@@ -1,43 +1,29 @@
 <template>
-    <div>
-        <div v-if="sharedConversationState.currentConversationInfo == null" class="conversation-empty-container">
-            <h1>^~^</h1>
-        </div>
-        <div v-else class="conversation-container">
-            <div ref="conversationContentContainer" class="conversation-content-container"
-                 @dragover="dragEvent($event, 'dragover')"
-                 @dragleave="dragEvent($event, 'dragleave')"
-                 @dragenter="dragEvent($event,'dragenter')"
-                 @drop="dragEvent($event, 'drop')"
-                 :dummy_just_for_reactive="currentVoiceMessage"
+    <view>
+        <view v-if="sharedConversationState.currentConversationInfo == null" class="conversation-empty-container">
+            <text>^~^</text>
+        </view>
+        <view v-else class="conversation-container">
+            <view ref="conversationContentContainer" class="conversation-content-container"
+                  :dummy_just_for_reactive="currentVoiceMessage"
             >
-                <div ref="conversationMessageList" class="conversation-message-list" v-on:scroll="onScroll"
-                     infinite-wrapper>
-                    <ul>
-                        <!--todo item.messageId or messageUid as key-->
-                        <li v-for="(message) in sharedConversationState.currentConversationMessageList"
-                            :key="message.messageId">
-                            <!--todo 不同的消息类型 notification in out-->
+                <block v-for="(message) in sharedConversationState.currentConversationMessageList"
+                       :key="message.messageId">
+                    <!--todo 不同的消息类型 notification in out-->
 
-                            <NotificationMessageContentView :message="message" v-if="isNotificationMessage(message)"/>
-                            <RecallNotificationMessageContentView :message="message" v-else-if="isRecallNotificationMessage(message)"/>
-                            <NormalOutMessageContentView
-                                @click.native.capture="sharedConversationState.enableMessageMultiSelection? clickMessageItem($event, message) : null"
-                                :message="message"
-                                v-else-if="message.direction === 0"/>
-                            <NormalInMessageContentView
-                                @click.native.capture="sharedConversationState.enableMessageMultiSelection ? clickMessageItem($event, message) : null"
-                                :message="message"
-                                v-else/>
-                        </li>
-                    </ul>
-                </div>
-                <div v-if="sharedConversationState.inputtingUser" class="inputting-container">
-                    <img class="avatar" :src="sharedConversationState.inputtingUser.portrait"/>
-                    <!--                    <ScaleLoader :color="'#d2d2d2'" :height="'15px'" :width="'3px'"/>-->
-                </div>
-                <div v-show="!sharedConversationState.enableMessageMultiSelection" v-on:mousedown="dragStart"
-                     class="divider-handler"></div>
+                    <NotificationMessageContentView :message="message" v-if="isNotificationMessage(message)"/>
+                    <RecallNotificationMessageContentView :message="message" v-else-if="isRecallNotificationMessage(message)"/>
+                    <NormalOutMessageContentView
+                        @click.native.capture="sharedConversationState.enableMessageMultiSelection? clickMessageItem($event, message) : null"
+                        :message="message"
+                        v-else-if="message.direction === 0"/>
+                    <NormalInMessageContentView
+                        @click.native.capture="sharedConversationState.enableMessageMultiSelection ? clickMessageItem($event, message) : null"
+                        :message="message"
+                        v-else/>
+                </block>
+                <view v-show="!sharedConversationState.enableMessageMultiSelection"
+                      class="viewider-handler"></view>
                 <MessageInputView :conversationInfo="sharedConversationState.currentConversationInfo"
                                   v-show="!sharedConversationState.enableMessageMultiSelection"
                                   class="message-input-container"
@@ -96,9 +82,9 @@
                 <!--                        <a @click.prevent="mentionMessageSender(message)">{{ mentionMessageSenderTitle(message) }}</a>-->
                 <!--                    </li>-->
                 <!--                </vue-context>-->
-            </div>
-        </div>
-    </div>
+            </view>
+        </view>
+    </view>
 </template>
 
 <script>
@@ -138,10 +124,14 @@ import ConversationType from "@/wfc/model/conversationType";
 import GroupMemberType from "@/wfc/model/groupMemberType";
 import CompositeMessageContent from "@/wfc/messages/compositeMessageContent";
 import ConnectionStatus from "../../wfc/client/connectionStatus";
+import UniRefresh from "../../components/uni-list/uni-refresh";
+import UniList from "../../components/uni-list/uni-list";
 
 var amr;
 export default {
     components: {
+        UniList,
+        UniRefresh,
         MultiSelectActionView,
         NotificationMessageContentView,
         RecallNotificationMessageContentView,
@@ -168,62 +158,20 @@ export default {
             saveMessageListViewFlexGrow: -1,
 
             dragAndDropEnterCount: 0,
+            trigger: false,
             // FIXME 选中一个会话，然后切换到其他page，比如联系人，这时该会话收到新消息或发送消息，会导致新收到/发送的消息的界面错乱，尚不知道原因，但这么做能解决。
         };
     },
 
-    activated() {
-        console.log('conversationView', this.sharedConversationState.currentConversationMessageList);
-    },
-
-    deactivated() {
+    onPullDownRefresh() {
+        store.loadConversationHistoryMessages(() => {
+            uni.stopPullDownRefresh();
+        }, () => {
+            uni.stopPullDownRefresh();
+        });
     },
 
     methods: {
-        dragEvent(e, v) {
-            if (v === 'dragenter') {
-                this.dragAndDropEnterCount++;
-            } else if (v === 'dragleave') {
-                this.dragAndDropEnterCount--;
-            } else if (v === 'drop') {
-                this.dragAndDropEnterCount--;
-                let isFile;
-                if (e.dataTransfer.items) {
-                    if (typeof (e.dataTransfer.items[0].webkitGetAsEntry) == "function") {
-                        isFile = e.dataTransfer.items[0].webkitGetAsEntry().isFile;
-                    } else if (typeof (e.dataTransfer.items[0].getAsEntry) == "function") {
-                        isFile = e.dataTransfer.items[0].getAsEntry().isFile;
-                    }
-                } else {
-                    return true;
-                }
-                if (!isFile) {
-                    this.$notify({
-                        // title: '不支持',
-                        text: this.$t('conversation.not_support_send_folder'),
-                        type: 'warn'
-                    });
-                    return true;
-                }
-
-                let length = e.dataTransfer.files.length;
-                if (length > 0 && length < 5) {
-                    for (let i = 0; i < length; i++) {
-                        this.$eventBus.$emit('uploadFile', e.dataTransfer.files[i])
-                        store.sendFile(this.sharedConversationState.currentConversationInfo.conversation, e.dataTransfer.files[i]);
-                    }
-                } else {
-                    this.$notify({
-                        // title: '大文件提示',
-                        text: this.$t('conversation.drag_to_send_limit_tip'),
-                        type: 'warn'
-                    });
-                }
-            } else if (v === 'dragover') {
-                // If not st as 'copy', electron will open the drop file
-                e.dataTransfer.dropEffect = 'copy';
-            }
-        },
         toggleConversationInfo() {
             this.showConversationInfo = !this.showConversationInfo;
         },
@@ -283,44 +231,13 @@ export default {
             // this.$refs.menu && this.$refs.menu.close();
 
             // 当用户往上滑动一段距离之后，收到新消息，不自动滚到到最后
+            // console.log('onscroll');
             if (e.target.scrollHeight > e.target.clientHeight + e.target.scrollTop + e.target.clientHeight / 2) {
                 store.setShouldAutoScrollToBottom(false)
             } else {
                 store.setShouldAutoScrollToBottom(true)
                 store.clearConversationUnreadStatus(this.sharedConversationState.currentConversationInfo.conversation);
             }
-        },
-
-        dragStart() {
-            this.isHandlerDragging = true;
-            console.log('drag start')
-        },
-
-        drag(e) {
-            // Don't do anything if dragging flag is false
-            if (!this.isHandlerDragging) {
-                return false;
-            }
-
-            // Get offset
-            let containerOffsetTop = this.$refs['conversationContentContainer'].offsetTop;
-
-            // Get x-coordinate of pointer relative to container
-            let pointerRelativeYpos = e.clientY - containerOffsetTop;
-
-            // Arbitrary minimum width set on box A, otherwise its inner content will collapse to width of 0
-            let boxAminHeight = 150;
-
-            // Resize box A
-            // * 8px is the left/right spacing between .handler and its inner pseudo-element
-            // * Set flex-grow to 0 to prevent it from growing
-            this.$refs['conversationMessageList'].style.height = (Math.max(boxAminHeight, pointerRelativeYpos)) + 'px';
-            this.$refs['conversationMessageList'].style.flexGrow = 0;
-
-        },
-
-        dragEnd() {
-            this.isHandlerDragging = false;
         },
 
         onMenuClose() {
@@ -534,15 +451,9 @@ export default {
             this.toggleMessageMultiSelectionActionView(message);
         },
 
-        infiniteHandler($state) {
-            console.log('to load more message');
-            store.loadConversationHistoryMessages(() => {
-                console.log('loaded')
-                $state.loaded();
-            }, () => {
-                console.log('complete')
-                $state.complete()
-            });
+        upper() {
+            console.log('xxx upper')
+            this.trigger = true;
         },
 
         pickConversationAndForwardMessage(forwardType, messages) {
@@ -704,7 +615,8 @@ export default {
         // this.$eventBus.$off('forward-fav')
     },
 
-    updated() {
+    onLoad() {
+        console.log('updatedxxxx')
         if (!this.sharedConversationState.currentConversationInfo) {
             return;
         }
@@ -715,18 +627,19 @@ export default {
             let messageListElement = this.$refs['conversationMessageList'];
             // messageListElement.scroll({top: messageListElement.scrollHeight, left: 0, behavior: 'auto'})
             console.log('to scroll to bottom')
-            uni.pageScrollTo({
-                scrollTop:999999,
+            this.$nextTick(() => {
+                console.log('to scroll to bottom0000')
+                uni.pageScrollTo({
+                    scrollTop: 999999,
+                });
             });
         } else {
             // 用户滑动到上面之后，收到新消息，不自动滑动到最下面
         }
         if (this.sharedConversationState.currentConversationInfo) {
-            if (!this.sharedMiscState.isPageHidden) {
-                let unreadCount = this.sharedConversationState.currentConversationInfo.unreadCount;
-                if (unreadCount.unread > 0) {
-                    store.clearConversationUnreadStatus(this.sharedConversationState.currentConversationInfo.conversation);
-                }
+            let unreadCount = this.sharedConversationState.currentConversationInfo.unreadCount;
+            if (unreadCount.unread > 0) {
+                store.clearConversationUnreadStatus(this.sharedConversationState.currentConversationInfo.conversation);
             }
         }
 
@@ -776,8 +689,6 @@ export default {
     justify-content: center;
     align-items: center;
     background-color: white;
-    border-top-right-radius: var(--main-border-radius);
-    border-bottom-right-radius: var(--main-border-radius);
     /*border-left: 1px solid #e6e6e6;*/
 }
 
@@ -786,119 +697,24 @@ export default {
     font-weight: normal;
 }
 
-.title-container {
-    width: 100%;
-    height: 60px;
-    display: flex;
-    padding: 0 0 0 20px;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #f5f5f5;
-    border-bottom: 1px solid #e6e6e6;
-    border-top-right-radius: var(--main-border-radius);
-    position: relative;
-}
-
-
-.title-container h1 {
-    font-size: 16px;
-    font-weight: normal;
-}
-
-.title-container a {
-    text-decoration: none;
-    padding: 15px;
-    color: #181818;
-}
-
-.title-container a:active {
-    color: #d6d6d6;
-}
-
 .conversation-container {
     height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
-.conversation-container header {
-    border-top-right-radius: var(--main-border-radius);
-}
-
-.conversation-container header {
-    width: 100%;
-    height: 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #f5f5f5;
-    border-bottom: 1px solid #e6e6e6;
-}
-
 .conversation-content-container {
     flex: 1;
-    height: calc(100% - 60px);
+    height: 100%;
     position: relative;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     background-color: #f3f3f3;
-    border-bottom-right-radius: var(--main-border-radius);
 }
 
-.conversation-content-container .drag-drop-container {
-    position: absolute;
-    background-color: #f2f2f2a5;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 100;
-    height: 100%;
-    padding: 20px 15px 15px 15px;
-}
 
-.conversation-content-container .drag-drop {
-    border: 2px dashed #b2b2b2;
-    height: 100%;
-    width: 100%;
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.conversation-content-container .drag-drop p {
-    padding-bottom: 100px;
-}
-
-.conversation-message-list {
-    flex: 1 1 auto;
-    overflow: auto;
-}
-
-.conversation-message-list ul {
-    list-style: none;
-}
-
-/*.handler {*/
-/*  height: 1px;*/
-/*  background-color: #e2e2e2;*/
-/*}*/
-
-.inputting-container {
-    display: flex;
-    padding: 10px 20px;
-    align-items: center;
-}
-
-.inputting-container .avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 3px;
-    margin-right: 20px;
-}
-
-.divider-handler::before {
+.viewider-handler::before {
     cursor: row-resize;
     content: '';
     display: block;
@@ -906,23 +722,6 @@ export default {
     height: 3px;
     border-top: 1px solid #e2e2e2;
     margin: 0 auto;
-}
-
-.user-online-status {
-    color: gray;
-    font-size: 10px;
-}
-
-.conversation-info-container {
-    display: none;
-    width: 250px;
-    height: 100%;
-    top: 0;
-    right: 0;
-    position: absolute;
-    background-color: #ffffffe5;
-    backdrop-filter: blur(6px);
-    border-left: 1px solid #e6e6e6;
 }
 
 .conversation-info-container.active {

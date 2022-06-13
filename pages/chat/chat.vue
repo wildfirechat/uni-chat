@@ -51,7 +51,7 @@ import NotificationMessageContent from "../../wfc/messages/notification/notifica
 /**
  * 聊天页面
  */
-import chatInput from "../../components/chat-input/chat-input";
+import chatInput from "../../components/wx-chat-bk/chat-input/chat-input";
 
 export default {
   data() {

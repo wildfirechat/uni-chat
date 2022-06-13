@@ -1,19 +1,17 @@
 <template>
-    <div class="conversation-list">
-        <ul>
-            <li
+    <view class="conversation-list">
+        <uni-list :border="true">
+            <view
                 @click="showConversation(conversationInfo)"
                 v-for="conversationInfo in sharedConversationState.conversationInfoList"
                 :key="conversationInfoKey(conversationInfo)"
                 v-bind:class="{active: sharedConversationState.currentConversationInfo && sharedConversationState.currentConversationInfo.conversation.equal(conversationInfo.conversation),
                           top:conversationInfo.isTop,
                           highlight:contextMenuConversationInfo && contextMenuConversationInfo.conversation.equal(conversationInfo.conversation) }"
-                @contextmenu.prevent="showConversationItemContextMenu($event, conversationInfo)"
             >
                 <ConversationItemView :conversation-info="conversationInfo"/>
-            </li>
-        </ul>
-
+            </view>
+        </uni-list>
 
 <!--        <vue-context ref="menu" v-slot="{data:conversationInfo}" v-on:close="onConversationItemContextMenuClose">-->
 <!--            <li>-->
@@ -42,7 +40,7 @@
 <!--                <a>{{ $t('conversation.mark_as_read') }}</a>-->
 <!--            </li>-->
 <!--        </vue-context>-->
-    </div>
+    </view>
 </template>
 
 <script>
@@ -50,6 +48,7 @@
 import ConversationItemView from "./ConversationItemView";
 import store from "../../store";
 import wfc from "../../wfc/client/wfc";
+import UniList from "../../components/uni-list/uni-list";
 
 export default {
     name: 'ConversationListView',
@@ -123,6 +122,7 @@ export default {
     },
 
     components: {
+        UniList,
         ConversationItemView,
     },
 };

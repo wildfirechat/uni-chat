@@ -1,7 +1,7 @@
 {
-    "name" : "uni-wfc-demo",
-    "appid" : "__UNI__BE5CC7E",
-    "description" : "",
+    "name" : "uni-chat",
+    "appid" : "__UNI__2077CCF",
+    "description" : "野火IM uniapp 插件",
     "versionName" : "1.0.0",
     "versionCode" : 101,
     "transformPx" : false,

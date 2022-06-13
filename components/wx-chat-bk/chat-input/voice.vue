@@ -22,5 +22,5 @@
 </template>
 
 <style>
-@import "./voice.css";
+@import "voice.css";
 </style>

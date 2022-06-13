@@ -1,17 +1,22 @@
 <template>
     <div class="test-page">
-        <button @click="testWebrtc">test-webrtc</button>
+        <button @click="testWebrtc">退出</button>
 
     </div>
 </template>
 
 <script>
+import wfc from "../../wfc/client/wfc";
+import {clear} from "../util/storageHelper";
+
 export default {
     name: "testPage",
     methods: {
         testWebrtc() {
+            wfc.disconnect();
+            clear();
             uni.navigateTo({
-                url: './testWebrtc',
+                url: '../login/login',
                 success: () => {
                     console.log('nav to test-webrtc success');
 

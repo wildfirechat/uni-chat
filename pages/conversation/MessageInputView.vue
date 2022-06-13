@@ -1,6 +1,6 @@
 <template>
     <div class="message-input-container">
-<!--        <button>语音</button>-->
+        <!--        <button>语音</button>-->
         <input type="text" placeholder="请输入" v-model="text">
         <!--        <button>+</button>-->
         <button @click="send">发送</button>
@@ -43,6 +43,10 @@ export default {
 .message-input-container {
     display: flex;
     align-items: center;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    background: lightgrey;
 }
 
 .message-input-container input {
