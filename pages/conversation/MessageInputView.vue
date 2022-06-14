@@ -108,7 +108,6 @@ export default {
 
     methods: {
         send() {
-            console.log('xxxxxyxxxx', this.text)
             if (this.text) {
                 let textMessageContent = new TextMessageContent(this.text)
                 wfc.sendConversationMessage(this.conversationInfo.conversation, textMessageContent);

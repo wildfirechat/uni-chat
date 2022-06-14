@@ -3,10 +3,10 @@
         <view v-if="sharedConversationState.currentConversationInfo == null" class="conversation-empty-container">
             <text>^~^</text>
         </view>
-        <view v-else class="conversation-container">
-            <view ref="conversationContentContainer" class="conversation-content-container"
-                  :dummy_just_for_reactive="currentVoiceMessage"
-            >
+        <view v-else ref="conversationContentContainer" class="conversation-content-container"
+              :dummy_just_for_reactive="currentVoiceMessage"
+        >
+            <uni-list ref="conversationMessageList" class="message-list" :border="false">
                 <block v-for="(message) in sharedConversationState.currentConversationMessageList"
                        :key="message.messageId">
                     <!--todo 不同的消息类型 notification in out-->
@@ -22,67 +22,67 @@
                         :message="message"
                         v-else/>
                 </block>
-                <view v-show="!sharedConversationState.enableMessageMultiSelection"
-                      class="viewider-handler"></view>
-                <MessageInputView :conversationInfo="sharedConversationState.currentConversationInfo"
-                                  v-show="!sharedConversationState.enableMessageMultiSelection"
-                                  class="message-input-container"
-                                  ref="messageInputView"
-                />
-                <MultiSelectActionView v-show="sharedConversationState.enableMessageMultiSelection"/>
-                <!--                <SingleConversationInfoView-->
-                <!--                    v-if="showConversationInfo &&  sharedConversationState.currentConversationInfo.conversation.type === 0"-->
-                <!--                    :conversation-info="sharedConversationState.currentConversationInfo"-->
-                <!--                    v-bind:class="{ active: showConversationInfo }"-->
-                <!--                    class="conversation-info-container"-->
-                <!--                />-->
-                <!--                <GroupConversationInfoView-->
-                <!--                    v-if="showConversationInfo &&  sharedConversationState.currentConversationInfo.conversation.type === 1"-->
-                <!--                    :conversation-info="sharedConversationState.currentConversationInfo"-->
-                <!--                    v-bind:class="{ active: showConversationInfo }"-->
-                <!--                    class="conversation-info-container"-->
-                <!--                />-->
+            </uni-list>
+<!--            <view v-show="!sharedConversationState.enableMessageMultiSelection"-->
+<!--                  class="viewider-handler"></view>-->
+            <MessageInputView :conversationInfo="sharedConversationState.currentConversationInfo"
+                              v-show="!sharedConversationState.enableMessageMultiSelection"
+                              class="message-input-container"
+                              ref="messageInputView"
+            />
+            <MultiSelectActionView v-show="sharedConversationState.enableMessageMultiSelection"/>
+            <!--                <SingleConversationInfoView-->
+            <!--                    v-if="showConversationInfo &&  sharedConversationState.currentConversationInfo.conversation.type === 0"-->
+            <!--                    :conversation-info="sharedConversationState.currentConversationInfo"-->
+            <!--                    v-bind:class="{ active: showConversationInfo }"-->
+            <!--                    class="conversation-info-container"-->
+            <!--                />-->
+            <!--                <GroupConversationInfoView-->
+            <!--                    v-if="showConversationInfo &&  sharedConversationState.currentConversationInfo.conversation.type === 1"-->
+            <!--                    :conversation-info="sharedConversationState.currentConversationInfo"-->
+            <!--                    v-bind:class="{ active: showConversationInfo }"-->
+            <!--                    class="conversation-info-container"-->
+            <!--                />-->
 
-                <!--                <vue-context ref="menu" v-slot="{data:message}" :close-on-scroll="true" v-on:close="onMenuClose">-->
-                <!--                    &lt;!&ndash;          更多menu item&ndash;&gt;-->
-                <!--                    <li v-if="isCopyable(message)">-->
-                <!--                        <a @click.prevent="copy(message)">{{ $t('common.copy') }}</a>-->
-                <!--                    </li>-->
-                <!--                    <li v-if="isDownloadAble(message)">-->
-                <!--                        <a @click.prevent="download(message)">{{ $t('common.save') }}</a>-->
-                <!--                    </li>-->
-                <!--                    <li>-->
-                <!--                        <a @click.prevent="delMessage(message)">{{ $t('common.delete') }}</a>-->
-                <!--                    </li>-->
-                <!--                    <li v-if="isForwardable(message)">-->
-                <!--                        <a @click.prevent="_forward(message)">{{ $t('common.forward') }}</a>-->
-                <!--                    </li>-->
-                <!--                    <li v-if="isFavable(message)">-->
-                <!--                        <a @click.prevent="favMessage(message)">{{ $t('common.fav') }}</a>-->
-                <!--                    </li>-->
-                <!--                    <li v-if="isQuotable(message)">-->
-                <!--                        <a @click.prevent="quoteMessage(message)">{{ $t('common.quote') }}</a>-->
-                <!--                    </li>-->
-                <!--                    <li>-->
-                <!--                        <a @click.prevent="multiSelect(message)">{{ $t('common.multi_select') }}</a>-->
-                <!--                    </li>-->
-                <!--                    <li v-if="isRecallable(message)">-->
-                <!--                        <a @click.prevent="recallMessage(message)">{{ $t('common.recall') }}</a>-->
-                <!--                    </li>-->
-                <!--                    <li v-if="isLocalFile(message)">-->
-                <!--                        <a @click.prevent="openFile(message)">{{ $t('common.open') }}</a>-->
-                <!--                    </li>-->
-                <!--                    <li v-if="isLocalFile(message)">-->
-                <!--                        <a @click.prevent="openDir(message)">{{ $t('common.open_dir') }}</a>-->
-                <!--                    </li>-->
-                <!--                </vue-context>-->
-                <!--                <vue-context ref="messageSenderContextMenu" v-slot="{data: message}" :close-on-scroll="true" v-on:close="onMessageSenderContextMenuClose">-->
-                <!--                    &lt;!&ndash;          更多menu item，比如添加到通讯录等&ndash;&gt;-->
-                <!--                    <li>-->
-                <!--                        <a @click.prevent="mentionMessageSender(message)">{{ mentionMessageSenderTitle(message) }}</a>-->
-                <!--                    </li>-->
-                <!--                </vue-context>-->
-            </view>
+            <!--                <vue-context ref="menu" v-slot="{data:message}" :close-on-scroll="true" v-on:close="onMenuClose">-->
+            <!--                    &lt;!&ndash;          更多menu item&ndash;&gt;-->
+            <!--                    <li v-if="isCopyable(message)">-->
+            <!--                        <a @click.prevent="copy(message)">{{ $t('common.copy') }}</a>-->
+            <!--                    </li>-->
+            <!--                    <li v-if="isDownloadAble(message)">-->
+            <!--                        <a @click.prevent="download(message)">{{ $t('common.save') }}</a>-->
+            <!--                    </li>-->
+            <!--                    <li>-->
+            <!--                        <a @click.prevent="delMessage(message)">{{ $t('common.delete') }}</a>-->
+            <!--                    </li>-->
+            <!--                    <li v-if="isForwardable(message)">-->
+            <!--                        <a @click.prevent="_forward(message)">{{ $t('common.forward') }}</a>-->
+            <!--                    </li>-->
+            <!--                    <li v-if="isFavable(message)">-->
+            <!--                        <a @click.prevent="favMessage(message)">{{ $t('common.fav') }}</a>-->
+            <!--                    </li>-->
+            <!--                    <li v-if="isQuotable(message)">-->
+            <!--                        <a @click.prevent="quoteMessage(message)">{{ $t('common.quote') }}</a>-->
+            <!--                    </li>-->
+            <!--                    <li>-->
+            <!--                        <a @click.prevent="multiSelect(message)">{{ $t('common.multi_select') }}</a>-->
+            <!--                    </li>-->
+            <!--                    <li v-if="isRecallable(message)">-->
+            <!--                        <a @click.prevent="recallMessage(message)">{{ $t('common.recall') }}</a>-->
+            <!--                    </li>-->
+            <!--                    <li v-if="isLocalFile(message)">-->
+            <!--                        <a @click.prevent="openFile(message)">{{ $t('common.open') }}</a>-->
+            <!--                    </li>-->
+            <!--                    <li v-if="isLocalFile(message)">-->
+            <!--                        <a @click.prevent="openDir(message)">{{ $t('common.open_dir') }}</a>-->
+            <!--                    </li>-->
+            <!--                </vue-context>-->
+            <!--                <vue-context ref="messageSenderContextMenu" v-slot="{data: message}" :close-on-scroll="true" v-on:close="onMessageSenderContextMenuClose">-->
+            <!--                    &lt;!&ndash;          更多menu item，比如添加到通讯录等&ndash;&gt;-->
+            <!--                    <li>-->
+            <!--                        <a @click.prevent="mentionMessageSender(message)">{{ mentionMessageSenderTitle(message) }}</a>-->
+            <!--                    </li>-->
+            <!--                </vue-context>-->
         </view>
     </view>
 </template>
@@ -105,7 +105,6 @@ import {numberValue, stringValue} from "@/wfc/util/longUtil";
 import MultiSelectActionView from "@/pages/conversation/MessageMultiSelectActionView";
 // import ForwardMessageByPickConversationView from "@/pages/conversation/message/forward/ForwardMessageByPickConversationView";
 // import ForwardMessageByCreateConversationView from "@/pages/conversation/message/forward/ForwardMessageByCreateConversationView";
-import ScaleLoader from 'vue-spinner/src/ScaleLoader'
 import ForwardType from "@/pages/conversation/message/forward/ForwardType";
 // import localStorageEmitter from "../../../ipc/localStorageEmitter";
 import {fs, isElectron, shell} from "@/platform";
@@ -125,12 +124,12 @@ import GroupMemberType from "@/wfc/model/groupMemberType";
 import CompositeMessageContent from "@/wfc/messages/compositeMessageContent";
 import ConnectionStatus from "../../wfc/client/connectionStatus";
 import UniRefresh from "../../components/uni-list/uni-refresh";
-import UniList from "../../components/uni-list/uni-list";
+// import UniList from "../../components/uni-list/uni-list";
 
 var amr;
 export default {
     components: {
-        UniList,
+        // UniList,
         UniRefresh,
         MultiSelectActionView,
         NotificationMessageContentView,
@@ -141,7 +140,6 @@ export default {
         GroupConversationInfoView,
         SingleConversationInfoView,
         // InfiniteLoading,
-        ScaleLoader,
     },
     // props: ["conversation"],
     data() {
@@ -152,14 +150,12 @@ export default {
             sharedContactState: store.state.contact,
             sharedPickState: store.state.pick,
             sharedMiscState: store.state.misc,
-            isHandlerDragging: false,
 
             savedMessageListViewHeight: -1,
             saveMessageListViewFlexGrow: -1,
 
             dragAndDropEnterCount: 0,
-            trigger: false,
-            // FIXME 选中一个会话，然后切换到其他page，比如联系人，这时该会话收到新消息或发送消息，会导致新收到/发送的消息的界面错乱，尚不知道原因，但这么做能解决。
+
         };
     },
 
@@ -451,11 +447,6 @@ export default {
             this.toggleMessageMultiSelectionActionView(message);
         },
 
-        upper() {
-            console.log('xxx upper')
-            this.trigger = true;
-        },
-
         pickConversationAndForwardMessage(forwardType, messages) {
             return new Promise(((resolve, reject) => {
                 let beforeClose = (event) => {
@@ -557,82 +548,25 @@ export default {
     },
 
     mounted() {
-        // this.popupItem = this.$refs['setting'];
-        // document.addEventListener('mouseup', this.dragEnd);
-        // document.addEventListener('mousemove', this.drag);
-
-        // this.$on('openMessageContextMenu', (event, message) => {
-        //     this.$refs.menu.open(event, message);
-        // });
-        //
-        // this.$on('openMessageSenderContextMenu', (event, message) => {
-        //     // 目前只支持群会话里面，消息发送者右键@
-        //     if (message.conversation.type === ConversationType.Group) {
-        //         this.$refs.messageSenderContextMenu.open(event, message);
-        //     }
-        // });
-
-        // this.$eventBus.$on('send-file', args => {
-        //     let fileMessageContent = new FileMessageContent(null, args.remoteUrl, args.name, args.size);
-        //     let message = new Message(null, fileMessageContent);
-        //     this.forward(message)
-        // });
-        //
-        // this.$eventBus.$on('forward-fav', args => {
-        //     let favItem = args.favItem;
-        //     let message = favItem.toMessage();
-        //     this.forward(message);
-        // });
-        //
-        // localStorageEmitter.on('inviteConferenceParticipant', (ev, args) => {
-        //     if (isElectron()) {
-        //         remote.getCurrentWindow().focus();
-        //     }
-        //     let payload = args.messagePayload;
-        //     let messageContent = Message.messageContentFromMessagePayload(payload, wfc.getUserId());
-        //     let message = new Message(null, messageContent);
-        //     this.forward(message)
-        //         .then(() => {
-        //             ev.reply('inviteConferenceParticipantDone')
-        //         })
-        //         .catch(() => {
-        //             ev.reply('inviteConferenceParticipantCancel')
-        //         });
-        // });
-
         uni.setNavigationBarTitle({
             title: this.targetUserOnlineStateDesc ? this.conversationTitle + `(${this.targetUserOnlineStateDesc})` : this.conversationTitle
         });
-        // if (wfc.getConnectionStatus() === ConnectionStatus.ConnectionStatusConnected){
-        //     store._loadDefaultData();
-        // }
     },
 
-    beforeDestroy() {
-        // document.removeEventListener('mouseup', this.dragEnd);
-        // document.removeEventListener('mousemove', this.drag);
-        // this.$eventBus.$off('send-file')
-        // this.$eventBus.$off('forward-fav')
-    },
-
-    onLoad() {
-        console.log('updatedxxxx')
+    updated() {
         if (!this.sharedConversationState.currentConversationInfo) {
             return;
         }
-        // this.popupItem = this.$refs['setting'];
-        // refer to http://iamdustan.com/smoothscroll/
         console.log('conversationView updated', this.sharedConversationState.shouldAutoScrollToBottom)
         if (this.sharedConversationState.shouldAutoScrollToBottom) {
-            let messageListElement = this.$refs['conversationMessageList'];
-            // messageListElement.scroll({top: messageListElement.scrollHeight, left: 0, behavior: 'auto'})
-            console.log('to scroll to bottom')
-            this.$nextTick(() => {
-                console.log('to scroll to bottom0000')
+            setTimeout(() => {
                 uni.pageScrollTo({
                     scrollTop: 999999,
+                    duration:10,
                 });
-            });
+                this.$forceUpdate()
+
+            }, 100);
         } else {
             // 用户滑动到上面之后，收到新消息，不自动滑动到最下面
         }
@@ -692,25 +626,13 @@ export default {
     /*border-left: 1px solid #e6e6e6;*/
 }
 
-.conversation-empty-container h1 {
-    font-size: 17px;
-    font-weight: normal;
-}
-
-.conversation-container {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
 .conversation-content-container {
-    flex: 1;
-    height: 100%;
-    position: relative;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    background-color: #f3f3f3;
+    /*position: relative;*/
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    /*background-color: #f3f3f3;*/
+    padding: 0 12px;
+    padding-bottom: 112rpx;
 }
 
 
@@ -724,12 +646,8 @@ export default {
     margin: 0 auto;
 }
 
-.message-input-container {
-    /*height: 200px;*/
-    /*min-height: 200px;*/
+.message-list {
+    /*padding-bottom: 112rpx;*/
 }
 
-.conversation-info-container.active {
-    display: flex;
-}
 </style>
