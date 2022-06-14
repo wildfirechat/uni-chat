@@ -724,6 +724,11 @@ export default {
     margin: 0 auto;
 }
 
+.message-input-container {
+    /*height: 200px;*/
+    /*min-height: 200px;*/
+}
+
 .conversation-info-container.active {
     display: flex;
 }
