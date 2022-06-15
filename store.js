@@ -187,6 +187,7 @@ let store = {
         // 目前，通知只可能在主窗口触发
         wfc.eventEmitter.on(EventType.ConnectionStatusChanged, (status) => {
             miscState.connectionStatus = status;
+            console.log('connection status changed', status);
             if (status === ConnectionStatus.ConnectionStatusConnected) {
                 this._loadDefaultData();
 
