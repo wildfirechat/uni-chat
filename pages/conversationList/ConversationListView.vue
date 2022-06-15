@@ -14,6 +14,7 @@
         </uni-list>
 
         <chunLei-popups v-model="showContextMenu" :popData="contextMenuItems" @tapPopup="onContextMenuItemSelect" :x="contextMenuX" :y="contextMenuY" direction="column" theme="dark" :triangle="false" placement="bottom-start" dynamic/>
+        <main-action-menu ref="mainActionMenu"></main-action-menu>
     </view>
 </template>
 
@@ -33,8 +34,25 @@ export default {
             showContextMenu: false,
             contextMenuX: 0,
             contextMenuY: 0,
-            contextMenuItems: []
+            contextMenuItems: [],
         };
+    },
+
+    onShow(){
+      console.log('conversationList onShow', this.sharedConversationState.conversationInfoList.length)
+    },
+
+    onNavigationBarButtonTap(e){
+        console.log('onNavigationBarButtonTap', this.$refs.mainActionMenu)
+        this.$refs.mainActionMenu.show();
+        switch (e.index){
+            case 0:
+                break;
+            case 1:
+                break;
+            default:
+                break;
+        }
     },
 
     methods: {

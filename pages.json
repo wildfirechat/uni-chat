@@ -9,7 +9,23 @@
 		{
 			"path": "pages/conversationList/ConversationListView",
 			"style": {
-				"navigationBarTitleText": "会话列表"
+				"navigationBarTitleText": "会话列表",
+                "app-plus": {
+                    "titleNView": {
+                        "buttons": [
+                            {
+                                "text": "\ue657",
+                                "fontSrc": "/static/wx_iconfont.ttf",
+                                "fontSize": "28px"
+                            },
+                            {
+                                "text": "\ue636",
+                                "fontSrc": "/static/wx_iconfont.ttf",
+                                "fontSize": "26px"
+                            }
+                        ]
+                    }
+                }
 			}
 		},
         {
@@ -32,7 +48,23 @@
 		{
 			"path": "pages/contact/ContactListView",
 			"style": {
-				"navigationBarTitleText": "好友"
+				"navigationBarTitleText": "好友",
+                "app-plus": {
+                    "titleNView": {
+                        "buttons": [
+                            {
+                                "text": "\ue657",
+                                "fontSrc": "/static/wx_iconfont.ttf",
+                                "fontSize": "28px"
+                            },
+                            {
+                                "text": "\ue636",
+                                "fontSrc": "/static/wx_iconfont.ttf",
+                                "fontSize": "26px"
+                            }
+                        ]
+                    }
+                }
 			}
 		},
         {
