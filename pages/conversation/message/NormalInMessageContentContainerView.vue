@@ -10,7 +10,6 @@
                            v-model="sharedPickState.messages"/>
                     <img
                         @click="onClickUserPortrait(message.from)"
-                        @contextmenu.prevent="openMessageSenderContextMenu($event, message)"
                         class="avatar"
                         draggable="false"
                         :src="message._from.portrait" alt="">
@@ -23,7 +22,7 @@
                             <MessageContentContainerView class="message-content-container"
                                                          v-bind:class="{highlight:highLight}"
                                                          :message="message"
-                                                         @contextmenu.prevent.native="openMessageContextMenu($event, message)"/>
+                                                         />
                             <!--                            <LoadingView v-if="isDownloading"/>-->
                         </div>
                         <QuoteMessageView style="padding: 5px 0; max-width: 80%"
@@ -64,13 +63,6 @@ export default {
     methods: {
         onClickUserPortrait(userId) {
             wfc.getUserInfo(userId, true);
-        },
-        openMessageContextMenu(event, message) {
-            this.$parent.$emit('openMessageContextMenu', event, message)
-            this.highLight = true;
-        },
-        openMessageSenderContextMenu(event, message) {
-            this.$parent.$emit('openMessageSenderContextMenu', event, message)
         },
     },
     mounted() {

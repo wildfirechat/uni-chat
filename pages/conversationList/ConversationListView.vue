@@ -1,6 +1,6 @@
 <template>
-    <view class="conversation-list">
-        <uni-list :border="true">
+    <view class="conversation-list" @scroll="onScroll">
+        <uni-list :border="true" @scroll="onScroll">
             <view
                 @click="showConversation(conversationInfo)"
                 v-for="conversationInfo in sharedConversationState.conversationInfoList"
@@ -9,11 +9,11 @@
                           top:conversationInfo.isTop,
                           highlight:contextMenuConversationInfo && contextMenuConversationInfo.conversation.equal(conversationInfo.conversation) }"
             >
-                <ConversationItemView :conversation-info="conversationInfo"/>
+                <ConversationItemView :conversation-info="conversationInfo" @contextmenu.prevent.native="longpressItem(conversationInfo)"/>
             </view>
         </uni-list>
 
-<!--        <vue-context ref="menu" v-slot="{data:conversationInfo}" v-on:close="onConversationItemContextMenuClose">-->
+        <!--        <vue-context ref="menu" v-slot="{data:conversationInfo}" v-on:close="onConversationItemContextMenuClose">-->
 <!--            <li>-->
 <!--                <a @click.prevent="setConversationTop(conversationInfo)">{{-->
 <!--                        conversationInfo && conversationInfo.isTop ? $t('conversation.cancel_sticky_top') : $t('conversation.sticky_top')-->
@@ -116,6 +116,16 @@ export default {
         markConversationAsUnread(conversation) {
             wfc.markConversationAsUnread(conversation, true);
         },
+        longpressItem(conversationInfo){
+            console.log('xxxxx, lonp', conversationInfo, this.$refs.popup.open);
+            // let el = this.$refs['contextMenu-' + message.messageId][0]
+            // // console.log('xxxx', this.$refs, el, el.length, el.showTab)
+            // el.showTab();
+        },
+
+        onScroll(){
+            // TODO
+        }
     },
     activated() {
         this.scrollActiveElementCenter();
@@ -131,7 +141,7 @@ export default {
 <style lang="css" scoped>
 
 .conversation-list {
-    height: 100%;
+    height: 100vh;
     overflow: auto;
 }
 
