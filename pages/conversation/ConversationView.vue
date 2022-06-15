@@ -16,19 +16,18 @@
                     <NormalOutMessageContentView
                         @click.native.capture="sharedConversationState.enableMessageMultiSelection? clickMessageItem($event, message) : null"
                         :message="message"
-                        @longpress.native="onLongPressMessage($event, message)"
+                        @longpress.native="showMessageContextMenu($event, message)"
                         v-else-if="message.direction === 0"/>
                     <NormalInMessageContentView
                         @click.native.capture="sharedConversationState.enableMessageMultiSelection ? clickMessageItem($event, message) : null"
                         :message="message"
-                        @longpress.native="onLongPressMessage($event, message)"
+                        @longpress.native="showMessageContextMenu($event, message)"
                         v-else/>
                 </view>
             </uni-list>
             <!--            <view v-show="!sharedConversationState.enableMessageMultiSelection"-->
             <!--                  class="viewider-handler"></view>-->
-            <chunLei-popups v-model="showContextMenu" :popData="contextMenuItems" @tapPopup="tapPopup" :x="x" :y="y" direction="column" theme="dark" :triangle="false" placement="bottom-start" dynamic>
-            </chunLei-popups>
+            <chunLei-popups v-model="showContextMenu" :popData="contextMenuItems" @tapPopup="onContextMenuItemSelect" :x="contextMenuX" :y="contextMenuY" direction="column" theme="dark" :triangle="false" placement="bottom-start" dynamic/>
             <MessageInputView :conversationInfo="sharedConversationState.currentConversationInfo"
                               v-show="!sharedConversationState.enableMessageMultiSelection"
                               class="message-input-container"
@@ -62,7 +61,7 @@ import RecallNotificationMessageContentView from "@/pages/conversation/message/R
 import NotificationMessageContent from "@/wfc/messages/notification/notificationMessageContent";
 import TextMessageContent from "@/wfc/messages/textMessageContent";
 import store from "@/store";
-import wfc from "@/wfc/client/wfc";
+import wfc from "../../wfc/client/wfc";
 import {numberValue, stringValue} from "@/wfc/util/longUtil";
 import MultiSelectActionView from "@/pages/conversation/MessageMultiSelectActionView";
 // import ForwardMessageByPickConversationView from "@/pages/conversation/message/forward/ForwardMessageByPickConversationView";
@@ -84,12 +83,10 @@ import ConversationType from "@/wfc/model/conversationType";
 import GroupMemberType from "@/wfc/model/groupMemberType";
 import CompositeMessageContent from "@/wfc/messages/compositeMessageContent";
 import ConnectionStatus from "../../wfc/client/connectionStatus";
-import UniRefresh from "../../components/uni-list/uni-refresh";
 
 var amr;
 export default {
     components: {
-        UniRefresh,
         MultiSelectActionView,
         NotificationMessageContentView,
         RecallNotificationMessageContentView,
@@ -113,10 +110,11 @@ export default {
             saveMessageListViewFlexGrow: -1,
 
             dragAndDropEnterCount: 0,
+
             showContextMenu: false,
-            x: 0,
-            y: 0,
-            contextMenuItems: [{title: '复制', disabled: true}, {title: '转发'}, {title: '回复'}, {title: '删除'}]
+            contextMenuX: 0,
+            contextMenuY: 0,
+            contextMenuItems: []
         };
     },
 
@@ -512,30 +510,34 @@ export default {
         },
 
 
-        onLongPressMessage(e, message) {
-            this.x = e.touches[0].clientX;
-            this.y = e.touches[0].clientY;
+        showMessageContextMenu(e, message) {
+            this.contextMenuX = e.touches[0].clientX;
+            this.contextMenuY = e.touches[0].clientY;
 
             this.contextMenuItems = [];
             if (this.isCopyable(message)) {
                 this.contextMenuItems.push({
                     title: "复制",
+                    message:message,
                     tag: 'copy',
                 })
             }
             if (this.isDownloadAble(message)) {
                 this.contextMenuItems.push({
                     title: "下载",
+                    message:message,
                     tag: 'copy'
                 })
             }
             this.contextMenuItems.push({
                 title: '删除',
+                message:message,
                 tag: 'delete',
             })
             if (this.isForwardable(message)){
                 this.contextMenuItems.push({
                     title: '转发',
+                    message:message,
                     tag: 'forward',
                 })
             }
@@ -573,8 +575,13 @@ export default {
             //     <!--                    </li>-->
         },
 
-        tapPopup(t) {
-            console.log('xxx tapPopup', t)
+        onContextMenuItemSelect(t) {
+            console.log('xxx onContextMenuItemSelect', t)
+            if (t.tag === 'delete'){
+                console.log('wfc delete message', t.message.messageId)
+                wfc.deleteMessage(t.message.messageId);
+                // wfc.deleteMessage(3100);
+            }
         }
     },
 

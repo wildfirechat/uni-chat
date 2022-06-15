@@ -9,37 +9,11 @@
                           top:conversationInfo.isTop,
                           highlight:contextMenuConversationInfo && contextMenuConversationInfo.conversation.equal(conversationInfo.conversation) }"
             >
-                <ConversationItemView :conversation-info="conversationInfo" @contextmenu.prevent.native="longpressItem(conversationInfo)"/>
+                <ConversationItemView :conversation-info="conversationInfo" @longpress.native="showConversationContextMenu($event, conversationInfo)"/>
             </view>
         </uni-list>
 
-        <!--        <vue-context ref="menu" v-slot="{data:conversationInfo}" v-on:close="onConversationItemContextMenuClose">-->
-<!--            <li>-->
-<!--                <a @click.prevent="setConversationTop(conversationInfo)">{{-->
-<!--                        conversationInfo && conversationInfo.isTop ? $t('conversation.cancel_sticky_top') : $t('conversation.sticky_top')-->
-<!--                    }}</a>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--                <a @click.prevent="setConversationSilent(conversationInfo)">{{-->
-<!--                        conversationInfo && conversationInfo.isSilent ? $t('conversation.enable_notification') : $t('conversation.disable_notification')-->
-<!--                    }}</a>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--                <a @click.prevent="removeConversation(conversationInfo)">{{ $t('common.delete') }}</a>-->
-<!--            </li>-->
-<!--            <li v-show="conversationInfo-->
-<!--                && (!sharedConversationState.currentConversationInfo || !sharedConversationState.currentConversationInfo.conversation.equal(conversationInfo.conversation))-->
-<!--                && conversationInfo._unread === 0"-->
-<!--                @click.prevent="markConversationAsUnread(conversationInfo.conversation)">-->
-<!--                <a>{{ $t('conversation.mark_as_unread') }}</a>-->
-<!--            </li>-->
-<!--            <li v-show="conversationInfo-->
-<!--                && (!sharedConversationState.currentConversationInfo || !sharedConversationState.currentConversationInfo.conversation.equal(conversationInfo.conversation))-->
-<!--                && conversationInfo._unread > 0"-->
-<!--                @click.prevent="clearConversationUnreadStatus(conversationInfo.conversation)">-->
-<!--                <a>{{ $t('conversation.mark_as_read') }}</a>-->
-<!--            </li>-->
-<!--        </vue-context>-->
+        <chunLei-popups v-model="showContextMenu" :popData="contextMenuItems" @tapPopup="onContextMenuItemSelect" :x="contextMenuX" :y="contextMenuY" direction="column" theme="dark" :triangle="false" placement="bottom-start" dynamic/>
     </view>
 </template>
 
@@ -48,7 +22,6 @@
 import ConversationItemView from "./ConversationItemView";
 import store from "../../store";
 import wfc from "../../wfc/client/wfc";
-import UniList from "../../components/uni-list/uni-list";
 
 export default {
     name: 'ConversationListView',
@@ -56,6 +29,11 @@ export default {
         return {
             sharedConversationState: store.state.conversation,
             contextMenuConversationInfo: null,
+
+            showContextMenu: false,
+            contextMenuX: 0,
+            contextMenuY: 0,
+            contextMenuItems: []
         };
     },
 
@@ -98,13 +76,6 @@ export default {
             el && el.scrollIntoView({behavior: "instant", block: "center"});
         },
 
-        showConversationItemContextMenu(event, conversationInfo) {
-            this.contextMenuConversationInfo = conversationInfo;
-            console.log('showConversationItemContextMenu', conversationInfo, this.$refs.menu, this.$refs.menu.open)
-            this.$refs.menu.open(event, conversationInfo)
-            console.log('showConversationItemContextMenu end')
-        },
-
         onConversationItemContextMenuClose() {
             this.contextMenuConversationInfo = null;
         },
@@ -116,15 +87,48 @@ export default {
         markConversationAsUnread(conversation) {
             wfc.markConversationAsUnread(conversation, true);
         },
-        longpressItem(conversationInfo){
-            console.log('xxxxx, lonp', conversationInfo, this.$refs.popup.open);
-            // let el = this.$refs['contextMenu-' + message.messageId][0]
-            // // console.log('xxxx', this.$refs, el, el.length, el.showTab)
-            // el.showTab();
-        },
 
         onScroll(){
             // TODO
+        },
+
+        showConversationContextMenu(e, conversationInfo) {
+            console.log('xxxx ooooy')
+            this.contextMenuX = e.touches[0].clientX;
+            this.contextMenuY = e.touches[0].clientY;
+            this.contextMenuItems = [];
+
+            this.contextMenuItems.push({
+                title:conversationInfo.isTop ? '取消置顶' :'置顶',
+                tag:'top',
+                conversationInfo: conversationInfo,
+            })
+
+            this.contextMenuItems.push({
+                title:conversationInfo.isSilent ? '取消静音' :'静音',
+                tag:'silent',
+                conversationInfo: conversationInfo,
+            })
+
+            this.contextMenuItems.push({
+                title:'删除会话',
+                tag:'delete',
+                conversationInfo: conversationInfo,
+            })
+
+            this.contextMenuItems.push({
+                title:conversationInfo._unread === 0 ? '标记为未读' : '标记为已读',
+                tag:'mark',
+                conversationInfo: conversationInfo,
+            })
+            this.showContextMenu = true;
+
+        },
+
+        onContextMenuItemSelect(t){
+            if (t.tag === 'delete'){
+                store.removeConversation(t.conversationInfo.conversation);
+            }
         }
     },
     activated() {
@@ -132,7 +136,6 @@ export default {
     },
 
     components: {
-        UniList,
         ConversationItemView,
     },
 };
