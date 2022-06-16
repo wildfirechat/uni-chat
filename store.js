@@ -482,7 +482,7 @@ let store = {
                 uni.navigateTo({
                     url: '/pages/conversationList/ConversationListView'
                 });
-            }, 100)
+            }, 50)
 
             return;
         }
@@ -524,7 +524,7 @@ let store = {
 
         pickState.messages.length = 0;
 
-        console.log('navigateTo ConversationView');
+        // 不加延时的话，不能正常切换页面，会报一次莫名其妙的错误。
         setTimeout(() => {
             uni.navigateTo({
                 url: '/pages/conversation/ConversationView',
@@ -532,7 +532,7 @@ let store = {
                     console.log('nav to ConversationView err', err);
                 },
             });
-        }, 100);
+        }, 50);
     },
 
     quitGroup(groupId) {
@@ -819,67 +819,33 @@ let store = {
      * @return {Promise<boolean>}
      */
     async sendFile(conversation, file) {
-        console.log('send file', file)
-        if (file.size && file.size > 100 * 1024 * 1024) {
-            if (wfc.isSupportBigFilesUpload()) {
-                this.sendBigFile(conversation, file);
-            } else {
-                console.log('file too big, and not support upload big file')
-            }
-            return true;
-        }
-
         let fileOrLocalPath = null;
         let remotePath = null;
-        if (typeof file === 'string') {
-            if (!file.startsWith('http')) {
-                fileOrLocalPath = file;
-            } else {
-                remotePath = file;
-            }
-
-            file = {
-                path: file,
-                name: file.substring((file.lastIndexOf('/') + 1))
-            }
-        } else {
-            fileOrLocalPath = file;
-        }
+        fileOrLocalPath = file;
         let msg = new Message();
         msg.conversation = conversation;
 
-        let mediaType = helper.getMediaType(file.name.split('.').slice(-1).pop());
+        let mediaType = helper.getMediaType(file.split('.').slice(-1).pop());
         // todo other file type
-        let messageContentmediaType = {
+        let messageContentMediaType = {
             'pic': MessageContentMediaType.Image,
             'video': MessageContentMediaType.Video,
             'doc': MessageContentMediaType.File,
         }[mediaType];
 
         let messageContent;
-        switch (messageContentmediaType) {
+        switch (messageContentMediaType) {
             case MessageContentMediaType.Image:
-                let iThumbnail = await imageThumbnail(file);
-                if (iThumbnail === null) {
-                    return false;
-                }
-                // let img64 = self.imgDataUriToBase64(imageThumbnail);
-                messageContent = new ImageMessageContent(fileOrLocalPath, remotePath, iThumbnail.split(',')[1]);
+                messageContent = new ImageMessageContent(fileOrLocalPath, remotePath);
                 break;
             case MessageContentMediaType.Video:
-                let vThumbnail = await videoThumbnail(file);
-                let duration = await videoDuration(file)
-                duration = Math.ceil(duration * 1000);
-                if (vThumbnail === null) {
-                    return false;
-                }
-                // let video64 = self.imgDataUriToBase64(videoThumbnail);
-                messageContent = new VideoMessageContent(fileOrLocalPath, remotePath, vThumbnail.split(',')[1]);
+                messageContent = new VideoMessageContent(fileOrLocalPath, remotePath);
                 break;
             case MessageContentMediaType.File:
                 messageContent = new FileMessageContent(fileOrLocalPath, remotePath);
                 break;
             default:
+                console.log('not support file')
                 return false;
         }
         msg.messageContent = messageContent;

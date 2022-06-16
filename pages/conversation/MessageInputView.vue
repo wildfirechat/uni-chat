@@ -16,7 +16,7 @@
                 <view v-else @click="toggleExt" class="wf-input-button-icon wxfont add2"></view>
             </view>
             <view v-if="showExt" class="wf-ext-container">
-                <view class="wf-ext-item" v-for="(v, i) in extList" @click="toolClick(v)">
+                <view class="wf-ext-item" v-for="(v, i) in extList" @click="onClickExt(v)">
                     <view class="wf-ext-item-icon">
                         <view class="wxfont" :class="v.icon"></view>
                     </view>
@@ -25,11 +25,11 @@
             </view>
             <scroll-view :scroll-y="true" v-if="showEmoji" class="wf-emoji-container">
                 <view class="wf-emoji-content">
-                    <view class="emoji-item" @click="addMsg(v)" v-for="(v,i) in emojiList" :key="i">{{ v }}</view>
+                    <view class="emoji-item" @click="onClickEmoji(v)" v-for="(v,i) in emojiList" :key="i">{{ v }}</view>
                 </view>
             </scroll-view>
         </view>
-        <!--                <zmm-upload-image chooseType="chooseMedia" :show="false" ref="upload" @allComplete="upLoadallComplete" @oneComplete="upLoadoneComplete"></zmm-upload-image>-->
+<!--        <zmm-upload-image chooseType="chooseMedia" :show="false" ref="upload" @allComplete="upLoadallComplete" @oneComplete="upLoadoneComplete"></zmm-upload-image>-->
         <!-- #ifndef H5 -->
         <view class="wf-voice-recorder" v-show="showRecorder">
             <zmm-recorder :show="showRecorder" ref="rec" @recorderStop="recorderStop"/>
@@ -42,6 +42,8 @@
 import TextMessageContent from "../../wfc/messages/textMessageContent";
 import ConversationInfo from "../../wfc/model/conversationInfo";
 import wfc from "../../wfc/client/wfc";
+import ImageMessageContent from "../../wfc/messages/imageMessageContent";
+import store from "../../store";
 
 export default {
     name: "MessageInputView",
@@ -60,26 +62,32 @@ export default {
             extList: [
                 {
                     title: '相册',
+                    tag: 'image',
                     icon: 'image'
                 },
                 {
                     title: '拍摄',
+                    tag: 'shoot',
                     icon: 'camera'
                 },
                 {
                     title: '位置',
+                    tag: 'location',
                     icon: 'location'
                 },
                 {
                     title: '语音',
+                    tag: 'voice',
                     icon: 'voice'
                 },
                 {
                     title: '名片',
+                    tag: 'userCard',
                     icon: 'user_card'
                 },
                 {
                     title: '收藏',
+                    tag: 'fav',
                     icon: 'fav'
                 }
             ],
@@ -98,7 +106,6 @@ export default {
         };
     },
     mounted() {
-        console.log('xxxx message Input')
         // #ifdef APP-PLUS
         uni.onKeyboardHeightChange(res => {
             this.keyboardHeight = res.height;
@@ -180,11 +187,39 @@ export default {
             this.showVoice = false;
         },
 
-        toolClick() {
-
+        onClickExt(ext) {
+            console.log('onClick ext', ext);
+            switch (ext.tag){
+                case 'image':
+                    this.chooseImage();
+                    break;
+                default:
+                    break;
+            }
         },
-        addMsg() {
+        onClickEmoji(emoji) {
+            console.log('onClick emoji', emoji)
+            this.text = this.text + emoji;
+        },
 
+        chooseImage(){
+            uni.chooseImage({
+                // count: _self.limit ? _self.limit  - _self.fileList.length : 999,
+                sourceType: ['album', 'camera'],
+                sizeType: ['original', 'compressed'],
+                success: (e) => {
+                    console.log('choose image', e.tempFilePaths);
+                    e.tempFilePaths.forEach(path => {
+                        let filePath;
+                        if (path.startsWith('file://')){
+                            filePath = path.substring('file://'.length);
+                        }else {
+                            filePath = plus.io.convertLocalFileSystemURL(path)
+                        }
+                        store.sendFile(this.conversationInfo.conversation, filePath);
+                    })
+                }
+            })
         }
 
     },
