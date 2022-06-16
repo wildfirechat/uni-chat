@@ -66,6 +66,11 @@ export default {
                     icon: 'image'
                 },
                 {
+                    title: '视频通话',
+                    tag: 'voip',
+                    icon: 'voip'
+                },
+                {
                     title: '拍摄',
                     tag: 'shoot',
                     icon: 'camera'
@@ -76,20 +81,10 @@ export default {
                     icon: 'location'
                 },
                 {
-                    title: '语音',
-                    tag: 'voice',
-                    icon: 'voice'
-                },
-                {
                     title: '名片',
                     tag: 'userCard',
                     icon: 'user_card'
                 },
-                {
-                    title: '收藏',
-                    tag: 'fav',
-                    icon: 'fav'
-                }
             ],
             msgFocus: false,
             showExt: false,
@@ -136,12 +131,17 @@ export default {
             })
         },
         startRecord() {
-            this.$refs['rec'].startRecord();
-            this.showRecorder = true;
+
+            // this.$refs['rec'].startRecord();
+            // this.showRecorder = true;
+            uni.showToast({
+                title: 'TODO 发送语音消息',
+                icon: 'none'
+            })
         },
 
         endRecord() {
-            this.$refs['rec'].stopRecord();
+            // this.$refs['rec'].stopRecord();
         },
 
         recorderStop(e) {
@@ -194,6 +194,10 @@ export default {
                     this.chooseImage();
                     break;
                 default:
+                    uni.showToast({
+                        title: 'TODO ' + ext.title,
+                        icon: 'none'
+                    })
                     break;
             }
         },

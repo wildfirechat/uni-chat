@@ -19,7 +19,7 @@
                 </li>
                 <li>
                     <label>{{ $t('common.wfc_id') }}</label>
-                    <p>{{ user.name }}</p>
+                    <p class="single-line">{{ user.name }}</p>
                 </li>
                 <li>
                     <label>{{ $t('common.area') }}</label>

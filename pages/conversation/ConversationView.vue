@@ -585,6 +585,11 @@ export default {
                 console.log('wfc delete message', t.message.messageId)
                 wfc.deleteMessage(t.message.messageId);
                 // wfc.deleteMessage(3100);
+            }else {
+                uni.showToast({
+                    title: 'TODO ' + t.title,
+                    icon: 'none'
+                })
             }
         }
     },

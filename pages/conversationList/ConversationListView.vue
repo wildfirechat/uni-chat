@@ -133,6 +133,11 @@ export default {
         onContextMenuItemSelect(t){
             if (t.tag === 'delete'){
                 store.removeConversation(t.conversationInfo.conversation);
+            }else {
+                uni.showToast({
+                    title: 'TODO ' + t.title,
+                    icon: 'none'
+                })
             }
         }
     },
