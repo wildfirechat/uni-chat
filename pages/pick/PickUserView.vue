@@ -101,6 +101,10 @@ export default {
         })
     },
 
+    onUnload(){
+        this.sharedPickState.users.length = 0
+    },
+
     methods: {
         unpick(user) {
             if (this.isUserUncheckable(user)) {
