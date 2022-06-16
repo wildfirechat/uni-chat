@@ -21,9 +21,9 @@
             </label>
             <label class="switch">
                 保存到通讯录
-                <input type="checkbox"
+                <checkbox
                        :checked="conversationInfo.conversation._target._isFav"
-                       @change="setFavGroup(conversationInfo.conversation.target, $event.target.checked)">
+                       @change="setFavGroup(conversationInfo.conversation.target, $event.target.checked)"/>
                 <span class="slider"></span>
             </label>
         </header>
@@ -408,9 +408,10 @@ header label input {
 .switch {
     display: flex;
     flex-direction: row;
+    justify-content: flex-start;
 }
 
-.switch input {
+.switch checkbox {
     margin-left: 20px;
 }
 
