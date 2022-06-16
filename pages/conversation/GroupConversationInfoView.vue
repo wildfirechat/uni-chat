@@ -90,6 +90,8 @@ export default {
         // #endif
         eventChannel.on('conversationInfo', (options) => {
             this.conversationInfo = options.conversationInfo;
+
+            // TODO 需要监听群成员变化，并更新
             this.groupMemberUserInfos = store.getConversationMemberUsrInfos(this.conversationInfo.conversation);
 
             uni.setNavigationBarTitle({
@@ -100,38 +102,19 @@ export default {
     components: {UserListVue},
     methods: {
         showCreateConversationModal() {
-
-            let beforeOpen = (event) => {
-                console.log('Opening...')
-            };
-            let beforeClose = (event) => {
-                console.log('Closing...', event, event.params)
-                if (event.params.confirm) {
-                    let newPickedUsers = event.params.users;
+            let beforeClose = (users) => {
+                    let newPickedUsers = users;
                     let ids = newPickedUsers.map(u => u.uid);
                     wfc.addGroupMembers(this.conversationInfo.conversation.target, ids, null, [0])
-                }
-            };
-            let closed = (event) => {
-                console.log('Close...', event)
             };
             let groupMemberUserInfos = store.getGroupMemberUserInfos(this.conversationInfo.conversation.target, false);
-            this.$modal.show(
-                PickUserView,
+            this.$pickUser(
                 {
                     users: this.sharedContactState.favContactList.concat(this.sharedContactState.friendList),
                     initialCheckedUsers: groupMemberUserInfos,
                     uncheckableUsers: groupMemberUserInfos,
                     confirmTitle: this.$t('common.add'),
-                }, {
-                    name: 'pick-user-modal',
-                    width: 600,
-                    height: 480,
-                    clickToClose: false,
-                }, {
-                    'before-open': beforeOpen,
-                    'before-close': beforeClose,
-                    'closed': closed,
+                    successCB: beforeClose,
                 })
         },
 
