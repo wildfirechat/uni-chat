@@ -427,6 +427,7 @@ let store = {
 
     _loadConversationList(conversationType = [0, 1, 3], lines = [0]) {
         let conversationList = wfc.getConversationList(conversationType, lines);
+        console.log('_loadConversationList', conversationList.length)
         conversationList.forEach(info => {
             this._patchConversationInfo(info);
             // side affect

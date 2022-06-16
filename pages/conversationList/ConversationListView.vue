@@ -43,7 +43,7 @@ export default {
     },
 
     onNavigationBarButtonTap(e){
-        console.log('onNavigationBarButtonTap', this.$refs.mainActionMenu)
+        console.log('onNavigationBarButtonTap')
         this.$refs.mainActionMenu.show();
         switch (e.index){
             case 0:

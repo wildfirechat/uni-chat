@@ -15,11 +15,11 @@
                                  :style="paddingStyle"
                                  v-bind:class="{disabled: isUserUncheckable(user)}"
                                  @click.stop="clickUserItem(user)">
-                                <input class="checkbox"
+                                <checkbox class="checkbox"
                                        v-bind:value="user"
                                        :disabled="isUserUncheckable(user)"
                                        type="checkbox"
-                                       :checked="isUserChecked(user)">
+                                       :checked="isUserChecked(user)"/>
                                 <img class="avatar" :src="user.portrait" alt="">
                                 <span
                                     class="single-line"> {{

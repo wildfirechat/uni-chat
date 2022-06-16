@@ -68,6 +68,12 @@
 			}
 		},
         {
+            "path": "pages/pick/PickUserView",
+            "style": {
+                "navigationBarTitleText": "选择联系人"
+            }
+        },
+        {
             "path": "pages/test/testPage",
             "style": {
                 "navigationBarTitleText": " 测试"
