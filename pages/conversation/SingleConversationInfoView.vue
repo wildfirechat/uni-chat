@@ -9,6 +9,7 @@
         <UserListVue :users="users"
                      :show-category-label="false"
                      :padding-left="'20px'"
+                     v-if="users"
         />
     </div>
 </template>
@@ -24,14 +25,28 @@ export default {
     props: {
         conversationInfo: {
             type: ConversationInfo,
-            required: true,
+            required: false,
         }
     },
     data() {
         return {
-            users: store.getConversationMemberUsrInfos(this.conversationInfo.conversation),
+            users: null,
             sharedContactState: store.state.contact,
         }
+    },
+    onLoad(option) {
+        console.log('SingleConversationInfoView onLoad')
+        // #ifdef APP-NVUE
+        const eventChannel = this.$scope.eventChannel; // 兼容APP-NVUE
+        // #endif
+        // #ifndef APP-NVUE
+        const eventChannel = this.getOpenerEventChannel();
+        // #endif
+        eventChannel.on('conversationInfo', (options) => {
+            this.conversationInfo = options.conversationInfo;
+            this.users = store.getConversationMemberUsrInfos(this.conversationInfo.conversation);
+            console.log('xxx users', this.users)
+        })
     },
     components: {UserListVue},
     methods: {

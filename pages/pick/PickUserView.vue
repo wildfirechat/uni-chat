@@ -92,8 +92,6 @@ export default {
         // #ifndef APP-NVUE
         const eventChannel = this.getOpenerEventChannel();
         // #endif
-        // eventChannel.emit('acceptDataFromOpenedPage', {data: 'data from test page'});
-        // eventChannel.emit('someEvent', {data: 'data from test page for someEvent'});
         // 监听openerUsers事件，获取上一页面通过eventChannel传送到当前页面的数据
         eventChannel.on('pickOptions', (options) => {
             this.users = options.users;

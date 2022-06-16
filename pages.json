@@ -32,13 +32,36 @@
             "path": "pages/conversation/ConversationView",
             "style": {
                 "navigationBarTitleText": "会话详情",
-                "enablePullDownRefresh": true
+                "enablePullDownRefresh": true,
+                "app-plus": {
+                    "titleNView": {
+                        "buttons": [
+                            {
+                                "text": "\ue623",
+                                "fontSrc": "/static/wx_iconfont.ttf",
+                                "fontSize": "28px"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "path": "pages/conversation/SingleConversationInfoView",
+            "style": {
+                "navigationBarTitleText": "单人会话信息"
+            }
+        },
+        {
+            "path": "pages/conversation/GroupConversationInfoView",
+            "style": {
+                "navigationBarTitleText": "群会话信息"
             }
         },
 		{
 			"path": "pages/contact/UserDetailView",
 			"style": {
-				"navigationBarTitleText": " 用户信息"
+				"navigationBarTitleText": "用户信息"
 			}
 		},
 		{

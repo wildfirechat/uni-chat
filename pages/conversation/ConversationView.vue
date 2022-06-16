@@ -100,7 +100,6 @@ export default {
     data() {
         return {
             conversationInfo: null,
-            showConversationInfo: false,
             sharedConversationState: store.state.conversation,
             sharedContactState: store.state.contact,
             sharedPickState: store.state.pick,
@@ -129,15 +128,46 @@ export default {
     onLoad() {
     },
 
+    onNavigationBarButtonTap(e){
+        console.log('xxxx')
+        if (this.conversationInfo.conversation.type === ConversationType.Single){
+            uni.navigateTo({
+                url: '/pages/conversation/SingleConversationInfoView',
+                success: (res) => {
+                    res.eventChannel.emit('conversationInfo', {
+                        conversationInfo: this.conversationInfo
+                    });
+                },
+                fail: (err) => {
+                    console.log('nav to SingleConversationInfoView err', err);
+                }
+            });
+
+        }else if (this.conversationInfo.conversation.type === ConversationType.Group){
+            uni.navigateTo({
+                url: '/pages/conversation/GroupConversationInfoView',
+                success: (res) => {
+                    res.eventChannel.emit('conversationInfo', {
+                        conversationInfo: this.conversationInfo
+                    });
+                },
+                fail: (err) => {
+                    console.log('nav to GroupConversationInfoView err', err);
+                }
+            });
+        }else {
+            uni.showToast({
+                title: 'TODO 暂不支持该会话类型',
+                icon: 'none'
+            })
+        }
+    },
+
     onUnload(){
         store.setCurrentConversationInfo(null);
     },
 
     methods: {
-        toggleConversationInfo() {
-            this.showConversationInfo = !this.showConversationInfo;
-        },
-
         toggleMessageMultiSelectionActionView(message) {
             if (!this.sharedConversationState.enableMessageMultiSelection) {
                 this.saveMessageListViewFlexGrow = this.$refs['conversationMessageList'].style.flexGrow;
@@ -161,12 +191,6 @@ export default {
                 store.selectOrDeselectMessage(message);
                 event.stopPropagation();
             }
-        },
-
-        hideConversationInfo() {
-            // TODO
-            // 是否在创建群聊，或者是在查看会话参与者信息
-            this.showConversationInfo && (this.showConversationInfo = false);
         },
 
         isNotificationMessage(message) {
@@ -624,9 +648,6 @@ export default {
             }
         }
 
-        if (this.conversationInfo && this.sharedConversationState.currentConversationInfo && !this.conversationInfo.conversation.equal(this.sharedConversationState.currentConversationInfo.conversation)) {
-            this.showConversationInfo = false;
-        }
         this.conversationInfo = this.sharedConversationState.currentConversationInfo;
     },
 

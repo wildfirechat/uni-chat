@@ -10,22 +10,7 @@
                     </div>
                     <ul>
                         <li v-for="(user) in groupedUser.users" :key="user.uid">
-                            <tippy
-                                v-if="!clickUserItemFunc"
-                                :to="'user-' + user.uid"
-                                interactive
-                                theme="light"
-                                :animate-fill="false"
-                                placement="left"
-                                distant="7"
-                                animation="fade"
-                                trigger="click"
-                                :style="tippyStyleFix"
-                            >
-                                <UserCardView :user-info="user" v-on:close="closeUserCard(user)"/>
-                            </tippy>
                             <div class="content"
-                                 :ref="'userCardTippy-'+user.uid"
                                  :name="'user-'+user.uid"
                                  :style="paddingStyle"
                                  v-bind:class="{active: (sharedContactState.currentFriend
@@ -98,18 +83,6 @@ export default {
             el && el.scrollIntoView({behavior: "instant", block: "center"});
         },
 
-        tippyStyleFix() {
-            let root = document.documentElement;
-            root.style.setProperty('--tippy-right', '250px');
-        },
-
-        tippyStyleReset() {
-            let root = document.documentElement;
-            root.style.setProperty('--tippy-right', '0');
-        },
-        closeUserCard(user) {
-            this.$refs["userCardTippy-" + user.uid][0]._tippy.hide();
-        },
         imgUrlAlt(e){
             e.target.src = Config.DEFAULT_PORTRAIT_URL;
         }
@@ -117,9 +90,6 @@ export default {
     },
 
     mounted() {
-        if (!this.clickUserItemFunc) {
-            this.tippyStyleFix()
-        }
     },
 
     activated() {
@@ -127,9 +97,6 @@ export default {
     },
 
     destroyed() {
-        if (!this.clickUserItemFunc) {
-            this.tippyStyleReset()
-        }
     },
 
     computed: {
@@ -243,10 +210,3 @@ ul {
 
 </style>
 
-<!--<style>-->
-<!--.tippy-tooltip {-->
-<!--  right: 250px !important;-->
-<!--  border: 1px solid #f5f5f5 !important;-->
-<!--  background-color: #fcfcfc !important;-->
-<!--}-->
-<!--</style>-->

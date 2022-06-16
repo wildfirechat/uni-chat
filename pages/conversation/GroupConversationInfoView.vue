@@ -1,5 +1,5 @@
 <template>
-    <div class="conversation-info">
+    <div class="conversation-info" v-if="conversationInfo">
         <header>
             <label>
                 {{ $t('conversation.group_name') }}
@@ -67,18 +67,31 @@ export default {
     props: {
         conversationInfo: {
             type: ConversationInfo,
-            required: true,
+            required: false,
         }
     },
     data() {
         return {
-            groupMemberUserInfos: store.getConversationMemberUsrInfos(this.conversationInfo.conversation),
+            groupMemberUserInfos: null,
             filterQuery: '',
             sharedContactState: store.state.contact,
             groupAnnouncement: '',
             newGroupName: '',
             newGroupAnnouncement: '',
         }
+    },
+    onLoad(option) {
+        console.log('GroupConversationInfoView onLoad')
+        // #ifdef APP-NVUE
+        const eventChannel = this.$scope.eventChannel; // 兼容APP-NVUE
+        // #endif
+        // #ifndef APP-NVUE
+        const eventChannel = this.getOpenerEventChannel();
+        // #endif
+        eventChannel.on('conversationInfo', (options) => {
+            this.conversationInfo = options.conversationInfo;
+            this.groupMemberUserInfos = store.getConversationMemberUsrInfos(this.conversationInfo.conversation);
+        })
     },
     components: {UserListVue},
     methods: {
