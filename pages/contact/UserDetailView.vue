@@ -61,6 +61,10 @@ export default {
         // });
     },
 
+    onUnload(){
+        store.setCurrentFriend(null);
+    },
+
     methods: {
         chat() {
             let conversation = new Conversation(ConversationType.Single, this.user.uid, 0);

@@ -75,7 +75,21 @@ export default {
     },
     methods: {
         clickUserItem(user) {
-            this.clickUserItemFunc && this.clickUserItemFunc(user);
+            if (this.clickUserItemFunc){
+                this.clickUserItemFunc(user);
+            }else {
+                store.setCurrentFriend(user)
+                uni.navigateTo({
+                    url: '/pages/contact/UserDetailView',
+                    success: () => {
+                        console.log('nav to userDetailView success');
+
+                    },
+                    fail: (err) => {
+                        console.log('nav to userDetailView err', err);
+                    }
+                });
+            }
         },
 
         scrollActiveElementCenter() {

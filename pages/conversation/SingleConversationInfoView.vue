@@ -45,7 +45,10 @@ export default {
         eventChannel.on('conversationInfo', (options) => {
             this.conversationInfo = options.conversationInfo;
             this.users = store.getConversationMemberUsrInfos(this.conversationInfo.conversation);
-            console.log('xxx users', this.users)
+
+            uni.setNavigationBarTitle({
+                title: this.conversationInfo.conversation._target._displayName,
+            });
         })
     },
     components: {UserListVue},
