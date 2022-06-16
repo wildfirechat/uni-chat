@@ -461,6 +461,9 @@ let store = {
     },
 
     setCurrentConversationInfo(conversationInfo) {
+        if (!conversationState.currentConversationInfo && !conversationInfo){
+            return;
+        }
         if (!conversationInfo) {
             if (conversationState.currentConversationInfo) {
                 let conversation = conversationState.currentConversationInfo.conversation;
@@ -474,6 +477,13 @@ let store = {
             conversationState.currentConversationDeliveries = null;
             conversationState.currentConversationRead = null;
             conversationState.enableMessageMultiSelection = false;
+
+            setTimeout(() => {
+                uni.navigateTo({
+                    url: '/pages/conversationList/ConversationListView'
+                });
+            }, 100)
+
             return;
         }
 
@@ -513,6 +523,16 @@ let store = {
         conversationState.inputtingUser = null;
 
         pickState.messages.length = 0;
+
+        console.log('navigateTo ConversationView');
+        setTimeout(() => {
+            uni.navigateTo({
+                url: '/pages/conversation/ConversationView',
+                fail: (err) => {
+                    console.log('nav to ConversationView err', err);
+                },
+            });
+        }, 100);
     },
 
     quitGroup(groupId) {

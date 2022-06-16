@@ -65,24 +65,12 @@ export default {
             users = users.filter(u => {
                 return u.uid !== Config.FILE_HELPER_ID
             });
-            uni.navigateTo({
-                url: '../../pages/pick/PickUserView',
-                events: {
-                    pickedUsers: users => {
-                        console.log('pickedUsers', users.length);
-                        store.createConversation(users)
-                    }
-                },
-
-                success: (res) => {
-                    res.eventChannel.emit('openerUsers', users);
+            this.$pickUser({
+                users:users,
+                successCB: users => {
+                    store.createConversation(users)
                 }
-            })
-            // TODO
-            //   uni.showToast({
-            //       title: 'TODO 创建群聊',
-            //       icon: 'none'
-            //   })
+            });
         },
         go2SearchFriend() {
             // TODO

@@ -19,7 +19,7 @@
             <header>
                 <span v-if="checkedUsers.length === 0">{{ $t('pick.picked_contact') }}</span>
                 <span v-else>{{ $t('pick.picked_contact') + this.checkedUsers.length }}</span>
-                <button size="mini" @click="confirm">确定</button>
+                <button size="mini" @click="confirm"> {{confirmTitle}}</button>
             </header>
             <div class="content">
                 <div class="picked-user-container" v-for="(user, index) in checkedUsers" :key="index">
@@ -95,13 +95,16 @@ export default {
         // eventChannel.emit('acceptDataFromOpenedPage', {data: 'data from test page'});
         // eventChannel.emit('someEvent', {data: 'data from test page for someEvent'});
         // 监听openerUsers事件，获取上一页面通过eventChannel传送到当前页面的数据
-        eventChannel.on('openerUsers', (users) => {
-            console.log('openerUsers', typeof users, users)
-            this.users = users;
+        eventChannel.on('pickOptions', (options) => {
+            this.users = options.users;
+            this.initialCheckedUsers = options.initialCheckedUsers;
+            this.uncheckableUsers = options.uncheckableUsers;
+            this.showCategoryLabel = options.showCategoryLabel;
+            this.confirmTitle = options.confirmTitle;
         })
     },
 
-    onUnload(){
+    onUnload() {
         this.sharedPickState.users.length = 0
     },
 
@@ -248,6 +251,7 @@ export default {
 .checked-contact-list-container header button {
     border-style: none;
     margin-right: 20px;
+    color: #4168e0;
 }
 
 .checked-contact-list-container .content {
@@ -287,31 +291,6 @@ export default {
     height: 45px;
     margin: 10px 10px;
     border-radius: 3px;
-}
-
-.checked-contact-list-container footer {
-    height: 55px;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-footer button {
-    padding: 5px 30px;
-    border-radius: 4px;
-    border: 1px solid #cccccc;
-}
-
-footer button.confirm {
-    background-color: #20bf64;
-    margin-left: 20px;
-    margin-right: 20px;
-}
-
-footer button.confirm.disable {
-    background-color: #f2f2f2;
-    color: #c2c2c2;
 }
 
 </style>

@@ -129,6 +129,10 @@ export default {
     onLoad() {
     },
 
+    onUnload(){
+        store.setCurrentConversationInfo(null);
+    },
+
     methods: {
         toggleConversationInfo() {
             this.showConversationInfo = !this.showConversationInfo;
