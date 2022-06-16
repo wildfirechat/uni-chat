@@ -13,7 +13,7 @@
                                 <span v-if="friendRequest.status === 1" class="status">{{
                                         $t('friend_request.accepted')
                                     }}</span>
-                                <button v-else-if="friendRequest.status === 0" class="accept"
+                                <button v-else-if="friendRequest.status === 0" class="accept" size="mini"
                                         @click="accept(friendRequest)">{{
                                         $t('common.add')
                                     }}
@@ -136,11 +136,9 @@ export default {
 }
 
 .new-friend-item .info .name-action .accept {
-    padding: 0 10px;
     text-align: center;
     color: white;
     background: #4168e0;
-    border-radius: 10px;
     border: solid 1px #4168e0;
 }
 
