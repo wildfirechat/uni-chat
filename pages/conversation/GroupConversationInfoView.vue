@@ -90,8 +90,6 @@ export default {
         // #endif
         eventChannel.on('conversationInfo', (options) => {
             this.conversationInfo = options.conversationInfo;
-
-            // TODO 需要监听群成员变化，并更新
             this.groupMemberUserInfos = store.getConversationMemberUsrInfos(this.conversationInfo.conversation);
 
             uni.setNavigationBarTitle({
@@ -103,8 +101,7 @@ export default {
     methods: {
         showCreateConversationModal() {
             let beforeClose = (users) => {
-                    let newPickedUsers = users;
-                    let ids = newPickedUsers.map(u => u.uid);
+                    let ids = users.map(u => u.uid);
                     wfc.addGroupMembers(this.conversationInfo.conversation.target, ids, null, [0], null, () => {
                         this.groupMemberUserInfos = store.getConversationMemberUsrInfos(this.conversationInfo.conversation);
                     }, err => {
@@ -125,36 +122,23 @@ export default {
         },
 
         showRemoveGroupMemberModal() {
-            let beforeOpen = (event) => {
-                console.log('Opening...')
-            };
-            let beforeClose = (event) => {
-                console.log('Closing...', event, event.params)
-                if (event.params.confirm) {
-                    let newPickedUsers = event.params.users;
-                    let ids = newPickedUsers.map(u => u.uid);
-                    wfc.kickoffGroupMembers(this.conversationInfo.conversation.target, ids, [0])
-                }
-            };
-            let closed = (event) => {
-                console.log('Close...', event)
-            };
+            let beforeClose = (users) => {
+                let ids = users.map(u => u.uid);
+                wfc.kickoffGroupMembers(this.conversationInfo.conversation.target, ids, [0],null, () => {
+                    this.groupMemberUserInfos = store.getConversationMemberUsrInfos(this.conversationInfo.conversation);
+                }, err => {
+                    uni.showToast({
+                        title: '踢除群成员失败' + err,
+                    });
+                })
+            }
             let groupMemberUserInfos = store.getGroupMemberUserInfos(this.conversationInfo.conversation.target, false, false);
-            this.$modal.show(
-                PickUserView,
+            this.$pickUser(
                 {
                     users: groupMemberUserInfos,
                     confirmTitle: this.$t('common.remove'),
                     showCategoryLabel: false,
-                }, {
-                    name: 'pick-user-modal',
-                    width: 600,
-                    height: 480,
-                    clickToClose: false,
-                }, {
-                    'before-open': beforeOpen,
-                    'before-close': beforeClose,
-                    'closed': closed,
+                    successCB: beforeClose,
                 })
 
         },
@@ -242,11 +226,11 @@ export default {
         enableRemoveGroupMember() {
             let selfUid = wfc.getUserId();
             let groupMember = wfc.getGroupMember(this.conversationInfo.conversation.target, selfUid);
+            let t = false;
             if (groupMember){
-            return [GroupMemberType.Manager, GroupMemberType.Owner].indexOf(groupMember.type) >= 0;
+                t = [GroupMemberType.Manager, GroupMemberType.Owner].indexOf(groupMember.type) >= 0;
             }
-            return false;
-
+            return t;
         },
 
         enableEditGroupNameOrAnnouncement() {

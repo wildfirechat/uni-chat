@@ -68,7 +68,20 @@ export default {
             this.$pickUser({
                 users:users,
                 successCB: users => {
-                    store.createConversation(users)
+                    // TODO 创建群聊会比较慢，可以在这儿加一个 loading 页面
+                    store.createConversation(users, (conversation) => {
+                        // 不加延时的话，不能正常切换页面，会报莫名其妙的错误。
+                        setTimeout(()=> {
+                            uni.navigateTo({
+                                url: '/pages/conversation/ConversationView',
+                                fail: err => {
+                                    console.log('navigate to ConversationView', err)
+                                }
+                            });
+                        }, 50)
+                    }, err => {
+
+                    } )
                 }
             });
         },

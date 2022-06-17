@@ -18,7 +18,6 @@
 import UserListVue from "@/pages/user/UserListVue";
 import ConversationInfo from "@/wfc/model/conversationInfo";
 import store from "@/store";
-import PickUserView from "@/pages/pick/PickUserView";
 
 export default {
     name: "SingleConversationInfoView",
@@ -54,41 +53,22 @@ export default {
     components: {UserListVue},
     methods: {
         showCreateConversationModal() {
-            this.$modal.show(
-                PickUserView,
+            this.$pickUser(
                 {
                     users: this.sharedContactState.favContactList.concat(this.sharedContactState.friendList),
                     initialCheckedUsers: [this.conversationInfo.conversation._target],
                     uncheckableUsers: [this.conversationInfo.conversation._target],
                     confirmTitle: this.$t('common.add'),
-                }, {
-                    name: 'pick-user-modal',
-                    width: 600,
-                    height: 480,
-                    clickToClose: false,
-                }, {
-                    'before-open': this.beforeOpen,
-                    'before-close': this.beforeClose,
-                    'closed': this.closed,
+                    successCB: (users) => {
+                        let newPickedUsers = users;
+                        newPickedUsers.push(this.conversationInfo.conversation._target)
+                        store.createConversation(newPickedUsers);
+                    }
                 })
         },
         showUserInfo(user) {
             // TODO
             console.log('todo show userInfo', user);
-        },
-        beforeOpen(event) {
-            console.log('Opening...')
-        },
-        beforeClose(event) {
-            console.log('Closing...', event, event.params)
-            if (event.params.confirm) {
-                let newPickedUsers = event.params.users;
-                newPickedUsers.push(this.conversationInfo.conversation._target)
-                store.createConversation(newPickedUsers)
-            }
-        },
-        closed(event) {
-            console.log('Close...', event)
         },
     },
 

@@ -38,14 +38,14 @@ export default {
         };
     },
 
-    onShow(){
-      console.log('conversationList onShow', this.sharedConversationState.conversationInfoList.length)
+    onShow() {
+        console.log('conversationList onShow', this.sharedConversationState.conversationInfoList.length)
     },
 
-    onNavigationBarButtonTap(e){
+    onNavigationBarButtonTap(e) {
         console.log('onNavigationBarButtonTap')
         this.$refs.mainActionMenu.show();
-        switch (e.index){
+        switch (e.index) {
             case 0:
                 break;
             case 1:
@@ -58,6 +58,12 @@ export default {
     methods: {
         showConversation(conversationInfo) {
             store.setCurrentConversationInfo(conversationInfo);
+            uni.navigateTo({
+                url: '/pages/conversation/ConversationView',
+                fail: err => {
+                    console.log('navigate to ConversationView', err)
+                }
+            });
         },
 
         setConversationTop(conversationInfo) {
@@ -93,7 +99,7 @@ export default {
             wfc.markConversationAsUnread(conversation, true);
         },
 
-        onScroll(){
+        onScroll() {
             // TODO
         },
 
@@ -104,36 +110,36 @@ export default {
             this.contextMenuItems = [];
 
             this.contextMenuItems.push({
-                title:conversationInfo.isTop ? '取消置顶' :'置顶',
-                tag:'top',
+                title: conversationInfo.isTop ? '取消置顶' : '置顶',
+                tag: 'top',
                 conversationInfo: conversationInfo,
             })
 
             this.contextMenuItems.push({
-                title:conversationInfo.isSilent ? '取消静音' :'静音',
-                tag:'silent',
+                title: conversationInfo.isSilent ? '取消静音' : '静音',
+                tag: 'silent',
                 conversationInfo: conversationInfo,
             })
 
             this.contextMenuItems.push({
-                title:'删除会话',
-                tag:'delete',
+                title: '删除会话',
+                tag: 'delete',
                 conversationInfo: conversationInfo,
             })
 
             this.contextMenuItems.push({
-                title:conversationInfo._unread === 0 ? '标记为未读' : '标记为已读',
-                tag:'mark',
+                title: conversationInfo._unread === 0 ? '标记为未读' : '标记为已读',
+                tag: 'mark',
                 conversationInfo: conversationInfo,
             })
             this.showContextMenu = true;
 
         },
 
-        onContextMenuItemSelect(t){
-            if (t.tag === 'delete'){
+        onContextMenuItemSelect(t) {
+            if (t.tag === 'delete') {
                 store.removeConversation(t.conversationInfo.conversation);
-            }else {
+            } else {
                 uni.showToast({
                     title: 'TODO ' + t.title,
                     icon: 'none'

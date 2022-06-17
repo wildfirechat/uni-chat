@@ -478,12 +478,6 @@ let store = {
             conversationState.currentConversationRead = null;
             conversationState.enableMessageMultiSelection = false;
 
-            setTimeout(() => {
-                uni.navigateTo({
-                    url: '/pages/conversationList/ConversationListView'
-                });
-            }, 50)
-
             return;
         }
 
@@ -524,15 +518,6 @@ let store = {
 
         pickState.messages.length = 0;
 
-        // 不加延时的话，不能正常切换页面，会报一次莫名其妙的错误。
-        setTimeout(() => {
-            uni.navigateTo({
-                url: '/pages/conversation/ConversationView',
-                fail: (err) => {
-                    console.log('nav to ConversationView err', err);
-                },
-            });
-        }, 50);
     },
 
     quitGroup(groupId) {
