@@ -44,11 +44,15 @@ export default {
 
     onNavigationBarButtonTap(e) {
         console.log('onNavigationBarButtonTap')
-        this.$refs.mainActionMenu.show();
         switch (e.index) {
             case 0:
+                this.$refs.mainActionMenu.show();
                 break;
             case 1:
+                uni.showToast({
+                    title: 'TODO 搜索',
+                    icon: 'none'
+                });
                 break;
             default:
                 break;

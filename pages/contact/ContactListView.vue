@@ -35,6 +35,7 @@
                              v-if="sharedContactState.expandFriendList"/>
             </li>
         </ul>
+        <main-action-menu ref="mainActionMenu"></main-action-menu>
     </div>
 </template>
 <script>
@@ -49,6 +50,23 @@ export default {
     data() {
         return {
             sharedContactState: store.state.contact,
+        }
+    },
+
+    onNavigationBarButtonTap(e) {
+        console.log('onNavigationBarButtonTap')
+        switch (e.index) {
+            case 0:
+                this.$refs.mainActionMenu.show();
+                break;
+            case 1:
+                uni.showToast({
+                    title: 'TODO 搜索',
+                    icon: 'none'
+                });
+                break;
+            default:
+                break;
         }
     },
     methods: {
