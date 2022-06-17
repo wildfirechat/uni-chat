@@ -105,7 +105,13 @@ export default {
             let beforeClose = (users) => {
                     let newPickedUsers = users;
                     let ids = newPickedUsers.map(u => u.uid);
-                    wfc.addGroupMembers(this.conversationInfo.conversation.target, ids, null, [0])
+                    wfc.addGroupMembers(this.conversationInfo.conversation.target, ids, null, [0], null, () => {
+                        this.groupMemberUserInfos = store.getConversationMemberUsrInfos(this.conversationInfo.conversation);
+                    }, err => {
+                        uni.showToast({
+                            title: '邀请新成员失败 ' + err,
+                        });
+                    })
             };
             let groupMemberUserInfos = store.getGroupMemberUserInfos(this.conversationInfo.conversation.target, false);
             this.$pickUser(

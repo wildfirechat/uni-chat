@@ -2,15 +2,15 @@
 import wfc from 'wfc/client/wfc.js'
 export default {
   onLaunch: function () {
-    console.log("App Launch0000");
+    console.log("App Launch");
 	wfc.init();
 
   },
   onShow: function () {
-    console.log("App Show0000");
+    console.log("App Show");
   },
   onHide: function () {
-    console.log("App Hide111");
+    console.log("App Hide");
   },
 };
 </script>

@@ -65,10 +65,6 @@
 			}
 		},
 		{
-			"path": "pages/chat-input/chat-input",
-			"style": {}
-		},
-		{
 			"path": "pages/contact/ContactListView",
 			"style": {
 				"navigationBarTitleText": "好友",
