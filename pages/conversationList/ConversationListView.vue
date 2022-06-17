@@ -58,12 +58,7 @@ export default {
     methods: {
         showConversation(conversationInfo) {
             store.setCurrentConversationInfo(conversationInfo);
-            uni.navigateTo({
-                url: '/pages/conversation/ConversationView',
-                fail: err => {
-                    console.log('navigate to ConversationView', err)
-                }
-            });
+            this.$go2ConversationPage();
         },
 
         setConversationTop(conversationInfo) {

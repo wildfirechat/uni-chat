@@ -22,6 +22,41 @@ const i18n = new VueI18n({
     }
 })
 
+// 如果不存在会话页面，则入栈，如果已经存在会话页面，则返回到该页面
+Vue.prototype.$go2ConversationPage = () => {
+    let pages = getCurrentPages();
+    let cvRoute = 'pages/conversation/ConversationView'
+    let delta = 0;
+    let found = false;
+    for (let i = pages.length - 1; i >=0 ; i--) {
+        if (pages[i].route === cvRoute){
+            found = true;
+            break;
+        } else {
+            delta ++;
+        }
+    }
+    if (found){
+        uni.navigateBack({
+            delta: delta,
+            fail: err => {
+                console.log('nav back to conversationView err', err);
+            }
+        });
+    } else {
+        uni.navigateTo({
+            url: '/pages/conversation/ConversationView',
+            success: () => {
+                console.log('nav to conversationView success');
+
+            },
+            fail: (err) => {
+                console.log('nav to conversationView err', err);
+            }
+        })
+    }
+}
+
 Vue.prototype._i18n = i18n;
 const app = new Vue({
     i18n,

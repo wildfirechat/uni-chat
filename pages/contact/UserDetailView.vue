@@ -69,16 +69,7 @@ export default {
         chat() {
             let conversation = new Conversation(ConversationType.Single, this.user.uid, 0);
             store.setCurrentConversation(conversation);
-            uni.navigateTo({
-                url: '../conversation/ConversationView',
-                success: () => {
-                    console.log('nav to conversationView success');
-
-                },
-                fail: (err) => {
-                    console.log('nav to conversationView err', err);
-                }
-            })
+            this.$go2ConversationPage();
         },
         updateFriendAlias() {
             let friendAlias = this.$refs.input.value;
