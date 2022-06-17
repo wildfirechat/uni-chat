@@ -58,6 +58,12 @@
                 "navigationBarTitleText": "群会话信息"
             }
         },
+        {
+            "path": "pages/contact/SearchUserView",
+            "style": {
+                "navigationBarTitleText": "搜索用户"
+            }
+        },
 		{
 			"path": "pages/contact/UserDetailView",
 			"style": {

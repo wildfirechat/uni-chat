@@ -66,33 +66,28 @@ export default {
                 return u.uid !== Config.FILE_HELPER_ID
             });
             this.$pickUser({
-                users:users,
+                users: users,
                 successCB: users => {
                     // TODO 创建群聊会比较慢，可以在这儿加一个 loading 页面
                     store.createConversation(users, (conversation) => {
                         // 不加延时的话，不能正常切换页面，会报莫名其妙的错误
-                        setTimeout(()=> {
+                        setTimeout(() => {
                             this.$go2ConversationPage();
                         }, 50)
                     }, err => {
 
-                    } )
+                    })
                 }
             });
         },
         go2SearchFriend() {
-            // TODO
-            // uni.navigateTo({
-            //   url: '../../wx/search-friends/index'
-            // })
-            uni.showToast({
-                title: 'TODO 添加好友',
-                icon: 'none'
+            uni.navigateTo({
+                url: '/pages/contact/SearchUserView',
+                fail: err => {
+                }
             })
         },
         go2ScanQrCode() {
-            // this.$fc.saoyisao()
-
             uni.showToast({
                 title: 'TODO 扫一扫',
                 icon: 'none'

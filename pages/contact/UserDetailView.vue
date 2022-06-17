@@ -32,7 +32,8 @@
             </ul>
         </div>
         <div class="footer">
-            <a @click="this.chat">{{ $t('message.send_message') }}</a>
+            <a v-if="isFriend" @click="this.chat">{{ $t('message.send_message') }}</a>
+            <a v-else @click="addFriend">添加好友</a>
         </div>
     </div>
 </template>
@@ -61,7 +62,7 @@ export default {
         // });
     },
 
-    onUnload(){
+    onUnload() {
         store.setCurrentFriend(null);
     },
 
@@ -84,6 +85,20 @@ export default {
                     })
             }
         },
+        addFriend(){
+            let userInfo = wfc.getUserInfo(wfc.getUserId());
+            let reason = '你好，我是' + userInfo.displayName;
+            wfc.sendFriendRequest(this.user.uid, reason, '', () => {
+                uni.navigateBack({
+                    delta: 1
+                })
+            }, err => {
+                uni.showToast({
+                    title: '好友请求发送失败 ' + err,
+                    icon: 'none'
+                });
+            })
+        }
     },
     computed: {
         name: function () {
@@ -99,6 +114,9 @@ export default {
                 wfc.getUserInfo(friend.uid, true)
             })();
             return name;
+        },
+        isFriend() {
+            return wfc.isMyFriend(this.user.uid);
         }
     }
 }

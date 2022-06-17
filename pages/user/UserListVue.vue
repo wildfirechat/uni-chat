@@ -19,7 +19,7 @@
                                  @click.stop="clickUserItem(user)">
                                 <img class="avatar" :src="user.portrait" alt="" @error="imgUrlAlt">
                                 <div style="padding-left: 10px">
-                                    <p class="single-line"> {{ user._displayName }}</p>
+                                    <p class="single-line"> {{ user._displayName ? user._displayName : user.displayName }}</p>
                                     <p v-if="user._userOnlineStatusDesc" class="single-line user-online-status"> {{ user._userOnlineStatusDesc }}</p>
                                 </div>
                             </div>
