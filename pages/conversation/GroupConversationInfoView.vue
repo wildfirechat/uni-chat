@@ -21,9 +21,12 @@
             </label>
             <label class="switch">
                 保存到通讯录
-                <checkbox
-                       :checked="conversationInfo.conversation._target._isFav"
-                       @change="setFavGroup(conversationInfo.conversation.target, $event.target.checked)"/>
+                <checkbox-group @change="setFavGroup(conversationInfo.conversation.target, $event.target.value.length === 1)">
+                    <checkbox
+                        value="fav"
+                        :checked="conversationInfo.conversation._target._isFav"
+                    />
+                </checkbox-group>
                 <span class="slider"></span>
             </label>
         </header>
@@ -101,14 +104,14 @@ export default {
     methods: {
         showCreateConversationModal() {
             let beforeClose = (users) => {
-                    let ids = users.map(u => u.uid);
-                    wfc.addGroupMembers(this.conversationInfo.conversation.target, ids, null, [0], null, () => {
-                        this.groupMemberUserInfos = store.getConversationMemberUsrInfos(this.conversationInfo.conversation);
-                    }, err => {
-                        uni.showToast({
-                            title: '邀请新成员失败 ' + err,
-                        });
-                    })
+                let ids = users.map(u => u.uid);
+                wfc.addGroupMembers(this.conversationInfo.conversation.target, ids, null, [0], null, () => {
+                    this.groupMemberUserInfos = store.getConversationMemberUsrInfos(this.conversationInfo.conversation);
+                }, err => {
+                    uni.showToast({
+                        title: '邀请新成员失败 ' + err,
+                    });
+                })
             };
             let groupMemberUserInfos = store.getGroupMemberUserInfos(this.conversationInfo.conversation.target, false);
             this.$pickUser(
@@ -124,7 +127,7 @@ export default {
         showRemoveGroupMemberModal() {
             let beforeClose = (users) => {
                 let ids = users.map(u => u.uid);
-                wfc.kickoffGroupMembers(this.conversationInfo.conversation.target, ids, [0],null, () => {
+                wfc.kickoffGroupMembers(this.conversationInfo.conversation.target, ids, [0], null, () => {
                     this.groupMemberUserInfos = store.getConversationMemberUsrInfos(this.conversationInfo.conversation);
                 }, err => {
                     uni.showToast({
@@ -194,6 +197,7 @@ export default {
         },
 
         setFavGroup(groupId, fav) {
+            console.log('setFavGroup', groupId, fav)
             wfc.setFavGroup(groupId, fav, () => {
                 this.conversationInfo.conversation._target._isFav = fav;
                 store.reloadFavGroupList();
@@ -227,7 +231,7 @@ export default {
             let selfUid = wfc.getUserId();
             let groupMember = wfc.getGroupMember(this.conversationInfo.conversation.target, selfUid);
             let t = false;
-            if (groupMember){
+            if (groupMember) {
                 t = [GroupMemberType.Manager, GroupMemberType.Owner].indexOf(groupMember.type) >= 0;
             }
             return t;
@@ -236,8 +240,8 @@ export default {
         enableEditGroupNameOrAnnouncement() {
             let selfUid = wfc.getUserId();
             let groupMember = wfc.getGroupMember(this.conversationInfo.conversation.target, selfUid);
-            if (groupMember){
-            return [GroupMemberType.Manager, GroupMemberType.Owner].indexOf(groupMember.type) >= 0;
+            if (groupMember) {
+                return [GroupMemberType.Manager, GroupMemberType.Owner].indexOf(groupMember.type) >= 0;
             }
             return false;
         },
