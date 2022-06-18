@@ -33,7 +33,7 @@
         </div>
         <div class="footer">
             <a v-if="isFriend" @click="this.chat">{{ $t('message.send_message') }}</a>
-            <a v-else @click="addFriend">添加好友</a>
+            <a v-if="!isSelf" @click="addFriend">添加好友</a>
         </div>
     </div>
 </template>
@@ -117,6 +117,9 @@ export default {
         },
         isFriend() {
             return wfc.isMyFriend(this.user.uid);
+        },
+        isSelf(){
+            return this.user.uid === wfc.getUserId();
         }
     }
 }

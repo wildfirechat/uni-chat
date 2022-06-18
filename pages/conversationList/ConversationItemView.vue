@@ -119,6 +119,10 @@ export default {
     padding-left: 12px;
 }
 
+.conversation-item-container:active {
+    background: #d6d6d6;
+}
+
 .conversation-item {
     width: 100%;
     height: 70px;

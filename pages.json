@@ -99,9 +99,15 @@
             }
         },
         {
-            "path": "pages/test/testPage",
+            "path": "pages/me/MePage",
             "style": {
-                "navigationBarTitleText": " 测试"
+                "navigationBarTitleText": "我的"
+            }
+        },
+        {
+            "path": "pages/misc/WebViewPage",
+            "style": {
+                "navigationBarTitleText": "浏览器"
             }
         },
         {
@@ -128,8 +134,8 @@
 				"selectedIconPath": "static/image/tabbar/contact_press.png"
 			},
             {
-                "pagePath": "pages/test/testPage",
-                "text": "我",
+                "pagePath": "pages/me/MePage",
+                "text": "我的",
                 "iconPath": "static/image/tabbar/me_normal.png",
                 "selectedIconPath": "static/image/tabbar/me_press.png"
             }

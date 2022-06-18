@@ -1,0 +1,122 @@
+<template>
+    <div class="me-container">
+        <div class="user-info" @click="showUserInfo">
+            <image class="portrait" :src="user.portrait"></image>
+            <text class="name">{{ user.displayName }}</text>
+            <i></i>
+        </div>
+        <div class="about" @click="showAbout">
+            <text>关于</text>
+            <i></i>
+        </div>
+        <button class="logout-button" @click="logout">退出登录</button>
+    </div>
+
+</template>
+
+<script>
+import wfc from "../../wfc/client/wfc";
+import {clear} from "../util/storageHelper";
+import store from "../../store";
+
+export default {
+    name: "MePage",
+    data() {
+        return {
+            user: wfc.getUserInfo(wfc.getUserId()),
+        }
+    },
+    methods: {
+        showUserInfo() {
+            console.log('testsss')
+            store.setCurrentFriend(this.user)
+            uni.navigateTo({
+                url: '/pages/contact/UserDetailView',
+                success: () => {
+                    console.log('nav to UserDetailView success');
+
+                },
+                fail: (err) => {
+                    console.log('nav to UserDetailView err', err);
+                }
+            })
+
+        },
+        logout() {
+            wfc.disconnect();
+            clear();
+            uni.navigateTo({
+                url: '/pages/login/login',
+                success: () => {
+                    console.log('nav to login success');
+
+                },
+                fail: (err) => {
+                    console.log('nav to login err', err);
+                }
+            })
+        },
+        showAbout() {
+            console.log('click about')
+            uni.navigateTo({
+                url: '/pages/misc/WebViewPage?url=https://wildfirechat.cn/',
+                fail: (e) => {
+                    console.log('xooxo', e)
+                }
+            });
+        }
+    }
+}
+</script>
+
+<style scoped>
+
+.me-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    background: #fafafa;
+}
+
+.user-info {
+    width: 100%;
+    padding: 10px;
+    height: 80px;
+    display: flex;
+    background: white;
+    align-items: center;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
+.user-info:active {
+    background: #d6d6d6;
+}
+
+.user-info .portrait {
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+}
+
+.user-info .name {
+    margin-left: 10px;
+}
+
+.about {
+    width: 100%;
+    padding: 15px 10px;
+    background: white;
+}
+
+.about:active {
+    background: #d6d6d6;
+}
+
+.logout-button {
+    margin-top: 20px;
+}
+
+</style>
