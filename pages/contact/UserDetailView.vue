@@ -33,7 +33,7 @@
         </div>
         <div class="footer">
             <a v-if="isFriend" @click="this.chat">{{ $t('message.send_message') }}</a>
-            <a v-if="!isSelf" @click="addFriend">添加好友</a>
+            <a v-else-if="!isSelf" @click="addFriend">添加好友</a>
         </div>
     </div>
 </template>
@@ -200,7 +200,7 @@ export default {
     margin-top: 30px;
     color: white;
     padding: 10px 40px;
-    background-color: #3497f1;
+    background-color: #7497f1;
     border-radius: 5px;
     border: 1px solid transparent;
 }

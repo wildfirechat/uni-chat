@@ -97,6 +97,17 @@ export default {
     methods: {
         onClickUserPortrait(userId) {
             wfc.getUserInfo(userId, true);
+            store.setCurrentFriend(this.message._from);
+            uni.navigateTo({
+                url: '/pages/contact/UserDetailView',
+                success: () => {
+                    console.log('nav to UserDetailView success');
+
+                },
+                fail: (err) => {
+                    console.log('nav to UserDetailView err', err);
+                }
+            })
         },
         resend() {
             wfc.deleteMessage(this.message.messageId);

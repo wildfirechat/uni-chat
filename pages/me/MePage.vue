@@ -28,7 +28,6 @@ export default {
     },
     methods: {
         showUserInfo() {
-            console.log('testsss')
             store.setCurrentFriend(this.user)
             uni.navigateTo({
                 url: '/pages/contact/UserDetailView',
