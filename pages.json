@@ -112,26 +112,26 @@
         }
     ],
 	"tabBar": {
-		"selectedColor": "#35c8fb",
+		"selectedColor": "#3B62E0",
 		"color": "#7f8389",
 		"list": [
 			{
 				"pagePath": "pages/conversationList/ConversationListView",
 				"text": "会话列表",
-				"iconPath": "static/image/tabbar/chat_list_unselected.png",
-				"selectedIconPath": "static/image/tabbar/chat_list.png"
+				"iconPath": "static/image/tabbar/message_normal.png",
+				"selectedIconPath": "static/image/tabbar/message_press.png"
 			},
 			{
 				"pagePath": "pages/contact/ContactListView",
 				"text": "好友列表",
-				"iconPath": "static/image/tabbar/friend_unselected.png",
-				"selectedIconPath": "static/image/tabbar/friend.png"
+				"iconPath": "static/image/tabbar/contact_normal.png",
+				"selectedIconPath": "static/image/tabbar/contact_press.png"
 			},
             {
                 "pagePath": "pages/test/testPage",
                 "text": "我",
-                "iconPath": "static/image/tabbar/friend_unselected.png",
-                "selectedIconPath": "static/image/tabbar/friend.png"
+                "iconPath": "static/image/tabbar/me_normal.png",
+                "selectedIconPath": "static/image/tabbar/me_press.png"
             }
 		]
 	},
