@@ -57,6 +57,7 @@ export default {
 
     mounted() {
         this.user = this.sharedStateContact.currentFriend;
+        wfc.getUserInfo(this.user.uid, true);
         // uni.setNavigationBarTitle({
         //     title:this.user._displayName,
         // });

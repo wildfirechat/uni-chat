@@ -96,7 +96,6 @@ export default {
     },
     methods: {
         onClickUserPortrait(userId) {
-            wfc.getUserInfo(userId, true);
             store.setCurrentFriend(this.message._from);
             uni.navigateTo({
                 url: '/pages/contact/UserDetailView',
