@@ -126,11 +126,26 @@ export default {
     },
 
     onLoad() {
+        // #ifdef APP-PLUS
+        const currentWebview = this.$scope.$getAppWebview(); //此对象相当于html5plus里的plus.webview.currentWebview()。在uni-app里vue页面直接使用plus.webview.currentWebview()无效
+        // currentWebview.setBounce({position:{top:'100px'},changeoffset:{top:'0px'}}); //动态重设bounce效果
+        currentWebview.overrideUrlLoading({
+            mode: 'reject',
+            // match:'http.*'
+        }, e => {
+            console.log('reject url', e.url)
+            uni.navigateTo({
+                url: `/pages/misc/WebViewPage?url=${e.url}`,
+                fail: (e) => {
+                    console.log('navigate to WebViewPage error', e)
+                }
+            });
+        });
+        // #endif
     },
 
-    onNavigationBarButtonTap(e){
-        console.log('xxxx')
-        if (this.conversationInfo.conversation.type === ConversationType.Single){
+    onNavigationBarButtonTap(e) {
+        if (this.conversationInfo.conversation.type === ConversationType.Single) {
             uni.navigateTo({
                 url: '/pages/conversation/SingleConversationInfoView',
                 success: (res) => {
@@ -143,7 +158,7 @@ export default {
                 }
             });
 
-        }else if (this.conversationInfo.conversation.type === ConversationType.Group){
+        } else if (this.conversationInfo.conversation.type === ConversationType.Group) {
             uni.navigateTo({
                 url: '/pages/conversation/GroupConversationInfoView',
                 success: (res) => {
@@ -155,7 +170,7 @@ export default {
                     console.log('nav to GroupConversationInfoView err', err);
                 }
             });
-        }else {
+        } else {
             uni.showToast({
                 title: 'TODO 暂不支持该会话类型',
                 icon: 'none'
@@ -163,7 +178,7 @@ export default {
         }
     },
 
-    onUnload(){
+    onUnload() {
         store.setCurrentConversationInfo(null);
     },
 
@@ -546,26 +561,26 @@ export default {
             if (this.isCopyable(message)) {
                 this.contextMenuItems.push({
                     title: "复制",
-                    message:message,
+                    message: message,
                     tag: 'copy',
                 })
             }
             if (this.isDownloadAble(message)) {
                 this.contextMenuItems.push({
                     title: "下载",
-                    message:message,
+                    message: message,
                     tag: 'copy'
                 })
             }
             this.contextMenuItems.push({
                 title: '删除',
-                message:message,
+                message: message,
                 tag: 'delete',
             })
-            if (this.isForwardable(message)){
+            if (this.isForwardable(message)) {
                 this.contextMenuItems.push({
                     title: '转发',
-                    message:message,
+                    message: message,
                     tag: 'forward',
                 })
             }
@@ -605,11 +620,11 @@ export default {
 
         onContextMenuItemSelect(t) {
             console.log('xxx onContextMenuItemSelect', t)
-            if (t.tag === 'delete'){
+            if (t.tag === 'delete') {
                 console.log('wfc delete message', t.message.messageId)
                 wfc.deleteMessage(t.message.messageId);
                 // wfc.deleteMessage(3100);
-            }else {
+            } else {
                 uni.showToast({
                     title: 'TODO ' + t.title,
                     icon: 'none'
@@ -702,7 +717,7 @@ export default {
     flex-direction: column;
     /*background-color: #f3f3f3;*/
     /*padding: 0 12px;*/
-    padding-bottom: 112rpx;
+    padding-bottom: 112 rpx;
 }
 
 

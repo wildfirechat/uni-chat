@@ -4,7 +4,7 @@ export default {
     install(Vue) {
         Vue.prototype.$pickUser = function (options) {
             uni.navigateTo({
-                url: '../../pages/pick/PickUserView',
+                url: '/pages/pick/PickUserView',
                 events: {
                     pickedUsers: users => {
                         options.successCB && options.successCB(users);

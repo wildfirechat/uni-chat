@@ -5,8 +5,10 @@
 <script>
 export default {
     name: "WebViewPage",
-    data: {
-        url: '',
+    data() {
+        return {
+            url: '',
+        }
     },
 
     onLoad(option) {
