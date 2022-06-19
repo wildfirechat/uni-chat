@@ -156,6 +156,10 @@
     content: "\e670";
 }
 
+.voip:before {
+    content: "\e658";
+}
+
 .emoji:before {
     content: "\e60b";
 }
