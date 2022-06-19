@@ -165,6 +165,7 @@ let store = {
             uploadBigFiles: [],
             wfc: wfc,
             config: Config,
+            isRecording: false,
             userOnlineStateMap: new Map(),
 
             _reset() {
@@ -177,6 +178,7 @@ let store = {
                 this.uploadBigFiles = [];
                 this.wfc = wfc;
                 this.config = Config;
+                this.isRecording = false;
                 this.userOnlineStateMap = new Map();
             }
         },

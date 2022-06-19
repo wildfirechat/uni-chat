@@ -56,6 +56,15 @@ export default {
             }, 1000)
         });
         recorderManager.onStop((res) => {
+            store.state.misc.isRecording = false;
+            if (this.recordTime < 1){
+                uni.showToast({
+                    title: '录音时间太短',
+                    icon: 'none',
+                });
+                return;
+            }
+
             let filePath = plus.io.convertLocalFileSystemURL(res.tempFilePath);
             let soudMessageContent = new SoundMessageContent(filePath, '', this.recordTime)
             wfc.sendConversationMessage(this.conversationInfo.conversation, soudMessageContent);

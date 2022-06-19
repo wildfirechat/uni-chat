@@ -31,8 +31,8 @@
         </view>
 <!--        <zmm-upload-image chooseType="chooseMedia" :show="false" ref="upload" @allComplete="upLoadallComplete" @oneComplete="upLoadoneComplete"></zmm-upload-image>-->
         <!-- #ifndef H5 -->
-        <view class="wf-voice-recorder" v-show="showRecorder">
-            <zmm-recorder :show="showRecorder" :conversationInfo="conversationInfo" ref="rec" @recorderStop="recorderStop"/>
+        <view class="wf-voice-recorder" v-show="sharedMiscState.isRecording">
+            <zmm-recorder :show="sharedMiscState.isRecording" :conversationInfo="conversationInfo" ref="recorder"/>
         </view>
         <!-- #endif -->
     </view>
@@ -97,7 +97,7 @@ export default {
             longTapItemKey: '',
             // chatWindowData:[],
             localData: {},
-            showtitleNViewBtns: true,
+            sharedMiscState: store.state.misc,
         };
     },
     mounted() {
@@ -132,42 +132,13 @@ export default {
         },
         startRecord() {
 
-            this.$refs['rec'].startRecord();
-            this.showRecorder = true;
-            uni.showToast({
-                title: 'TODO 发送语音消息',
-                icon: 'none'
-            })
+            this.$refs['recorder'].startRecord();
+            this.sharedMiscState.isRecording = true;
         },
 
         endRecord() {
-            this.$refs['rec'].stopRecord();
-            this.showRecorder = false;
-        },
-
-        recorderStop(e) {
-            // uni.showLoading({title: '发送中'});
-            // this.$http.uploadFile({
-            //     url: '/file/uploadAudio',
-            //     filePath: e.recordFilePath,
-            //     name: 'file',
-            //     fileType: 'audio',
-            //     success: res => {
-            //         var data = JSON.parse(res.data);
-            //         if (data.code === 200) {
-            //             var msg = {
-            //                 time: e.recordTime,
-            //                 url: data.data.fullPath,
-            //                 text: data.data.sourceText
-            //             };
-            //             this.sendMsg(JSON.stringify(msg), 'VOICE');
-            //         }
-            //     }
-            // });
-            this.$refs['rec'].clear(); //清理录音
-            // 隐藏语音组件
-            this.showRecorder = false;
-            // this.showtool=false
+            this.$refs['recorder'].stopRecord();
+            this.sharedMiscState.isRecording = false;
         },
 
         toggleVoice() {
