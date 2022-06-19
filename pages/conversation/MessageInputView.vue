@@ -32,7 +32,7 @@
 <!--        <zmm-upload-image chooseType="chooseMedia" :show="false" ref="upload" @allComplete="upLoadallComplete" @oneComplete="upLoadoneComplete"></zmm-upload-image>-->
         <!-- #ifndef H5 -->
         <view class="wf-voice-recorder" v-show="showRecorder">
-            <zmm-recorder :show="showRecorder" ref="rec" @recorderStop="recorderStop"/>
+            <zmm-recorder :show="showRecorder" :conversationInfo="conversationInfo" ref="rec" @recorderStop="recorderStop"/>
         </view>
         <!-- #endif -->
     </view>
@@ -132,8 +132,8 @@ export default {
         },
         startRecord() {
 
-            // this.$refs['rec'].startRecord();
-            // this.showRecorder = true;
+            this.$refs['rec'].startRecord();
+            this.showRecorder = true;
             uni.showToast({
                 title: 'TODO 发送语音消息',
                 icon: 'none'
@@ -141,7 +141,8 @@ export default {
         },
 
         endRecord() {
-            // this.$refs['rec'].stopRecord();
+            this.$refs['rec'].stopRecord();
+            this.showRecorder = false;
         },
 
         recorderStop(e) {

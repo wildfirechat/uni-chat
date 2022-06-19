@@ -1,218 +1,150 @@
 <template>
-  <view v-if="show">
-    <view class="uni-padding-wrap">
-      <block v-if="!recording && !playing && !hasRecord">
-        <view class="page-body-time">
-          <text class="time-big">{{ formatedRecordTime }}</text>
+    <view v-if="show">
+        <view class="uni-padding-wrap">
+            <block v-if="recording === true">
+                <view class="page-body-time">
+                    <text class="time-big">{{ formatRecordTime }}</text>
+                </view>
+                <view class="page-body-buttons">
+                    <view class="page-body-button" @click="stopRecord">
+                        <view class="button-stop-record"></view>
+                    </view>
+                </view>
+            </block>
         </view>
-        <view class="page-body-buttons">
-          <view class="page-body-button" @click="startRecord">
-            <image src="@/static/record.png"></image>
-          </view>
-        </view>
-      </block>
-      <block v-if="recording === true">
-        <view class="page-body-time">
-          <text class="time-big">{{ formatedRecordTime }}</text>
-        </view>
-        <view class="page-body-buttons">
-          <view class="page-body-button" @click="stopRecord">
-            <view class="button-stop-record"></view>
-          </view>
-        </view>
-      </block>
-      <block v-if="hasRecord === true && playing === false">
-        <view class="page-body-time">
-          <text class="time-big">{{ formatedPlayTime }}</text>
-          <text class="time-small">{{ formatedRecordTime }}</text>
-        </view>
-        <view class="page-body-buttons">
-          <view class="page-body-button" @click="playVoice">
-            <image src="@/static/play.png"></image>
-          </view>
-          <view class="page-body-button" @click="clear">
-            <image src="@/static/trash.png"></image>
-          </view>
-        </view>
-      </block>
-      <block v-if="hasRecord === true && playing === true">
-        <view class="page-body-time">
-          <text class="time-big">{{ formatedPlayTime }}</text>
-          <text class="time-small">{{ formatedRecordTime }}</text>
-        </view>
-        <view class="page-body-buttons">
-          <view class="page-body-button" @click="stopVoice">
-            <image src="@/static/stop.png"></image>
-          </view>
-          <view class="page-body-button" @click="clear">
-            <image src="@/static/trash.png"></image>
-          </view>
-        </view>
-      </block>
     </view>
-  </view>
 </template>
 <script>
 // #ifdef APP-PLUS
 import permision from "@/common/permission.js"
+import store from "../../store";
+import SoundMessageContent from "../../wfc/messages/soundMessageContent";
+import wfc from "../../wfc/client/wfc";
 // #endif
-var playTimeInterval = null;
-var recordTimeInterval = null;
-var recorderManager = null;
-var music = null;
+let recordTimeInterval = null;
+let recorderManager = null;
 export default {
-  props: {
-    show: {
-      type: Boolean,
-      default: true
-    }
-  },
-  emits: ['recorderStop'],
-  data() {
-    return {
-      recording: false, //录音中
-      playing: false, //播放中
-      hasRecord: false, //是否有了一个
-      tempFilePath: '',
-      recordTime: 0,
-      playTime: 0,
-      formatedRecordTime: '00:00:00', //录音的总时间
-      formatedPlayTime: '00:00:00' //播放录音的当前时间
-    }
-  },
-  beforeDestroy: function () {
-    this.clear();
-  },
-  mounted() {
-    music = uni.createInnerAudioContext();
-    music.onEnded(() => {
-      clearInterval(playTimeInterval)
-      var playTime = 0
-      // console.log('play voice finished')
-      this.playing = false;
-      this.formatedPlayTime = this.formatTime(playTime);
-      this.playTime = playTime;
-    });
-    recorderManager = uni.getRecorderManager();
-    recorderManager.onStart(() => {
-      // console.log('recorder start');
-      this.recording = true;
-      recordTimeInterval = setInterval(() => {
-        this.recordTime += 1;
-        this.formatedRecordTime = this.formatTime(this.recordTime);
-      }, 1000)
-    });
-    recorderManager.onStop((res) => {
-      // console.log('on stop');
-      music.src = res.tempFilePath;
-      this.hasRecord = true;
-      this.recording = false;
-      this.$emit('recorderStop', {
-        formatedRecordTime: this.formatedRecordTime,
-        recordTime: this.recordTime < 1 ? this.recordTime + 1 : this.recordTime,
-        recordFilePath: res.tempFilePath
-      })
-      this.clear()
-    });
-    recorderManager.onError(() => {
-      console.log('recorder onError');
-    });
-  },
-  methods: {
-    formatTime(time) {
-      if (typeof time !== 'number' || time < 0) {
-        return time
-      }
+    props: {
+        show: {
+            type: Boolean,
+            default: true
+        },
+        conversationInfo:{
+            type: Object,
+            required: true,
+        }
+    },
+    data() {
+        return {
+            recording: false, //录音中
+            tempFilePath: '',
+            recordTime: 0,
+            formatRecordTime: '00:00:00', //录音的总时间
+        }
+    },
+    beforeDestroy: function () {
+        this.clear();
+    },
+    mounted() {
+        recorderManager = uni.getRecorderManager();
+        recorderManager.onStart(() => {
+            // console.log('recorder start');
+            this.recording = true;
+            recordTimeInterval = setInterval(() => {
+                this.recordTime += 1;
+                this.formatRecordTime = this.formatTime(this.recordTime);
+            }, 1000)
+        });
+        recorderManager.onStop((res) => {
+            let filePath = plus.io.convertLocalFileSystemURL(res.tempFilePath);
+            let soudMessageContent = new SoundMessageContent(filePath, '', this.recordTime)
+            wfc.sendConversationMessage(this.conversationInfo.conversation, soudMessageContent);
 
-      var hour = parseInt(time / 3600)
-      time = time % 3600
-      var minute = parseInt(time / 60)
-      time = time % 60
-      var second = time
-
-      return ([hour, minute, second]).map(function (n) {
-        n = n.toString()
-        return n[1] ? n : '0' + n
-      }).join(':')
+            this.recording = false;
+            this.clear()
+        });
+        recorderManager.onError(() => {
+            console.log('recorder onError');
+        });
     },
-    async startRecord() { //开始录音
-      // #ifdef APP-PLUS
-      let status = await this.checkPermission();
-      if (status !== 1) {
-        return;
-      }
-      // #endif
-
-      // TODO ios 在没有请求过权限之前无法得知是否有相关权限，这种状态下需要直接调用录音，但没有状态或回调判断用户拒绝
-      recorderManager.start({
-        duration: 600000,
-        sampleRate: 44100,
-        format: 'mp3'
-      });
-    },
-    stopRecord() { //停止录音
-      recorderManager.stop();
-
-    },
-    playVoice() {
-      // console.log('play voice');
-      this.playing = true;
-      playTimeInterval = setInterval(() => {
-        this.playTime += 1;
-        this.formatedPlayTime = this.formatTime(this.playTime);
-      }, 1000)
-      music.play();
-    },
-    stopVoice() {
-      clearInterval(playTimeInterval)
-      this.playing = false;
-      this.formatedPlayTime = this.formatTime(0);
-      this.playTime = 0;
-      music.stop();
-    },
-    end() {
-      music.stop();
-      recorderManager.stop();
-      clearInterval(recordTimeInterval)
-      clearInterval(playTimeInterval);
-      this.recording = false, this.playing = false, this.hasRecord = false;
-      this.playTime = 0, this.recordTime = 0;
-      this.formatedRecordTime = "00:00:00", this.formatedRecordTime = "00:00:00";
-    },
-    clear() {
-      this.end();
-    }
-    // #ifdef APP-PLUS
-    ,
-    async checkPermission() {
-      let status = permision.isIOS ? await permision.requestIOS('record') :
-          await permision.requestAndroid('android.permission.RECORD_AUDIO');
-
-      if (status === null || status === 1) {
-        status = 1;
-      } else if (status === 2) {
-        uni.showModal({
-          content: "系统麦克风已关闭",
-          confirmText: "确定",
-          showCancel: false,
-          success: function (res) {
-          }
-        })
-      } else {
-        uni.showModal({
-          content: "需要麦克风权限",
-          confirmText: "设置",
-          success: function (res) {
-            if (res.confirm) {
-              permision.gotoAppSetting();
+    methods: {
+        formatTime(time) {
+            if (typeof time !== 'number' || time < 0) {
+                return time
             }
-          }
-        })
-      }
-      return status;
+
+            let hour = parseInt(time / 3600)
+            time = time % 3600
+            let minute = parseInt(time / 60)
+            time = time % 60
+            let second = time
+
+            return ([hour, minute, second]).map(function (n) {
+                n = n.toString()
+                return n[1] ? n : '0' + n
+            }).join(':')
+        },
+        async startRecord() { //开始录音
+            // #ifdef APP-PLUS
+            let status = await this.checkPermission();
+            if (status !== 1) {
+                return;
+            }
+            // #endif
+
+            // TODO ios 在没有请求过权限之前无法得知是否有相关权限，这种状态下需要直接调用录音，但没有状态或回调判断用户拒绝
+            recorderManager.start({
+                duration: 60000,
+                sampleRate: 44100,
+                format: 'mp3'
+            });
+        },
+        stopRecord() { //停止录音
+            recorderManager.stop();
+
+        },
+        end() {
+            recorderManager.stop();
+            clearInterval(recordTimeInterval)
+            this.recording = false;
+            this.recordTime = 0;
+            this.formatRecordTime = "00:00:00";
+            this.formatRecordTime = "00:00:00";
+        },
+        clear() {
+            this.end();
+        }
+        // #ifdef APP-PLUS
+        ,
+        async checkPermission() {
+            let status = permision.isIOS ? await permision.requestIOS('record') :
+                await permision.requestAndroid('android.permission.RECORD_AUDIO');
+
+            if (status === null || status === 1) {
+                status = 1;
+            } else if (status === 2) {
+                uni.showModal({
+                    content: "系统麦克风已关闭",
+                    confirmText: "确定",
+                    showCancel: false,
+                    success: function (res) {
+                    }
+                })
+            } else {
+                uni.showModal({
+                    content: "需要麦克风权限",
+                    confirmText: "设置",
+                    success: function (res) {
+                        if (res.confirm) {
+                            permision.gotoAppSetting();
+                        }
+                    }
+                })
+            }
+            return status;
+        }
+        // #endif
     }
-    // #endif
-  }
 }
 </script>
 
@@ -221,60 +153,60 @@ export default {
 }
 
 image {
-  width: 130rpx;
-  height: 130rpx;
+    width: 130rpx;
+    height: 130rpx;
 }
 
 .page-body-wrapper {
-  justify-content: space-between;
-  flex-grow: 1;
-  margin-bottom: 300rpx;
+    justify-content: space-between;
+    flex-grow: 1;
+    margin-bottom: 300rpx;
 }
 
 .page-body-time {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .time-big {
-  font-size: 26rpx;
-  margin: 20rpx;
+    font-size: 26rpx;
+    margin: 20rpx;
 }
 
 .time-small {
-  font-size: 26rpx;
+    font-size: 26rpx;
 }
 
 .page-body-buttons {
-  display: flex;
-  justify-content: space-around;
+    display: flex;
+    justify-content: space-around;
 }
 
 .page-body-button {
-  /* width: 250rpx; */
-  text-align: center;
+    /* width: 250rpx; */
+    text-align: center;
 }
 
 .button-stop-record {
-  box-sizing: border-box;
-  width: 130rpx;
-  height: 130rpx;
-  border: 20rpx solid #fff;
-  background-color: #4CD964;
-  border-radius: 50%;
-  animation: colors 1s linear infinite;
+    box-sizing: border-box;
+    width: 130rpx;
+    height: 130rpx;
+    border: 20rpx solid #fff;
+    background-color: #4CD964;
+    border-radius: 50%;
+    animation: colors 1s linear infinite;
 }
 
 @keyframes colors {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: .7;
-  }
-  100% {
-    opacity: 1;
-  }
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: .7;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 </style>
