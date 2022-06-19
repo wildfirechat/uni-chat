@@ -732,7 +732,7 @@ export default {
 }
 
 .message-list {
-    /*padding-bottom: 112rpx;*/
+    padding-bottom: 112rpx;
     flex: 1 1 auto;
     overflow: auto;
 }
