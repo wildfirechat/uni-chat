@@ -208,6 +208,7 @@ export default {
                 sizeType: ['original', 'compressed'],
                 success: (e) => {
                     console.log('choose video', e);
+                    let duration = e.duration;
                     let path = e.tempFilePath;
                     let filePath;
                     if (path.startsWith('file://')){
@@ -215,7 +216,7 @@ export default {
                     }else {
                         filePath = plus.io.convertLocalFileSystemURL(path)
                     }
-                    store.sendFile(this.conversationInfo.conversation, filePath);
+                    store.sendFile(this.conversationInfo.conversation, filePath, duration);
                 }
             })
         }

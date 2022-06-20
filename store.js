@@ -803,9 +803,10 @@ let store = {
      *
      * @param conversation
      * @param {File | string} file html File 类型或者url，绝对路径只在electron里面生效
+     * @param {number} videoDuration 视频文件长度，仅发送视频文件消息时有效
      * @return {Promise<boolean>}
      */
-    async sendFile(conversation, file) {
+    async sendFile(conversation, file, videoDuration = 0) {
         let fileOrLocalPath = null;
         let remotePath = null;
         fileOrLocalPath = file;
@@ -826,7 +827,7 @@ let store = {
                 messageContent = new ImageMessageContent(fileOrLocalPath, remotePath);
                 break;
             case MessageContentMediaType.Video:
-                messageContent = new VideoMessageContent(fileOrLocalPath, remotePath);
+                messageContent = new VideoMessageContent(fileOrLocalPath, remotePath, '', videoDuration);
                 break;
             case MessageContentMediaType.File:
                 messageContent = new FileMessageContent(fileOrLocalPath, remotePath);
