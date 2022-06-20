@@ -65,14 +65,6 @@ export default {
             this.$go2ConversationPage();
         },
 
-        setConversationTop(conversationInfo) {
-            store.setConversationTop(conversationInfo.conversation, !conversationInfo.isTop);
-        },
-
-        setConversationSilent(conversationInfo) {
-            store.setConversationSilent(conversationInfo.conversation, !conversationInfo.isSilent);
-        },
-
         removeConversation(conversationInfo) {
             store.removeConversation(conversationInfo.conversation);
         },
@@ -86,24 +78,11 @@ export default {
             el && el.scrollIntoView({behavior: "instant", block: "center"});
         },
 
-        onConversationItemContextMenuClose() {
-            this.contextMenuConversationInfo = null;
-        },
-
-        clearConversationUnreadStatus(conversation) {
-            wfc.clearConversationUnreadStatus(conversation);
-        },
-
-        markConversationAsUnread(conversation) {
-            wfc.markConversationAsUnread(conversation, true);
-        },
-
         onScroll() {
             // TODO
         },
 
         showConversationContextMenu(e, conversationInfo) {
-            console.log('xxxx ooooy')
             this.contextMenuX = e.touches[0].clientX;
             this.contextMenuY = e.touches[0].clientY;
             this.contextMenuItems = [];
@@ -136,13 +115,31 @@ export default {
         },
 
         onContextMenuItemSelect(t) {
-            if (t.tag === 'delete') {
-                store.removeConversation(t.conversationInfo.conversation);
-            } else {
-                uni.showToast({
-                    title: 'TODO ' + t.title,
-                    icon: 'none'
-                })
+            switch (t.tag) {
+                case 'delete':
+                    store.removeConversation(t.conversationInfo.conversation);
+                    break;
+                case 'top':
+                    store.setConversationTop(t.conversationInfo.conversation, !t.conversationInfo.isTop);
+                    break;
+                case 'silent':
+                    store.setConversationSilent(t.conversationInfo.conversation, !t.conversationInfo.isSilent);
+                    break;
+                case 'mark':
+                    let conversation = t.conversationInfo.conversation;
+                    if (t.conversationInfo._unread === 0){
+                        wfc.markConversationAsUnread(conversation, true);
+                    } else {
+                        wfc.clearConversationUnreadStatus(conversation);
+                    }
+                    break;
+                default:
+                    uni.showToast({
+                        title: 'TODO ' + t.title,
+                        icon: 'none'
+                    })
+                    break;
+
             }
         }
     },
