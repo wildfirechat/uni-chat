@@ -5,9 +5,7 @@
                 @click="showConversation(conversationInfo)"
                 v-for="conversationInfo in sharedConversationState.conversationInfoList"
                 :key="conversationInfoKey(conversationInfo)"
-                v-bind:class="{active: sharedConversationState.currentConversationInfo && sharedConversationState.currentConversationInfo.conversation.equal(conversationInfo.conversation),
-                          top:conversationInfo.isTop,
-                          highlight:contextMenuConversationInfo && contextMenuConversationInfo.conversation.equal(conversationInfo.conversation) }"
+                v-bind:class="{top:conversationInfo.isTop }"
             >
                 <ConversationItemView :conversation-info="conversationInfo" @longpress.native="showConversationContextMenu($event, conversationInfo)"/>
             </view>
@@ -29,7 +27,6 @@ export default {
     data() {
         return {
             sharedConversationState: store.state.conversation,
-            contextMenuConversationInfo: null,
 
             showContextMenu: false,
             contextMenuX: 0,
@@ -160,29 +157,8 @@ export default {
     overflow: auto;
 }
 
-.conversation-list ul:first-of-type li {
-    background-color: #f8f8f8;
-}
-
-/*.conversation-list ul li:hover {*/
-/*  background-color: #d6d6d6;*/
-/*}*/
-
-.conversation-list ul:first-of-type li.active {
-    background-color: #d6d6d6;
-}
-
-.conversation-list ul:first-of-type li.top {
+.conversation-list .top {
     background-color: #f1f1f1;
-}
-
-.conversation-list li.highlight {
-    box-shadow: 0 0 0 2px #4168e0 inset;
-    z-index: 100;
-}
-
-.conversation-list ul:first-of-type li.active.top {
-    background-color: #d6d6d6;
 }
 
 </style>
