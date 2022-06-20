@@ -165,6 +165,9 @@ export default {
                 case 'image':
                     this.chooseImage();
                     break;
+                case 'shoot':
+                    this.chooseVideo();
+                    break;
                 default:
                     uni.showToast({
                         title: 'TODO ' + ext.title,
@@ -194,6 +197,25 @@ export default {
                         }
                         store.sendFile(this.conversationInfo.conversation, filePath);
                     })
+                }
+            })
+        },
+
+        chooseVideo(){
+            uni.chooseVideo({
+                // count: _self.limit ? _self.limit  - _self.fileList.length : 999,
+                sourceType: ['camera'],
+                sizeType: ['original', 'compressed'],
+                success: (e) => {
+                    console.log('choose video', e);
+                    let path = e.tempFilePath;
+                    let filePath;
+                    if (path.startsWith('file://')){
+                        filePath = path.substring('file://'.length);
+                    }else {
+                        filePath = plus.io.convertLocalFileSystemURL(path)
+                    }
+                    store.sendFile(this.conversationInfo.conversation, filePath);
                 }
             })
         }
