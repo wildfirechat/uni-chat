@@ -1,11 +1,10 @@
 <template>
     <div class="video-content-container">
-        <image preload="metadata"
-               controls
-               draggable="true"
+        <image controls
                @click="preview"
                :src="'data:video/jpeg;base64,' + message.messageContent.thumbnail"
                />
+        <view class="wxfont play play-button"></view>
     </div>
 </template>
 
@@ -58,6 +57,15 @@ export default {
     max-width: 400px;
     border-radius: 5px;
     overflow: hidden;
+}
+
+.play-button{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    color: white;
+    font-size: 20px;
+    transform: translate(-50%, -50%);
 }
 
 .right-arrow:before {
