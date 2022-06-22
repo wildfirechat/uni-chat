@@ -111,6 +111,12 @@
             }
         },
         {
+            "path": "pages/misc/PreviewVideoPage",
+            "style": {
+                "navigationBarTitleText": "视频预览"
+            }
+        },
+        {
             "path": "pages/test/testWebrtc",
             "style": {
                 "navigationBarTitleText": " 测试 webrtc"

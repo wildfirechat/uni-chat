@@ -1,11 +1,11 @@
 <template>
     <div class="video-content-container">
-        <video preload="metadata"
+        <image preload="metadata"
                controls
                draggable="true"
-               @dragstart="dragVideo($event)"
-               :poster="'data:video/jpeg;base64,' + message.messageContent.thumbnail"
-               :src="message.messageContent.remotePath +'#t=0.1'"/>
+               @click="preview"
+               :src="'data:video/jpeg;base64,' + message.messageContent.thumbnail"
+               />
     </div>
 </template>
 
@@ -27,23 +27,20 @@ export default {
         }
     },
     methods: {
-        preview(message) {
+        preview() {
+            let message = this.message;
             if (this.isInCompositeView) {
                 this.$parent.previewCompositeMessage(message.messageUid);
             } else {
-                console.log('preview', message);
-                //store.previewMessage(message, true);
-                uni.previewImage({
-                    current: 1,
-                    urls: [this.message.messageContent.remotePath]
+                console.log('preview', message.messageContent.remotePath);
+                uni.navigateTo({
+                    url: `/pages/misc/PreviewVideoPage?url=${message.messageContent.remotePath}`,
+                    fail: (e) => {
+                        console.log('navigate to PreviewVideoPage error', e)
+                    }
                 });
             }
         },
-
-        dragVideo(event) {
-            let video = this.message.messageContent;
-            event.dataTransfer.setData('URL', video.remotePath)
-        }
     }
 }
 </script>
