@@ -1836,6 +1836,14 @@ export class WfcManager {
         impl.setMyCustomState(customState, customText, successCB, failCB)
     }
 
+    notify(title, content){
+        impl.notify(title, content)
+    }
+
+    clearAllNotification(){
+        impl.clearAllNotification();
+    }
+
     _getStore() {
         return impl._getStore();
     }

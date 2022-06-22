@@ -25,6 +25,9 @@ import CompositeMessageContent from "./wfc/messages/compositeMessageContent";
 import DismissGroupNotification from "./wfc/messages/notification/dismissGroupNotification";
 import KickoffGroupMemberNotification from "./wfc/messages/notification/kickoffGroupMemberNotification";
 import QuitGroupNotification from "./wfc/messages/notification/quitGroupNotification";
+import MessageStatus from "./wfc/messages/messageStatus";
+import MessageConfig from "./wfc/client/messageConfig";
+import PersistFlag from "./wfc/messages/persistFlag";
 
 /**
  * 一些说明
@@ -157,6 +160,7 @@ let store = {
 
         misc: {
             connectionStatus: ConnectionStatus.ConnectionStatusUnconnected,
+            isAppHidden: false,
             enableNotification: true,
             enableMinimize: getItem('minimizable') === '1',
             enableNotificationMessageDetail: true,
@@ -308,6 +312,10 @@ let store = {
                 conversationState.currentConversationMessageList.push(msg);
                 conversationState.currentConversationOldestMessageId = conversationState.currentConversationMessageList[0].messageId;
                 conversationState.currentConversationOldestMessageUid = conversationState.currentConversationMessageList[0].messageUid;
+            }
+
+            if (msg.conversation.type !== 2 && miscState.isAppHidden && (miscState.enableNotification || msg.status === MessageStatus.AllMentioned || msg.status === MessageStatus.Mentioned)) {
+                this.notify(msg);
             }
         });
 
@@ -1565,6 +1573,34 @@ let store = {
             wfc.clearConversationUnreadStatus(conversation);
         }
     },
+    notify(msg) {
+        let content = msg.messageContent;
+        let tip
+        //Todo
+        if (msg.direction === 0 /* && !(type===0 && target===file_transfer_id)*/) {
+            return;
+        }
+        if (MessageConfig.getMessageContentPersitFlag(content.type) === PersistFlag.Persist_And_Count) {
+            if (msg.status !== MessageStatus.AllMentioned && msg.status !== MessageStatus.Mentioned) {
+                let silent = false;
+                for (const info of conversationState.conversationInfoList) {
+                    if (info.conversation.equal(msg.conversation)) {
+                        silent = info.isSilent;
+                        break;
+                    }
+                }
+                if (silent) {
+                    return;
+                }
+                tip = "新消息来了";
+            } else {
+                tip = "有人@你";
+            }
+
+            wfc.notify(tip, miscState.enableNotificationMessageDetail ? content.digest(msg) : '')
+        }
+    },
+
 }
 
 let conversationState = store.state.conversation;
