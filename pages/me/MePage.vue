@@ -44,16 +44,11 @@ export default {
         logout() {
             wfc.disconnect();
             clear();
-            uni.navigateTo({
-                url: '/pages/login/login',
-                success: () => {
-                    console.log('nav to login success');
-
-                },
-                fail: (err) => {
-                    console.log('nav to login err', err);
+            uni.reLaunch(
+                {
+                    url:'/pages/login/login'
                 }
-            })
+            );
         },
         showAbout() {
             console.log('click about')

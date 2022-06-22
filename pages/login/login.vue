@@ -41,21 +41,16 @@ export default {
 
     components: {},
     props: {},
-    onShow() {
-        // let status = wfc.getConnectionStatus();
-        // if (status === ConnectionStatus.ConnectionStatusConnected) {
-        //     console.log('connected, switch to ConversationListView');
-        //     this.go2ConversationList();
-        //     return
-        // }
-        console.log('login onShow');
+    onLoad(){
         let userId = getItem('userId');
         let token = getItem('token')
         if (token) {
             wfc.connect(userId, token);
             this.go2ConversationList();
         }
-
+    },
+    onShow() {
+        console.log('login onShow');
     },
     methods: {
         bindPhoneInput: function (e) {

@@ -1579,6 +1579,12 @@ function _reset() {
     searchState._reset();
     pickState._reset();
     miscState._reset();
+
+   uni.reLaunch(
+       {
+           url:'/pages/login/login'
+       }
+   );
 }
 
 export default store

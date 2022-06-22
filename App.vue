@@ -1,9 +1,7 @@
 <script>
-import wfc from 'wfc/client/wfc.js'
 export default {
   onLaunch: function () {
     console.log("App Launch");
-	wfc.init();
 
   },
   onShow: function () {

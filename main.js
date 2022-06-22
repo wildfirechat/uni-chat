@@ -4,6 +4,7 @@ import store from "./store";
 import VueI18n from 'vue-i18n'
 import {getItem} from "./pages/util/storageHelper";
 import Picker from "./common/Picker";
+import wfc from "./wfc/client/wfc";
 
 Vue.config.productionTip = false
 
@@ -64,6 +65,7 @@ const app = new Vue({
 })
 
 app.store = store;
+wfc.init();
 store.init();
 
 app.$mount()
