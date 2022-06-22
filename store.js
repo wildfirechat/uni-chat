@@ -317,6 +317,7 @@ let store = {
             if (msg.conversation.type !== 2 && miscState.isAppHidden && (miscState.enableNotification || msg.status === MessageStatus.AllMentioned || msg.status === MessageStatus.Mentioned)) {
                 this.notify(msg);
             }
+
         });
 
         wfc.eventEmitter.on(EventType.RecallMessage, (operator, messageUid) => {
@@ -1436,9 +1437,9 @@ let store = {
         let userId = wfc.getUserId();
         // 默认允许通知
         let setting = getItem(userId + '-' + 'notification');
-        miscState.enableNotification = setting === null || setting === '1'
+        miscState.enableNotification = !setting || setting === '1'
         setting = getItem(userId + '-' + 'notificationDetail');
-        miscState.enableNotificationMessageDetail = setting === null || setting === '1'
+        miscState.enableNotificationMessageDetail = !setting || setting === '1'
         miscState.enableCloseWindowToExit = getItem(userId + '-' + 'closeWindowToExit') === '1'
         miscState.enableAutoLogin = getItem(userId + '-' + 'autoLogin') === '1'
         setting = getItem('minimizable')
