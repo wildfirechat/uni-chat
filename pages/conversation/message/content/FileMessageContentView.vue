@@ -16,8 +16,6 @@
 <script>
 import Message from "@/wfc/messages/message";
 import helper from "@/pages/util/helper";
-import {downloadFile} from "@/platformHelper";
-import {fs, isElectron, shell} from "@/platform";
 import store from "@/store";
 
 export default {
@@ -35,22 +33,23 @@ export default {
     },
     methods: {
         clickFile() {
-            if (isElectron()) {
-                let localPath = this.message.messageContent.localPath;
-                if (localPath && fs.existsSync(localPath)) {
-                    shell.openPath(localPath);
-                } else {
-                    if (!this.isDownloading()) {
-                        downloadFile(this.message)
-                        store.addDownloadingMessage(this.message.messageId)
-                    } else {
-                        // TODO toast 下载中
-                        console.log('file isDownloading')
-                    }
-                }
-            } else {
-                downloadFile(this.message)
-            }
+            // TODO
+            // if (isElectron()) {
+            //     let localPath = this.message.messageContent.localPath;
+            //     if (localPath && fs.existsSync(localPath)) {
+            //         shell.openPath(localPath);
+            //     } else {
+            //         if (!this.isDownloading()) {
+            //             downloadFile(this.message)
+            //             store.addDownloadingMessage(this.message.messageId)
+            //         } else {
+            //             // TODO toast 下载中
+            //             console.log('file isDownloading')
+            //         }
+            //     }
+            // } else {
+            //     downloadFile(this.message)
+            // }
         },
 
         dragFile(event) {

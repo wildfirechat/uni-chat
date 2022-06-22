@@ -67,12 +67,10 @@ import MultiSelectActionView from "@/pages/conversation/MessageMultiSelectAction
 // import ForwardMessageByPickConversationView from "@/pages/conversation/message/forward/ForwardMessageByPickConversationView";
 // import ForwardMessageByCreateConversationView from "@/pages/conversation/message/forward/ForwardMessageByCreateConversationView";
 import ForwardType from "@/pages/conversation/message/forward/ForwardType";
-import {fs, isElectron, shell} from "@/platform";
 import FileMessageContent from "@/wfc/messages/fileMessageContent";
 import ImageMessageContent from "@/wfc/messages/imageMessageContent";
 // import {copyImg, copyText} from "@/pages/util/clipboard";
 import Message from "@/wfc/messages/message";
-// import {downloadFile} from "@/platformHelper";
 import VideoMessageContent from "@/wfc/messages/videoMessageContent";
 import SoundMessageContent from "@/wfc/messages/soundMessageContent";
 import MessageContentType from "@/wfc/messages/messageContentType";
@@ -298,13 +296,7 @@ export default {
         },
 
         isLocalFile(message) {
-            if (message && isElectron()) {
-                let media = message.messageContent;
-                let localPath = media.localPath;
-                if (localPath) {
-                    return fs.existsSync(localPath);
-                }
-            }
+            // TODO
             return false;
         },
 
@@ -333,27 +325,30 @@ export default {
             }
         },
         download(message) {
-            if (isElectron()) {
-                downloadFile(message);
-            } else {
-                if (!store.isDownloadingMessage(message.messageId)) {
-                    downloadFile(message)
-                    store.addDownloadingMessage(message.messageId)
-                } else {
-                    // TODO toast 下载中
-                    console.log('file isDownloading')
-                }
-            }
+            // TODO
+            // if (isElectron()) {
+            //     downloadFile(message);
+            // } else {
+            //     if (!store.isDownloadingMessage(message.messageId)) {
+            //         downloadFile(message)
+            //         store.addDownloadingMessage(message.messageId)
+            //     } else {
+            //         // TODO toast 下载中
+            //         console.log('file isDownloading')
+            //     }
+            // }
         },
 
         openFile(message) {
             let file = message.messageContent;
-            shell.openItem(file.localPath);
+            // TODO
+            //shell.openItem(file.localPath);
         },
 
         openDir(message) {
             let file = message.messageContent;
-            shell.showItemInFolder(file.localPath);
+            // TODO
+            // shell.showItemInFolder(file.localPath);
         },
 
         recallMessage(message) {

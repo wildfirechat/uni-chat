@@ -15,8 +15,6 @@
 
 <script>
 import Message from "@/wfc/messages/message";
-import avenginekitproxy from "@/wfc/av/engine/avenginekitproxy";
-import avenginekit from "@/wfc/av/internal/engine.min";
 import store from "@/store";
 import ConversationType from "@/wfc/model/conversationType";
 
@@ -33,12 +31,13 @@ export default {
 
     methods: {
         joinConference() {
-            if (avenginekit.joinConference) {
-                let cmc = this.message.messageContent;
-                avenginekitproxy.joinConference(cmc.callId, cmc.audioOnly, cmc.pin, cmc.host, cmc.title, cmc.desc, cmc.audience, cmc.advanced, false, false)
-            } else {
-                console.log('not support conference')
-            }
+            // TODO
+            // if (avenginekit.joinConference) {
+            //     let cmc = this.message.messageContent;
+            //     avenginekitproxy.joinConference(cmc.callId, cmc.audioOnly, cmc.pin, cmc.host, cmc.title, cmc.desc, cmc.audience, cmc.advanced, false, false)
+            // } else {
+            //     console.log('not support conference')
+            // }
         }
     },
 

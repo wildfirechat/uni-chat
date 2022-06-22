@@ -39,8 +39,6 @@ import store from "@/store";
 import MessageContentType from "@/wfc/messages/messageContentType";
 import Message from "@/wfc/messages/message";
 import PreviewQuotedMessageView from "@/pages/conversation/message/PreviewQuotedMessageView";
-import {fs, isElectron, shell} from "@/platform";
-import {downloadFile} from "@/platformHelper";
 
 export default {
     name: "QuoteMessageView",
@@ -109,22 +107,23 @@ export default {
         },
 
         downloadQuotedFile(quotedFileMessage){
-            if (isElectron()) {
-                let localPath = quotedFileMessage.messageContent.localPath;
-                if (localPath && fs.existsSync(localPath)) {
-                    shell.openPath(localPath);
-                } else {
-                    if (!store.isDownloadingMessage(quotedFileMessage.messageId)) {
-                        downloadFile(quotedFileMessage)
-                        store.addDownloadingMessage(quotedFileMessage.messageId)
-                    } else {
-                        // TODO toast 下载中
-                        console.log('file isDownloading')
-                    }
-                }
-            } else {
-                downloadFile(quotedFileMessage)
-            }
+            // TODO
+            // if (isElectron()) {
+            //     let localPath = quotedFileMessage.messageContent.localPath;
+            //     if (localPath && fs.existsSync(localPath)) {
+            //         shell.openPath(localPath);
+            //     } else {
+            //         if (!store.isDownloadingMessage(quotedFileMessage.messageId)) {
+            //             downloadFile(quotedFileMessage)
+            //             store.addDownloadingMessage(quotedFileMessage.messageId)
+            //         } else {
+            //             // TODO toast 下载中
+            //             console.log('file isDownloading')
+            //         }
+            //     }
+            // } else {
+            //     downloadFile(quotedFileMessage)
+            // }
         }
     },
     computed: {
