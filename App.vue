@@ -1,10 +1,17 @@
 <script>
 import store from "./store";
+import wfc from "./wfc/client/wfc";
 
 export default {
   onLaunch: function () {
     console.log("App Launch");
-
+      plus.push.getClientInfoAsync((info) => {
+          let cid = info["clientid"];
+          console.log('xxx cid', cid)
+          if (cid){
+              wfc.setDeviceToken(cid);
+          }
+      });
   },
   onShow: function () {
     console.log("App Show");

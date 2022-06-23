@@ -18,7 +18,8 @@
         },
         /* 模块配置 */
         "modules" : {
-            "VideoPlayer" : {}
+            "VideoPlayer" : {},
+            "Push" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -48,21 +49,24 @@
             "ios" : {},
             /* SDK配置 */
             "sdkConfigs" : {
-                "ad" : {}
+                "ad" : {},
+                "push" : {
+                    "unipush" : {}
+                }
             }
         },
         "nativePlugins" : {
             "wf-uni-wfc-client" : {
                 "__plugin_info__" : {
-                    "name" : "野火IM原生插件",
-                    "description" : "野火IM官方发布移动端原生插件",
+                    "name" : "野火IM SDK",
+                    "description" : "野火IM 原生插件",
                     "platforms" : "Android,iOS",
-                    "url" : "https://ext.dcloud.net.cn/plugin?id=7895",
-                    "android_package_name" : "cn.wildfirechat.unidemo",
-                    "ios_bundle_id" : "cn.wildfirechat.unidemo",
-                    "isCloud" : true,
-                    "bought" : 1,
-                    "pid" : "7895",
+                    "url" : "",
+                    "android_package_name" : "",
+                    "ios_bundle_id" : "",
+                    "isCloud" : false,
+                    "bought" : -1,
+                    "pid" : "",
                     "parameters" : {}
                 }
             }

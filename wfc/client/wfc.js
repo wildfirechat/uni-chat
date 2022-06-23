@@ -1844,6 +1844,15 @@ export class WfcManager {
         impl.clearAllNotification();
     }
 
+    /**
+     * 设置推送 token
+     * @param {number} type
+     * @param {string} token
+     */
+    setDeviceToken(type, token){
+        impl.setDeviceToken(7, token);
+    }
+
     _getStore() {
         return impl._getStore();
     }
