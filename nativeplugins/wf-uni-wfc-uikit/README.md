@@ -2,7 +2,7 @@
 
 1. 本插件依赖于[wf-uni-wfc-client](https://ext.dcloud.net.cn/plugin?id=7895)
 2. 本插件主要实现一些 UI相关的功能，比如会话页面、音视频通话页面等。
-3. 遇到问题，请到```https://github.com/wildfirechat/uni-Android-SDK```项目下提issue，我们会尽快解决
+3. 遇到问题，请到[uni-wfc-client](https://gitee.com/wfchat/uni-wfc-client) 项目下提issue，我们会尽快解决
 
 ## 针对音视频通话功能的特殊说明
 
