@@ -17,6 +17,7 @@
 import Message from "@/wfc/messages/message";
 import store from "@/store";
 import ConversationType from "@/wfc/model/conversationType";
+import wfcUIKit from "../../../../wfc/uikit/wfcUIKit";
 
 export default {
     name: "ConferenceInviteMessageContentView",
@@ -31,13 +32,12 @@ export default {
 
     methods: {
         joinConference() {
-            // TODO
-            // if (avenginekit.joinConference) {
-            //     let cmc = this.message.messageContent;
-            //     avenginekitproxy.joinConference(cmc.callId, cmc.audioOnly, cmc.pin, cmc.host, cmc.title, cmc.desc, cmc.audience, cmc.advanced, false, false)
-            // } else {
-            //     console.log('not support conference')
-            // }
+            if (wfcUIKit.isSupportConference()) {
+                let cmc = this.message.messageContent;
+                wfcUIKit.joinConference(cmc.callId, cmc.audioOnly, cmc.pin, cmc.host, cmc.title, cmc.desc, cmc.audience, cmc.advanced, false, false)
+            } else {
+                console.log('not support conference')
+            }
         }
     },
 

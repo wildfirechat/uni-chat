@@ -29,7 +29,7 @@
                 </view>
             </scroll-view>
         </view>
-<!--        <zmm-upload-image chooseType="chooseMedia" :show="false" ref="upload" @allComplete="upLoadallComplete" @oneComplete="upLoadoneComplete"></zmm-upload-image>-->
+        <!--        <zmm-upload-image chooseType="chooseMedia" :show="false" ref="upload" @allComplete="upLoadallComplete" @oneComplete="upLoadoneComplete"></zmm-upload-image>-->
         <!-- #ifndef H5 -->
         <view class="wf-voice-recorder" v-show="sharedMiscState.isRecording">
             <zmm-recorder :show="sharedMiscState.isRecording" :conversationInfo="conversationInfo" ref="recorder"/>
@@ -42,8 +42,9 @@
 import TextMessageContent from "../../wfc/messages/textMessageContent";
 import ConversationInfo from "../../wfc/model/conversationInfo";
 import wfc from "../../wfc/client/wfc";
-import ImageMessageContent from "../../wfc/messages/imageMessageContent";
 import store from "../../store";
+import ConversationType from "../../wfc/model/conversationType";
+import wfcUIKit from "../../wfc/uikit/wfcUIKit";
 
 export default {
     name: "MessageInputView",
@@ -66,9 +67,14 @@ export default {
                     icon: 'image'
                 },
                 {
-                    title: '视频通话',
-                    tag: 'voip',
+                    title: '语音通话',
+                    tag: 'voip_a',
                     icon: 'voip'
+                },
+                {
+                    title: '视频通话',
+                    tag: 'voip_v',
+                    icon: 'voip_v'
                 },
                 {
                     title: '拍摄',
@@ -161,12 +167,18 @@ export default {
 
         onClickExt(ext) {
             console.log('onClick ext', ext);
-            switch (ext.tag){
+            switch (ext.tag) {
                 case 'image':
                     this.chooseImage();
                     break;
                 case 'shoot':
                     this.chooseVideo();
+                    break;
+                case 'voip_a':
+                    this.voip(true);
+                    break;
+                case 'voip_v':
+                    this.voip(false);
                     break;
                 default:
                     uni.showToast({
@@ -181,7 +193,7 @@ export default {
             this.text = this.text + emoji;
         },
 
-        chooseImage(){
+        chooseImage() {
             uni.chooseImage({
                 // count: _self.limit ? _self.limit  - _self.fileList.length : 999,
                 sourceType: ['album', 'camera'],
@@ -190,9 +202,9 @@ export default {
                     console.log('choose image', e.tempFilePaths);
                     e.tempFilePaths.forEach(path => {
                         let filePath;
-                        if (path.startsWith('file://')){
+                        if (path.startsWith('file://')) {
                             filePath = path.substring('file://'.length);
-                        }else {
+                        } else {
                             filePath = plus.io.convertLocalFileSystemURL(path)
                         }
                         store.sendFile(this.conversationInfo.conversation, filePath);
@@ -201,7 +213,18 @@ export default {
             })
         },
 
-        chooseVideo(){
+        voip(audioOnly){
+            if (this.conversationInfo.conversation.type === ConversationType.Single){
+                wfcUIKit.startSingleCall(this.conversationInfo.conversation.target, audioOnly)
+            } else if (this.conversationInfo.conversation.type === ConversationType.Group){
+                uni.showToast({
+                    title: 'TODO 选人，然后发起音视频通话' ,
+                    icon: 'none'
+                })
+            }
+        },
+
+        chooseVideo() {
             uni.chooseVideo({
                 // count: _self.limit ? _self.limit  - _self.fileList.length : 999,
                 sourceType: ['camera'],
@@ -211,9 +234,9 @@ export default {
                     let duration = e.duration;
                     let path = e.tempFilePath;
                     let filePath;
-                    if (path.startsWith('file://')){
+                    if (path.startsWith('file://')) {
                         filePath = path.substring('file://'.length);
-                    }else {
+                    } else {
                         filePath = plus.io.convertLocalFileSystemURL(path)
                     }
                     store.sendFile(this.conversationInfo.conversation, filePath, duration);
@@ -263,7 +286,7 @@ export default {
 }
 
 .wf-ext-container {
-    height: 558rpx;
+    height: 558 rpx;
     width: 100%;
     background-color: #f7f7f7;
     display: flex;
@@ -273,7 +296,7 @@ export default {
 }
 
 .wf-ext-item {
-    padding: 35rpx;
+    padding: 35 rpx;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -281,37 +304,37 @@ export default {
 
 .wf-ext-item-icon {
     background-color: #fff;
-    width: 110rpx;
-    height: 110rpx;
+    width: 110 rpx;
+    height: 110 rpx;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    border-radius: 12rpx;
+    border-radius: 12 rpx;
 }
 
 .wf-ext-item-icon .wxfont {
     color: #181818;
-    font-size: 64rpx;
+    font-size: 64 rpx;
 }
 
 .wf-ext-item-text {
-    font-size: 24rpx;
+    font-size: 24 rpx;
     color: #666;
-    margin-top: 16rpx;
+    margin-top: 16 rpx;
 }
 
 .wf-message-input-toolbar {
     position: relative;
     z-index: 3;
-    padding: 16rpx 12rpx;
+    padding: 16 rpx 12 rpx;
     box-sizing: border-box;
     display: flex;
     width: 100%;
     flex-direction: row;
     align-items: center;
     justify-content: space-around;
-    border: 1rpx #ddd solid;
+    border: 1 rpx #ddd solid;
     border-left: none;
     border-right: none;
 }
@@ -323,17 +346,17 @@ export default {
 .wf-input-text-container {
     overflow: auto;
     width: 100%;
-    margin: 0 12rpx;
-    min-height: 75rpx;
+    margin: 0 12 rpx;
+    min-height: 75 rpx;
     background-color: #fff;
-    border-radius: 24rpx;
-    padding-top: 18rpx;
-    max-height: 225rpx;
+    border-radius: 24 rpx;
+    padding-top: 18 rpx;
+    max-height: 225 rpx;
     box-sizing: border-box;
 }
 
 .wf-message-input-container .wf-input-textarea {
-    padding: 0 24rpx;
+    padding: 0 24 rpx;
     box-sizing: border-box !important;
     width: 100%;
     background: #fff;
@@ -341,10 +364,10 @@ export default {
 
 .wf-input-voice-container {
     box-sizing: border-box;
-    margin: 0 12rpx;
+    margin: 0 12 rpx;
     width: 100%;
-    height: 75rpx;
-    border-radius: 24rpx;
+    height: 75 rpx;
+    border-radius: 24 rpx;
     background: #fff;
     display: flex;
     flex-direction: row;
@@ -353,42 +376,42 @@ export default {
 
 .wf-input-voice-button {
     text-align: center;
-    font-size: 24rpx;
-    line-height: 75rpx;
+    font-size: 24 rpx;
+    line-height: 75 rpx;
     flex: 1;
 }
 
 .wf-input-voice-button:nth-child(1) {
-    border-right: 1rpx #eee solid;
+    border-right: 1 rpx #eee solid;
 }
 
 .wf-input-text-send-button {
     white-space: nowrap;
-    padding: 10rpx 24rpx;
-    border-radius: 12rpx;
-    border: 1rpx #ddd solid;
+    padding: 10 rpx 24 rpx;
+    border-radius: 12 rpx;
+    border: 1 rpx #ddd solid;
     background: #f7f7f7;
     color: #ddd;
 }
 
 .wf-input-button-icon {
-    font-size: 64rpx;
+    font-size: 64 rpx;
     color: #333;
 }
 
 .wf-voice-recorder {
-    width: 250rpx;
-    height: 250rpx;
+    width: 250 rpx;
+    height: 250 rpx;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 680rpx;
+    bottom: 680 rpx;
     box-sizing: border-box;
     text-align: center;
     position: fixed;
     border-radius: 50%;
     background-color: #f8f8f8;
-    box-shadow: 0rpx 4rpx 10rpx rgba(0, 0, 0, 0.05);
-    padding: 20rpx;
+    box-shadow: 0 rpx 4 rpx 10 rpx rgba(0, 0, 0, 0.05);
+    padding: 20 rpx;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -404,9 +427,9 @@ export default {
 .popsendCard-close {
     width: 100%;
     text-align: center;
-    height: 70rpx;
-    line-height: 70rpx;
-    font-size: 42rpx;
+    height: 70 rpx;
+    line-height: 70 rpx;
+    font-size: 42 rpx;
     background-color: #fff;
     position: fixed;
     bottom: 0;
@@ -415,7 +438,7 @@ export default {
 }
 
 .wf-emoji-container {
-    height: 558rpx;
+    height: 558 rpx;
 }
 
 .wf-emoji-content {
@@ -425,9 +448,9 @@ export default {
 }
 
 .emoji-item {
-    font-size: 44rpx;
-    width: 93rpx;
-    height: 93rpx;
+    font-size: 44 rpx;
+    width: 93 rpx;
+    height: 93 rpx;
     display: flex;
     flex-direction: row;
     justify-content: center;

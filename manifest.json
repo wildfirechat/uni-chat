@@ -69,6 +69,20 @@
                     "pid" : "",
                     "parameters" : {}
                 }
+            },
+            "wf-uni-wfc-uikit" : {
+                "__plugin_info__" : {
+                    "name" : "野火IM UIKit",
+                    "description" : "野火IM UIKit原生插件",
+                    "platforms" : "Android",
+                    "url" : "",
+                    "android_package_name" : "",
+                    "ios_bundle_id" : "",
+                    "isCloud" : false,
+                    "bought" : -1,
+                    "pid" : "",
+                    "parameters" : {}
+                }
             }
         }
     },

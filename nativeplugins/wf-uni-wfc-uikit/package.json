@@ -1,0 +1,30 @@
+{
+    "name": "野火IM UIKit",
+    "id": "wf-uni-wfc-uikit",
+    "version": "0.1.0",
+    "description": "野火IM UIKit原生插件",
+    "_dp_type": "nativeplugin",
+    "_dp_nativeplugin": {
+        "android": {
+            "plugins": [
+                {
+                    "type": "module",
+                    "name": "wf-uni-wfc-uikit",
+                    "class": "cn.wildfirechat.uni.uikit.UIKitModule"
+                }
+            ],
+            "hooksClass": "cn.wildfirechat.uni.uikit.UIKitUniAppHookProxy",
+            "integrateType": "aar",
+            "dependencies": [
+                "androidx.lifecycle:lifecycle-extensions:2.2.0"
+            ],
+            "abis": ["arm64-v8a", "armeabi-v7a", "x86"],
+            "minSdkVersion": 21,
+            "compileOptions": {
+                "sourceCompatibility": "1.8",
+                "targetCompatibility": "1.8"
+            },
+            "useAndroidX": true
+        }
+    }
+}
