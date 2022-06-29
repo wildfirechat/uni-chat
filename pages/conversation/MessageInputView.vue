@@ -217,11 +217,24 @@ export default {
             if (this.conversationInfo.conversation.type === ConversationType.Single){
                 wfcUIKit.startSingleCall(this.conversationInfo.conversation.target, audioOnly)
             } else if (this.conversationInfo.conversation.type === ConversationType.Group){
-                uni.showToast({
-                    title: 'TODO 选人，然后发起音视频通话' ,
-                    icon: 'none'
-                })
+                this.showPickGroupMemberToVoipModal(audioOnly)
             }
+        },
+
+        showPickGroupMemberToVoipModal(audioOnly) {
+            let beforeClose = (users) => {
+                let ids = users.map(u => u.uid);
+                wfcUIKit.startMultiCall(this.conversationInfo.conversation.target, ids, audioOnly);
+            }
+            let groupMemberUserInfos = store.getGroupMemberUserInfos(this.conversationInfo.conversation.target, false, false);
+            this.$pickUser(
+                {
+                    users: groupMemberUserInfos,
+                    confirmTitle: this.$t('common.confirm'),
+                    showCategoryLabel: false,
+                    successCB: beforeClose,
+                })
+
         },
 
         chooseVideo() {
