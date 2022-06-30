@@ -27,7 +27,6 @@ export default {
     },
     computed: {
         isShow() {
-            console.log('xxxx', this.display, this.pulling)
             if (this.display === "show" || this.pulling === true) {
                 return true;
             }

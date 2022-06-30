@@ -7,7 +7,6 @@ export default {
     console.log("App Launch");
       plus.push.getClientInfoAsync((info) => {
           let cid = info["clientid"];
-          console.log('xxx cid', cid)
           if (cid){
               wfc.setDeviceToken(cid);
           }

@@ -614,7 +614,6 @@ export default {
         },
 
         onContextMenuItemSelect(t) {
-            console.log('xxx onContextMenuItemSelect', t)
             if (t.tag === 'delete') {
                 console.log('wfc delete message', t.message.messageId)
                 wfc.deleteMessage(t.message.messageId);
@@ -712,7 +711,7 @@ export default {
     flex-direction: column;
     /*background-color: #f3f3f3;*/
     /*padding: 0 12px;*/
-    padding-bottom: 112 rpx;
+    padding-bottom: 112rpx;
 }
 
 

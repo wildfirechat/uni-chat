@@ -37,6 +37,10 @@ export default {
                 wfcUIKit.joinConference(cmc.callId, cmc.audioOnly, cmc.pin, cmc.host, cmc.title, cmc.desc, cmc.audience, cmc.advanced, false, false)
             } else {
                 console.log('not support conference')
+                uni.showToast({
+                    title: '不支持会议功能',
+                    icon: 'none',
+                });
             }
         }
     },
