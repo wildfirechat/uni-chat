@@ -1,6 +1,5 @@
 node_modules
 unpackage/resources/__UNI__*
 unpackage
-nativeplugins/wf-uni-wfc-client/
 .hbuilderx
 .idea
