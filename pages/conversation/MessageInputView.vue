@@ -12,7 +12,7 @@
                     <textarea @focus="showExt = false" :focus="msgFocus" class="wf-input-textarea" :adjust-position="false" v-model="text" placeholder="" hold-keyboard confirm-type="send" @confirm="send(text)" :maxlength="-1" auto-height/>
                 </view>
                 <view @click="toggleEmoji" class="wf-input-button-icon wxfont emoji"></view>
-                <view v-if="text !== ''" class="wf-input-text-send-button" @touchend.prevent="send(text)" :style="{ background: text !== '' ? '#1BC418' : '#F7F7F7', color: text !== '' ? '#fff' : '#ddd', 'border-color': text !== '' ? '#1BC418' : '#ddd' }">发送</view>
+                <view v-if="text !== ''" class="wf-input-text-send-button" @touchend.prevent="send(text)" :style="{ background: text !== '' ? '#4168e0' : '#F7F7F7', color: text !== '' ? '#fff' : '#ddd', 'border-color': text !== '' ? '#1BC418' : '#ddd' }">发送</view>
                 <view v-else @click="toggleExt" class="wf-input-button-icon wxfont add2"></view>
             </view>
             <view v-if="showExt" class="wf-ext-container">
