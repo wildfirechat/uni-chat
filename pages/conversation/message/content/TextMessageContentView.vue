@@ -30,19 +30,23 @@ export default {
 
     computed: {
         textContent() {
-            let tmp = parser(this.message.messageContent.digest(this.message));
-            // let tmp = this.message.messageContent.digest(this.message);
-            // pls refer to https://stackoverflow.com/questions/4522124/replace-leading-spaces-with-nbsp-in-javascript
-            tmp = tmp.replace(/^[ \t]+/gm, function (x) {
-                return new Array(x.length + 1).join('&nbsp;')
-            })
-            tmp = tmp.replace(/<script/gi, "&lt;script");
-            tmp = tmp.replace(/<iframe/gi, "&lt;iframe");
-            if (tmp.indexOf('<img') >= 0) {
-                tmp = tmp.replace(/<img/g, '<img style="max-width:400px;"')
+            try {
+                let tmp = parser(this.message.messageContent.digest(this.message));
+                // let tmp = this.message.messageContent.digest(this.message);
+                // pls refer to https://stackoverflow.com/questions/4522124/replace-leading-spaces-with-nbsp-in-javascript
+                tmp = tmp.replace(/^[ \t]+/gm, function (x) {
+                    return new Array(x.length + 1).join('&nbsp;')
+                })
+                tmp = tmp.replace(/<script/gi, "&lt;script");
+                tmp = tmp.replace(/<iframe/gi, "&lt;iframe");
+                if (tmp.indexOf('<img') >= 0) {
+                    tmp = tmp.replace(/<img/g, '<img style="max-width:400px;"')
+                    return tmp;
+                }
                 return tmp;
+            }catch (e) {
+				return this.message.messageContent.digest(this.message);
             }
-            return tmp;
         }
     }
 }
