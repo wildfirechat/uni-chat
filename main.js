@@ -5,6 +5,8 @@ import VueI18n from 'vue-i18n'
 import {getItem} from "./pages/util/storageHelper";
 import Picker from "./common/Picker";
 import wfc from "./wfc/client/wfc";
+import wfcUIKit from "./wfc/uikit/wfcUIKit";
+import Config from "./config";
 
 Vue.config.productionTip = false
 
@@ -29,15 +31,15 @@ Vue.prototype.$go2ConversationPage = () => {
     let cvRoute = 'pages/conversation/ConversationView'
     let delta = 0;
     let found = false;
-    for (let i = pages.length - 1; i >=0 ; i--) {
-        if (pages[i].route === cvRoute){
+    for (let i = pages.length - 1; i >= 0; i--) {
+        if (pages[i].route === cvRoute) {
             found = true;
             break;
         } else {
-            delta ++;
+            delta++;
         }
     }
-    if (found){
+    if (found) {
         uni.navigateBack({
             delta: delta,
             fail: err => {
@@ -66,6 +68,11 @@ const app = new Vue({
 
 app.store = store;
 wfc.init();
+if (wfcUIKit.isUIKitEnable()) {
+    Config.ICE_SERVERS.forEach(iceServer => {
+        wfcUIKit.addICEServer(iceServer.uri, iceServer.userName, iceServer.password);
+    })
+}
 store.init();
 
 app.$mount()

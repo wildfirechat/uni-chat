@@ -1,6 +1,17 @@
+import {na} from "../../vendor/pinyin/data/dict-zi-web";
+
 const uniWfcUIKit = uni.requireNativePlugin("wf-uni-wfc-uikit");
 
 export class WfcUIKit {
+
+    /**
+     * 判断 UIKit 原生插件是否集成
+     * @return {boolean}
+     */
+    isUIKitEnable() {
+        return !!uniWfcUIKit;
+    }
+
     /**
      *
      * @param {Conversation} conversation 会话
@@ -77,6 +88,23 @@ export class WfcUIKit {
      */
     isSupportConference() {
         return uniWfcUIKit.isSupportConference();
+    }
+
+    /**
+     * 添加 ICE Server
+     * @param {string} url
+     * @param {string} name
+     * @param {string} password
+     */
+    addICEServer(url, name, password) {
+        uniWfcUIKit.addICEServer(url, name, password)
+    }
+
+    /**
+     * 配置允许 UIKit 层处理后台通知
+     */
+    enableNativeNotificaiton(enable) {
+        uniWfcUIKit.enableNativeNotificaiton(enable);
     }
 }
 

@@ -28,6 +28,7 @@ import QuitGroupNotification from "./wfc/messages/notification/quitGroupNotifica
 import MessageStatus from "./wfc/messages/messageStatus";
 import MessageConfig from "./wfc/client/messageConfig";
 import PersistFlag from "./wfc/messages/persistFlag";
+import wfcUIKit from "./wfc/uikit/wfcUIKit";
 
 /**
  * 一些说明
@@ -314,6 +315,7 @@ let store = {
                 conversationState.currentConversationOldestMessageUid = conversationState.currentConversationMessageList[0].messageUid;
             }
 
+            // 没有使用 uikit 默认的通知处理
             if (msg.conversation.type !== 2 && miscState.isAppHidden && (miscState.enableNotification || msg.status === MessageStatus.AllMentioned || msg.status === MessageStatus.Mentioned)) {
                 this.notify(msg);
             }
