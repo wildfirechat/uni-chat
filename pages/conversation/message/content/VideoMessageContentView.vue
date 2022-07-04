@@ -2,7 +2,7 @@
     <div class="video-content-container">
         <image controls
                @click="preview"
-               :src="'data:video/jpeg;base64,' + message.messageContent.thumbnail"
+               :src="thumbnailUri()"
                />
         <view class="wxfont play play-button"></view>
     </div>
@@ -11,6 +11,8 @@
 <script>
 import Message from "@/wfc/messages/message";
 import store from "@/store";
+import MessageStatus from "../../../../wfc/messages/messageStatus";
+import Config from "../../../../config";
 
 export default {
     name: "VideoMessageContentView",
@@ -26,6 +28,14 @@ export default {
         }
     },
     methods: {
+        thumbnailUri(){
+            console.log('xxx thumbnailUri 000')
+            if (this.message.status === MessageStatus.Sending){
+                return Config.DEFAULT_VIDEO_POSTER;
+            }else {
+                return 'data:video/jpeg;base64,' + this.message.messageContent.thumbnail;
+            }
+        },
         preview() {
             let message = this.message;
             if (this.isInCompositeView) {
