@@ -15,7 +15,7 @@
                 <input type="text"
                        ref="groupAnnouncementInput"
                        :disabled="!enableEditGroupNameOrAnnouncement"
-                       @keyup.enter='updateGroupAnnouncement'
+                       @confirm='updateGroupAnnouncement'
                        v-model="newGroupAnnouncement"
                        :placeholder="groupAnnouncement">
             </label>
@@ -64,6 +64,7 @@ import wfc from "@/wfc/client/wfc";
 import GroupMemberType from "@/wfc/model/groupMemberType";
 import GroupType from "@/wfc/model/groupType";
 import ModifyGroupInfoType from "@/wfc/model/modifyGroupInfoType";
+import Config from "../../config";
 
 export default {
     name: "GroupConversationInfoView",
@@ -98,6 +99,8 @@ export default {
             uni.setNavigationBarTitle({
                 title: this.conversationInfo.conversation._target._displayName,
             });
+
+            this.getGroupAnnouncement();
         })
     },
     components: {UserListVue},
@@ -151,16 +154,32 @@ export default {
         },
 
         async getGroupAnnouncement() {
-            let response = await axios.post('/get_group_announcement', {
-                groupId: this.conversationInfo.conversation.target,
-            }, {withCredentials: true});
-            if (response.data && response.data.result) {
-                this.groupAnnouncement = response.data.result.text;
-            } else {
-                if (this.enableEditGroupNameOrAnnouncement) {
-                    this.groupAnnouncement = this.$t('conversation.click_to_edit_group_announcement');
+            let url = Config.APP_SERVER + '/get_group_announcement';
+            console.log('to getGroupAnnouncement', url, this.conversationInfo.conversation.target)
+            uni.request({
+                url: Config.APP_SERVER + '/get_group_announcement',
+                method: 'POST',
+                data: {
+                    groupId: this.conversationInfo.conversation.target,
+                },
+                withCredentials: true,
+                success: (response) => {
+                    console.log('getGroupAnnouncement response ', response)
+                    if (response.data && response.data.result) {
+                        this.groupAnnouncement = response.data.result.text;
+                    } else {
+                        if (this.enableEditGroupNameOrAnnouncement) {
+                            this.groupAnnouncement = this.$t('conversation.click_to_edit_group_announcement');
+                        }
+                    }
+                },
+                fail: (e) => {
+                    console.log('getGroupAnnouncement error', e)
+                },
+                complete: (obj) => {
+                    console.log('getGroupAnnouncement complete', obj)
                 }
-            }
+            });
         },
 
         updateGroupName() {
@@ -181,15 +200,30 @@ export default {
             if (!this.newGroupAnnouncement || this.newGroupAnnouncement === this.groupAnnouncement) {
                 return;
             }
-            let response = await axios.post('/put_group_announcement', {
-                author: wfc.getUserId(),
-                groupId: this.conversationInfo.conversation.target,
-                text: this.newGroupAnnouncement,
-            }, {withCredentials: true});
-            if (response.data && response.data.code === 0) {
-                this.groupAnnouncement = this.newGroupAnnouncement;
-                this.$refs.groupAnnouncementInput.blur();
-            }
+            console.log('updateGroupAnnouncement')
+            uni.request({
+                url: Config.APP_SERVER + '/put_group_announcement',
+                method: 'POST',
+                data: {
+                    author: wfc.getUserId(),
+                    groupId: this.conversationInfo.conversation.target,
+                    text: this.newGroupAnnouncement,
+                },
+                withCredentials: true,
+                success: (response) => {
+                    console.log('updateGroupAnnouncement success', response)
+                    if (response.data && response.data.code === 0) {
+                        this.groupAnnouncement = this.newGroupAnnouncement;
+                        this.$refs.groupAnnouncementInput.blur();
+                    }
+                },
+                fail: (err) => {
+                    console.log('updateGroupAnnouncement err', err)
+                },
+                complete: (obj) => {
+                    console.log('updateGroupAnnouncement complete', obj)
+                }
+            });
         },
 
         quitGroup() {
@@ -208,7 +242,8 @@ export default {
     },
 
     created() {
-        this.getGroupAnnouncement();
+        // 这个时候，this.conversationInfo 还没数据
+        // this.getGroupAnnouncement();
     },
 
     computed: {
