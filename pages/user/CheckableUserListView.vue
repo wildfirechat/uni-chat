@@ -177,6 +177,7 @@ ul {
 .contact-item .label {
     width: 100%;
     background-color: #fafafa;
+    z-index: 9999;
 }
 
 .contact-item .label p {
