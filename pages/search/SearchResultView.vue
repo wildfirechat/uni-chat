@@ -23,7 +23,7 @@
                     <label>{{ $t('common.contact') }}</label>
                     <ul>
                         <li v-for="(contact, index) in toShowContactList" :key="index">
-                            <div class="search-result-item contact" @click.stop="chatToContact(contact)">
+                            <div class="search-result-item" @click.stop="chatToContact(contact)">
                                 <img :src="contact.portrait">
                                 <span>{{ contact._displayName }}</span>
                             </div>
@@ -39,7 +39,7 @@
                     <label>{{ $t('contact.group') }}</label>
                     <ul>
                         <li v-for="(group, index) in toShowGroupList" :key="index">
-                            <div class="search-result-item group-item" @click="chatToGroup(group)">
+                            <div class="search-result-item" @click="chatToGroup(group)">
                                 <img :src="group.portrait" alt="">
                                 <span>{{ group.remark ? group.remark : group.name }}</span>
                             </div>
@@ -49,6 +49,25 @@
                          class="show-all"
                          @click.stop="showAllGroup">
                         {{ $t('search.view_all') + this.sharedSearchState.groupSearchResult.length }}
+                    </div>
+                </li>
+                <li class="category-item" v-if="sharedSearchState.conversationSearchResult.length > 0">
+                    <label>聊天记录</label>
+                    <ul>
+                        <li v-for="(convR, index) in toShowConversationList" :key="index">
+                            <div class="search-result-item conversation" @click="onClickConversationSearchResultItem(convR)">
+                                <img :src="convR._conversationInfo.conversation._target.portrait" alt="">
+                                <div class="title-desc">
+                                    <span>{{ convR._conversationInfo.conversation._target._displayName }}</span>
+                                    <span class="desc">{{ conversationMatchDesc(convR) }}</span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div v-if="!shouldShowAllConversation&& this.sharedSearchState.conversationSearchResult.length > 5"
+                         class="show-all"
+                         @click.stop="showAllConversation">
+                        {{ $t('search.view_all') + this.sharedSearchState.conversationSearchResult.length }}
                     </div>
                 </li>
                 <li class="category-item" v-if="sharedMiscState.isElectron">
@@ -80,6 +99,7 @@ export default {
             shouldShowAllUser: false,
             shouldShowAllContact: false,
             shouldShowAllGroup: false,
+            shouldShowAllConversation: false,
         }
     },
 
@@ -127,6 +147,10 @@ export default {
             this.shouldShowAllGroup = true;
         },
 
+        showAllConversation() {
+            this.shouldShowAllConversation = true;
+        },
+
         chatToContact(contact) {
             let conversation = new Conversation(ConversationType.Single, contact.uid, 0);
             store.setCurrentConversation(conversation);
@@ -137,6 +161,19 @@ export default {
             let conversation = new Conversation(ConversationType.Group, group.target, 0);
             store.setCurrentConversation(conversation);
             this.$go2ConversationPage();
+        },
+
+        onClickConversationSearchResultItem(result) {
+            if (result.matchMessage) {
+                store.setCurrentConversation(result.conversation);
+                this.$go2ConversationPage();
+            } else {
+                store.state.search.conversation = result.conversation;
+                uni.navigateTo({
+                        url: '/pages/search/SearchConversationMessagePage'
+                    }
+                );
+            }
         },
 
         showMessageHistoryPage() {
@@ -151,8 +188,15 @@ export default {
                 url: url,
             });
             console.log(IPCRendererEventType.showMessageHistoryPage, url)
-        }
+        },
 
+        conversationMatchDesc(convSearchResult) {
+            if (convSearchResult.matchMessage) {
+                return convSearchResult.matchMessage.messageContent.digest(convSearchResult.matchMessage);
+            } else {
+                return convSearchResult.matchCount + '条相关聊天记录';
+            }
+        },
     },
 
     computed: {
@@ -164,6 +208,9 @@ export default {
         },
         toShowGroupList: function () {
             return !this.shouldShowAllGroup && this.sharedSearchState.groupSearchResult.length > 5 ? this.sharedSearchState.groupSearchResult.slice(0, 4) : this.sharedSearchState.groupSearchResult;
+        },
+        toShowConversationList: function () {
+            return !this.shouldShowAllConversation && this.sharedSearchState.conversationSearchResult.length > 5 ? this.sharedSearchState.conversationSearchResult.slice(0, 4) : this.sharedSearchState.conversationSearchResult;
         }
     },
 
@@ -200,27 +247,33 @@ export default {
 .search-result-item {
     background-color: white;
     padding: 10px 12px;
+    display: flex;
+    align-items: center;
 }
 
 .search-result-item:active {
     background-color: #d9d9d9;
 }
 
-.search-result-item.contact {
-    width: 100%;
-    display: flex;
-    align-items: center;
-}
-
-.search-result-item.contact img {
+.search-result-item img {
     width: 34px;
     height: 34px;
     border-radius: 2px;
 }
 
-.search-result-item.contact span {
+.search-result-item span {
     font-size: 14px;
     padding-left: 10px;
+}
+
+.search-result-item.conversation .title-desc {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-result-item.conversation .title-desc .desc {
+    font-size: 12px;
+    color: grey;
 }
 
 .search-result-item.contact button {
@@ -233,23 +286,6 @@ export default {
 
 .search-result-item.contact button:active {
     background: #cccccc;
-}
-
-.search-result-item.group-item {
-    width: 100%;
-    display: flex;
-    align-items: center;
-}
-
-.search-result-item.group-item img {
-    width: 34px;
-    height: 34px;
-    border-radius: 2px;
-}
-
-.search-result-item.group-item span {
-    font-size: 14px;
-    padding-left: 10px;
 }
 
 .search-result-item.message {

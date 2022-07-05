@@ -160,6 +160,10 @@
     content: "\e658";
 }
 
+.file:before {
+    content: "\e68f";
+}
+
 .voip_v:before {
     content: "\e670";
 }

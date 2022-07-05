@@ -47,12 +47,8 @@ export default {
                 break;
             case 1:
                 uni.navigateTo({
-                    url:'/pages/search/SearchPage'
+                    url:'/pages/search/SearchPortalPage'
                 });
-                // uni.showToast({
-                //     title: 'TODO 搜索',
-                //     icon: 'none'
-                // });
                 break;
             default:
                 break;

@@ -16,7 +16,7 @@ import SearchResultView from "./SearchResultView";
 import store from "../../store";
 
 export default {
-    name: "SearchPage",
+    name: "SearchPortalPage",
     components: {SearchResultView},
 
     data() {
@@ -36,13 +36,14 @@ export default {
 <style scoped>
 
 .search-portal-container {
-
+    height: 100%;
 }
 
 .search-portal-container input {
     padding: 0 10px;
     margin: 5px 0;
-
+    height: 35px;
+    border-bottom: 1px solid lightgrey;
 }
 
 .search-portal-container .tip-container {

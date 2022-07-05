@@ -65,9 +65,15 @@
             }
         },
         {
-            "path": "pages/search/SearchPage",
+            "path": "pages/search/SearchPortalPage",
             "style": {
                 "navigationBarTitleText": "搜索"
+            }
+        },
+        {
+            "path": "pages/search/SearchConversationMessagePage",
+            "style": {
+                "navigationBarTitleText": " 会话消息搜索"
             }
         },
 		{

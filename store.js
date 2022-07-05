@@ -127,6 +127,7 @@ let store = {
 
         search: {
             query: null,
+            conversation: null,
             userSearchResult: [],
             contactSearchResult: [],
             groupSearchResult: [],
@@ -135,6 +136,7 @@ let store = {
 
             _reset() {
                 this.query = null;
+                this.conversation = null;
                 this.userSearchResult = [];
                 this.contactSearchResult = [];
                 this.groupSearchResult = [];
@@ -404,7 +406,7 @@ let store = {
             }
         });
 
-        if (wfc.getConnectionStatus() === ConnectionStatus.ConnectionStatusConnected){
+        if (wfc.getConnectionStatus() === ConnectionStatus.ConnectionStatusConnected) {
             this._loadDefaultData();
         }
 
@@ -472,7 +474,7 @@ let store = {
     },
 
     setCurrentConversationInfo(conversationInfo) {
-        if (!conversationState.currentConversationInfo && !conversationInfo){
+        if (!conversationState.currentConversationInfo && !conversationInfo) {
             return;
         }
         if (!conversationInfo) {
@@ -1285,7 +1287,7 @@ let store = {
             return u._displayName.indexOf(query) > -1 || u._firstLetters.indexOf(query) > -1 || u._pinyin.indexOf(query) > -1
         });
 
-        console.log('friend searchResult', result)
+        // console.log('friend searchResult', result)
         return result;
     },
 
@@ -1611,11 +1613,11 @@ function _reset() {
     pickState._reset();
     miscState._reset();
 
-   uni.reLaunch(
-       {
-           url:'/pages/login/login'
-       }
-   );
+    uni.reLaunch(
+        {
+            url: '/pages/login/login'
+        }
+    );
 }
 
 export default store
