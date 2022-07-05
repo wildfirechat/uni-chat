@@ -64,6 +64,12 @@
                 "navigationBarTitleText": "搜索用户"
             }
         },
+        {
+            "path": "pages/search/SearchPage",
+            "style": {
+                "navigationBarTitleText": "搜索"
+            }
+        },
 		{
 			"path": "pages/contact/UserDetailView",
 			"style": {

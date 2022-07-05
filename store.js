@@ -127,7 +127,6 @@ let store = {
 
         search: {
             query: null,
-            show: false,
             userSearchResult: [],
             contactSearchResult: [],
             groupSearchResult: [],
@@ -136,7 +135,6 @@ let store = {
 
             _reset() {
                 this.query = null;
-                this.show = false;
                 this.userSearchResult = [];
                 this.contactSearchResult = [];
                 this.groupSearchResult = [];
@@ -1246,19 +1244,13 @@ let store = {
         contactState.expandFriendList = !contactState.expandFriendList;
     },
 
-    // search actions
-    toggleSearchView(show) {
-        console.log('ts', show, searchState.show);
-        searchState.show = show
-    },
-
     setSearchQuery(query) {
         searchState.query = query;
         if (query) {
             console.log('search', query)
             searchState.contactSearchResult = this.filterContact(query);
             searchState.groupSearchResult = this.filterGroupConversation(query);
-            searchState.conversationSearchResult = this.filterConversation(query);
+            searchState.conversationSearchResult = this.searchConversation(query);
             // searchState.messageSearchResult = this.searchMessage(query);
             // 默认不搜索新用户
             // this.searchUser(query);

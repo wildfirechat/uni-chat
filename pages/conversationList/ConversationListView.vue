@@ -46,10 +46,13 @@ export default {
                 this.$refs.mainActionMenu.show();
                 break;
             case 1:
-                uni.showToast({
-                    title: 'TODO 搜索',
-                    icon: 'none'
+                uni.navigateTo({
+                    url:'/pages/search/SearchPage'
                 });
+                // uni.showToast({
+                //     title: 'TODO 搜索',
+                //     icon: 'none'
+                // });
                 break;
             default:
                 break;
