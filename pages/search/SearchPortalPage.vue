@@ -37,13 +37,19 @@ export default {
 
 .search-portal-container {
     height: 100%;
+    position: relative;
 }
 
 .search-portal-container input {
-    padding: 0 10px;
-    margin: 5px 0;
+    padding: 5px 10px;
     height: 35px;
+    margin-bottom: 5px;
     border-bottom: 1px solid lightgrey;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: white;
 }
 
 .search-portal-container .tip-container {

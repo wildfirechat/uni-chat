@@ -40,10 +40,8 @@ export default {
     methods: {
         search() {
             //store.setSearchQuery(this.keyword)
-            console.log('owoooo')
             if (this.query && this.query.trim()) {
                 this.messages = store.searchMessage(this.conversationInfo.conversation, this.query);
-                console.log('xxxx ', this.messages.length, this.conversationInfo.conversation, this.query)
             } else {
                 this.messages = [];
             }
@@ -65,28 +63,37 @@ export default {
 <style lang="css" scoped>
 
 .search-conversation-message-container {
-    display: block;
     z-index: 100;
+    /*background-color: #f3f3f3e5;*/
+    background-color: white;
+    position: relative;
     overflow: auto;
-    /*background-color: red;*/
-    background-color: #f3f3f3e5;
 }
 
 .search-conversation-message-container .input {
-    padding: 0 10px;
-    margin: 5px 0;
     height: 35px;
+    width: 100%;
+    padding: 5px 10px;
+    margin-bottom: 5px;
     background-color: white;
     border-bottom: 1px solid lightgrey;
+    position: fixed;
+    left: 0;
+    top: 0;
 }
 
 .search-conversation-message-container .category {
-    padding: 0 10px;
+    display: block;
+    margin-top: 40px;
+    margin-left: 10px;
+    color: #b2b2b2;
+    /*border-bottom: 1px solid #eeeeee;*/
 }
 
 .search-conversation-message-container ul {
     list-style: none;
     background-color: white;
+    overflow: auto;
 }
 
 .category-item label {
@@ -128,6 +135,10 @@ export default {
 .search-result-item .title-desc .desc {
     font-size: 12px;
     color: grey;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 

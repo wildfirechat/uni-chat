@@ -223,6 +223,7 @@ export default {
 
 .search-result-container {
     display: block;
+    padding-top: 40px;
     z-index: 100;
     overflow: auto;
     /*background-color: red;*/
