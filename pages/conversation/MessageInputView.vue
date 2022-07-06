@@ -82,6 +82,11 @@ export default {
                     icon: 'camera'
                 },
                 {
+                    title: '文件',
+                    tag: 'file',
+                    icon: 'file'
+                },
+                {
                     title: '位置',
                     tag: 'location',
                     icon: 'location'
@@ -174,6 +179,9 @@ export default {
                 case 'shoot':
                     this.chooseVideo();
                     break;
+                case 'file':
+                    this.chooseFile();
+                    break;
                 case 'voip_a':
                     this.voip(true);
                     break;
@@ -255,6 +263,22 @@ export default {
                     store.sendFile(this.conversationInfo.conversation, filePath, duration);
                 }
             })
+        },
+
+        chooseFile() {
+            wfc.chooseFile( 'all', (file) => {
+                    console.log('choose file', file);
+                    let path = file.path;
+                    let filePath;
+                    if (path.startsWith('file://')) {
+                        filePath = path.substring('file://'.length);
+                    } else {
+                        filePath = plus.io.convertLocalFileSystemURL(path)
+                    }
+                    file.path = filePath;
+                    store.sendFile(this.conversationInfo.conversation, file);
+                }
+            )
         }
 
     },

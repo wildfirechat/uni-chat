@@ -1853,6 +1853,10 @@ export class WfcManager {
         impl.setDeviceToken(7, token);
     }
 
+    chooseFile(type, successCB, failCB){
+        impl.chooseFile(type, successCB, failCB)
+    }
+
     _getStore() {
         return impl._getStore();
     }
