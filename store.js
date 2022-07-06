@@ -1209,6 +1209,8 @@ let store = {
             contactState.favContactList.forEach(u => {
                 u._category = '☆ 星标朋友';
             })
+        }else {
+            contactState.favContactList = [];
         }
     },
 
