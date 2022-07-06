@@ -824,7 +824,8 @@ let store = {
         let msg = new Message();
         msg.conversation = conversation;
 
-        let mediaType = helper.getMediaType(file.split('.').slice(-1).pop());
+        let path = typeof file === 'string' ? file : file.path;
+        let mediaType = helper.getMediaType(path.split('.').slice(-1).pop());
         // todo other file type
         let messageContentMediaType = {
             'pic': MessageContentMediaType.Image,
