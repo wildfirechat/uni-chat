@@ -60,9 +60,8 @@ export default {
                 this.$refs.mainActionMenu.show();
                 break;
             case 1:
-                uni.showToast({
-                    title: 'TODO 搜索',
-                    icon: 'none'
+                uni.navigateTo({
+                    url:'/pages/search/SearchPortalPage'
                 });
                 break;
             default:
@@ -101,19 +100,22 @@ export default {
 
 .contact-list {
     height: 100%;
-    overflow: auto;
 }
 
 .category-item-container {
     height: 40px;
     display: flex;
     align-items: center;
+    z-index: 1000;
     padding-left: 15px;
     color: #262626;
     font-size: 14px;
+    /* #ifndef APP-PLUS-NVUE */
+    position: -webkit-sticky;
+    /* #endif */
     position: sticky;
     background-color: #fafafa;
-    top: 0;
+    top: var(--window-top);
 }
 
 .category-item {
