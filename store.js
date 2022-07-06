@@ -1568,8 +1568,11 @@ let store = {
 
     clearConversationUnreadStatus(conversation) {
         let info = wfc.getConversationInfo(conversation);
-        if (info && (info.unreadCount.unread + info.unreadCount.unreadMention + info.unreadCount.unreadMentionAll) > 0) {
-            wfc.clearConversationUnreadStatus(conversation);
+        if (info && info.unreadCount) {
+            const { unread = 0, unreadMention = 0, unreadMentionAll = 0 } = info.unreadCount;
+            if ((unread + unreadMention + unreadMentionAll) > 0) {
+                wfc.clearConversationUnreadStatus(conversation);
+            }
         }
     },
     notify(msg) {
