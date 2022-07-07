@@ -39,14 +39,7 @@ export default {
 
     components: {},
     props: {},
-    onLoad() {
-        let userId = getItem('userId');
-        let token = getItem('token')
-        if (token) {
-            wfc.connect(userId, token);
-            this.go2ConversationList();
-        }
-    },
+
     onShow() {
         console.log('login onShow');
     },
@@ -143,7 +136,6 @@ export default {
                 }
             });
         }
-
     }
 };
 </script>

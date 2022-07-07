@@ -1,5 +1,16 @@
 {
 	"pages": [
+        {
+            "path": "pages/SplashPage",
+            "style": {
+                "navigationBarTitleText": "",
+				"navigationStyle": "custom",
+				"app-plus": {
+					"animationType": "none",
+					"animationDuration": 100
+				}
+            }
+        },
 		{
 			"path": "pages/login/login",
 			"style": {
