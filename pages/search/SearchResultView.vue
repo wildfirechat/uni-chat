@@ -261,11 +261,12 @@ export default {
 
 
 .search-result-category-container label {
-    color: #b2b2b2;
+    color: #828282;
+    background: #EDEDED;
     display: block;
     padding-top: 10px;
     padding-bottom: 2px;
-    margin-left: 12px;
+    padding-left: 12px;
     border-bottom: 1px solid #eeeeee;
 }
 
