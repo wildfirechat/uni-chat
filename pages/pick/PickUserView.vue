@@ -189,32 +189,32 @@ export default {
 .contact-list-container .input-container {
     position: relative;
     display: flex;
+    align-items: center;
     width: 100%;
 }
 
 .input-container input {
-    height: 25px;
-    margin: 15px 20px 0 15px;
+    height: 35px;
     flex: 1;
     border-radius: 3px;
     border: 1px solid #ededed;
     background-color: white;
+    margin: 0 15px;
     padding-left: 20px;
     text-align: left;
     outline: none;
 }
 
-.input-container input:active {
-    border: 1px solid #4168e0;
-}
+/*.input-container input:active {*/
+/*    border: 1px solid #4168e0;*/
+/*}*/
 
-.input-container input:focus {
-    border: 1px solid #4168e0;
-}
+/*.input-container input:focus {*/
+/*    border: 1px solid #4168e0;*/
+/*}*/
 
 .input-container i {
     position: absolute;
-    top: 20px;
     left: 20px;
 }
 

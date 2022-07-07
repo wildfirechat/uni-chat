@@ -28,5 +28,6 @@ export default {
 @import './global.css';
 @import './wfc.css';
 @import './static/customicons.css';
+@import './assets/fonts/icomoon/style.css';
 
 </style>
