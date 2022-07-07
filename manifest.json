@@ -1,5 +1,5 @@
 {
-    "name" : "uni-chat",
+    "name" : "野火IM",
     "appid" : "__UNI__2077CCF",
     "description" : "野火IM uniapp demo",
     "versionName" : "1.0.0",
@@ -52,6 +52,11 @@
                 "ad" : {},
                 "push" : {
                     "unipush" : {}
+                }
+            },
+            "icons" : {
+                "android" : {
+                    "xxxhdpi" : "static/image/logo.png"
                 }
             }
         },
