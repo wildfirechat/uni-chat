@@ -1,8 +1,8 @@
 <template>
     <section class="search-result-container">
-        <div class="search-result">
-            <ul>
-                <li class="category-item" v-if="sharedSearchState.userSearchResult.length > 0">
+        <div v-if="!showEmptyView" class="search-result">
+            <ul style="display: block">
+                <li class="search-result-category-container" v-if="sharedSearchState.userSearchResult.length > 0">
                     <label>{{ $t('search.new_user') }}</label>
                     <ul>
                         <li v-for="(user, index) in toShowUserList" :key="index">
@@ -19,7 +19,7 @@
                         {{ $t('search.view_all') + this.sharedSearchState.contactSearchResult.length }}
                     </div>
                 </li>
-                <li class="category-item" v-if="sharedSearchState.contactSearchResult.length > 0">
+                <li class="search-result-category-container" v-if="sharedSearchState.contactSearchResult.length > 0">
                     <label>{{ $t('common.contact') }}</label>
                     <ul>
                         <li v-for="(contact, index) in toShowContactList" :key="index">
@@ -35,7 +35,7 @@
                         {{ $t('search.view_all') + this.sharedSearchState.contactSearchResult.length }}
                     </div>
                 </li>
-                <li class="category-item" v-if="sharedSearchState.groupSearchResult.length > 0">
+                <li class="search-result-category-container" v-if="sharedSearchState.groupSearchResult.length > 0">
                     <label>{{ $t('contact.group') }}</label>
                     <ul>
                         <li v-for="(group, index) in toShowGroupList" :key="index">
@@ -51,7 +51,7 @@
                         {{ $t('search.view_all') + this.sharedSearchState.groupSearchResult.length }}
                     </div>
                 </li>
-                <li class="category-item" v-if="sharedSearchState.conversationSearchResult.length > 0">
+                <li class="search-result-category-container" v-if="sharedSearchState.conversationSearchResult.length > 0">
                     <label>聊天记录</label>
                     <ul>
                         <li v-for="(convR, index) in toShowConversationList" :key="index">
@@ -70,13 +70,16 @@
                         {{ $t('search.view_all') + this.sharedSearchState.conversationSearchResult.length }}
                     </div>
                 </li>
-                <li class="category-item" v-if="sharedMiscState.isElectron">
+                <li class="search-result-category-container" v-if="sharedMiscState.isElectron">
                     <label>{{ $t('search.message_history') }}</label>
                     <div class="search-result-item message" @click="showMessageHistoryPage">
                         <p>{{ $t('search.search_message_history') }} </p>
                     </div>
                 </li>
             </ul>
+        </div>
+        <div v-else class="empty-container">
+            <text>没有搜索结果</text>
         </div>
     </section>
 </template>
@@ -211,6 +214,11 @@ export default {
         },
         toShowConversationList: function () {
             return !this.shouldShowAllConversation && this.sharedSearchState.conversationSearchResult.length > 5 ? this.sharedSearchState.conversationSearchResult.slice(0, 4) : this.sharedSearchState.conversationSearchResult;
+        },
+
+        showEmptyView() {
+            const {userSearchResult, contactSearchResult, groupSearchResult, conversationSearchResult} = this.sharedSearchState;
+            return userSearchResult.length + contactSearchResult.length + groupSearchResult.length + conversationSearchResult.length === 0;
         }
     },
 
@@ -222,12 +230,18 @@ export default {
 <style lang="css" scoped>
 
 .search-result-container {
-    display: block;
-    padding-top: 40px;
-    z-index: 100;
-    overflow: auto;
+    margin-top: 35px;
+    height: calc(100% - 35px);
     /*background-color: red;*/
     background-color: #f3f3f3e5;
+}
+
+.search-result-container .empty-container {
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    color: grey;
 }
 
 .search-result-container ul {
@@ -235,8 +249,18 @@ export default {
     background-color: white;
 }
 
+.search-result-category-container {
+    /*position: sticky;*/
+    /*min-height: 40px;*/
+    /*!* #ifndef APP-PLUS-NVUE *!*/
+    /*position: -webkit-sticky;*/
+    /*!* #endif *!*/
+    /*top: 0;*/
+    /*left: 0;*/
+}
 
-.category-item label {
+
+.search-result-category-container label {
     color: #b2b2b2;
     display: block;
     padding-top: 10px;

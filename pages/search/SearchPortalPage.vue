@@ -1,9 +1,7 @@
 <template>
     <view class="search-portal-container">
         <input class="input" type="text" v-model="keyword" :placeholder="$t('common.search')" @input="search">
-        <view v-if="keyword && keyword.trim()">
-            <SearchResultView/>
-        </view>
+        <SearchResultView v-if="keyword && keyword.trim()"/>
         <view v-else class="tip-container">
             <text>请输入关键字进行搜索</text>
         </view>
@@ -36,20 +34,21 @@ export default {
 <style scoped>
 
 .search-portal-container {
-    height: 100%;
+    height: 100vh;
     position: relative;
 }
 
 .search-portal-container input {
     padding: 5px 10px;
     height: 35px;
-    margin-bottom: 5px;
+    box-sizing: border-box;
     border-bottom: 1px solid lightgrey;
     position: fixed;
     width: 100%;
     top: 0;
     left: 0;
     background-color: white;
+    z-index: 99;
 }
 
 .search-portal-container .tip-container {
