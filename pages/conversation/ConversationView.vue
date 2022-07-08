@@ -97,7 +97,7 @@ export default {
     // props: ["conversation"],
     data() {
         return {
-            conversationInfo: null,
+            conversationInfo: store.state.conversation.currentConversationInfo,
             sharedConversationState: store.state.conversation,
             sharedContactState: store.state.contact,
             sharedPickState: store.state.pick,
