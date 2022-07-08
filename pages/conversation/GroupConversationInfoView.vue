@@ -65,6 +65,7 @@ import GroupMemberType from "@/wfc/model/groupMemberType";
 import GroupType from "@/wfc/model/groupType";
 import ModifyGroupInfoType from "@/wfc/model/modifyGroupInfoType";
 import Config from "../../config";
+import EventType from "../../wfc/client/wfcEvent";
 
 export default {
     name: "GroupConversationInfoView",
@@ -103,8 +104,20 @@ export default {
             this.getGroupAnnouncement();
         })
     },
-    components: {UserListVue},
+
+    mounted(){
+        wfc.eventEmitter.on(EventType.UserInfosUpdate, this.onUserInfosUpdate)
+    },
+
+    beforeDestroy(){
+        wfc.eventEmitter.removeListener(EventType.UserInfosUpdate, this.onUserInfosUpdate)
+    },
+
     methods: {
+        onUserInfosUpdate(){
+            this.groupMemberUserInfos = store.getConversationMemberUsrInfos(this.conversationInfo.conversation);
+        },
+
         showCreateConversationModal() {
             let beforeClose = (users) => {
                 let ids = users.map(u => u.uid);
@@ -240,6 +253,8 @@ export default {
             })
         }
     },
+
+    components: {UserListVue},
 
     created() {
         // 这个时候，this.conversationInfo 还没数据
