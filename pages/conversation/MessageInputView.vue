@@ -1,21 +1,21 @@
 <template>
     <view>
-        <view :style="'height: ' + keyboardHeight + 'px'"></view>
-        <view v-if="showExt||showEmoji" :style="'height:558rpx'"></view>
-        <view class="wf-message-input-container" :style="'transform: translateY(-' + keyboardHeight + 'px)'">
+        <view :style="'height: ' + currentKeyboardHeight + 'px'"></view>
+        <view v-if="showExt||showEmoji" :style="'height:' + currentKeyboardHeight + 'px'"></view>
+        <view class="wf-message-input-container" :style="'transform: translateY(-' + currentKeyboardHeight + 'px)'">
             <view class="wf-message-input-toolbar">
                 <view class="wf-input-button-icon wxfont" @click="toggleVoice" :class="showVoice ? 'keyboard' : 'voice'"></view>
                 <view class="wf-input-voice-container" v-if="showVoice">
                     <view class="wf-input-voice-button" @longpress="startRecord" @touchend="endRecord">按住说话</view>
                 </view>
-                <view v-else class="wf-input-text-container" @click="msgFocus=true">
-                    <textarea @focus="showExt = false" :focus="msgFocus" class="wf-input-textarea" :adjust-position="false" v-model="text" placeholder="" hold-keyboard confirm-type="send" @confirm="send(text)" :maxlength="-1" auto-height/>
+                <view v-else class="wf-input-text-container" >
+                    <textarea @focus="onInputFocus" class="wf-input-textarea" :adjust-position="false" v-model="text" placeholder="" hold-keyboard confirm-type="send" @confirm="send(text)" :maxlength="-1" auto-height/>
                 </view>
                 <view @click="toggleEmoji" class="wf-input-button-icon wxfont emoji"></view>
                 <view v-if="text !== ''" class="wf-input-text-send-button" @touchend.prevent="send(text)" :style="{ background: text !== '' ? '#4168e0' : '#F7F7F7', color: text !== '' ? '#fff' : '#ddd', 'border-color': text !== '' ? '#1BC418' : '#ddd' }">发送</view>
                 <view v-else @click="toggleExt" class="wf-input-button-icon wxfont add2"></view>
             </view>
-            <view v-if="showExt" class="wf-ext-container">
+            <view v-if="showExt" class="wf-ext-container" :style="'height: ' + keyboardHeight + 'px'">
                 <view class="wf-ext-item" v-for="(v, i) in extList" @click="onClickExt(v)" :key="i">
                     <view class="wf-ext-item-icon">
                         <view class="wxfont" :class="v.icon"></view>
@@ -29,18 +29,18 @@
 
             <!--                </view>-->
             <!--            </scroll-view>-->
-            <view class="wf-stickers-container" :style="'height: ' + keyboardHeight + 'px'" v-if="showEmoji">
+            <view v-if="showEmoji" class="wf-stickers-container" :style="'height: ' + keyboardHeight + 'px'" >
                 <view class="category-container">
                     <view class="category" v-for="(v, i) in emojiStickerList" :key="i" @click="onCategoryClick(i)">
                         <img :src="v.poster" v-bind:class="{active: i === currentEmojiStickerIndex}" >
                     </view>
                 </view>
-                <scroll-view v-if="currentEmojiStickerIndex === 0" :scroll-y="true" class="wf-emoji-container">
+                <scroll-view v-if="currentEmojiStickerIndex === 0" :scroll-y="true" class="wf-emoji-container" :style="'height: ' + (keyboardHeight - 60) + 'px'">
                     <view class="wf-emoji-content">
                         <view class="emoji-item" @click="onClickEmoji(v)" v-for="(v,i) in emojiStickerList[0].emojis" :key="i">{{ v }}</view>
                     </view>
                 </scroll-view>
-                <scroll-view v-else :scroll-y="true" class="wf-sticker-container" @scrolltoupper="(e)=>{e.preventDefault()}">
+                <scroll-view v-else :scroll-y="true" class="wf-sticker-container" :style="'height: ' + (keyboardHeight - 60) + 'px'">
                     <view class="wf-sticker-content">
                         <img :src="s" class="sticker-item" @click="onClickSticker(s)" v-for="(s,j) in emojiStickerList[currentEmojiStickerIndex].stickers" :key="j"/>
                     </view>
@@ -126,6 +126,7 @@ export default {
             timer: '',
             talkTo: '',
             keyboardHeight: 0,
+            currentKeyboardHeight: 0,
             windowHeight: 0,
             longTapItemKey: '',
             // chatWindowData:[],
@@ -135,13 +136,18 @@ export default {
     },
     onLoad() {
       this.keyboardHeight = getItem('keyboardHeight')
+        console.log('onload keyboardHeight', this.currentKeyboardHeight)
     },
 
     mounted() {
         // #ifdef APP-PLUS
         uni.onKeyboardHeightChange(res => {
-            this.keyboardHeight = res.height;
-            setItem('keyboardHeight', this.keyboardHeight)
+            this.currentKeyboardHeight = res.height;
+            if (!this.keyboardHeight && res.height > 0){
+                this.keyboardHeight = res.height;
+                setItem('keyboardHeight', this.keyboardHeight)
+            }
+            console.log('xxx keyboardHeight', this.keyboardHeight, this.currentKeyboardHeight);
         });
         // #endif
     },
@@ -177,6 +183,11 @@ export default {
         endRecord() {
             this.$refs['recorder'].stopRecord();
             this.sharedMiscState.isRecording = false;
+        },
+
+        onInputFocus(){
+          this.showEmoji = false;
+          this.showExt = false;
         },
 
         toggleVoice() {
@@ -319,14 +330,14 @@ export default {
 
     },
     watch: {
-        keyboardHeight: {
+        currentKeyboardHeight: {
             deep: true,
             immediate: true,
             handler(v) {
-                if (v > 0) {
-                    this.showEmoji = false
-                }
-                this.scrolltoBottom();
+                // if (v > 0) {
+                //     this.showEmoji = false
+                // }
+                // this.scrolltoBottom();
             }
         },
     }
@@ -359,7 +370,6 @@ export default {
 }
 
 .wf-ext-container {
-    height: 558rpx;
     width: 100%;
     background-color: #f7f7f7;
     display: flex;
@@ -511,7 +521,7 @@ export default {
 }
 
 .wf-emoji-container {
-    height: 500rpx;
+
 }
 
 .wf-emoji-content {
@@ -531,7 +541,7 @@ export default {
 }
 
 .wf-stickers-container {
-    min-height: 560rpx;
+    min-height: 60rpx;
     width: 100%;
     flex-direction: column;
 }
@@ -565,7 +575,6 @@ export default {
 }
 
 .wf-sticker-container {
-    height: 500rpx;
 }
 
 .wf-sticker-content {
@@ -574,22 +583,19 @@ export default {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-around;
+    align-content: flex-start;
+    padding: 10px 0;
 }
 
 .sticker-item {
     height: 33%;
     aspect-ratio: 1/1;
     padding: 8rpx;
+    border-radius: 5px;
 }
 
 .sticker-item:active{
     background: lightgrey;
-    border-radius: 5px;
-}
-
-.sticker-item:last-of-type::after {
-    content: "";
-    flex: auto;
 }
 
 </style>
