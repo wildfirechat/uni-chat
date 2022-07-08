@@ -140,7 +140,7 @@ export default {
         // #ifdef APP-PLUS
         uni.onKeyboardHeightChange(res => {
             this.currentKeyboardHeight = res.height;
-            if (!this.keyboardHeight && res.height > 0){
+            if (this.keyboardHeight !== res.height && res.height > 0){
                 this.keyboardHeight = res.height;
                 setItem('keyboardHeight', this.keyboardHeight)
             }
