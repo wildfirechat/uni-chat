@@ -16,18 +16,36 @@
                 <view v-else @click="toggleExt" class="wf-input-button-icon wxfont add2"></view>
             </view>
             <view v-if="showExt" class="wf-ext-container">
-                <view class="wf-ext-item" v-for="(v, i) in extList" @click="onClickExt(v)">
+                <view class="wf-ext-item" v-for="(v, i) in extList" @click="onClickExt(v)" :key="i">
                     <view class="wf-ext-item-icon">
                         <view class="wxfont" :class="v.icon"></view>
                     </view>
                     <view class="wf-ext-item-text">{{ v.title }}</view>
                 </view>
             </view>
-            <scroll-view :scroll-y="true" v-if="showEmoji" class="wf-emoji-container">
-                <view class="wf-emoji-content">
-                    <view class="emoji-item" @click="onClickEmoji(v)" v-for="(v,i) in emojiList" :key="i">{{ v }}</view>
+            <!--            <scroll-view :scroll-y="true" v-if="showEmoji" class="wf-emoji-container">-->
+            <!--                <view class="wf-emoji-content">-->
+            <!--                    <view class="emoji-item" @click="onClickEmoji(v)" v-for="(v,i) in emojiList" :key="i">{{ v }}</view>-->
+
+            <!--                </view>-->
+            <!--            </scroll-view>-->
+            <view class="wf-stickers-container" :style="'height: ' + keyboardHeight + 'px'" v-if="showEmoji">
+                <view class="category-container">
+                    <view class="category" v-for="(v, i) in emojiStickerList" :key="i" @click="onCategoryClick(i)">
+                        <img :src="v.poster" v-bind:class="{active: i === currentEmojiStickerIndex}" >
+                    </view>
                 </view>
-            </scroll-view>
+                <scroll-view v-if="currentEmojiStickerIndex === 0" :scroll-y="true" class="wf-emoji-container">
+                    <view class="wf-emoji-content">
+                        <view class="emoji-item" @click="onClickEmoji(v)" v-for="(v,i) in emojiStickerList[0].emojis" :key="i">{{ v }}</view>
+                    </view>
+                </scroll-view>
+                <scroll-view v-else :scroll-y="true" class="wf-sticker-container" @scrolltoupper="(e)=>{e.preventDefault()}">
+                    <view class="wf-sticker-content">
+                        <img :src="s" class="sticker-item" @click="onClickSticker(s)" v-for="(s,j) in emojiStickerList[currentEmojiStickerIndex].stickers" :key="j"/>
+                    </view>
+                </scroll-view>
+            </view>
         </view>
         <!--        <zmm-upload-image chooseType="chooseMedia" :show="false" ref="upload" @allComplete="upLoadallComplete" @oneComplete="upLoadoneComplete"></zmm-upload-image>-->
         <!-- #ifndef H5 -->
@@ -45,6 +63,9 @@ import wfc from "../../wfc/client/wfc";
 import store from "../../store";
 import ConversationType from "../../wfc/model/conversationType";
 import wfcUIKit from "../../wfc/uikit/wfcUIKit";
+import emojiStickerConfig from "./emojiStickerConfig";
+import {getItem, setItem} from "../util/storageHelper";
+import StickerMessageContent from "../../wfc/messages/stickerMessageContent";
 
 export default {
     name: "MessageInputView",
@@ -57,7 +78,8 @@ export default {
     },
     data() {
         return {
-            emojiList: ['😁', '😂', '😃', '😄', '😅', '😆', '😉', '😊', '😋', '😌', '😍', '😏', '😒', '😓', '😔', '😖', '😘', '😚', '😜', '😝', '😞', '😠', '😡', '😢', '😣', '😤', '😥', '😨', '😩', '😪', '😫', '😭', '😰', '😱', '😲', '😳', '😵', '😷', '😸', '😹', '😺', '😻', '😼', '😽', '😾', '😿', '🙀', '🙅', '🙆', '🙇', '🙈', '🙉', '🙊', '🙋', '🙌', '🙍', '🙎', '🙏'],
+            emojiStickerList: emojiStickerConfig,
+            currentEmojiStickerIndex: 0,
             showRecorder: false,
             showVoice: false,
             extList: [
@@ -111,10 +133,15 @@ export default {
             sharedMiscState: store.state.misc,
         };
     },
+    onLoad() {
+      this.keyboardHeight = getItem('keyboardHeight')
+    },
+
     mounted() {
         // #ifdef APP-PLUS
         uni.onKeyboardHeightChange(res => {
             this.keyboardHeight = res.height;
+            setItem('keyboardHeight', this.keyboardHeight)
         });
         // #endif
     },
@@ -196,9 +223,18 @@ export default {
                     break;
             }
         },
+
+        onCategoryClick(i) {
+            this.currentEmojiStickerIndex = i;
+        },
         onClickEmoji(emoji) {
             console.log('onClick emoji', emoji)
             this.text = this.text + emoji;
+        },
+        onClickSticker(sticker) {
+            console.log('onClick sticker', sticker)
+            let stickerMsg = new StickerMessageContent('', sticker, 200, 200)
+            wfc.sendConversationMessage(this.conversationInfo.conversation, stickerMsg);
         },
 
         chooseImage() {
@@ -221,10 +257,10 @@ export default {
             })
         },
 
-        voip(audioOnly){
-            if (this.conversationInfo.conversation.type === ConversationType.Single){
+        voip(audioOnly) {
+            if (this.conversationInfo.conversation.type === ConversationType.Single) {
                 wfcUIKit.startSingleCall(this.conversationInfo.conversation.target, audioOnly)
-            } else if (this.conversationInfo.conversation.type === ConversationType.Group){
+            } else if (this.conversationInfo.conversation.type === ConversationType.Group) {
                 this.showPickGroupMemberToVoipModal(audioOnly)
             }
         },
@@ -266,7 +302,7 @@ export default {
         },
 
         chooseFile() {
-            wfc.chooseFile( 'all', (file) => {
+            wfc.chooseFile('all', (file) => {
                     console.log('choose file', file);
                     let path = file.path;
                     let filePath;
@@ -475,7 +511,7 @@ export default {
 }
 
 .wf-emoji-container {
-    height: 558rpx;
+    height: 500rpx;
 }
 
 .wf-emoji-content {
@@ -492,6 +528,68 @@ export default {
     flex-direction: row;
     justify-content: center;
     align-items: center;
+}
+
+.wf-stickers-container {
+    min-height: 560rpx;
+    width: 100%;
+    flex-direction: column;
+}
+
+.wf-stickers-container .category-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    z-index: 99;
+    width: 100%;
+    height: 60px;
+    border-bottom: 1px solid grey;
+}
+
+.wf-stickers-container .category {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wf-stickers-container .category img {
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    margin: 0 5px;
+    border-radius: 5px;
+    object-fit: contain;
+}
+.wf-stickers-container .category img.active {
+    background: lightgrey;
+}
+
+.wf-sticker-container {
+    height: 500rpx;
+}
+
+.wf-sticker-content {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.sticker-item {
+    height: 33%;
+    aspect-ratio: 1/1;
+    padding: 8rpx;
+}
+
+.sticker-item:active{
+    background: lightgrey;
+    border-radius: 5px;
+}
+
+.sticker-item:last-of-type::after {
+    content: "";
+    flex: auto;
 }
 
 </style>
