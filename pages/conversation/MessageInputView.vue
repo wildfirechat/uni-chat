@@ -134,12 +134,9 @@ export default {
             sharedMiscState: store.state.misc,
         };
     },
-    onLoad() {
-      this.keyboardHeight = getItem('keyboardHeight')
-        console.log('onload keyboardHeight', this.currentKeyboardHeight)
-    },
 
     mounted() {
+        this.keyboardHeight = getItem('keyboardHeight');
         // #ifdef APP-PLUS
         uni.onKeyboardHeightChange(res => {
             this.currentKeyboardHeight = res.height;
