@@ -631,6 +631,7 @@ export default {
         uni.setNavigationBarTitle({
             title: this.targetUserOnlineStateDesc ? this.conversationTitle + `(${this.targetUserOnlineStateDesc})` : this.conversationTitle
         });
+        store.clearConversationUnreadStatus(this.conversationInfo.conversation) ;
     },
 
     updated() {
