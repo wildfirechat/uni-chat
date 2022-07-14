@@ -23,7 +23,7 @@ export default {
     name: "MePage",
     data() {
         return {
-            user: wfc.getUserInfo(wfc.getUserId()),
+            user: store.state.contact.selfUserInfo,
         }
     },
     methods: {
@@ -51,7 +51,6 @@ export default {
             );
         },
         showAbout() {
-            console.log('click about')
             uni.navigateTo({
                 url: '/pages/misc/WebViewPage?url=https://wildfirechat.cn/',
                 fail: (e) => {
