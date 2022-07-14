@@ -240,7 +240,24 @@ export default {
         },
 
         quitGroup() {
-            store.quitGroup(this.conversationInfo.conversation.target)
+            let groupInfo = this.conversationInfo.conversation._target;
+            if (groupInfo.owner === store.state.contact.selfUserInfo.uid){
+                store.quitGroup(this.conversationInfo.conversation.target)
+            } else {
+                store.quitGroup(this.conversationInfo.conversation.target)
+            }
+            uni.switchTab({
+                url: '/pages/conversationList/ConversationListView',
+                success: () => {
+                    console.log('to conversation list success');
+                },
+                fail: e => {
+                    console.log('to conversation list error', e);
+                },
+                complete: () => {
+                    console.log('switch tab complete')
+                }
+            });
         },
 
         setFavGroup(groupId, fav) {

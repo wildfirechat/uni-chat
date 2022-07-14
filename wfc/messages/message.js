@@ -105,6 +105,9 @@ export default class Message {
                     }
                 }
                 msg.messageContent = content;
+                if (content instanceof UnknownMessageContent){
+                    console.log('unknownMessage Content', obj)
+                }
 
             } else {
                 console.error('message content not register', obj);
@@ -141,7 +144,9 @@ export default class Message {
                     }
                 }
                 msg.messageContent = content;
-
+                if (content instanceof UnknownMessageContent){
+                    console.log('unknownMessage Content', obj)
+                }
             } else {
                 console.error('message content not register', obj);
             }

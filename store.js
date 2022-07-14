@@ -533,6 +533,14 @@ let store = {
 
     },
 
+    dismissGroup(groupId) {
+        wfc.dismissGroup(groupId, [0], null, () => {
+            this.setCurrentConversationInfo(null)
+        }, (err) => {
+            console.log('dismiss group error', err)
+        })
+    },
+
     quitGroup(groupId) {
         wfc.quitGroup(groupId, [0], null, () => {
             this.setCurrentConversationInfo(null)
