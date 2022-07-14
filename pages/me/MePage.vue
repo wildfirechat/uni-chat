@@ -18,6 +18,8 @@
 import wfc from "../../wfc/client/wfc";
 import {clear} from "../util/storageHelper";
 import store from "../../store";
+import ModifyMyInfoEntry from "../../wfc/model/modifyMyInfoEntry";
+import ModifyMyInfoType from "../../wfc/model/modifyMyInfoType";
 
 export default {
     name: "MePage",
@@ -51,12 +53,19 @@ export default {
             );
         },
         showAbout() {
-            uni.navigateTo({
-                url: '/pages/misc/WebViewPage?url=https://wildfirechat.cn/',
-                fail: (e) => {
-                    console.log('xooxo', e)
-                }
-            });
+            // uni.navigateTo({
+            //     url: '/pages/misc/WebViewPage?url=https://wildfirechat.cn/',
+            //     fail: (e) => {
+            //     }
+            // });
+            let entry = new ModifyMyInfoEntry();
+            entry.type = ModifyMyInfoType.General;
+            entry.value = '1';
+            wfc.modifyMyInfo([entry], () => {
+                console.log('modifyMyInfo success')
+            }, (err) => {
+                console.log('modifyMyInfo error', err)
+            })
         }
     }
 }
