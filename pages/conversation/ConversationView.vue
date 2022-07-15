@@ -142,6 +142,10 @@ export default {
         // #endif
     },
 
+    onShow(){
+        this.updateConversationTitle();
+    },
+
     onNavigationBarButtonTap(e) {
         if (this.conversationInfo.conversation.type === ConversationType.Single) {
             uni.navigateTo({
@@ -635,7 +639,13 @@ export default {
                     icon: 'none'
                 })
             }
-        }
+        },
+
+        updateConversationTitle(){
+            uni.setNavigationBarTitle({
+                title: this.targetUserOnlineStateDesc ? this.conversationTitle + `(${this.targetUserOnlineStateDesc})` : this.conversationTitle
+            });
+        },
     },
 
     mounted() {

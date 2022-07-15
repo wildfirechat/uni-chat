@@ -7,7 +7,7 @@
                        ref="groupNameInput"
                        :disabled="!enableEditGroupNameOrAnnouncement"
                        v-model="newGroupName"
-                       @keyup.enter="updateGroupName"
+                       @confirm="updateGroupName"
                        :placeholder="conversationInfo.conversation._target._displayName">
             </label>
             <label>
@@ -205,9 +205,12 @@ export default {
 
             wfc.modifyGroupInfo(groupId, ModifyGroupInfoType.Modify_Group_Name, this.newGroupName, [0], null, () => {
                 this.conversationInfo.conversation._target._displayName = this.newGroupName;
-                this.$refs.groupNameInput.blur();
+                uni.setNavigationBarTitle({
+                    title: this.conversationInfo.conversation._target._displayName,
+                });
             }, (err) => {
                 // do nothing
+                console.log('err', err)
             })
         },
 
