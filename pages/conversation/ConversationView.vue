@@ -579,6 +579,13 @@ export default {
                     tag: 'forward',
                 })
             }
+            if (this.isRecallable(message)) {
+                this.contextMenuItems.push({
+                    title: '撤回',
+                    message: message,
+                    tag: 'recall',
+                })
+            }
             this.showContextMenu = true;
 
             // <!--                    <li v-if="isCopyable(message)">-->
@@ -618,7 +625,11 @@ export default {
                 console.log('wfc delete message', t.message.messageId)
                 wfc.deleteMessage(t.message.messageId);
                 // wfc.deleteMessage(3100);
-            } else {
+            } else if (t.tag === 'forward'){
+                this.forward(t.message)
+            } else if(t.tag === 'recall'){
+                this.recallMessage(t.message);
+            }else {
                 uni.showToast({
                     title: 'TODO ' + t.title,
                     icon: 'none'
