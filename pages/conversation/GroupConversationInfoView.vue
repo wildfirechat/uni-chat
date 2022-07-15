@@ -106,15 +106,17 @@ export default {
     },
 
     mounted(){
-        wfc.eventEmitter.on(EventType.UserInfosUpdate, this.onUserInfosUpdate)
+        wfc.eventEmitter.on(EventType.UserInfosUpdate, this.onConversationMembersUpdate)
+        wfc.eventEmitter.on(EventType.GroupMembersUpdate, this.onConversationMembersUpdate)
     },
 
     beforeDestroy(){
-        wfc.eventEmitter.removeListener(EventType.UserInfosUpdate, this.onUserInfosUpdate)
+        wfc.eventEmitter.removeListener(EventType.UserInfosUpdate, this.onConversationMembersUpdate)
+        wfc.eventEmitter.removeListener(EventType.GroupMembersUpdate, this.onConversationMembersUpdate)
     },
 
     methods: {
-        onUserInfosUpdate(){
+        onConversationMembersUpdate(){
             this.groupMemberUserInfos = store.getConversationMemberUsrInfos(this.conversationInfo.conversation);
         },
 
