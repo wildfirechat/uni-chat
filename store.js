@@ -206,6 +206,7 @@ let store = {
                 || status === ConnectionStatus.ConnectionStatusRejected) {
                 removeItem("userId");
                 removeItem('token')
+                wfc.disconnect();
                 _reset();
             }
         });
