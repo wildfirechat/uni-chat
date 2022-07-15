@@ -140,9 +140,9 @@
             }
         },
         {
-            "path": "pages/test/testWebrtc",
+            "path": "pages/misc/ApiTestPage",
             "style": {
-                "navigationBarTitleText": " 测试 webrtc"
+                "navigationBarTitleText": "API测试"
             }
         }
     ],

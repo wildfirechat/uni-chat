@@ -9,6 +9,10 @@
             <text>关于</text>
             <i></i>
         </div>
+        <div class="about" @click="showApiTest">
+            <text>API测试</text>
+            <i></i>
+        </div>
         <button class="logout-button" @click="logout">退出登录</button>
     </div>
 
@@ -54,9 +58,18 @@ export default {
             uni.navigateTo({
                 url: '/pages/misc/WebViewPage?url=https://wildfirechat.cn/',
                 fail: (e) => {
-                    console.log('xooxo', e)
+                    console.log(e)
                 }
             });
+        },
+        showApiTest(){
+            uni.navigateTo({
+                url: '/pages/misc/ApiTestPage',
+                fail: (e) => {
+                    console.log(e)
+                }
+            });
+
         }
     }
 }
