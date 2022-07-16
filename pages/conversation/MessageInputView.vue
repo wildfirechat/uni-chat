@@ -2,14 +2,14 @@
     <view>
         <view :style="'height: ' + currentKeyboardHeight + 'px'"></view>
         <view v-if="showExt||showEmoji" :style="'height:' + currentKeyboardHeight + 'px'"></view>
-        <view class="wf-message-input-container" :style="'transform: translateY(-' + currentKeyboardHeight + 'px)'">
+        <view class="wf-message-input-container" :style="'transform: translateY(-' + currentKeyboardHeight + 'px)'" @touchmove.prevent>
             <view class="wf-message-input-toolbar">
                 <view class="wf-input-button-icon wxfont" @click="toggleVoice" :class="showVoice ? 'keyboard' : 'voice'"></view>
                 <view class="wf-input-voice-container" v-if="showVoice">
                     <view class="wf-input-voice-button" @longpress="startRecord" @touchend="endRecord">按住说话</view>
                 </view>
                 <view v-else class="wf-input-text-container" >
-                    <textarea @focus="onInputFocus" class="wf-input-textarea" :adjust-position="false" v-model="text" placeholder="" hold-keyboard confirm-type="send" @confirm="send(text)" :maxlength="-1" auto-height/>
+                    <textarea ref="textarea" @focus="onInputFocus" class="wf-input-textarea" :adjust-position="false" v-model="text" placeholder="" hold-keyboard confirm-type="send" @confirm="send(text)" :maxlength="-1" auto-height/>
                 </view>
                 <view @click="toggleEmoji" class="wf-input-button-icon wxfont emoji"></view>
                 <view v-if="text !== ''" class="wf-input-text-send-button" @touchend.prevent="send(text)" :style="{ background: text !== '' ? '#4168e0' : '#F7F7F7', color: text !== '' ? '#fff' : '#ddd', 'border-color': text !== '' ? '#1BC418' : '#ddd' }">发送</view>
@@ -157,20 +157,6 @@ export default {
                 this.text = '';
             }
         },
-        scrolltoBottom() {
-            if (this.timer) {
-                clearTimeout(this.timer);
-            }
-            this.$nextTick(() => {
-                this.timer = setTimeout(() => {
-                    uni.pageScrollTo({
-                        scrollTop: 999999,
-                        duration: 10
-                    });
-                    this.$forceUpdate()
-                }, 100);
-            })
-        },
         startRecord() {
 
             this.$refs['recorder'].startRecord();
@@ -182,9 +168,18 @@ export default {
             this.sharedMiscState.isRecording = false;
         },
 
+        minimizeMessageInputView(){
+            this.showEmoji = false;
+            this.showExt = false;
+            // 没有 blur 这个方法，奇怪。。。
+            // this.$refs.textarea.blur();
+            uni.hideKeyboard();
+        },
+
         onInputFocus(){
           this.showEmoji = false;
           this.showExt = false;
+          this.$parent.onMessageInputViewShow();
         },
 
         toggleVoice() {
@@ -235,6 +230,7 @@ export default {
         onCategoryClick(i) {
             this.currentEmojiStickerIndex = i;
         },
+
         onClickEmoji(emoji) {
             console.log('onClick emoji', emoji)
             this.text = this.text + emoji;
@@ -326,18 +322,6 @@ export default {
         }
 
     },
-    watch: {
-        currentKeyboardHeight: {
-            deep: true,
-            immediate: true,
-            handler(v) {
-                // if (v > 0) {
-                //     this.showEmoji = false
-                // }
-                // this.scrolltoBottom();
-            }
-        },
-    }
 }
 </script>
 

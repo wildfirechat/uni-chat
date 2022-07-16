@@ -59,6 +59,15 @@ Vue.prototype.$go2ConversationPage = () => {
         })
     }
 }
+Vue.prototype.$scrollToBottom= () => {
+    setTimeout(() => {
+        uni.pageScrollTo({
+            scrollTop: 999999,
+            duration: 10
+        });
+        app.$forceUpdate()
+    }, 100);
+}
 
 Vue.prototype._i18n = i18n;
 const app = new Vue({

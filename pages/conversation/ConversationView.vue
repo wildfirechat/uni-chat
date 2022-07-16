@@ -111,7 +111,8 @@ export default {
             showContextMenu: false,
             contextMenuX: 0,
             contextMenuY: 0,
-            contextMenuItems: []
+            contextMenuItems: [],
+            lastScrollTop:0,
         };
     },
 
@@ -233,15 +234,19 @@ export default {
             // hide message context menu
             // this.$refs.menu && this.$refs.menu.close();
 
-            console.log('onscroll');
-            this.showContextMenu = false;
-            // 当用户往上滑动一段距离之后，收到新消息，不自动滚到到最后
-            if (e.target.scrollHeight > e.target.clientHeight + e.target.scrollTop + e.target.clientHeight / 2) {
-                store.setShouldAutoScrollToBottom(false)
-            } else {
-                store.setShouldAutoScrollToBottom(true)
-                store.clearConversationUnreadStatus(this.sharedConversationState.currentConversationInfo.conversation);
+            if (!this.lastScrollTop){
+                this.lastScrollTop = e.scrollTop;
+                return;
             }
+            if (e.scrollTop < this.lastScrollTop){
+                this.$refs.messageInputView.minimizeMessageInputView();
+            }
+            this.lastScrollTop = e.scrollTop;
+            this.showContextMenu = false;
+        },
+
+        onMessageInputViewShow(){
+            this.$scrollToBottom();
         },
 
         onMenuClose() {
@@ -648,18 +653,15 @@ export default {
         },
     },
 
+    onPageScroll(res){
+        this.onScroll(res)
+    },
+
     mounted() {
         uni.setNavigationBarTitle({
             title: this.targetUserOnlineStateDesc ? this.conversationTitle + `(${this.targetUserOnlineStateDesc})` : this.conversationTitle
         });
-        setTimeout(() => {
-            uni.pageScrollTo({
-                scrollTop: 999999,
-                duration: 10,
-            });
-            this.$forceUpdate()
-
-        }, 100);
+        this.$scrollToBottom();
         store.clearConversationUnreadStatus(this.conversationInfo.conversation) ;
     },
 
@@ -669,14 +671,7 @@ export default {
         }
         console.log('conversationView updated', this.sharedConversationState.shouldAutoScrollToBottom)
         if (this.sharedConversationState.shouldAutoScrollToBottom) {
-            // setTimeout(() => {
-            //     uni.pageScrollTo({
-            //         scrollTop: 999999,
-            //         duration: 10,
-            //     });
-            //     this.$forceUpdate()
-            //
-            // }, 100);
+            this.$scrollToBottom();
         } else {
             // 用户滑动到上面之后，收到新消息，不自动滑动到最下面
         }
