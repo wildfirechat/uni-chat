@@ -27,7 +27,7 @@
             </uni-list>
             <!--            <view v-show="!sharedConversationState.enableMessageMultiSelection"-->
             <!--                  class="viewider-handler"></view>-->
-            <chunLei-popups v-model="showContextMenu" :popData="contextMenuItems" @tapPopup="onContextMenuItemSelect" :x="contextMenuX" :y="contextMenuY" direction="column" theme="dark" :triangle="false" placement="bottom-start" dynamic/>
+            <chunLei-popups v-model="showContextMenu" :popData="contextMenuItems" @tapPopup="onContextMenuItemSelect" :x="contextMenuX" :y="contextMenuY" direction="column" theme="dark" :triangle="false" dynamic/>
             <MessageInputView :conversationInfo="sharedConversationState.currentConversationInfo"
                               v-show="!sharedConversationState.enableMessageMultiSelection"
                               class="message-input-container"
@@ -661,14 +661,14 @@ export default {
         }
         console.log('conversationView updated', this.sharedConversationState.shouldAutoScrollToBottom)
         if (this.sharedConversationState.shouldAutoScrollToBottom) {
-            setTimeout(() => {
-                uni.pageScrollTo({
-                    scrollTop: 999999,
-                    duration: 10,
-                });
-                this.$forceUpdate()
-
-            }, 100);
+            // setTimeout(() => {
+            //     uni.pageScrollTo({
+            //         scrollTop: 999999,
+            //         duration: 10,
+            //     });
+            //     this.$forceUpdate()
+            //
+            // }, 100);
         } else {
             // 用户滑动到上面之后，收到新消息，不自动滑动到最下面
         }
