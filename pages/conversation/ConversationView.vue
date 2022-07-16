@@ -652,6 +652,14 @@ export default {
         uni.setNavigationBarTitle({
             title: this.targetUserOnlineStateDesc ? this.conversationTitle + `(${this.targetUserOnlineStateDesc})` : this.conversationTitle
         });
+        setTimeout(() => {
+            uni.pageScrollTo({
+                scrollTop: 999999,
+                duration: 10,
+            });
+            this.$forceUpdate()
+
+        }, 100);
         store.clearConversationUnreadStatus(this.conversationInfo.conversation) ;
     },
 
