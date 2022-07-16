@@ -43,6 +43,39 @@
                 "targetCompatibility": "1.8"
             },
             "useAndroidX": true
-        }
+        },
+		"ios": {
+		    "plugins": [
+		        {
+		            "type": "module",
+		            "name": "wf-uni-wfc-uikit",
+		            "class": "WFUIKitModule"
+		        }
+		    ],
+            "frameworks": [
+                "WFUIKitUniPlugin.xcframework",
+                "SDWebImage.xcframework",
+                "WebRTC.xcframework",
+                "WFAVEngineKit.xcframework",
+                "WFChatUIKit.xcframework",
+                "ZLPhotoBrowser.xcframework"
+            ],
+            "embedFrameworks": [
+                "SDWebImage.xcframework",
+                "WebRTC.xcframework",
+                "WFAVEngineKit.xcframework",
+                "WFChatUIKit.xcframework",
+                "ZLPhotoBrowser.xcframework"
+            ],
+            "resources": [
+                "ring.caf" 
+            ],
+            "validArchitectures": [
+                "arm64"
+            ],
+            "hooksClass": "WFUIKitProxy",
+            "integrateType": "framework",
+            "deploymentTarget": "9.0"
+		}
     }
 }
