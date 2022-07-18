@@ -262,6 +262,9 @@ let store = {
         console.log('store', 'listen receiveMessage')
         wfc.eventEmitter.on(EventType.ReceiveMessage, (msg, hasMore) => {
             console.log('receiveMessage', hasMore);
+            if (miscState.connectionStatus === ConnectionStatus.ConnectionStatusReceiveing){
+                return;
+            }
             if (!hasMore) {
                 this._loadDefaultConversationList();
             }
