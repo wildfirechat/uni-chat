@@ -1,9 +1,7 @@
 <template>
     <view>
-        <view :style="'height: ' + currentKeyboardHeight + 'px'"></view>
-        <view v-if="showExt||showEmoji" :style="'height:' + currentKeyboardHeight + 'px'"></view>
-        <view class="wf-message-input-container" :style="'transform: translateY(-' + currentKeyboardHeight + 'px)'" @touchmove.prevent>
-            <view class="wf-message-input-toolbar">
+        <view class="wf-message-input-container" @touchmove.prevent>
+            <view class="wf-message-input-toolbar" :style="'padding-bottom: ' + messageInputToolbarTransformY + 'px'">
                 <view class="wf-input-button-icon wxfont" @click="toggleVoice" :class="showVoice ? 'keyboard' : 'voice'"></view>
                 <view class="wf-input-voice-container" v-if="showVoice">
                     <view class="wf-input-voice-button" @longpress="startRecord" @touchend="endRecord">按住说话</view>
@@ -136,17 +134,6 @@ export default {
     },
 
     mounted() {
-        this.keyboardHeight = getItem('keyboardHeight');
-        // #ifdef APP-PLUS
-        uni.onKeyboardHeightChange(res => {
-            this.currentKeyboardHeight = res.height;
-            if (this.keyboardHeight !== res.height && res.height > 0){
-                this.keyboardHeight = res.height;
-                setItem('keyboardHeight', this.keyboardHeight)
-            }
-            console.log('xxx keyboardHeight', this.keyboardHeight, this.currentKeyboardHeight);
-        });
-        // #endif
     },
 
     methods: {
@@ -186,12 +173,14 @@ export default {
             this.showVoice = !this.showVoice;
             this.showEmoji = false;
             this.showExt = false;
+            this.$parent.onEmojiOrExtPanelShow(true);
         },
 
         toggleEmoji() {
             this.showEmoji = !this.showEmoji;
             this.showExt = false;
             this.showVoice = false;
+            this.$parent.onEmojiOrExtPanelShow(true);
 
         },
         toggleExt() {
@@ -319,9 +308,19 @@ export default {
                     store.sendFile(this.conversationInfo.conversation, file);
                 }
             )
-        }
+        },
 
+        onKeyboardHeightChange(keyboardHeight, currentKeyboardHeight){
+            console.log('0-----------', this.showExt, this.showEmoji, currentKeyboardHeight)
+            this.keyboardHeight = keyboardHeight;
+            this.currentKeyboardHeight = currentKeyboardHeight;
+        }
     },
+    computed:{
+        messageInputToolbarTransformY(){
+            return (this.showExt || this.showEmoji) ? 0 : this.currentKeyboardHeight;
+        }
+    }
 }
 </script>
 

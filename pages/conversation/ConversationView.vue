@@ -6,7 +6,7 @@
         <view v-else ref="conversationContentContainer" class="conversation-content-container"
               :dummy_just_for_reactive="currentVoiceMessage"
         >
-            <uni-list ref="conversationMessageList" class="message-list" :border="false" @scroll="onScroll">
+            <uni-list ref="conversationMessageList" class="message-list" :style="'padding-bottom: ' + messageListTransformY + 'px'" :border="false" @scroll="onScroll">
                 <view v-for="(message) in sharedConversationState.currentConversationMessageList"
                       :key="message.messageId">
                     <!--todo 不同的消息类型 notification in out-->
@@ -81,6 +81,7 @@ import ConversationType from "@/wfc/model/conversationType";
 import GroupMemberType from "@/wfc/model/groupMemberType";
 import CompositeMessageContent from "@/wfc/messages/compositeMessageContent";
 import ConnectionStatus from "../../wfc/client/connectionStatus";
+import {getItem, setItem} from "../util/storageHelper";
 
 var amr;
 export default {
@@ -113,6 +114,9 @@ export default {
             contextMenuY: 0,
             contextMenuItems: [],
             lastScrollTop:0,
+            keyboardHeight:0,
+            currentKeyboardHeight:0,
+            emojiOrExtPannelShowing: false,
         };
     },
 
@@ -247,6 +251,7 @@ export default {
 
         onMessageInputViewShow(){
             this.$scrollToBottom();
+            this.emojiOrExtPannelShowing = false;
         },
 
         onMenuClose() {
@@ -651,6 +656,11 @@ export default {
                 title: this.targetUserOnlineStateDesc ? this.conversationTitle + `(${this.targetUserOnlineStateDesc})` : this.conversationTitle
             });
         },
+        // TODO 监听键盘出现，transformY message-list
+
+        onEmojiOrExtPanelShow(show){
+            this.emojiOrExtPannelShowing = show;
+        },
     },
 
     onPageScroll(res){
@@ -663,6 +673,20 @@ export default {
         });
         this.$scrollToBottom();
         store.clearConversationUnreadStatus(this.conversationInfo.conversation) ;
+
+        this.keyboardHeight = getItem('keyboardHeight');
+        // #ifdef APP-PLUS
+        uni.onKeyboardHeightChange(res => {
+            if (this.keyboardHeight !== res.height && res.height > 0){
+                this.keyboardHeight = res.height;
+                setItem('keyboardHeight', this.keyboardHeight)
+            }
+            this.currentKeyboardHeight = res.height;
+            this.$refs.messageInputView.onKeyboardHeightChange(this.keyboardHeight, this.currentKeyboardHeight);
+            // currentKeyboardHeight 显示扩展面板的时候，也应当置上
+            console.log('keyboardHeight', this.keyboardHeight, this.currentKeyboardHeight);
+        });
+        // #endif
     },
 
     updated() {
@@ -708,6 +732,10 @@ export default {
                 }
             }
             return null;
+        },
+
+        messageListTransformY(){
+            return this.emojiOrExtPannelShowing ? this.keyboardHeight : this.currentKeyboardHeight;
         }
     },
 
@@ -752,6 +780,7 @@ export default {
 
 .message-list {
     padding-bottom: 112rpx;
+    min-height: 100px;
     flex: 1 1 auto;
     overflow: auto;
 }
