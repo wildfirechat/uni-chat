@@ -6,25 +6,28 @@
         <view v-else ref="conversationContentContainer" class="conversation-content-container"
               :dummy_just_for_reactive="currentVoiceMessage"
         >
-            <uni-list ref="conversationMessageList" class="message-list" :style="'padding-bottom: ' + messageListTransformY + 'px'" :border="false" @scroll="onScroll">
-                <view v-for="(message) in sharedConversationState.currentConversationMessageList"
-                      :key="message.messageId">
-                    <!--todo 不同的消息类型 notification in out-->
+            <view class="message-list-container">
+                <scroll-view ref="conversationMessageList" class="message-list" scroll-y="true" :scroll-top="scrollTop" :scroll-into-view="'id-' + lastMessageId" @scroll="onScroll">
+                    <view v-for="(message) in sharedConversationState.currentConversationMessageList"
+                          :id="'id-'+ message.messageId"
+                          :key="message.messageId">
+                        <!--todo 不同的消息类型 notification in out-->
 
-                    <NotificationMessageContentView :message="message" v-if="isNotificationMessage(message)"/>
-                    <RecallNotificationMessageContentView :message="message" v-else-if="isRecallNotificationMessage(message)"/>
-                    <NormalOutMessageContentView
-                        @click.native.capture="sharedConversationState.enableMessageMultiSelection? clickMessageItem($event, message) : null"
-                        :message="message"
-                        @longpress.native="showMessageContextMenu($event, message)"
-                        v-else-if="message.direction === 0"/>
-                    <NormalInMessageContentView
-                        @click.native.capture="sharedConversationState.enableMessageMultiSelection ? clickMessageItem($event, message) : null"
-                        :message="message"
-                        @longpress.native="showMessageContextMenu($event, message)"
-                        v-else/>
-                </view>
-            </uni-list>
+                        <NotificationMessageContentView :message="message" v-if="isNotificationMessage(message)"/>
+                        <RecallNotificationMessageContentView :message="message" v-else-if="isRecallNotificationMessage(message)"/>
+                        <NormalOutMessageContentView
+                            @click.native.capture="sharedConversationState.enableMessageMultiSelection? clickMessageItem($event, message) : null"
+                            :message="message"
+                            @longpress.native="showMessageContextMenu($event, message)"
+                            v-else-if="message.direction === 0"/>
+                        <NormalInMessageContentView
+                            @click.native.capture="sharedConversationState.enableMessageMultiSelection ? clickMessageItem($event, message) : null"
+                            :message="message"
+                            @longpress.native="showMessageContextMenu($event, message)"
+                            v-else/>
+                    </view>
+                </scroll-view>
+            </view>
             <!--            <view v-show="!sharedConversationState.enableMessageMultiSelection"-->
             <!--                  class="viewider-handler"></view>-->
             <chunLei-popups v-model="showContextMenu" :popData="contextMenuItems" @tapPopup="onContextMenuItemSelect" :x="contextMenuX" :y="contextMenuY" direction="column" theme="dark" :triangle="false" dynamic/>
@@ -116,7 +119,7 @@ export default {
             lastScrollTop:0,
             keyboardHeight:0,
             currentKeyboardHeight:0,
-            emojiOrExtPannelShowing: false,
+            scrollTop: 0,
         };
     },
 
@@ -247,11 +250,6 @@ export default {
             }
             this.lastScrollTop = e.scrollTop;
             this.showContextMenu = false;
-        },
-
-        onMessageInputViewShow(){
-            this.$scrollToBottom();
-            this.emojiOrExtPannelShowing = false;
         },
 
         onMenuClose() {
@@ -658,9 +656,6 @@ export default {
         },
         // TODO 监听键盘出现，transformY message-list
 
-        onEmojiOrExtPanelShow(show){
-            this.emojiOrExtPannelShowing = show;
-        },
     },
 
     onPageScroll(res){
@@ -681,10 +676,15 @@ export default {
                 this.keyboardHeight = res.height;
                 setItem('keyboardHeight', this.keyboardHeight)
             }
-            this.currentKeyboardHeight = res.height;
-            this.$refs.messageInputView.onKeyboardHeightChange(this.keyboardHeight, this.currentKeyboardHeight);
+            if (this.$refs.messageInputView){
+                this.$refs.messageInputView.onKeyboardHeightChange(this.keyboardHeight, res.height);
+            }
+            this.scrollTop = 99919;
+            this.$nextTick(()=> {
+                this.scrollTop = 99999;
+            })
             // currentKeyboardHeight 显示扩展面板的时候，也应当置上
-            console.log('keyboardHeight', this.keyboardHeight, this.currentKeyboardHeight);
+            console.log('------------- keyboardHeight', this.keyboardHeight, this.currentKeyboardHeight);
         });
         // #endif
     },
@@ -695,7 +695,8 @@ export default {
         }
         console.log('conversationView updated', this.sharedConversationState.shouldAutoScrollToBottom)
         if (this.sharedConversationState.shouldAutoScrollToBottom) {
-            this.$scrollToBottom();
+            // this.$scrollToBottom();
+            this.scrollTop = 99998;
         } else {
             // 用户滑动到上面之后，收到新消息，不自动滑动到最下面
         }
@@ -734,8 +735,8 @@ export default {
             return null;
         },
 
-        messageListTransformY(){
-            return this.emojiOrExtPannelShowing ? this.keyboardHeight : this.currentKeyboardHeight;
+        lastMessageId(){
+            return this.conversationInfo.lastMessage ? this.conversationInfo.lastMessage.messageId : '';
         }
     },
 
@@ -759,12 +760,11 @@ export default {
 .conversation-content-container {
     position: relative;
     display: flex;
-    height: 100%;
+    height: 100vh;
     overflow: hidden;
     flex-direction: column;
     /*background-color: #f3f3f3;*/
     /*padding: 0 12px;*/
-    padding-bottom: 112rpx;
 }
 
 
@@ -778,10 +778,14 @@ export default {
     margin: 0 auto;
 }
 
-.message-list {
-    padding-bottom: 112rpx;
+.message-list-container {
     min-height: 100px;
     flex: 1 1 auto;
+    overflow: hidden;
+}
+
+.message-list {
+    height: 100%;
     overflow: auto;
 }
 

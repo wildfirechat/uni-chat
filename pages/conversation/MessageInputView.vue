@@ -1,16 +1,16 @@
 <template>
     <view>
-        <view class="wf-message-input-container" @touchmove.prevent>
-            <view class="wf-message-input-toolbar" :style="'padding-bottom: ' + messageInputToolbarTransformY + 'px'">
+        <view class="wf-message-input-container">
+            <view class="wf-message-input-toolbar">
                 <view class="wf-input-button-icon wxfont" @click="toggleVoice" :class="showVoice ? 'keyboard' : 'voice'"></view>
                 <view class="wf-input-voice-container" v-if="showVoice">
                     <view class="wf-input-voice-button" @longpress="startRecord" @touchend="endRecord">按住说话</view>
                 </view>
                 <view v-else class="wf-input-text-container" >
-                    <textarea ref="textarea" @focus="onInputFocus" class="wf-input-textarea" :adjust-position="false" v-model="text" placeholder="" hold-keyboard confirm-type="send" @confirm="send(text)" :maxlength="-1" auto-height/>
+                    <textarea ref="textarea" @focus="onInputFocus" :focus="inputFocus" class="wf-input-textarea" v-model="text" placeholder="" hold-keyboard confirm-type="send" @confirm="send(text)" :maxlength="-1" auto-height/>
                 </view>
-                <view @click="toggleEmoji" class="wf-input-button-icon wxfont emoji"></view>
-                <view v-if="text !== ''" class="wf-input-text-send-button" @touchend.prevent="send(text)" :style="{ background: text !== '' ? '#4168e0' : '#F7F7F7', color: text !== '' ? '#fff' : '#ddd', 'border-color': text !== '' ? '#1BC418' : '#ddd' }">发送</view>
+                <view @click.prevent="toggleEmoji" class="wf-input-button-icon wxfont emoji"></view>
+                <view v-if="text !== ''" class="wf-input-text-send-button" @touchstart.prevent="" @touchmove.prevent="" @touchend.prevent="send(text)" :style="{ background: text !== '' ? '#4168e0' : '#F7F7F7', color: text !== '' ? '#fff' : '#ddd', 'border-color': text !== '' ? '#1BC418' : '#ddd' }">发送</view>
                 <view v-else @click="toggleExt" class="wf-input-button-icon wxfont add2"></view>
             </view>
             <view v-if="showExt" class="wf-ext-container" :style="'height: ' + keyboardHeight + 'px'">
@@ -120,6 +120,7 @@ export default {
             msgFocus: false,
             showExt: false,
             showEmoji: false,
+            lastInputFocusState: undefined,
             text: '',
             timer: '',
             talkTo: '',
@@ -160,27 +161,25 @@ export default {
             this.showExt = false;
             // 没有 blur 这个方法，奇怪。。。
             // this.$refs.textarea.blur();
-            uni.hideKeyboard();
+            //uni.hideKeyboard();
         },
 
         onInputFocus(){
           this.showEmoji = false;
           this.showExt = false;
-          this.$parent.onMessageInputViewShow();
         },
 
         toggleVoice() {
             this.showVoice = !this.showVoice;
             this.showEmoji = false;
             this.showExt = false;
-            this.$parent.onEmojiOrExtPanelShow(true);
         },
 
         toggleEmoji() {
+            console.log('------------- toggleEmoji')
             this.showEmoji = !this.showEmoji;
             this.showExt = false;
             this.showVoice = false;
-            this.$parent.onEmojiOrExtPanelShow(true);
 
         },
         toggleExt() {
@@ -311,14 +310,13 @@ export default {
         },
 
         onKeyboardHeightChange(keyboardHeight, currentKeyboardHeight){
-            console.log('0-----------', this.showExt, this.showEmoji, currentKeyboardHeight)
             this.keyboardHeight = keyboardHeight;
             this.currentKeyboardHeight = currentKeyboardHeight;
         }
     },
     computed:{
-        messageInputToolbarTransformY(){
-            return (this.showExt || this.showEmoji) ? 0 : this.currentKeyboardHeight;
+        inputFocus(){
+            return !this.showExt && !this.showEmoji && !this.showVoice;
         }
     }
 }
@@ -340,13 +338,13 @@ export default {
 /*}*/
 
 .wf-message-input-container {
-    background: #f7f7f7;
+    /*background: #f7f7f7;*/
     /*background: red;*/
-    position: fixed;
-    left: 0;
-    bottom: 0;
+    /*position: fixed;*/
     width: 100%;
+    z-index: 9999;
     transition: all 0.1s;
+    background: red;
 }
 
 .wf-ext-container {

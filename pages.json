@@ -43,7 +43,7 @@
             "path": "pages/conversation/ConversationView",
             "style": {
                 "navigationBarTitleText": "会话详情",
-                "enablePullDownRefresh": true,
+                "enablePullDownRefresh": false,
                 "app-plus": {
                     "titleNView": {
                         "buttons": [
@@ -53,7 +53,9 @@
                                 "fontSize": "28px"
                             }
                         ]
-                    }
+                    },
+                    "softinputMode": "adjustResize",
+                    "bounce":"none"
                 }
             }
         },
