@@ -338,13 +338,12 @@ export default {
 /*}*/
 
 .wf-message-input-container {
-    /*background: #f7f7f7;*/
+    background: #f7f7f7;
     /*background: red;*/
-    /*position: fixed;*/
     width: 100%;
     z-index: 9999;
     transition: all 0.1s;
-    background: red;
+    /*background: red;*/
 }
 
 .wf-ext-container {

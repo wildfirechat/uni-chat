@@ -7,9 +7,14 @@
               :dummy_just_for_reactive="currentVoiceMessage"
         >
             <view class="message-list-container">
-                <scroll-view ref="conversationMessageList" class="message-list" scroll-y="true" :scroll-top="scrollTop" :scroll-into-view="'id-' + lastMessageId" @scroll="onScroll">
+                <scroll-view ref="conversationMessageList" class="message-list" scroll-y="true" :scroll-top="scrollTop" :scroll-into-view="'id-' + lastMessageId"
+                             refresher-enabled="true" :refresher-triggered="triggered"
+                             :refresher-threshold="45" refresher-background="lightgreen" @refresherpulling="onPulling"
+                             @refresherrefresh="onRefresh" @refresherrestore="onRestore" @refresherabort="onAbort"
+                             @scroll="onScroll">
                     <view v-for="(message) in sharedConversationState.currentConversationMessageList"
                           :id="'id-'+ message.messageId"
+                          @touchmove="test"
                           :key="message.messageId">
                         <!--todo 不同的消息类型 notification in out-->
 
@@ -120,15 +125,10 @@ export default {
             keyboardHeight:0,
             currentKeyboardHeight:0,
             scrollTop: 0,
-        };
-    },
 
-    onPullDownRefresh() {
-        store.loadConversationHistoryMessages(() => {
-            uni.stopPullDownRefresh();
-        }, () => {
-            uni.stopPullDownRefresh();
-        });
+            triggered:false,
+
+        };
     },
 
     onLoad() {
@@ -241,15 +241,22 @@ export default {
             // hide message context menu
             // this.$refs.menu && this.$refs.menu.close();
 
-            if (!this.lastScrollTop){
-                this.lastScrollTop = e.scrollTop;
-                return;
-            }
-            if (e.scrollTop < this.lastScrollTop){
-                this.$refs.messageInputView.minimizeMessageInputView();
-            }
-            this.lastScrollTop = e.scrollTop;
+            // console.log('onScroollllll',e,  this.lastScrollTop, e.scrollTop, e.scrollTop < this.lastScrollTop)
+            // if (!this.lastScrollTop){
+            //     this.lastScrollTop = e.detail.deltaY;
+            //     return;
+            // }
+            // if (e.detail.deltaY < this.lastScrollTop){
+            //     this.$refs.messageInputView.minimizeMessageInputView();
+            //     uni.hideKeyboard();
+            // }
+            // this.lastScrollTop =  e.detail.deltaY;
+            // this.showContextMenu = false;
+        },
+
+        test(){
             this.showContextMenu = false;
+            uni.hideKeyboard();
         },
 
         onMenuClose() {
@@ -654,12 +661,36 @@ export default {
                 title: this.targetUserOnlineStateDesc ? this.conversationTitle + `(${this.targetUserOnlineStateDesc})` : this.conversationTitle
             });
         },
-        // TODO 监听键盘出现，transformY message-list
 
-    },
+        onPulling(e) {
+            console.log("onpulling", e);
+        },
+        onRefresh() {
+            console.log('onRresh...')
+            if (this._freshing){
+                return;
+            }
 
-    onPageScroll(res){
-        this.onScroll(res)
+            this._freshing = true;
+            this.triggered = true;
+            store.loadConversationHistoryMessages(() => {
+                console.log('onRresh... 11')
+                this.triggered = false;
+                this._freshing = false;
+            }, () => {
+                console.log('onRresh... 12')
+                this.triggered = false;
+                this._freshing = false;
+            });
+        },
+        onRestore() {
+            this.triggered = 'restore'; // 需要重置
+            console.log("onRestore");
+        },
+        onAbort() {
+            console.log("onAbort");
+        }
+
     },
 
     mounted() {
