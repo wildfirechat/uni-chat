@@ -375,10 +375,10 @@ let store = {
 
 
         wfc.eventEmitter.on(EventType.SendMessage, (message) => {
-            this._loadDefaultConversationList();
             if (!this._isDisplayMessage(message)) {
                 return;
             }
+            this._loadDefaultConversationList();
             if (!conversationState.currentConversationInfo || !message.conversation.equal(conversationState.currentConversationInfo.conversation)) {
                 console.log('not current conv')
                 return;
@@ -392,6 +392,27 @@ let store = {
             this._patchMessage(message, lastTimestamp)
 
             conversationState.currentConversationMessageList.push(message);
+        });
+
+        wfc.eventEmitter.on(EventType.MessageStatusUpdate, (message) => {
+            if (!this._isDisplayMessage(message)) {
+                return;
+            }
+            this._loadDefaultConversationList();
+            if (!conversationState.currentConversationInfo || !message.conversation.equal(conversationState.currentConversationInfo.conversation)) {
+                console.log('not current conv')
+                return;
+            }
+
+            let msg;
+            for (let i = 0; i < conversationState.currentConversationMessageList.length ; i++) {
+                msg = conversationState.currentConversationMessageList[i];
+                if (msg.messageId === message.messageId){
+                    msg = Object.assign(msg, message);
+                    conversationState.currentConversationMessageList[i] = msg;
+                    break;
+                }
+            }
         });
 
         wfc.eventEmitter.on(EventType.MessageReceived, (delivery) => {
