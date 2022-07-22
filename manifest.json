@@ -79,7 +79,7 @@
                 "__plugin_info__" : {
                     "name" : "野火IM UIKit",
                     "description" : "野火IM UIKit原生插件",
-                    "platforms" : "Android",
+                    "platforms" : "Android,iOS",
                     "url" : "",
                     "android_package_name" : "",
                     "ios_bundle_id" : "",
