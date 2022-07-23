@@ -64,7 +64,7 @@ export default {
                     mobile: phone,
                     code: code,
                     clientId: clientId,
-                    platform: 2,
+                    platform: Config.getWFCPlatform(),
                 },
                 header: {
                     'content-type': 'application/json' // 默认值

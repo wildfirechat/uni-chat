@@ -43,8 +43,14 @@ export default class Config {
     static RECALL_REEDIT_TIME_LIMIT = 60;
 
     static getWFCPlatform() {
-        let p = uni.getSystemInfoSync().platform;
-        return p === 'android' ? 2 : 1;
+        let info = uni.getSystemInfoSync();
+        if (info.osName === 'ios'){
+            return info.deviceType === 'phone' ? 1 : 8;
+        }else if (info.os === 'android'){
+            return info.deviceType === 'phone' ? 2 : 9;
+        }else {
+            return 0;
+        }
     }
 
 

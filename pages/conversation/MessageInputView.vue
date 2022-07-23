@@ -10,8 +10,8 @@
                     <textarea ref="textarea" @focus="onInputFocus" :focus="inputFocus" class="wf-input-textarea" v-model="text" placeholder="" hold-keyboard confirm-type="send" @confirm="send(text)" :maxlength="-1" auto-height/>
                 </view>
                 <view @click.prevent="toggleEmoji" class="wf-input-button-icon wxfont emoji"></view>
-                <view v-if="text !== ''" class="wf-input-text-send-button" @touchstart.prevent="" @touchmove.prevent="" @touchend.prevent="send(text)" :style="{ background: text !== '' ? '#4168e0' : '#F7F7F7', color: text !== '' ? '#fff' : '#ddd', 'border-color': text !== '' ? '#1BC418' : '#ddd' }">发送</view>
-                <view v-else @click="toggleExt" class="wf-input-button-icon wxfont add2"></view>
+                <view v-if="!hideSendButton && text !== ''" class="wf-input-text-send-button" @touchstart.prevent="" @touchmove.prevent="" @touchend.prevent="send(text)" :style="{ background: text !== '' ? '#4168e0' : '#F7F7F7', color: text !== '' ? '#fff' : '#ddd', 'border-color': text !== '' ? '#1BC418' : '#ddd' }">发送</view>
+                <view v-if="hideSendButton || text === ''" @click="toggleExt" class="wf-input-button-icon wxfont add2"></view>
             </view>
             <view v-if="showExt" class="wf-ext-container" :style="'height: ' + keyboardHeight + 'px'">
                 <view class="wf-ext-item" v-for="(v, i) in extList" @click="onClickExt(v)" :key="i">
@@ -64,6 +64,7 @@ import wfcUIKit from "../../wfc/uikit/wfcUIKit";
 import emojiStickerConfig from "./emojiStickerConfig";
 import {getItem, setItem} from "../util/storageHelper";
 import StickerMessageContent from "../../wfc/messages/stickerMessageContent";
+import Config from "../../config";
 
 export default {
     name: "MessageInputView",
@@ -78,6 +79,7 @@ export default {
         return {
             emojiStickerList: emojiStickerConfig,
             currentEmojiStickerIndex: 0,
+            hideSendButton: Config.getWFCPlatform() === 1 || Config.getWFCPlatform() === 8,
             showRecorder: false,
             showVoice: false,
             extList: [
