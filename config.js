@@ -46,7 +46,7 @@ export default class Config {
         let info = uni.getSystemInfoSync();
         if (info.osName === 'ios'){
             return info.deviceType === 'phone' ? 1 : 8;
-        }else if (info.os === 'android'){
+        }else if (info.osName === 'android'){
             return info.deviceType === 'phone' ? 2 : 9;
         }else {
             return 0;
