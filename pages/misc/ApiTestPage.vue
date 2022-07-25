@@ -2,6 +2,7 @@
     <div>
         <button @click="setUserEnableReceipt">setUserEnableReceipt</button>
         <button @click="modifyMyInfo">modifyMyInfo</button>
+        <button @click="systemInfo">SystemInfo</button>
     </div>
 
 </template>
@@ -31,6 +32,9 @@ export default {
             }, (err) => {
                 console.log('modifyMyInfo error', err);
             })
+        },
+        systemInfo(){
+            console.log('systemInfo', uni.getSystemInfoSync())
         }
     }
 }
