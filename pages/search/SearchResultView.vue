@@ -300,6 +300,10 @@ export default {
 .search-result-item.conversation .title-desc .desc {
     font-size: 12px;
     color: grey;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .search-result-item.contact button {
