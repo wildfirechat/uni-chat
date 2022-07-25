@@ -95,7 +95,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    max-width: 500px;
+    max-width: 200px;
     min-width: 150px;
 }
 

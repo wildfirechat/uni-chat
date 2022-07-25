@@ -86,7 +86,7 @@ export default {
 
 /*style for v-html */
 .text-message-container .text >>> img {
-    max-width: 400px !important;
+    max-width: 200px !important;
     display: inline-block;
 }
 

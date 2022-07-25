@@ -62,9 +62,9 @@ export default {
     border-radius: 5px;
 }
 
-.video-content-container video {
-    max-height: 400px;
-    max-width: 400px;
+.video-content-container image {
+    max-height: 200px;
+    max-width: 200px;
     border-radius: 5px;
     overflow: hidden;
 }
