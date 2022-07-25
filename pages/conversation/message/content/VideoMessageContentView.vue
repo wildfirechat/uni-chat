@@ -74,7 +74,7 @@ export default {
     left: 50%;
     top: 50%;
     color: white;
-    font-size: 20px;
+    font-size: 60px;
     transform: translate(-50%, -50%);
 }
 
