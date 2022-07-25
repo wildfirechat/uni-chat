@@ -121,12 +121,12 @@ export default {
             contextMenuX: 0,
             contextMenuY: 0,
             contextMenuItems: [],
-            lastScrollTop:0,
-            keyboardHeight:0,
-            currentKeyboardHeight:0,
+            lastScrollTop: 0,
+            keyboardHeight: 0,
+            currentKeyboardHeight: 0,
             scrollTop: 0,
 
-            triggered:false,
+            triggered: false,
 
         };
     },
@@ -150,7 +150,7 @@ export default {
         // #endif
     },
 
-    onShow(){
+    onShow() {
         this.updateConversationTitle();
     },
 
@@ -254,7 +254,7 @@ export default {
             // this.showContextMenu = false;
         },
 
-        test(){
+        test() {
             this.showContextMenu = false;
             uni.hideKeyboard();
         },
@@ -605,6 +605,13 @@ export default {
                     tag: 'recall',
                 })
             }
+            if (this.isQuotable(message)) {
+                this.contextMenuItems.push({
+                    title: '引用',
+                    message: message,
+                    tag: 'quote',
+                })
+            }
             this.showContextMenu = true;
 
             // <!--                    <li v-if="isCopyable(message)">-->
@@ -644,11 +651,13 @@ export default {
                 console.log('wfc delete message', t.message.messageId)
                 wfc.deleteMessage(t.message.messageId);
                 // wfc.deleteMessage(3100);
-            } else if (t.tag === 'forward'){
+            } else if (t.tag === 'forward') {
                 this.forward(t.message)
-            } else if(t.tag === 'recall'){
+            } else if (t.tag === 'recall') {
                 this.recallMessage(t.message);
-            }else {
+            } else if (t.tag === 'quote') {
+                store.quoteMessage(t.message);
+            } else {
                 uni.showToast({
                     title: 'TODO ' + t.title,
                     icon: 'none'
@@ -656,7 +665,7 @@ export default {
             }
         },
 
-        updateConversationTitle(){
+        updateConversationTitle() {
             uni.setNavigationBarTitle({
                 title: this.targetUserOnlineStateDesc ? this.conversationTitle + `(${this.targetUserOnlineStateDesc})` : this.conversationTitle
             });
@@ -667,7 +676,7 @@ export default {
         },
         onRefresh() {
             console.log('onRresh...')
-            if (this._freshing){
+            if (this._freshing) {
                 return;
             }
 
@@ -698,20 +707,20 @@ export default {
             title: this.targetUserOnlineStateDesc ? this.conversationTitle + `(${this.targetUserOnlineStateDesc})` : this.conversationTitle
         });
         this.$scrollToBottom();
-        store.clearConversationUnreadStatus(this.conversationInfo.conversation) ;
+        store.clearConversationUnreadStatus(this.conversationInfo.conversation);
 
         this.keyboardHeight = getItem('keyboardHeight');
         // #ifdef APP-PLUS
         uni.onKeyboardHeightChange(res => {
-            if (this.keyboardHeight !== res.height && res.height > 0){
+            if (this.keyboardHeight !== res.height && res.height > 0) {
                 this.keyboardHeight = res.height;
                 setItem('keyboardHeight', this.keyboardHeight)
             }
-            if (this.$refs.messageInputView){
+            if (this.$refs.messageInputView) {
                 this.$refs.messageInputView.onKeyboardHeightChange(this.keyboardHeight, res.height);
             }
             this.scrollTop = 99919;
-            this.$nextTick(()=> {
+            this.$nextTick(() => {
                 this.scrollTop = 99999;
             })
             // currentKeyboardHeight 显示扩展面板的时候，也应当置上
@@ -766,7 +775,7 @@ export default {
             return null;
         },
 
-        lastMessageId(){
+        lastMessageId() {
             return this.conversationInfo.lastMessage ? this.conversationInfo.lastMessage.messageId : '';
         }
     },

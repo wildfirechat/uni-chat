@@ -7,25 +7,7 @@
                 <img :src="mediaSrc" alt=""
                      @click="onMessageClick">
             </div>
-            <div v-else-if="enableMessagePreview && this.quotedMessage.messageContent.type === 1" class="other-content">
-                <tippy
-                    :to="'messagePreview' + this.message.messageId + this.quotedMessage.messageId + enableMessagePreview"
-                    interactive
-                    :animate-fill="false"
-                    placement="left"
-                    distant="7"
-                    theme="light"
-                    animation="fade"
-                    trigger="click"
-                >
-                    <PreviewQuotedMessageView :message="quotedMessage"/>
-                </tippy>
-                <p
-                    :name="'messagePreview' + this.message.messageId  + this.quotedMessage.messageId + enableMessagePreview">
-                    {{ this.quotedMessageStr }}
-                </p>
-            </div>
-            <p v-else
+            <p
                @click="onMessageClick">
                 {{ this.quotedMessageStr }}
             </p>
@@ -63,11 +45,6 @@ export default {
             required: false,
             default: '',
         },
-        enableMessagePreview: {
-            type: Boolean,
-            required: false,
-            default: false,
-        }
     },
 
     data() {

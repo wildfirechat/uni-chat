@@ -6,11 +6,19 @@
                 <view class="wf-input-voice-container" v-if="showVoice">
                     <view class="wf-input-voice-button" @longpress="startRecord" @touchend="endRecord">按住说话</view>
                 </view>
-                <view v-else class="wf-input-text-container" >
-                    <textarea ref="textarea" @focus="onInputFocus" :focus="inputFocus" class="wf-input-textarea" v-model="text" placeholder="" hold-keyboard confirm-type="send" @confirm="send(text)" :maxlength="-1" auto-height/>
+                <view v-else style="width: 100%">
+                    <view class="wf-input-text-container">
+                        <textarea ref="textarea" @focus="onInputFocus" :focus="inputFocus" class="wf-input-textarea" v-model="text" placeholder="" hold-keyboard confirm-type="send" @confirm="send(text)" :maxlength="-1" auto-height/>
+                    </view>
+                    <view v-if="sharedConversationState.quotedMessage" class="quote-message-container">
+                        <view class="quoted-message single-line">{{sharedConversationState.quotedMessage.messageContent.digest(sharedConversationState.quotedMessage)}}</view>
+                        <view class="cancel icon-ion-close" @click="cancelQuote"></view>
+                    </view>
                 </view>
                 <view @click.prevent="toggleEmoji" class="wf-input-button-icon wxfont emoji"></view>
-                <view v-if="!hideSendButton && text !== ''" class="wf-input-text-send-button" @touchstart.prevent="" @touchmove.prevent="" @touchend.prevent="send(text)" :style="{ background: text !== '' ? '#4168e0' : '#F7F7F7', color: text !== '' ? '#fff' : '#ddd', 'border-color': text !== '' ? '#1BC418' : '#ddd' }">发送</view>
+                <view v-if="!hideSendButton && text !== ''" class="wf-input-text-send-button" @touchstart.prevent="" @touchmove.prevent="" @touchend.prevent="send(text)"
+                      :style="{ background: text !== '' ? '#4168e0' : '#F7F7F7', color: text !== '' ? '#fff' : '#ddd', 'border-color': text !== '' ? '#1BC418' : '#ddd' }">发送
+                </view>
                 <view v-if="hideSendButton || text === ''" @click="toggleExt" class="wf-input-button-icon wxfont add2"></view>
             </view>
             <view v-if="showExt" class="wf-ext-container" :style="'height: ' + keyboardHeight + 'px'">
@@ -27,10 +35,10 @@
 
             <!--                </view>-->
             <!--            </scroll-view>-->
-            <view v-if="showEmoji" class="wf-stickers-container" :style="'height: ' + keyboardHeight + 'px'" >
+            <view v-if="showEmoji" class="wf-stickers-container" :style="'height: ' + keyboardHeight + 'px'">
                 <view class="category-container">
                     <view class="category" v-for="(v, i) in emojiStickerList" :key="i" @click="onCategoryClick(i)">
-                        <img :src="v.poster" v-bind:class="{active: i === currentEmojiStickerIndex}" >
+                        <img :src="v.poster" v-bind:class="{active: i === currentEmojiStickerIndex}">
                     </view>
                 </view>
                 <scroll-view v-if="currentEmojiStickerIndex === 0" :scroll-y="true" class="wf-emoji-container" :style="'height: ' + (keyboardHeight - 60) + 'px'">
@@ -62,9 +70,9 @@ import store from "../../store";
 import ConversationType from "../../wfc/model/conversationType";
 import wfcUIKit from "../../wfc/uikit/wfcUIKit";
 import emojiStickerConfig from "./emojiStickerConfig";
-import {getItem, setItem} from "../util/storageHelper";
 import StickerMessageContent from "../../wfc/messages/stickerMessageContent";
 import Config from "../../config";
+import QuoteInfo from "../../wfc/model/quoteInfo";
 
 export default {
     name: "MessageInputView",
@@ -133,6 +141,7 @@ export default {
             // chatWindowData:[],
             localData: {},
             sharedMiscState: store.state.misc,
+            sharedConversationState: store.state.conversation,
         };
     },
 
@@ -143,6 +152,12 @@ export default {
         send() {
             if (this.text) {
                 let textMessageContent = new TextMessageContent(this.text)
+                let quotedMessage = this.sharedConversationState.quotedMessage;
+                if (quotedMessage) {
+                    let quoteInfo = QuoteInfo.initWithMessage(quotedMessage);
+                    textMessageContent.setQuoteInfo(quoteInfo);
+                    store.quoteMessage(null);
+                }
                 wfc.sendConversationMessage(this.conversationInfo.conversation, textMessageContent);
                 this.text = '';
             }
@@ -158,7 +173,7 @@ export default {
             this.sharedMiscState.isRecording = false;
         },
 
-        minimizeMessageInputView(){
+        minimizeMessageInputView() {
             this.showEmoji = false;
             this.showExt = false;
             // 没有 blur 这个方法，奇怪。。。
@@ -166,9 +181,9 @@ export default {
             //uni.hideKeyboard();
         },
 
-        onInputFocus(){
-          this.showEmoji = false;
-          this.showExt = false;
+        onInputFocus() {
+            this.showEmoji = false;
+            this.showExt = false;
         },
 
         toggleVoice() {
@@ -311,13 +326,21 @@ export default {
             )
         },
 
-        onKeyboardHeightChange(keyboardHeight, currentKeyboardHeight){
+        onKeyboardHeightChange(keyboardHeight, currentKeyboardHeight) {
             this.keyboardHeight = keyboardHeight;
             this.currentKeyboardHeight = currentKeyboardHeight;
+        },
+
+        cancelQuote(){
+            store.quoteMessage(null);
         }
     },
-    computed:{
-        inputFocus(){
+    computed: {
+        // quotedMessage() {
+        //     lastQuotedMessage = this.sharedConversationState.quotedMessage;
+        //     return this.sharedConversationState.quotedMessage;
+        // },
+        inputFocus() {
             return !this.showExt && !this.showEmoji && !this.showVoice;
         }
     }
@@ -394,7 +417,7 @@ export default {
     display: flex;
     width: 100%;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-around;
     border: 1rpx #ddd solid;
     border-left: none;
@@ -407,7 +430,6 @@ export default {
 
 .wf-input-text-container {
     overflow: auto;
-    width: 100%;
     margin: 0 12rpx;
     min-height: 75rpx;
     background-color: #fff;
@@ -415,6 +437,29 @@ export default {
     padding-top: 18rpx;
     max-height: 225rpx;
     box-sizing: border-box;
+}
+
+.quote-message-container{
+    overflow: auto;
+    display: flex;
+    background: #EBEFEF;
+    align-content: center;
+    position: relative;
+    margin: 0 12rpx;
+    padding: 5px;
+    border-radius: 24rpx;
+}
+.quote-message-container .quoted-message{
+    max-width: 250px;
+}
+
+.quote-message-container .cancel{
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 0 5px;
+    color: grey;
+    transform: translate(0, 50%);
 }
 
 .wf-message-input-container .wf-input-textarea {
@@ -549,6 +594,7 @@ export default {
     border-radius: 5px;
     object-fit: contain;
 }
+
 .wf-stickers-container .category img.active {
     background: lightgrey;
 }
@@ -573,7 +619,7 @@ export default {
     border-radius: 5px;
 }
 
-.sticker-item:active{
+.sticker-item:active {
     background: lightgrey;
 }
 
