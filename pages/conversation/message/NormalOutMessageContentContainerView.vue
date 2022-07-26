@@ -256,6 +256,7 @@ export default {
 .message-time-container .receipt {
     margin-right: 70px;
     font-size: 12px;
+    margin-top: -10px;
     color: #b4b4b4;
 }
 

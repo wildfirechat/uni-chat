@@ -58,6 +58,7 @@ export default {
         login(phone, code) {
             let appServer = Config.APP_SERVER + '/login';
             let clientId = wfc.getClientId();
+            console.log('login', wfc.getClientId(), Config.getWFCPlatform());
             uni.request({
                 url: appServer,
                 data: {
