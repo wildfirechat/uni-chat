@@ -44,10 +44,11 @@ export default class Config {
 
     static getWFCPlatform() {
         let info = uni.getSystemInfoSync();
-        if (info.osName === 'ios'){
-            return info.deviceType === 'phone' ? 1 : 8;
-        }else if (info.osName === 'android'){
-            return info.deviceType === 'phone' ? 2 : 9;
+        console.log('systemInfo', info);
+        if (info.osName === 'ios' || info.platform === 'ios'){
+            return info.deviceType !== 'phone' ? 8 : 1;
+        }else if (info.osName === 'android' || info.platform === 'android'){
+            return info.deviceType !== 'phone' ? 9 : 2;
         }else {
             return 0;
         }
