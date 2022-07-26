@@ -7,8 +7,7 @@
                 <img :src="mediaSrc" alt=""
                      @click="onMessageClick">
             </div>
-            <p
-               @click="onMessageClick">
+            <p v-else @click="onMessageClick">
                 {{ this.quotedMessageStr }}
             </p>
         </div>

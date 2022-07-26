@@ -29,7 +29,6 @@
                                           v-if="quotedMessage"
                                           :message="message"
                                           :quoted-message="quotedMessage"
-                                          :enable-message-preview="true"
                                           :message-digest="this.message.messageContent.quoteInfo.messageDigest"
                                           :show-close-button="false"/>
                     </div>
