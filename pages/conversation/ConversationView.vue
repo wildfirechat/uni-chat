@@ -793,7 +793,6 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: white;
     /*border-left: 1px solid #e6e6e6;*/
 }
 
@@ -803,7 +802,7 @@ export default {
     height: 100vh;
     overflow: hidden;
     flex-direction: column;
-    /*background-color: #f3f3f3;*/
+    background-color: #f3f3f3;
     /*padding: 0 12px;*/
 }
 

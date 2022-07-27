@@ -154,6 +154,7 @@ export default {
 .conversation-list {
     height: 100vh;
     overflow: auto;
+    background: #f3f3f3;
 }
 
 .conversation-list .top {
