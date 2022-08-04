@@ -57,6 +57,7 @@ import MarkUnreadMessageContent from "../messages/markUnreadMessageContent";
 import LinkMessageContent from "../messages/linkMessageContent";
 import FriendAddedNotification from "../messages/notification/friendAddedNotification";
 import FriendGreetingNotification from "../messages/notification/friendGreetingNotification";
+import PcLoginRequestMessageContent from "../messages/pcLoginRequestMessageContent";
 
 export default class MessageConfig {
     static getMessageContentClazz(type) {
@@ -410,6 +411,12 @@ export default class MessageConfig {
             flag: PersistFlag.No_Persist,
             type: MessageContentType.Mark_Unread_Sync,
             contentClazz: MarkUnreadMessageContent,
+        },
+        {
+            name: 'pcLoginRequest',
+            flag: PersistFlag.No_Persist,
+            type: MessageContentType.PC_Login_Request,
+            contentClazz: PcLoginRequestMessageContent,
         }
     ];
 }
