@@ -17,8 +17,8 @@ FOUNDATION_EXPORT const unsigned char WFAVEngineKitVersionString[];
 #import <Foundation/Foundation.h>
 #import <WebRTC/WebRTC.h>
 #import <WFChatClient/WFCChatClient.h>
+#import <WFAVEngineKit/WFAVCallSession.h>
 #import <PushKit/PushKit.h>
-
 
 @class WFAVCallSession;
 
@@ -164,7 +164,7 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
 
  @param session 通话Session
  */
-- (void)didReceiveCall:(WFAVCallSession *)session;
+- (void)didReceiveCall:(WFAVCallSession *_Nonnull)session;
 
 /**
  播放铃声的回调
@@ -202,16 +202,35 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
  */
 - (void)didChangeState:(WFAVEngineState)state;
 
-//多人音视频版本会调用到
+/**
+新参与者加入进来的回调
+
+@param userId 新参与者的用户ID
+*/
 - (void)didParticipantJoined:(NSString *_Nonnull)userId screenSharing:(BOOL)screenSharing;
 
-//多人音视频版本会调用到
+/**
+用户音视频接通的回调
+
+@param userId 用户ID
+*/
 - (void)didParticipantConnected:(NSString *_Nonnull)userId screenSharing:(BOOL)screenSharing;
 
-//多人音视频版本会调用到
+/**
+用户离开的回调
+
+@param userId 用户ID
+@param reason 离开原因
+*/
 - (void)didParticipantLeft:(NSString *_Nonnull)userId screenSharing:(BOOL)screenSharing withReason:(WFAVCallEndReason)reason;
 
+/**
+发起者角色发生改变，当发起者离开后会选举出新的发起者。
+实现方法是当发起者离开后找出接听最早的用户当发起者，如果都没有接听，回调参数为nil，当第一个人接听时，切换为发起者。
 
+@param initiator 发起者用户ID
+*/
+- (void)didChangeInitiator:(NSString *_Nullable)initiator;
 
 /**
  通话结束的回调
@@ -225,7 +244,7 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
 
  @param error 错误
  */
-- (void)didError:(NSError *)error;
+- (void)didError:(NSError *_Nonnull)error;
 
 /**
  通话模式发生变化的回调
@@ -239,14 +258,14 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
 
  @param stats 统计信息
  */
-- (void)didGetStats:(NSArray *)stats;
+- (void)didGetStats:(NSArray *_Nonnull)stats;
 
 /**
  创建本地视频流的回调
 
  @param localVideoTrack 本地视频流
  */
-- (void)didCreateLocalVideoTrack:(RTCVideoTrack *)localVideoTrack;
+- (void)didCreateLocalVideoTrack:(RTCVideoTrack *_Nonnull)localVideoTrack;
 
 /**
  收到对方视频流的回调
@@ -257,6 +276,13 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
  */
 - (void)didReceiveRemoteVideoTrack:(RTCVideoTrack * _Nonnull)remoteVideoTrack fromUser:(NSString *_Nonnull)userId screenSharing:(BOOL)screenSharing;
 
+/**
+用户视频mute状态改变，多人视频才会
+
+@param videoMuted 是否muted
+@param userId 用户Id
+*/
+- (void)didVideoMuted:(BOOL)videoMuted fromUser:(NSString *_Nonnull)userId;
 
 @optional
 /**
@@ -313,6 +339,18 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
  发起屏幕共享失败
  */
 - (void)onScreenSharingFailure;
+
+/* 此属性没有意义，仅为了兼容UI代码 */
+- (RTCVideoFrame *_Nonnull)didCaptureVideoFrame:(RTCVideoFrame *_Nonnull)frame screenSharing:(BOOL)isScreenSharing;
+@end
+
+@protocol WFAVExternalFrameDelegate <NSObject>
+- (void)didCaptureVideoFrame:(nonnull RTCVideoFrame *)frame;
+@end
+
+@protocol WFAVExternalVideoSource <NSObject>
+- (void)startCapture:(id<WFAVExternalFrameDelegate>_Nonnull)delegate;
+- (void)stopCapture;
 @end
 
 #pragma mark - 通话引擎
@@ -340,12 +378,12 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
 @property(nonatomic, assign, readonly)BOOL supportMultiCall;
 
 /*
- 最大音频通话路数，单人音视频默认为2，无法修改。
+ 最大音频通话路数，默认为16路
  */
 @property(nonatomic, assign)int maxAudioCallCount;
 
 /*
-最大视频通话路数，单人音视频默认为2，无法修改。
+最大视频通话路数，默认为4路
 */
 @property(nonatomic, assign)int maxVideoCallCount;
 
@@ -371,11 +409,6 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
             password:(NSString *)password;
 
 /**
- 是否启用统计功能
- */
-@property(nonatomic, assign) BOOL shouldGetStats;
-
-/**
  全局的通话事件监听
  */
 @property(nonatomic, weak) id<WFAVEngineDelegate> delegate;
@@ -388,7 +421,7 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
 /**
  发起通话
 
- @param targetIds 接收用户ID，本sdk只支持一个用户
+ @param targetIds 对方用户ID
  @param conversation 通话所在会话
  @param callExtra 通话附加信息
  @param sessionDelegate 通话Session的监听
@@ -400,20 +433,22 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
                   conversation:(WFCCConversation *)conversation
                sessionDelegate:(id<WFAVCallSessionDelegate>)sessionDelegate;
 
-
 /* 是否支持音视频会议 */
 @property(nonatomic, assign, readonly)BOOL supportConference;
 
-/* 此函数没有意义，仅为了兼容UI代码 */
+/* 为了兼容视频会议UI，本功能未实现*/
 - (void)listConference:(void(^_Nullable)(NSArray<NSDictionary *> * _Nullable conferences))successBlock
                  error:(void(^_Nullable)(int error_code))errorBlock;
 
 /* 此属性没有意义，仅为了兼容UI代码 */
 @property(nonatomic, assign) BOOL disableDualStreamMode;
 
+
 /* 此属性没有意义，仅为了兼容UI代码 */
 @property(nonatomic, assign)BOOL screenSharingReplaceMode;
 
+/* 此属性没有意义，仅为了兼容UI代码 */
+@property(nonatomic, assign) BOOL forceUseEAGLView;
 
 /* 此函数没有意义，仅为了兼容UI代码 */
 - (WFAVCallSession *_Nonnull)startConference:(NSString *_Nullable)callId
@@ -428,7 +463,7 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
                                       record:(BOOL)record
                              sessionDelegate:(id<WFAVCallSessionDelegate>_Nonnull)sessionDelegate;
 
-/* 此函数没有意义，仅为了兼容UI代码 */
+/* 为了兼容视频会议UI，本功能未实现*/
 - (WFAVCallSession *_Nonnull)joinConference:(NSString *_Nonnull)callId
                                   audioOnly:(BOOL)audioOnly
                                         pin:(NSString *_Nonnull)pin
@@ -441,6 +476,7 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
                                   muteAudio:(BOOL)muteAudio
                                   muteVideo:(BOOL)muteVideo
                              sessionDelegate:(id<WFAVCallSessionDelegate>_Nonnull)sessionDelegate;
+
 
 /**
  开启画面预览
@@ -467,6 +503,16 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
 - (void)dismissViewController:(UIViewController *)viewController;
 @end
 
+/*!
+ 兼容专业版，实际无意义
+ */
+typedef NS_ENUM(NSInteger, WFAVVideoType) {
+    WFAVVideoType_None,
+    WFAVVideoType_BigStream,
+    WFAVVideoType_SmallStream
+};
+
+
 @interface WFAVParticipantProfile : NSObject
 @property(nonatomic, strong, readonly)NSString *userId;
 @property(nonatomic, assign, readonly)long long startTime;
@@ -475,6 +521,10 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
 @property(nonatomic, assign, readonly)BOOL audioMuted;
 @property(nonatomic, assign, readonly)BOOL audience;
 @property(nonatomic, assign, readonly)BOOL screeSharing;
+//兼容专业版，实际无意义
+@property(nonatomic, strong, readonly)NSString * _Nullable callExtra;
+//兼容专业版，实际无意义
+@property(nonatomic, assign, readonly)WFAVVideoType videoType;
 @end
 
 #pragma mark - 通话Session
@@ -489,9 +539,9 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
 @property(nonatomic, strong, readonly) NSString *callId;
 
 /**
- 对方的用户ID
- */
-@property(nonatomic, strong, readonly) NSString *clientId;
+发起者用户ID
+*/
+@property(nonatomic, strong) NSString *initiator;
 
 /**
 邀请者用户ID，与initiator的区别是：initiator是当前通话的管理者，全局只有同一个用户，如果initiator退出，会选举出新的initiator；
@@ -540,9 +590,20 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
 @property(nonatomic, assign, readonly)WFAVCallEndReason endReason;
 
 /**
- 是否是扬声器
+ 是否是扬声器开启
  */
 @property(nonatomic, assign, getter=isSpeaker, readonly)BOOL speaker;
+
+/**
+是否是关掉视频
+*/
+@property(nonatomic, assign, getter=isVideoMuted, readonly) BOOL videoMuted;
+
+/**
+是否是关掉音频
+*/
+@property(nonatomic, assign, getter=isAudioMuted, readonly) BOOL audioMuted;
+
 
 /**
 是否是会议
@@ -558,6 +619,17 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
 会议新加入成名缺省状态，是否观众，仅当会议有效
 */
 @property(nonatomic, assign) BOOL defaultAudience;
+
+/**
+ 仅当会议有效
+*/
+@property(nonatomic, assign) WFAVVideoType defaultVideoType;
+
+/**
+ 仅当会议有效
+*/
+@property(nonatomic, assign) BOOL autoSwitchVideoType;
+
 
 /**
 是否高级会议模式，仅当会议有效
@@ -589,6 +661,9 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
  */
 @property(nonatomic, assign, getter=isInAppScreenSharing)BOOL inAppScreenSharing;
 
+/* 此属性没有意义，仅为了兼容UI代码 */
+@property(nonatomic, strong)id<WFAVExternalVideoSource> _Nullable externalVideoSource;
+
 /**
 呼叫附加信息
 */
@@ -598,35 +673,6 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
  Call uuid。如果使用callkit，需要在接听之前设置uuid（SDK会监听来电，如果非当前电话接通会自动挂断）。
  */
 @property(nonatomic, strong) NSUUID *callUUID;
-
-/**
-通话成员（不包含自己）
-*/
-@property(nonatomic, assign, readonly)NSArray<NSString *> *participantIds;
-@property(nonatomic, assign, readonly)NSString *initiator;
-
-- (BOOL)isParticipant:(NSString *)userId;
-
-/**
-通话成员（不包含自己）
-*/
-@property(nonatomic, assign, readonly) NSArray<WFAVParticipantProfile *> *participants;
-@property(nonatomic, assign, readonly) WFAVParticipantProfile *myProfile;
-//***兼容高级版音视频***
-- (WFAVParticipantProfile *_Nullable)profileOfUser:(NSString *_Nonnull)userId isScreenSharing:(BOOL)isScreenSharing;
-
-- (void)inviteNewParticipants:(NSArray<NSString *>*)targetIds;
-- (void)inviteNewParticipants:(NSArray<NSString *> *)newUserIds targetClientId:(NSString *)targetClientId autoAnswer:(BOOL)autoAnswer;
-/**
-是否是关掉视频
-*/
-@property(nonatomic, assign, getter=isVideoMuted, readonly) BOOL videoMuted;
-
-/**
-是否是关掉音频
-*/
-@property(nonatomic, assign, getter=isAudioMuted, readonly) BOOL audioMuted;
-
 /**
  接听通话
  */
@@ -681,6 +727,39 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
 - (BOOL)isHeadsetPluggedIn;
 
 /**
+邀请更多人加入群聊
+*/
+- (void)inviteNewParticipants:(NSArray<NSString *> *)newUserIds;
+
+/**
+邀请更多人加入群聊
+*/
+- (void)inviteNewParticipants:(NSArray<NSString *> *)newUserIds targetClientId:(NSString *)targetClientId autoAnswer:(BOOL)autoAnswer;
+
+/**
+是否是通话成员
+*/
+- (BOOL)isParticipant:(NSString *)userId;
+
+/**
+通话成员（不包含自己）
+*/
+@property(nonatomic, assign, readonly) NSArray<NSString *> *participantIds;
+
+/**
+通话成员（不包含自己）
+*/
+@property(nonatomic, assign, readonly) NSArray<WFAVParticipantProfile *> *participants;
+
+/**
+通话成员（不包含自己）
+*/
+@property(nonatomic, assign, readonly) WFAVParticipantProfile *myProfile;
+
+//***兼容高级版音视频***
+- (WFAVParticipantProfile *_Nullable)profileOfUser:(NSString *_Nonnull)userId isScreenSharing:(BOOL)isScreenSharing;
+
+/**
  设置本地视频视图Container
  
  @param videoContainerView 本地视频视图Container
@@ -696,6 +775,8 @@ typedef NS_ENUM(NSInteger, WFAVCallEndReason) {
  */
 - (void)setupRemoteVideoView:(UIView * _Nullable)videoContainerView scalingType:(WFAVVideoScalingType)scalingType forUser:(NSString * _Nonnull)userId screenSharing:(BOOL)screenSharing;
 
+/* 此函数没有意义，仅为了兼容UI代码 */
+- (void)setParticipant:(NSString * _Nonnull)userId screenSharing:(BOOL)isScreenSharing videoType:(WFAVVideoType)videoType;
 
 /* 此函数没有意义，仅为了兼容UI代码 */
 - (void)leaveConference:(BOOL)destroy;

@@ -39,6 +39,7 @@
                 }
             ],
             "frameworks": [
+                "Bugly.framework",
                 "WFClientUniPlugin.xcframework",
                 "WFChatClient.xcframework"
             ],
