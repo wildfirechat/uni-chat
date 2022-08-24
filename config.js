@@ -42,16 +42,21 @@ export default class Config {
      */
     static RECALL_REEDIT_TIME_LIMIT = 60;
 
+    static platform = -1;
     static getWFCPlatform() {
+        if (Config.platform){
+           return Config.platform;
+        }
         let info = uni.getSystemInfoSync();
         console.log('systemInfo', info);
         if (info.osName === 'ios' || info.platform === 'ios'){
-            return info.deviceType !== 'phone' ? 8 : 1;
+            Config.platform = info.deviceType !== 'phone' ? 8 : 1;
         }else if (info.osName === 'android' || info.platform === 'android'){
-            return info.deviceType !== 'phone' ? 9 : 2;
+            Config.platform = info.deviceType !== 'phone' ? 9 : 2;
         }else {
-            return 0;
+            Config.platform = 0;
         }
+        return Config.platform;
     }
 
 
