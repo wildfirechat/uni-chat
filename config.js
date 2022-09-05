@@ -44,7 +44,7 @@ export default class Config {
 
     static platform = -1;
     static getWFCPlatform() {
-        if (Config.platform){
+        if (Config.platform > 0){
            return Config.platform;
         }
         let info = uni.getSystemInfoSync();
