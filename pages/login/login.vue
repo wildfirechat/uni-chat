@@ -13,7 +13,7 @@
             <view>请输入验证码</view>
             <view class="auth-code-container">
                 <input @input="bindCodeInput" type="number" placeholder="验证码"></input>
-                <button :disabled="phone.length !== 11" @tap="bindLoginTap">获取验证码</button>
+                <button :disabled="phone.length !== 11" @tap="bindAuthCodeTap">获取验证码</button>
             </view>
         </view>
 
