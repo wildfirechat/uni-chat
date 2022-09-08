@@ -5,8 +5,8 @@
 本应用默认连接野火官方服务，也可以自己部署服务。如果想要私有部署服务，请按照[服务器快速部署](https://docs.wildfirechat.cn/quick_start/server.html)来部署服务到您自己的服务器。
 
 ## 配置
-1. 插件市场搜索[野火IM原生插件](https://ext.dcloud.net.cn/plugin?id=7895)，并购买(插件是免费的!)
-2. HBuilderX 原生插件配置，选择云端插件，并选中野火IM原生插件
+1. 插件市场搜索[野火即时通讯IM原生插件](https://ext.dcloud.net.cn/plugin?id=7895)和[野火实时音视频RTC原生插件](https://ext.dcloud.net.cn/plugin?id=9364)，并购买(插件是免费的!)
+2. HBuilderX 原生插件配置，选择云端插件，并选中购买的野火插件
 3. 如果使用野火官方服务，直接编译运行即可。如果使用自己私有部署IM服务，需要在[config.js](./config.js)配置应用服务地址和IM服务地址。修改如下配置：
     ```
     //应用服务地址
