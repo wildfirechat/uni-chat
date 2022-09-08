@@ -1,5 +1,3 @@
-import {na} from "../../vendor/pinyin/data/dict-zi-web";
-
 const uniWfcUIKit = uni.requireNativePlugin("wf-uni-wfc-uikit");
 
 export class WfcUIKit {
