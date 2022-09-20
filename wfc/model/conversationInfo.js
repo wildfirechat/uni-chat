@@ -5,7 +5,7 @@
 import Conversation from "./conversation";
 import Message from "../messages/message";
 import wfc from '../client/wfc'
-import {eq} from '../util/longUtil'
+import {eq, gt} from '../util/longUtil'
 
 import ConversationType from "./conversationType";
 
@@ -15,7 +15,7 @@ export default class ConversationInfo {
     timestamp = 0;
     draft = '';
     unreadCount = {};
-    isTop = false;
+    top = 0;
     isSilent = false;
 
     // TODO cache, maybe userInfo, groupInfo
@@ -23,12 +23,17 @@ export default class ConversationInfo {
 
     static protoConversationToConversationInfo(obj) {
         let conversationInfo = Object.assign(new ConversationInfo(), obj);
+        conversationInfo.top = obj.isTop;
+        delete conversationInfo.isTop;
         if(obj.conversation){
             conversationInfo.conversation = new Conversation(obj.conversation.type, obj.conversation.target, obj.conversation.line);
         }else{
             conversationInfo.conversation = new Conversation(obj.conversationType, obj.target, obj.line);
         }
         conversationInfo.lastMessage = Message.fromProtoMessage(obj.lastMessage);
+        if (conversationInfo.draft && conversationInfo.lastMessage && gt(conversationInfo.lastMessage.timestamp, 0)) {
+            conversationInfo.timestamp = conversationInfo.lastMessage.timestamp;
+        }
         return conversationInfo;
     }
 

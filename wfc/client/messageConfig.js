@@ -58,6 +58,11 @@ import LinkMessageContent from "../messages/linkMessageContent";
 import FriendAddedNotification from "../messages/notification/friendAddedNotification";
 import FriendGreetingNotification from "../messages/notification/friendGreetingNotification";
 import PcLoginRequestMessageContent from "../messages/pcLoginRequestMessageContent";
+import StartSecretChatNotification from "../messages/notification/startSecretChatNotification";
+import MultiCallOngoingMessageContent from "../av/messages/multiCallOngoingMessageContent";
+import JoinCallRequestMessageContent from "../av/messages/joinCallRequestMessageContent";
+import RichNotificationMessageContent from "../messages/notification/richNotificationMessageContent";
+import ArticlesMessageContent from "../messages/articlesMessageContent";
 
 export default class MessageConfig {
     static getMessageContentClazz(type) {
@@ -407,6 +412,18 @@ export default class MessageConfig {
             contentClazz: ConferenceKickoffMemberMessageContent,
         },
         {
+            name: 'multiCallOngoing',
+            flag: PersistFlag.Transparent,
+            type: MessageContentType.VOIP_Multi_Call_Ongoing,
+            contentClazz: MultiCallOngoingMessageContent,
+        },
+        {
+            name: 'joinCallRequest',
+            flag: PersistFlag.Transparent,
+            type: MessageContentType.VOIP_Join_Call_Request,
+            contentClazz: JoinCallRequestMessageContent,
+        },
+        {
             name: 'markUnreadMessage',
             flag: PersistFlag.No_Persist,
             type: MessageContentType.Mark_Unread_Sync,
@@ -417,6 +434,42 @@ export default class MessageConfig {
             flag: PersistFlag.No_Persist,
             type: MessageContentType.PC_Login_Request,
             contentClazz: PcLoginRequestMessageContent,
+        },
+        {
+            name: 'startSecretChat',
+            flag: PersistFlag.Persist_And_Count,
+            type: MessageContentType.StartSecretChat_Notification,
+            contentClazz: StartSecretChatNotification,
+        },
+        {
+            name: 'richNotification',
+            flag: PersistFlag.Persist_And_Count,
+            type: MessageContentType.Rich_Notification,
+            contentClazz: RichNotificationMessageContent,
+        },
+        {
+            name: 'articlesMessageContent',
+            flag: PersistFlag.Persist_And_Count,
+            type: MessageContentType.Articles,
+            contentClazz: ArticlesMessageContent,
+        },
+        {
+            name: 'channelMenuEventMessageContent',
+            flag: PersistFlag.Transparent,
+            type: MessageContentType.Channel_Menu_Event,
+            contentClazz: ArticlesMessageContent,
+        },
+        {
+            name: 'enterChannelChatMessageContent',
+            flag: PersistFlag.Transparent,
+            type: MessageContentType.Enter_Channel_Chat,
+            contentClazz: ArticlesMessageContent,
+        },
+        {
+            name: 'leaveChannelChatMessageContent',
+            flag: PersistFlag.Transparent,
+            type: MessageContentType.Leave_Channel_Chat,
+            contentClazz: ArticlesMessageContent,
         }
     ];
 }
