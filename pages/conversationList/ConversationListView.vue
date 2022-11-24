@@ -116,7 +116,7 @@ export default {
                     store.removeConversation(t.conversationInfo.conversation);
                     break;
                 case 'top':
-                    store.setConversationTop(t.conversationInfo.conversation, !t.conversationInfo.isTop);
+                    store.setConversationTop(t.conversationInfo.conversation, t.conversationInfo.top > 0 ? 0 : 1);
                     break;
                 case 'silent':
                     store.setConversationSilent(t.conversationInfo.conversation, !t.conversationInfo.isSilent);
