@@ -5,7 +5,7 @@
                 @click="showConversation(conversationInfo)"
                 v-for="conversationInfo in sharedConversationState.conversationInfoList"
                 :key="conversationInfoKey(conversationInfo)"
-                v-bind:class="{top:conversationInfo.isTop }"
+                v-bind:class="{top:conversationInfo.top }"
             >
                 <ConversationItemView :conversation-info="conversationInfo" @longpress.native="showConversationContextMenu($event, conversationInfo)"/>
             </view>
@@ -84,7 +84,7 @@ export default {
             this.contextMenuItems = [];
 
             this.contextMenuItems.push({
-                title: conversationInfo.isTop ? '取消置顶' : '置顶',
+                title: conversationInfo.top ? '取消置顶' : '置顶',
                 tag: 'top',
                 conversationInfo: conversationInfo,
             })
