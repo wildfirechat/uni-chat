@@ -47,7 +47,7 @@ export default {
                 console.error('!!!! 严重错误!!!! Config.APP_SERVER 和 Config.IM_SERVER_HOST要一起修改，不能一个用官方服务，一个用自己部署的服务');
         } else if(Config.IM_SERVER_HOST.indexOf(':') >= 0){
             console.error('!!!! 严重错误!!!! Config.IM_SERVER_HOST 不能包含端口，只需要 HOST 即可');
-        } else if(Config.IM_SERVER_HOST.indexOf('http')){
+        } else if(Config.IM_SERVER_HOST.indexOf('http') >= 0){
             console.error('!!!! 严重错误!!!! Config.IM_SERVER_HOST 不能包含http，只需要 HOST 即可');
         }
     },
