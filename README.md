@@ -9,10 +9,11 @@
 2. HBuilderX 原生插件配置，选择云端插件，并选中购买的野火插件
 3. 如果使用野火官方服务，直接编译运行即可。如果使用自己私有部署IM服务，需要在[config.js](./config.js)配置应用服务地址和IM服务地址。修改如下配置：
     ```
+    // 下面两个配置都要一起修复，否则登录进去之后，会马上退回登录界面
     //应用服务地址
     static APP_SERVER = 'http//wildfirechat.net:8888';
 
-    //IM 服务Host
+    //IM 服务Host，不能包含 http 前缀或者端口
     static IM_SERVER_HOST = 'wildfirechat.net';
     ```
 

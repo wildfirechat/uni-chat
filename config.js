@@ -18,7 +18,8 @@ export default class Config {
     //static APP_SERVER = 'http://wildfirechat.net:8888';
     static APP_SERVER = 'https://app.wildfirechat.net';
 
-	  static IM_SERVER_HOST = 'wildfirechat.net';
+    // IM SERVER 的 host 地址，一定要和 APP_SERVER 对应起来，即 APP_SERVER 上配置的 im-server 和下面所配置的im-server 是同一个
+	static IM_SERVER_HOST = 'wildfirechat.net:80';
 
     static QR_CODE_PREFIX_PC_SESSION = "wildfirechat://pcsession/";
     // turn server 配置，可以添加多个
