@@ -23,7 +23,7 @@ export default class Config {
 
     static QR_CODE_PREFIX_PC_SESSION = "wildfirechat://pcsession/";
     // turn server 配置，可以添加多个
-    static ICE_SERVERS = [{uri: 'turn:turn.wildfirechat.net:3478', userName: 'wfchat', password: 'wfchat'}];
+    static ICE_SERVERS = [{uri: 'turn:turn.wildfirechat.net:3478', userName: 'wfchat', password: 'wfchat1'}];
     static LANGUAGE = 'zh_CN';
 
     static SDK_PLATFORM_WINDOWS = 3;
