@@ -2,10 +2,10 @@
 支持Android和iOS端，使用了***野火UniApp原生插件***(在UniApp的插件市场搜索“野火IM原生插件”)。
 
 ## 部署服务端
-本应用默认连接野火官方服务，也可以自己部署服务。如果想要私有部署服务，请按照[服务器快速部署](https://docs.wildfirechat.cn/quick_start/server.html)来部署服务到您自己的服务器。
+本应用默认连接野火官方服务，也可以自己部署服务。如果想要私有部署服务，请按照 [服务器快速部署](https://docs.wildfirechat.cn/quick_start/server.html) 来部署服务到您自己的服务器。
 
 ## 配置
-1. 插件市场搜索[野火即时通讯IM原生插件](https://ext.dcloud.net.cn/plugin?id=7895)和[野火实时音视频RTC原生插件](https://ext.dcloud.net.cn/plugin?id=9364)，并购买(插件是免费的!)
+1. 插件市场搜索[野火即时通讯IM原生插件](https://ext.dcloud.net.cn/plugin?id=7895) 和 [野火实时音视频RTC原生插件](https://ext.dcloud.net.cn/plugin?id=9364) ，并购买(插件是免费的!)
 2. HBuilderX 原生插件配置，选择云端插件，并选中购买的野火插件
 3. 如果使用野火官方服务，直接编译运行即可。如果使用自己私有部署IM服务，需要在[config.js](./config.js)配置应用服务地址和IM服务地址。修改如下配置：
     ```
@@ -25,6 +25,10 @@
 
 ## 移植到其它应用
 如果要在现有项目中使用野火原生插件，需要把[wfc](./wfc)目录和[config.js](./config.js)配置文件一同拷贝到现有项目，然后添加***野火UniApp原生插件***。现有项目使用[wfc](./wfc)目录下的[wfc.js](./wfc/client/wfc.js)接口文件。
+
+## 抓取原生插件的日志
+1. ```Android```端，可以通过```adb logcat > wfc.log```进行抓去日志，如果提示找不到```adb```命令，请参考 [这儿](https://uniapp.dcloud.net.cn/tutorial/run/run-app-faq.html)
+2. ```iOS```端，请连接```Xcode```抓取
 
 ## 应用截图
 会话列表
