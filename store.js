@@ -202,6 +202,7 @@ let store = {
                 _reset();
             } else if (status === ConnectionStatus.ConnectionStatusSecretKeyMismatch
                 || status === ConnectionStatus.ConnectionStatusLogout
+                || status === ConnectionStatus.kConnectionStatusKickedOff
                 || status === ConnectionStatus.ConnectionStatusTokenIncorrect
                 || status === ConnectionStatus.ConnectionStatusRejected) {
                 removeItem("userId");
