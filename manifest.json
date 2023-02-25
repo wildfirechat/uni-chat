@@ -63,8 +63,8 @@
         "nativePlugins" : {
             "wf-uni-wfc-client" : {
                 "__plugin_info__" : {
-                    "name" : "【官方】野火IM原生插件",
-                    "description" : "野火IM官方发布移动端原生插件",
+                    "name" : "【官方】野火即时通讯IM原生插件",
+                    "description" : "野火官方发布移动端即时通讯插件，包括Android和iOS平台，拥有完善的Demo，支持单人、群组和聊天室会话，支持文字、语音、图片等常见消息，服务器和移动端免费使用，让您一步拥有完美的即时通讯软件。",
                     "platforms" : "Android,iOS",
                     "url" : "https://ext.dcloud.net.cn/plugin?id=7895",
                     "android_package_name" : "cn.wildfirechat.chat.uni",
@@ -77,8 +77,8 @@
             },
             "wf-uni-wfc-uikit" : {
                 "__plugin_info__" : {
-                    "name" : "【官方】野火IM音视频通话原生插件",
-                    "description" : "野火IM官方发布的音视频通话原生插件",
+                    "name" : "【官方】野火实时音视频RTC原生插件",
+                    "description" : "野火官方发布的移动端实时音视频插件，包括Android和iOS平台，拥有完善的Demo，服务器和移动端免费使用，支持多人音频和多人视频通话，让您一步拥有完美的即时通讯软件。",
                     "platforms" : "Android,iOS",
                     "url" : "https://ext.dcloud.net.cn/plugin?id=9364",
                     "android_package_name" : "cn.wildfirechat.chat.uni",
