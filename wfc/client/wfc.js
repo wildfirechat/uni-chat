@@ -510,6 +510,10 @@ export class WfcManager {
         return impl.getGroupInfo(groupId, refresh);
     }
 
+    getGroupInfos(groupIds, refresh = false) {
+        return impl.getGroupInfos(groupIds, refresh);
+    }
+
     /**
      * 获取群信息
      * @param {string} groupId 群id
