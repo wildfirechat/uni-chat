@@ -89,10 +89,18 @@ export default {
         lastMessageContent() {
             let conversationInfo = this.conversationInfo;
             if (conversationInfo.lastMessage && conversationInfo.lastMessage.messageContent) {
-
                 let senderName = '';
                 if (conversationInfo.conversation.type === 1 && conversationInfo.lastMessage.direction === 1 && !(conversationInfo.lastMessage.messageContent instanceof NotificationMessageContent)) {
-                    senderName = conversationInfo.lastMessage._from._displayName + ': ';
+                    if (conversationInfo.lastMessage._from) {
+                        senderName = conversationInfo.lastMessage._from._displayName + ': ';
+                    } else {
+                        conversationInfo.lastMessage = store._patchMessage(conversationInfo.lastMessage, 0)
+                        if (conversationInfo.lastMessage._from) {
+                            senderName = conversationInfo.lastMessage._from._displayName + ': ';
+                        } else {
+                            senderName = '<' + conversationInfo.lastMessage.from + '>: ';
+                        }
+                    }
                 }
                 return senderName + conversationInfo.lastMessage.messageContent.digest(conversationInfo.lastMessage);
             } else {
