@@ -1,40 +1,44 @@
 <template>
     <div class="contact-list">
-        <ul>
-            <li>
-                <div @click="showNewFriends" class="category-item-container">
-                    <i class="arrow right" v-bind:class="{down: sharedContactState.expandFriendRequestList}"></i>
-                    <div class="category-item">
-                        <span class="title">{{ $t('contact.new_friend') }}</span>
-                        <span class="desc" style="color: red" v-if="sharedContactState.unreadFriendRequestCount > 0">{{ sharedContactState.unreadFriendRequestCount }}</span>
+        <uni-list>
+            <view>
+
+                <div>
+                    <div @click="showNewFriends" class="category-item-container">
+                        <i class="arrow right" v-bind:class="{down: sharedContactState.expandFriendRequestList}"></i>
+                        <div class="category-item">
+                            <span class="title">{{ $t('contact.new_friend') }}</span>
+                            <span class="desc" style="color: red" v-if="sharedContactState.unreadFriendRequestCount > 0">{{ sharedContactState.unreadFriendRequestCount }}</span>
+                        </div>
+                    </div>
+                    <FriendRequestListView v-if="sharedContactState.expandFriendRequestList"/>
+                </div>
+                <div>
+                    <div @click="showGroups" class="category-item-container">
+                        <i class="arrow right" v-bind:class="{down: sharedContactState.expandGroup}"></i>
+                        <div class="category-item">
+                            <span class="title">{{ $t('contact.group') }}</span>
+                            <span class="desc">{{ sharedContactState.favGroupList.length }}</span>
+                        </div>
+                    </div>
+                    <GroupListVue v-if="sharedContactState.expandGroup"/>
+                    <div>
+                        <div @click="showContacts" class="category-item-container">
+                            <i class="arrow right" v-bind:class="{down: sharedContactState.expandFriendList}"></i>
+                            <div class="category-item">
+                                <span class="title">{{ $t('contact.contact') }}</span>
+                                <span class="desc">{{ sharedContactState.friendList.length }}</span>
+                            </div>
+                        </div>
+                        <UserListVue :enable-pick="false"
+                                     :users="sharedContactState.favContactList.concat(sharedContactState.friendList)"
+                                     :click-user-item-func="setCurrentUser"
+                                     :padding-left="'30px'"
+                                     v-if="sharedContactState.expandFriendList"/>
                     </div>
                 </div>
-                <FriendRequestListView v-if="sharedContactState.expandFriendRequestList"/>
-            </li>
-            <li>
-                <div @click="showGroups" class="category-item-container">
-                    <i class="arrow right" v-bind:class="{down: sharedContactState.expandGroup}"></i>
-                    <div class="category-item">
-                        <span class="title">{{ $t('contact.group') }}</span>
-                        <span class="desc">{{ sharedContactState.favGroupList.length }}</span>
-                    </div>
-                </div>
-                <GroupListVue v-if="sharedContactState.expandGroup"/>
-            <li>
-                <div @click="showContacts" class="category-item-container">
-                    <i class="arrow right" v-bind:class="{down: sharedContactState.expandFriendList}"></i>
-                    <div class="category-item">
-                        <span class="title">{{ $t('contact.contact') }}</span>
-                        <span class="desc">{{ sharedContactState.friendList.length }}</span>
-                    </div>
-                </div>
-                <UserListVue :enable-pick="false"
-                             :users="sharedContactState.favContactList.concat(sharedContactState.friendList)"
-                             :click-user-item-func="setCurrentUser"
-                             :padding-left="'30px'"
-                             v-if="sharedContactState.expandFriendList"/>
-            </li>
-        </ul>
+            </view>
+        </uni-list>
         <main-action-menu ref="mainActionMenu"></main-action-menu>
     </div>
 </template>
@@ -43,10 +47,11 @@ import FriendRequestListView from "./FriendRequestListView";
 import GroupListVue from "./GroupListView";
 import store from "../../store";
 import UserListVue from "../user/UserListVue";
+import UniList from "../../components/uni-list/uni-list.vue";
 
 export default {
     name: "ContactListView",
-    components: {UserListVue, GroupListVue, FriendRequestListView},
+    components: {UniList, UserListVue, GroupListVue, FriendRequestListView},
     data() {
         return {
             sharedContactState: store.state.contact,
@@ -61,7 +66,7 @@ export default {
                 break;
             case 1:
                 uni.navigateTo({
-                    url:'/pages/search/SearchPortalPage'
+                    url: '/pages/search/SearchPortalPage'
                 });
                 break;
             default:

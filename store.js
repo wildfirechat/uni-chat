@@ -198,13 +198,11 @@ let store = {
             console.log('connection status changed', status);
             if (status === ConnectionStatus.ConnectionStatusConnected) {
                 this._loadDefaultData();
-
-                    this.updateTray();
-                } else if (status === ConnectionStatus.ConnectionStatusLogout
-                    || status === ConnectionStatus.ConnectionStatusRejected
-                    || status === ConnectionStatus.ConnectionStatusSecretKeyMismatch
-                	|| status === ConnectionStatus.kConnectionStatusKickedOff
-                    || status === ConnectionStatus.ConnectionStatusTokenIncorrect) {
+            } else if (status === ConnectionStatus.ConnectionStatusLogout
+                || status === ConnectionStatus.ConnectionStatusRejected
+                || status === ConnectionStatus.ConnectionStatusSecretKeyMismatch
+                || status === ConnectionStatus.kConnectionStatusKickedOff
+                || status === ConnectionStatus.ConnectionStatusTokenIncorrect) {
                 _reset();
             }
         });
@@ -271,7 +269,7 @@ let store = {
 
         wfc.eventEmitter.on(EventType.ReceiveMessage, (msg, hasMore) => {
             console.log('receiveMessage', hasMore);
-            if (miscState.connectionStatus === ConnectionStatus.ConnectionStatusReceiveing){
+            if (miscState.connectionStatus === ConnectionStatus.ConnectionStatusReceiveing) {
                 return;
             }
             if (!hasMore) {
@@ -423,7 +421,7 @@ let store = {
             let index = conversationState.currentConversationMessageList.findIndex(m => m.messageId === message.messageId);
             if (index < 0) {
                 return;
-                }
+            }
             let msg = conversationState.currentConversationMessageList[index];
             Object.assign(msg, message)
 
@@ -484,6 +482,7 @@ let store = {
         let conversationList = wfc.getConversationList(conversationType, lines);
         let toLoadUserIdSet = new Set();
         let toLoadGroupIds = [];
+        console.log('_loadConversationList size', conversationList.length);
         conversationList.forEach(info => {
             if (info.conversation.type === ConversationType.Single) {
                 toLoadUserIdSet.add(info.conversation.target)
@@ -506,7 +505,7 @@ let store = {
             groupInfoMap.set(gid, new NullGroupInfo(gid))
         })
 
-        console.log('to load userIds', [...toLoadUserIdSet]);
+        console.log('to load userIds', toLoadUserIdSet.size);
         wfc.getUserInfos([...toLoadUserIdSet], false)
             .forEach(u => {
                 userInfoMap.set(u.uid, u);
@@ -674,7 +673,7 @@ let store = {
             }, (err) => {
                 console.log('watchOnlineState error', err);
             })
-		}
+        }
         if (conversation.type === ConversationType.Channel) {
             let content = new EnterChannelChatMessageContent();
             wfc.sendConversationMessage(conversation, content);
@@ -773,7 +772,7 @@ let store = {
                         })
 
                     } else {
-                    wfc.sendConversationMessage(conversation, message.messageContent);
+                        wfc.sendConversationMessage(conversation, message.messageContent);
                     }
                 });
             } else {
@@ -915,7 +914,7 @@ let store = {
         let remotePath = null;
         if (typeof file === 'string') {
             if (!file.startsWith('http')) {
-        fileOrLocalPath = file;
+                fileOrLocalPath = file;
             } else {
                 remotePath = file;
             }
@@ -1045,7 +1044,7 @@ let store = {
         }
         for (let i = 0; i < msgs.length; i++) {
             if (gt(msgs[i].messageUid, 0)) {
-            conversationState.currentConversationOldestMessageUid = msgs[0].messageUid;
+                conversationState.currentConversationOldestMessageUid = msgs[0].messageUid;
                 break;
             }
         }
@@ -1056,18 +1055,18 @@ let store = {
             return false;
         }
         let loadNewMsg = false;
-            let lastTimestamp = 0;
-            let newMsgs = [];
-            messages.forEach(m => {
+        let lastTimestamp = 0;
+        let newMsgs = [];
+        messages.forEach(m => {
             let index = conversationState.currentConversationMessageList.findIndex(cm => cm.messageId === m.messageId)
-                if (index === -1) {
-                    this._patchMessage(m, lastTimestamp);
-                    lastTimestamp = m.timestamp;
-                    newMsgs.push(m);
-                    loadNewMsg = true;
-                }
-            });
-            conversationState.currentConversationMessageList = newMsgs.concat(conversationState.currentConversationMessageList);
+            if (index === -1) {
+                this._patchMessage(m, lastTimestamp);
+                lastTimestamp = m.timestamp;
+                newMsgs.push(m);
+                loadNewMsg = true;
+            }
+        });
+        conversationState.currentConversationMessageList = newMsgs.concat(conversationState.currentConversationMessageList);
         return loadNewMsg;
     },
 
@@ -1081,15 +1080,15 @@ let store = {
         let loadRemoteHistoryMessageFunc = () => {
             wfc.loadRemoteConversationMessages(conversation, [], conversationState.currentConversationOldestMessageUid, 20,
                 (msgs) => {
-                console.log('loadRemoteConversationMessages response', msgs.length);
+                    console.log('loadRemoteConversationMessages response', msgs.length);
                     if (msgs.length === 0) {
                         completeCB();
                     } else {
                         // 可能拉回来的时候，本地已经切换会话了
                         if (conversation.equal(conversationState.currentConversationInfo.conversation)) {
                             conversationState.currentConversationOldestMessageUid = msgs[0].messageUid;
-                        msgs = msgs.filter(m => m.messageId !== 0);
-                        this._onloadConversationMessages(conversation, msgs);
+                            msgs = msgs.filter(m => m.messageId !== 0);
+                            this._onloadConversationMessages(conversation, msgs);
                         }
                         this._reloadConversation(conversation);
                         loadedCB();
@@ -1141,7 +1140,6 @@ let store = {
             this.setCurrentConversationInfo(null);
         }
         conversationState.conversationInfoList = conversationState.conversationInfoList.filter(info => !info.conversation.equal(conversation));
-        this.updateTray();
     },
 
     getMessageById(messageId) {
@@ -1168,7 +1166,7 @@ let store = {
             m._from = userInfoMap ? userInfoMap.get(m.from) : wfc.getUserInfo(m.from, false, '');
         }
         if (!m._from) {
-        	m._from = wfc.getUserInfo(m.from, false, m.conversation.type === ConversationType.Group ? m.conversation.target : '');
+            m._from = wfc.getUserInfo(m.from, false, m.conversation.type === ConversationType.Group ? m.conversation.target : '');
         }
         if (m.conversation.type === ConversationType.Group) {
             m._from._displayName = wfc.getGroupMemberDisplayNameEx(m._from);
@@ -1205,12 +1203,12 @@ let store = {
         if (info.conversation.type === ConversationType.Single) {
             info.conversation._target = userInfoMap ? userInfoMap.get(info.conversation.target) : wfc.getUserInfo(info.conversation.target, false);
             if (info.conversation._target) {
-            info.conversation._target._displayName = wfc.getUserDisplayNameEx(info.conversation._target);
+                info.conversation._target._displayName = wfc.getUserDisplayNameEx(info.conversation._target);
             }
         } else if (info.conversation.type === ConversationType.Group) {
             info.conversation._target = groupInfoMap ? groupInfoMap.get(info.conversation.target) : wfc.getGroupInfo(info.conversation.target, false);
             if (info.conversation._target) {
-            info.conversation._target._isFav = wfc.isFavGroup(info.conversation.target);
+                info.conversation._target._isFav = wfc.isFavGroup(info.conversation.target);
                 info.conversation._target._displayName = info.conversation._target.remark ? info.conversation._target.remark : info.conversation._target.name;
             }
         } else if (info.conversation.type === ConversationType.Channel) {
@@ -1400,7 +1398,7 @@ let store = {
             contactState.favContactList.forEach(u => {
                 u._category = '☆ 星标朋友';
             })
-        }else {
+        } else {
             contactState.favContactList = [];
         }
     },
@@ -1766,7 +1764,7 @@ let store = {
     clearConversationUnreadStatus(conversation) {
         let info = wfc.getConversationInfo(conversation);
         if (info && (info.unreadCount.unread + info.unreadCount.unreadMention + info.unreadCount.unreadMentionAll) > 0) {
-                wfc.clearConversationUnreadStatus(conversation);
+            wfc.clearConversationUnreadStatus(conversation);
 
         }
     },

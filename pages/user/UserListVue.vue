@@ -1,41 +1,40 @@
 <template>
-    <div>
-        <ul>
-            <li v-for="(groupedUser) in groupedUsers" :key="groupedUser.category">
-                <div ref="contactItem" class="contact-item">
-                    <div v-if="showCategoryLabel" class="label"
-                         :style="paddingStyle"
-                         v-bind:class="{sticky:enableCategoryLabelSticky}">
-                        <p>{{ groupedUser.category.toUpperCase() }}</p>
-                    </div>
-                    <ul>
-                        <li v-for="(user) in groupedUser.users" :key="user.uid">
-                            <div class="content"
-                                 :name="'user-'+user.uid"
-                                 :style="paddingStyle"
-                                 v-bind:class="{active: (sharedContactState.currentFriend
+    <uni-list style="width: 100%">
+        <view v-for="(groupedUser) in groupedUsers" :key="groupedUser.category">
+            <div ref="contactItem" class="contact-item">
+                <div v-if="showCategoryLabel" class="label"
+                     :style="paddingStyle"
+                     v-bind:class="{sticky:enableCategoryLabelSticky}">
+                    <p>{{ groupedUser.category.toUpperCase() }}</p>
+                </div>
+                <uni-list style="width: 100%">
+                    <view v-for="(user) in groupedUser.users" :key="user.uid">
+                        <div class="content"
+                             :name="'user-'+user.uid"
+                             :style="paddingStyle"
+                             v-bind:class="{active: (sharedContactState.currentFriend
                         && user._category === sharedContactState.currentFriend._category
                         && user.uid === sharedContactState.currentFriend.uid) || (currentUser && currentUser.uid === user.uid)}"
-                                 @click.stop="clickUserItem(user)">
-                                <img class="avatar" :src="user.portrait" alt="" @error="imgUrlAlt">
-                                <div style="padding-left: 10px">
-                                    <p class="single-line"> {{ user._displayName ? user._displayName : user.displayName }}</p>
-                                    <p v-if="user._userOnlineStatusDesc" class="single-line user-online-status"> {{ user._userOnlineStatusDesc }}</p>
-                                </div>
+                             @click.stop="clickUserItem(user)">
+                            <img class="avatar" :src="user.portrait" alt="" @error="imgUrlAlt">
+                            <div style="padding-left: 10px">
+                                <p class="single-line"> {{ user._displayName ? user._displayName : user.displayName }}</p>
+                                <p v-if="user._userOnlineStatusDesc" class="single-line user-online-status"> {{ user._userOnlineStatusDesc }}</p>
                             </div>
+                        </div>
 
-                        </li>
-                    </ul>
-                </div>
-            </li>
-        </ul>
-    </div>
+                    </view>
+                </uni-list>
+            </div>
+        </view>
+    </uni-list>
 </template>
 
 <script>
 import store from "../../store";
 import UserCardView from "./UserCardView";
 import Config from "../../config";
+import UniList from "../../components/uni-list/uni-list.vue";
 
 export default {
     name: "UserListVue",
@@ -75,9 +74,9 @@ export default {
     },
     methods: {
         clickUserItem(user) {
-            if (this.clickUserItemFunc){
+            if (this.clickUserItemFunc) {
                 this.clickUserItemFunc(user);
-            }else {
+            } else {
                 store.setCurrentFriend(user)
                 uni.navigateTo({
                     url: '/pages/contact/UserDetailView',
@@ -97,13 +96,14 @@ export default {
             el && el.scrollIntoView({behavior: "instant", block: "center"});
         },
 
-        imgUrlAlt(e){
+        imgUrlAlt(e) {
             e.target.src = Config.DEFAULT_PORTRAIT_URL;
         }
 
     },
 
     mounted() {
+        console.log('jjjjjjjjjjjjjjuserList', this.users.length);
     },
 
     activated() {
@@ -146,6 +146,7 @@ export default {
         },
     },
     components: {
+        UniList,
         UserCardView,
     },
 }
