@@ -10,7 +10,6 @@
 
 <script>
 import Message from "@/wfc/messages/message";
-import store from "@/store";
 
 export default {
     name: "ImageMessageContentView",

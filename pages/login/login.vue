@@ -24,6 +24,7 @@
 
 <script>
 import wfc from "../../wfc/client/wfc";
+import wfcUIKit from "../../wfc/uikit/wfcUIKit";
 import Config from '../../config';
 import {getItem, setItem} from "../util/storageHelper";
 import ConnectionStatus from "../../wfc/client/connectionStatus";
@@ -82,8 +83,6 @@ export default {
                 method: 'POST',
 
                 success: (res) => {
-                    console.log(res.data);
-
                     if (res.statusCode === 200) {
                         let loginResult = res.data;
 
@@ -93,6 +92,15 @@ export default {
                             wfc.connect(userId, token);
                             setItem('userId', userId);
                             setItem('token', token)
+
+                            let authToken = res.header['authToken'];
+                            if (!authToken){
+                                authToken = res.header['authtoken'];
+                            }
+
+                            console.log('setupAppserver', Config.APP_SERVER, authToken);
+                            wfcUIKit.setupAppServer(Config.APP_SERVER, authToken);
+
 
                             this.go2ConversationList();
 

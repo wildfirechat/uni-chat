@@ -13,6 +13,10 @@
             <text>API测试</text>
             <i></i>
         </div>
+        <div class="about" @click="showConferencePortal">
+            <text>打开会议入口</text>
+            <i></i>
+        </div>
         <button class="logout-button" @click="logout">退出登录</button>
     </div>
 
@@ -20,6 +24,7 @@
 
 <script>
 import wfc from "../../wfc/client/wfc";
+import wfcUIKit from "../../wfc/uikit/wfcUIKit";
 import {clear} from "../util/storageHelper";
 import store from "../../store";
 
@@ -70,6 +75,9 @@ export default {
                 }
             });
 
+        },
+        showConferencePortal(){
+            wfcUIKit.showConferencePortal();
         }
     }
 }

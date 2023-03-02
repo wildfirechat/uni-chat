@@ -38,6 +38,7 @@ export class WfcUIKit {
     }
 
     /**
+     * @deprecated 已废弃
      * 开始会议
      * @param {string} callId 会议id
      * @param {boolean} audioOnly 是否仅仅开启音频; true，音频会议；false，视频会议
@@ -55,6 +56,7 @@ export class WfcUIKit {
     }
 
     /**
+     * @deprecated 已废弃
      * 加入会议
      * @param {string} callId 会议id
      * @param {string} audioOnly 是否只开启音频
@@ -70,6 +72,31 @@ export class WfcUIKit {
      */
     joinConference(callId, audioOnly, pin, host, title, desc, audience, advance, muteAudio, muteVideo, callExtra = '') {
         uniWfcUIKit.joinConference(callId, audioOnly, pin, host, title, desc, audience, advance, muteAudio, muteVideo, callExtra);
+    }
+
+    /**
+     * 设置 app server 信息
+     * @param {string} appServerAddress 应用服务地址
+     * @param {string} authToken 成功登录应用服务后，返回的authToken header
+     */
+    setupAppServer(appServerAddress, authToken) {
+        uniWfcUIKit.setupAppServer(appServerAddress, authToken);
+    }
+
+    /**
+     * 打开原生会议详情界面
+     * @param {string} conferenceId 会议号
+     * @param {string} password 会议密码
+     */
+    showConferenceInfo(conferenceId, password) {
+        uniWfcUIKit.showConferenceInfo(conferenceId, password)
+    }
+
+    /**
+     * 打开原生会议入口界面
+     */
+    showConferencePortal() {
+        uniWfcUIKit.showConferencePortal();
     }
 
     /**
@@ -101,8 +128,8 @@ export class WfcUIKit {
     /**
      * 配置允许 UIKit 层处理后台通知
      */
-    enableNativeNotificaiton(enable) {
-        uniWfcUIKit.enableNativeNotificaiton(enable);
+    enableNativeNotification(enable) {
+        uniWfcUIKit.enableNativeNotification(enable);
     }
 }
 

@@ -1,6 +1,6 @@
 <template>
     <div class="conference-invite-message-container"
-         @click="joinConference"
+         @click="showConferenceInfo"
          v-bind:class="{out:message.direction === 0}">
         <div class="flex-row flex-align-center">
             <img class="avatar" alt="host" :src="portrait">
@@ -31,10 +31,13 @@ export default {
     },
 
     methods: {
-        joinConference() {
+        showConferenceInfo() {
+            console.log('showConferenceInfo')
             if (wfcUIKit.isSupportConference()) {
+                console.log('showConferenceInfo 0')
                 let cmc = this.message.messageContent;
-                wfcUIKit.joinConference(cmc.callId, cmc.audioOnly, cmc.pin, cmc.host, cmc.title, cmc.desc, cmc.audience, cmc.advanced, false, false)
+                wfcUIKit.showConferenceInfo(cmc.callId, cmc.pin);
+                console.log('showConferenceInfo 1')
             } else {
                 console.log('not support conference')
                 uni.showToast({
