@@ -506,7 +506,7 @@ let store = {
         })
 
         console.log('to load userIds', toLoadUserIdSet.size);
-        wfc.getUserInfos([...toLoadUserIdSet], false)
+        wfc.getUserInfos([...toLoadUserIdSet], '')
             .forEach(u => {
                 userInfoMap.set(u.uid, u);
             });
