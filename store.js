@@ -30,6 +30,7 @@ import MessageConfig from "./wfc/client/messageConfig";
 import PersistFlag from "./wfc/messages/persistFlag";
 import NullGroupInfo from "./wfc/model/nullGroupInfo";
 import NullUserInfo from "./wfc/model/nullUserInfo";
+import LeaveChannelChatMessageContent from "./wfc/messages/leaveChannelChatMessageContent";
 
 /**
  * 一些说明

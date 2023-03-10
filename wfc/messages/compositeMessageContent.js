@@ -1,4 +1,3 @@
-import MessageContent from "../messages/messageContent";
 import MessageContentType from "../messages/messageContentType";
 import wfc from "../client/wfc";
 import MediaMessageContent from "../messages/mediaMessageContent";
@@ -6,18 +5,38 @@ import {stringValue} from "../util/longUtil";
 import Message from "../messages/message";
 import Conversation from "../model/conversation";
 import Long from "long";
+import {compare} from "../../wfc/util/longUtil";
 import MessagePayload from "../messages/messagePayload";
+// import {isElectron} from "../../platform";
+import ArticlesMessageContent from "./articlesMessageContent";
 
-export default class CompositeMessageContent extends MessageContent {
+export default class CompositeMessageContent extends MediaMessageContent {
     title = '';
     messages = [];
+    // web 端有效，仅仅是用来标识 mediaCompositeMessage 是否已加载
+    loaded = false;
 
     constructor() {
-        super(MessageContentType.Composite_Message)
+        super(MessageContentType.Composite_Message, '', '')
     }
 
     setMessages(msgs) {
-        this.messages = msgs;
+        this.messages = [];
+        msgs.forEach(m => {
+            if (m.messageContent instanceof ArticlesMessageContent) {
+                let linkMessageContents = m.messageContent.toLinkMessageContent();
+                linkMessageContents.forEach(lm => {
+                    let msg = Object.assign(new Message(), m);
+                    msg.messageContent = lm;
+                    this.messages.push(msg);
+                })
+            } else {
+                this.messages.push(m)
+            }
+        })
+        this.messages = this.messages.sort((m1, m2) => {
+            return compare(m1.messageUid, m2.messageUid);
+        })
     }
 
     digest(message) {
@@ -28,6 +47,8 @@ export default class CompositeMessageContent extends MessageContent {
         let payload = super.encode();
         payload.content = this.title;
         let arr = [];
+        let binArr;
+        let size = 0;
         this.messages.forEach(msg => {
             let msgPayload = msg.messageContent.encode();
             let o = {
@@ -61,13 +82,50 @@ export default class CompositeMessageContent extends MessageContent {
                 o.mru = msg.messageContent.remotePath;
             }
 
+            if (!binArr) {
+                size += JSON.stringify(o).length;
+                if (size > 20480 && arr.length > 0) {
+                    binArr = arr.map((value) => value);
+                }
+            }
+
             arr.push(o);
 
         });
 
-        let obj = {
-            ms: arr,
+        let obj;
+        if (binArr && !this.file) {
+            obj = {
+                ms: arr,
+            }
+            let str = JSON.stringify(obj);
+            str = str.replace(/"uid":"([0-9]+)"/, "\"uid\":$1");
+            str = str.replace(/"serverTime":"([0-9]+)"/, "\"serverTime\":$1");
+
+            let blob = new Blob([str]);
+            let fileName = 'wcf-' + new Date().getTime() + '.data';
+            this.file = new File([blob], fileName);
+            // if (isElectron()) {
+            //     this.localPath = require('tmp').tmpNameSync() + fileName;
+            //     require('fs').writeFileSync(this.localPath, str);
+            //     payload.localMediaPath = this.localPath;
+            //     payload.mediaType = MessageContentType.File;
+            // }
+            obj = {
+                ms: binArr,
+            }
+        } else {
+            if (binArr) {
+                obj = {
+                    ms: binArr,
+                }
+            } else {
+                obj = {
+                    ms: arr,
+                }
+            }
         }
+
         let str = JSON.stringify(obj);
         str = str.replace(/"uid":"([0-9]+)"/, "\"uid\":$1");
         str = str.replace(/"serverTime":"([0-9]+)"/, "\"serverTime\":$1");
@@ -80,7 +138,40 @@ export default class CompositeMessageContent extends MessageContent {
         super.decode(payload);
 
         this.title = payload.content;
-        let str = wfc.b64_to_utf8(payload.binaryContent);
+        let str;
+        if (this.file) {
+            // web
+            let fileReader = new FileReader();
+            fileReader.onload(ev => {
+                this._decodeMessages(ev.target.result);
+            });
+            fileReader.readAsBinaryString(this.file);
+
+        } else if (this.localPath) {
+            // electron
+            // if (isElectron()) {
+            //     const fs = require("fs");
+            //     if (fs.existsSync(this.localPath)) {
+            //         const buffer = fs.readFileSync(this.localPath);
+            //         str = buffer.toString();
+            //         this._decodeMessages(str);
+            //     } else {
+            //         console.log('media composite message not downloaded', this.remotePath);
+            //     }
+            // }
+        }
+
+        if (!str) {
+            str = wfc.b64_to_utf8(payload.binaryContent);
+            this._decodeMessages(str);
+        }
+    }
+
+    _decodeMessages(str) {
+        if (this.loaded) {
+            return;
+        }
+        this.messages = [];
         // FIXME node 环境，decodeURIComponent 方法，有时候会在最后添加上@字符，目前尚未找到原因，先规避
         str = str.substring(0, str.lastIndexOf('}') + 1);
         str = str.replace(/"uid":([0-9]+)/g, "\"uid\":\"$1\"");
@@ -114,5 +205,7 @@ export default class CompositeMessageContent extends MessageContent {
             msg.messageContent = Message.messageContentFromMessagePayload(payload, msg.from);
             this.messages.push(msg);
         });
+        console.log('cp ms', this.messages)
     }
+
 }
