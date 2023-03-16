@@ -77,7 +77,14 @@ export default {
 
         },
         showConferencePortal(){
-            wfcUIKit.showConferencePortal();
+            if (wfcUIKit.isSupportConference()){
+                wfcUIKit.showConferencePortal();
+            } else {
+                uni.showToast({
+                    title: '当前插件，只支持音视频通话，不支持会议功能，请联系开发者',
+                    icon: 'none',
+                });
+            }
         }
     }
 }
