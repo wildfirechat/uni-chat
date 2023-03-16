@@ -30,6 +30,14 @@
 1. ```Android```端，可以通过```adb logcat > wfc.log```进行抓去日志，如果提示找不到```adb```命令，请参考 [这儿](https://uniapp.dcloud.net.cn/tutorial/run/run-app-faq.html)
 2. ```iOS```端，请连接```Xcode```抓取
 
+## 常见问题说明
+
+1. 如果希望普通电话，能打断音视频通话，则需要在`package.json`里面，添加如下权限声明:
+```xml
+   <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+
+```
+
 ## 应用截图
 会话列表
 ![会话列表](./screenshots/uniapp_conversation_list.jpeg)
