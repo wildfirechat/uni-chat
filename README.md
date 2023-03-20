@@ -37,10 +37,11 @@
        <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
     ```
 2. 如何集成推送功能
-   1. 参考[uni-push v1](https://uniapp.dcloud.net.cn/unipush-v1.html)，并进行相关配置
-   2. 编译、配置、部署 [push server getui 分支](https://github.com/wildfirechat/push_server/tree/getui)
-   3. `App.vue` 里面会调用`plus.push.getClientInfoAsync`获取推送相关的`clientId`，可以使用该`clientId`在`uni-push`后台测试推送功能。
-   4. 当设备不在线时，`im-server`会调用`push-server`，然后`push-server`调用`个推`进行推送
+   1. `HBuilder X`里面选中`manifest.json`，然后选中`Push`-> `uniPush 1.0`
+   2. 参考[uni-push v1](https://uniapp.dcloud.net.cn/unipush-v1.html)，并进行相关配置
+   3. 编译、配置、部署 [push server getui 分支](https://github.com/wildfirechat/push_server/tree/getui)
+   4. `App.vue` 里面会调用`plus.push.getClientInfoAsync`获取推送相关的`clientId`，可以使用该`clientId`在`uni-push`后台测试推送功能。
+   5. 当设备不在线时，`im-server`会调用`push-server`，然后`push-server`调用`个推`进行推送
 
 ## 应用截图
 会话列表
