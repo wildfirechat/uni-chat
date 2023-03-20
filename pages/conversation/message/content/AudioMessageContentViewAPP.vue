@@ -3,7 +3,7 @@
         <!--    <i class="icon-ion-android-volume-up"></i>-->
         <!--    <span> {{ duration }} </span>-->
 
-        <audio style="text-align: left" :src="remotePath" :name="duration" controls>
+        <audio style="text-align: left" :src="remotePath" :name="duration" controls @ended="onAudioComplete">
         </audio>
     </div>
 </template>
@@ -11,6 +11,8 @@
 <script>
 import Message from "@/wfc/messages/message";
 import Config from "@/config";
+import wfc from "@/wfc/client/wfc";
+import MessageStatus from "@/wfc/messages/messageStatus";
 
 export default {
     name: "AudioMessageContentView",
@@ -33,6 +35,13 @@ export default {
     mounted() {
     },
 
+    methods: {
+        onAudioComplete() {
+            if (this.message.status === MessageStatus.Unread){
+                wfc.updateMessageStatus(this.message.messageId, MessageStatus.Played);
+            }
+        }
+    },
     computed: {
         voice() {
             return this.message.messageContent;
