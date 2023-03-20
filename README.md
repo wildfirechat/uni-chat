@@ -33,10 +33,14 @@
 ## 常见问题说明
 
 1. 如果希望普通电话，能打断音视频通话，则需要在`package.json`里面，添加如下权限声明:
-```xml
-   <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
-
-```
+    ```xml
+       <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    ```
+2. 如何集成推送功能
+   1. 参考[uni-push v1](https://uniapp.dcloud.net.cn/unipush-v1.html)，并进行相关配置
+   2. 编译、配置、部署 [push server getui 分支](https://github.com/wildfirechat/push_server/tree/getui)
+   3. `App.vue` 里面会调用`plus.push.getClientInfoAsync`获取推送相关的`clientId`，可以使用该`clientId`在`uni-push`后台测试推送功能。
+   4. 当设备不在线时，`im-server`会调用`push-server`，然后`push-server`调用`个推`进行推送
 
 ## 应用截图
 会话列表
