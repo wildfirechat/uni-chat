@@ -9,7 +9,7 @@ export default {
           let cid = info["clientid"];
           if (cid){
               console.log('push clientId', cid);
-              wfc.setDeviceToken(cid);
+              wfc.setDeviceToken(7, cid);
           }
       });
   },
