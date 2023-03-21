@@ -180,6 +180,7 @@ export default {
     border-radius: 5rpx;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .record-modal {
