@@ -68,6 +68,7 @@ let store = {
             quotedMessage: null,
 
             downloadingMessages: [],
+            sendingMessages: [],
 
             currentVoiceMessage: null,
 
@@ -904,7 +905,6 @@ let store = {
      * @return {Promise<boolean>}
      */
     async sendFile(conversation, file) {
-        console.log('send file', file)
         if (file.size && file.size > 100 * 1024 * 1024) {
             if (!wfc.isSupportBigFilesUpload() || conversation.type === ConversationType.SecretChat) {
                 console.log('file too big, and not support upload big file')
@@ -944,7 +944,7 @@ let store = {
                 messageContent = new ImageMessageContent(fileOrLocalPath, remotePath);
                 break;
             case MessageContentMediaType.Video:
-                messageContent = new VideoMessageContent(fileOrLocalPath, remotePath, '', videoDuration);
+                messageContent = new VideoMessageContent(fileOrLocalPath, remotePath, '', 0);
                 break;
             case MessageContentMediaType.File:
                 messageContent = new FileMessageContent(fileOrLocalPath, remotePath);
