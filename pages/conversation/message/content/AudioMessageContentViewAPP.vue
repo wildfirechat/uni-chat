@@ -37,7 +37,7 @@ export default {
 
     methods: {
         onAudioComplete() {
-            if (this.message.status === MessageStatus.Unread){
+            if (this.message.status === MessageStatus.Unread) {
                 wfc.updateMessageStatus(this.message.messageId, MessageStatus.Played);
             }
         }
@@ -77,6 +77,10 @@ export default {
 .audio-message-container audio {
     outline: none;
     filter: sepia(20%) saturate(70%) grayscale(1) contrast(99%) invert(12%);
+}
+
+>>> .uni-audio-button.play:before{
+    content: '';
 }
 
 </style>
