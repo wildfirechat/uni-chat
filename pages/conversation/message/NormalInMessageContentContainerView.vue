@@ -20,9 +20,8 @@
                     <div class="flex-column flex-align-start">
                         <div class="flex-row">
                             <MessageContentContainerView class="message-content-container"
-                                                         v-bind:class="{highlight:highLight}"
                                                          :message="message"
-                                                         />
+                                                         @longpress.native="openMessageContextMenu($event, message)"/>
                             <!--                            <LoadingView v-if="isDownloading"/>-->
                         </div>
                         <QuoteMessageView style="padding: 5px 0; max-width: 80%"
@@ -72,6 +71,10 @@ export default {
                     console.log('nav to UserDetailView err', err);
                 }
             })
+        },
+        openMessageContextMenu(event, message) {
+            this.$parent.$emit('openMessageContextMenu', event, message)
+            this.highLight = true;
         },
     },
     mounted() {

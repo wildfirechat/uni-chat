@@ -14,7 +14,6 @@
                              @scroll="onScroll">
                     <view v-for="(message) in sharedConversationState.currentConversationMessageList"
                           :id="'id-'+ message.messageId"
-                          @touchmove="test"
                           :key="message.messageId">
                         <!--todo 不同的消息类型 notification in out-->
 
@@ -23,12 +22,14 @@
                         <NormalOutMessageContentView
                             @click.native.capture="sharedConversationState.enableMessageMultiSelection? clickMessageItem($event, message) : null"
                             :message="message"
-                            @longpress.native="showMessageContextMenu($event, message)"
+                            @touchstart.native="onTouchStart"
+                            @touchmove.native="onTouchMove"
                             v-else-if="message.direction === 0"/>
                         <NormalInMessageContentView
                             @click.native.capture="sharedConversationState.enableMessageMultiSelection ? clickMessageItem($event, message) : null"
                             :message="message"
-                            @longpress.native="showMessageContextMenu($event, message)"
+                            @touchstart.native="onTouchStart"
+                            @touchmove.native="onTouchMove"
                             v-else/>
                     </view>
                 </scroll-view>
@@ -118,6 +119,9 @@ export default {
             dragAndDropEnterCount: 0,
 
             showContextMenu: false,
+            isScroll: false,
+            touchStartX: 0,
+            touchStartY: 0,
             contextMenuX: 0,
             contextMenuY: 0,
             contextMenuItems: [],
@@ -254,14 +258,6 @@ export default {
             // this.showContextMenu = false;
         },
 
-        test() {
-            this.showContextMenu = false;
-            uni.hideKeyboard();
-        },
-
-        onMenuClose() {
-            this.$emit('contextMenuClosed')
-        },
         onMessageSenderContextMenuClose() {
             console.log('onMessageSenderContextMenuClose')
         },
@@ -567,7 +563,26 @@ export default {
         },
 
 
+        onTouchStart(e) {
+            this.isScroll = false
+            this.touchStartX = e.touches[0].clientX
+            this.touchStartY = e.touches[0].clientY
+        },
+
+        onTouchMove(e) {
+            uni.hideKeyboard();
+
+            let delX = e.touches[0].clientX - this.touchStartX
+            let delY = e.touches[0].clientY - this.touchStartY
+            if (Math.abs(delX) > 5 || Math.abs(delY) > 5) {
+                this.isScroll = true
+            }
+        },
+
         showMessageContextMenu(e, message) {
+            if (this.isScroll) {
+                return;
+            }
             this.contextMenuX = e.touches[0].clientX;
             this.contextMenuY = e.touches[0].clientY;
 
@@ -663,6 +678,7 @@ export default {
                     icon: 'none'
                 })
             }
+            this.$emit('contextMenuClosed')
         },
 
         updateConversationTitle() {
@@ -727,6 +743,9 @@ export default {
             console.log('------------- keyboardHeight', this.keyboardHeight, this.currentKeyboardHeight);
         });
         // #endif
+        this.$on('openMessageContextMenu', (event, message) => {
+            this.showMessageContextMenu(event, message)
+        });
     },
 
     updated() {
