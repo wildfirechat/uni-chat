@@ -87,9 +87,15 @@ export default {
             let userInfo = wfc.getUserInfo(wfc.getUserId());
             let reason = '你好，我是' + userInfo.displayName;
             wfc.sendFriendRequest(this.user.uid, reason, '', () => {
-                uni.navigateBack({
-                    delta: 1
-                })
+                uni.showToast({
+                    title: '好友请求发送成 ',
+                    icon: 'none'
+                });
+                setTimeout(() => {
+                    uni.navigateBack({
+                        delta: 1
+                    })
+                }, 1000)
             }, err => {
                 uni.showToast({
                     title: '好友请求发送失败 ' + err,
