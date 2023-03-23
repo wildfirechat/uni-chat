@@ -16,7 +16,7 @@
                     <div v-if="!shouldShowAllUser&& this.sharedSearchState.userSearchResult.length > 5"
                          class="show-all"
                          @click.stop="showAllUser">
-                        {{ $t('search.view_all') + this.sharedSearchState.contactSearchResult.length }}
+                        {{ $t('search.view_all') + this.sharedSearchState.userSearchResult.length }}
                     </div>
                 </li>
                 <li class="search-result-category-container" v-if="sharedSearchState.contactSearchResult.length > 0">

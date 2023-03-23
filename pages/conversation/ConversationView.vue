@@ -386,7 +386,11 @@ export default {
         },
 
         forward(message) {
-            return this.pickConversationAndForwardMessage(ForwardType.NORMAL, [message]);
+            uni.showToast({
+                title: 'TODO',
+                icon: 'none'
+            })
+            //return this.pickConversationAndForwardMessage(ForwardType.NORMAL, [message]);
         },
 
         _forward(message) {
