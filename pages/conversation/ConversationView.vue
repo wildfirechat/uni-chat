@@ -602,9 +602,14 @@ export default {
                 })
             }
             this.contextMenuItems.push({
-                title: '删除',
+                title: '本地删除',
                 message: message,
                 tag: 'delete',
+            })
+            this.contextMenuItems.push({
+                title: '远程删除',
+                message: message,
+                tag: 'deleteRemote',
             })
             if (this.isForwardable(message)) {
                 this.contextMenuItems.push({
@@ -665,8 +670,13 @@ export default {
             if (t.tag === 'delete') {
                 console.log('wfc delete message', t.message.messageId)
                 wfc.deleteMessage(t.message.messageId);
-                // wfc.deleteMessage(3100);
-            } else if (t.tag === 'forward') {
+            } else if (t.tag === 'deleteRemote'){
+                wfc.deleteRemoteMessageByUid(t.message.messageUid, () => {
+                    console.log('delete remote message success')
+                }, err => {
+                    console.log('delete remote message fail', err);
+                })
+            }else if (t.tag === 'forward') {
                 this.forward(t.message)
             } else if (t.tag === 'recall') {
                 this.recallMessage(t.message);
