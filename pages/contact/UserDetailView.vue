@@ -46,17 +46,14 @@ import wfc from "../../wfc/client/wfc";
 
 export default {
     name: "UserDetailView",
-    props: {
-        user: null,
-    },
     data() {
         return {
             sharedStateContact: store.state.contact,
+            user: store.state.contact.currentFriend,
         }
     },
 
     mounted() {
-        this.user = this.sharedStateContact.currentFriend;
         wfc.getUserInfo(this.user.uid, true);
         // uni.setNavigationBarTitle({
         //     title:this.user._displayName,
