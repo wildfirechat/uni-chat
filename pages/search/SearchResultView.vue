@@ -9,7 +9,7 @@
                             <div class="search-result-item contact">
                                 <img :src="user.portrait">
                                 <span>{{ user.displayName }}</span>
-                                <button @click.stop="addFriend(user)">{{ $t('common.add') }}</button>
+                                <button style="margin-right: 0; margin-left: auto; border: none" size="mini" @click.stop="addFriend(user)">{{ $t('common.add') }}</button>
                             </div>
                         </li>
                     </ul>
@@ -89,6 +89,7 @@ import store from "@/store";
 import Conversation from "@/wfc/model/conversation";
 import ConversationType from "@/wfc/model/conversationType";
 import FriendRequestView from "@/pages/contact/FriendRequestView";
+import wfc from "../../wfc/client/wfc";
 
 export default {
     name: "SearchResultView",
@@ -127,17 +128,30 @@ export default {
 
     methods: {
         addFriend(user) {
-            this.$modal.show(
-                FriendRequestView,
-                {
-                    userInfo: user,
-                },
-                {
-                    name: 'friend-request-modal',
-                    width: 600,
-                    height: 250,
-                    clickToClose: false,
-                }, {})
+            console.log('add friend', user);
+            wfc.sendFriendRequest(user.uid, '你好', '', () => {
+                uni.showToast({
+                    title: '发送好友请求成功',
+                    icon: 'none',
+                });
+            }, err => {
+                console.log('sendFriendRequest fail', err)
+                uni.showToast({
+                    title: ' 发送好友请求失败',
+                    icon: 'none',
+                });
+            })
+            // this.$modal.show(
+            //     FriendRequestView,
+            //     {
+            //         userInfo: user,
+            //     },
+            //     {
+            //         name: 'friend-request-modal',
+            //         width: 600,
+            //         height: 250,
+            //         clickToClose: false,
+            //     }, {})
         },
         showAllUser() {
             this.shouldShowAllUser = true;
