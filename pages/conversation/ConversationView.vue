@@ -370,21 +370,6 @@ export default {
             wfc.recallMessage(message.messageUid, null, null);
         },
 
-        delMessage(message) {
-            this.$alert({
-                title: ' 删除消息',
-                content: '确定删除消息？',
-                confirmText: '本地删除',
-                cancelText: '远程删除',
-                cancelCallback: () => {
-                    wfc.deleteRemoteMessageByUid(message.messageUid, null, null)
-                },
-                confirmCallback: () => {
-                    wfc.deleteMessage(message.messageId);
-                }
-            })
-        },
-
         forward(message) {
             uni.showToast({
                 title: 'TODO',

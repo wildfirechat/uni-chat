@@ -166,10 +166,7 @@ let store = {
             connectionStatus: ConnectionStatus.ConnectionStatusUnconnected,
             isAppHidden: false,
             enableNotification: true,
-            enableMinimize: getItem('minimizable') === '1',
             enableNotificationMessageDetail: true,
-            enableCloseWindowToExit: false,
-            enableAutoLogin: false,
             uploadBigFiles: [],
             wfc: wfc,
             config: Config,
@@ -179,10 +176,7 @@ let store = {
             _reset() {
                 this.connectionStatus = ConnectionStatus.ConnectionStatusUnconnected;
                 this.enableNotification = true;
-                this.enableMinimize = getItem('minimizable') === '1';
                 this.enableNotificationMessageDetail = true;
-                this.enableCloseWindowToExit = false;
-                this.enableAutoLogin = false;
                 this.uploadBigFiles = [];
                 this.wfc = wfc;
                 this.config = Config;
@@ -1639,10 +1633,6 @@ let store = {
         miscState.enableNotification = setting === null || setting === '1'
         setting = getItem(userId + '-' + 'notificationDetail');
         miscState.enableNotificationMessageDetail = setting === null || setting === '1'
-        miscState.enableCloseWindowToExit = getItem(userId + '-' + 'closeWindowToExit') === '1'
-        miscState.enableAutoLogin = getItem(userId + '-' + 'autoLogin') === '1'
-        setting = getItem('minimizable')
-        miscState.enableMinimize = setting === null || setting === '1'
     },
 
     setEnableNotification(enable) {
@@ -1650,26 +1640,9 @@ let store = {
         setItem(contactState.selfUserInfo.uid + '-' + 'notification', enable ? '1' : '0')
     },
 
-    setEnableMinimize(enable) {
-        miscState.enableMinimize = enable;
-        setItem('minimizable', enable ? '1' : '0')
-        currentWindow.minimizable = enable;
-    },
-
     setEnableNotificationDetail(enable) {
         miscState.enableNotificationMessageDetail = enable;
         setItem(contactState.selfUserInfo.uid + '-' + 'notificationDetail', enable ? '1' : '0')
-    },
-
-    setEnableCloseWindowToExit(enable) {
-        miscState.enableCloseWindowToExit = enable;
-        setItem(contactState.selfUserInfo.uid + '-' + 'closeWindowToExit', enable ? '1' : '0')
-        ipcRenderer.send('enable-close-window-to-exit', enable)
-    },
-
-    setEnableAutoLogin(enable) {
-        miscState.enableAutoLogin = enable;
-        setItem(contactState.selfUserInfo.uid + '-' + 'autoLogin', enable ? '1' : '0')
     },
 
     // clone一下，别影响到好友列表
