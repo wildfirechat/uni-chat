@@ -198,17 +198,6 @@ export default {
 
     methods: {
         toggleMessageMultiSelectionActionView(message) {
-            if (!this.sharedConversationState.enableMessageMultiSelection) {
-                this.saveMessageListViewFlexGrow = this.$refs['conversationMessageList'].style.flexGrow;
-                this.savedMessageListViewHeight = this.$refs['conversationMessageList'].style.height;
-                this.$refs['conversationMessageList'].style.flexGrow = 1;
-            } else {
-                if (this.saveMessageListViewFlexGrow !== -1 && this.savedMessageListViewHeight !== -1) {
-                    this.$refs['conversationMessageList'].style.height = this.savedMessageListViewHeight;
-                    this.$refs['conversationMessageList'].style.flexGrow = this.saveMessageListViewFlexGrow;
-                }
-            }
-            this.sharedPickState.messages.forEach(m => console.log(m.messageId));
             store.toggleMessageMultiSelection(message);
         },
 
@@ -409,6 +398,13 @@ export default {
         },
 
         favMessage(message) {
+            // fixme 收藏
+            // TODO 收藏
+            uni.showToast({
+                title: 'TODO ',
+                icon: 'none'
+            });
+            return;
             let favItem = FavItem.fromMessage(message);
             axios.post('/fav/add', {
                 messageUid: stringValue(favItem.messageUid),
@@ -621,6 +617,11 @@ export default {
                     tag: 'quote',
                 })
             }
+            this.contextMenuItems.push({
+                title: '多选',
+                message: message,
+                tag: 'multiSelection',
+            })
             this.showContextMenu = true;
 
             // <!--                    <li v-if="isCopyable(message)">-->
@@ -656,26 +657,36 @@ export default {
         },
 
         onContextMenuItemSelect(t) {
-            if (t.tag === 'delete') {
-                console.log('wfc delete message', t.message.messageId)
-                wfc.deleteMessage(t.message.messageId);
-            } else if (t.tag === 'deleteRemote'){
-                wfc.deleteRemoteMessageByUid(t.message.messageUid, () => {
-                    console.log('delete remote message success')
-                }, err => {
-                    console.log('delete remote message fail', err);
-                })
-            }else if (t.tag === 'forward') {
-                this.forward(t.message)
-            } else if (t.tag === 'recall') {
-                this.recallMessage(t.message);
-            } else if (t.tag === 'quote') {
-                store.quoteMessage(t.message);
-            } else {
-                uni.showToast({
-                    title: 'TODO ' + t.title,
-                    icon: 'none'
-                })
+            switch (t.tag) {
+                case 'delete':
+                    console.log('wfc delete message', t.message.messageId)
+                    wfc.deleteMessage(t.message.messageId);
+                    break;
+                case 'deleteRemote':
+                    wfc.deleteRemoteMessageByUid(t.message.messageUid, () => {
+                        console.log('delete remote message success')
+                    }, err => {
+                        console.log('delete remote message fail', err);
+                    })
+                    break;
+                case 'forward':
+                    this.forward(t.message)
+                    break;
+                case 'recall':
+                    this.recallMessage(t.message);
+                    break;
+                case 'quote':
+                    store.quoteMessage(t.message);
+                    break;
+                case 'multiSelection':
+                    this.multiSelect(t.message);
+                    break;
+                default:
+                    uni.showToast({
+                        title: 'TODO ' + t.title,
+                        icon: 'none'
+                    })
+                    break;
             }
             this.$emit('contextMenuClosed')
         },

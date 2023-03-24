@@ -5,8 +5,9 @@
             <div class="message-content-container"
                  v-bind:class="{checked:sharedPickState.messages.indexOf(message) >= 0}">
                 <checkbox id="checkbox" v-if="sharedConversationState.enableMessageMultiSelection" type="checkbox"
-                       class="checkbox"
-                       :value="message" placeholder="" v-model="sharedPickState.messages"/>
+                          class="checkbox"
+                          :checked="isMessageChecked"
+                          :value="message" placeholder="" v-model="sharedPickState.messages"/>
 
                 <div class="message-avatar-content-container">
                     <!-- 文件的进度条有点特殊，有进度的消息的进度条有点特殊 -->
@@ -26,10 +27,10 @@
                     </div>
 
                     <img
-                         class="avatar"
-                         @click="onClickUserPortrait(message.from)"
-                         draggable="false"
-                         :src="message._from.portrait" alt="">
+                        class="avatar"
+                        @click="onClickUserPortrait(message.from)"
+                        draggable="false"
+                        :src="message._from.portrait" alt="">
                 </div>
             </div>
             <p v-if="shouldShowMessageReceipt" class="receipt" @click="showMessageReceiptDetail">
@@ -224,6 +225,10 @@ export default {
 
         shouldShowMessageReceipt() {
             return this.sharedConversationState.isMessageReceiptEnable && ["FireRobot", Config.FILE_HELPER_ID].indexOf(this.message.conversation.target) < 0;
+        },
+
+        isMessageChecked() {
+            return this.sharedPickState.messages.findIndex(m => m.messageId === this.message.messageId) >= 0;
         }
     },
 
