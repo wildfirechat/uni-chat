@@ -81,6 +81,7 @@ export default {
     word-break: break-word;
     overflow: hidden;
     display: inline-block;
+    user-select: none;
     text-overflow: ellipsis;
 }
 

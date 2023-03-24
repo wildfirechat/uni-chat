@@ -7,6 +7,7 @@ import picker from "./common/picker";
 import wfc from "./wfc/client/wfc";
 import wfcUIKit from "./wfc/uikit/wfcUIKit";
 import Config from "./config";
+import forward from "./common/forward";
 
 Vue.config.productionTip = false
 
@@ -14,6 +15,7 @@ App.mpType = 'app'
 
 Vue.use(VueI18n)
 Vue.use(picker)
+Vue.use(forward)
 
 const i18n = new VueI18n({
     // 使用localStorage存储语言状态是为了保证页面刷新之后还是保持原来选择的语言状态

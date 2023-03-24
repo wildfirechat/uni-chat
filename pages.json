@@ -66,6 +66,12 @@
             }
         },
         {
+            "path": "pages/conversation/message/forward/ForwardMessagePage",
+            "style": {
+                "navigationBarTitleText": "消息转发"
+            }
+        },
+        {
             "path": "pages/conversation/GroupConversationInfoView",
             "style": {
                 "navigationBarTitleText": "群会话信息"

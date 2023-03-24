@@ -31,6 +31,7 @@ import PersistFlag from "./wfc/messages/persistFlag";
 import NullGroupInfo from "./wfc/model/nullGroupInfo";
 import NullUserInfo from "./wfc/model/nullUserInfo";
 import LeaveChannelChatMessageContent from "./wfc/messages/leaveChannelChatMessageContent";
+import ArticlesMessageContent from "./wfc/messages/articlesMessageContent";
 
 /**
  * 一些说明

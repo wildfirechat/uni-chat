@@ -73,8 +73,6 @@ import store from "@/store";
 import wfc from "../../wfc/client/wfc";
 import {numberValue, stringValue} from "@/wfc/util/longUtil";
 import MultiSelectActionView from "@/pages/conversation/MessageMultiSelectActionView";
-// import ForwardMessageByPickConversationView from "@/pages/conversation/message/forward/ForwardMessageByPickConversationView";
-// import ForwardMessageByCreateConversationView from "@/pages/conversation/message/forward/ForwardMessageByCreateConversationView";
 import ForwardType from "@/pages/conversation/message/forward/ForwardType";
 import FileMessageContent from "@/wfc/messages/fileMessageContent";
 import ImageMessageContent from "@/wfc/messages/imageMessageContent";
@@ -360,16 +358,9 @@ export default {
         },
 
         forward(message) {
-            uni.showToast({
-                title: 'TODO',
-                icon: 'none'
-            })
-            //return this.pickConversationAndForwardMessage(ForwardType.NORMAL, [message]);
-        },
-
-        _forward(message) {
-            this.forward(message).catch(() => {
-                // do nothing
+            this.$forward({
+                forwardType: ForwardType.NORMAL,
+                messages: [message],
             });
         },
 
@@ -448,78 +439,6 @@ export default {
             this.toggleMessageMultiSelectionActionView(message);
         },
 
-        pickConversationAndForwardMessage(forwardType, messages) {
-            return new Promise(((resolve, reject) => {
-                let beforeClose = (event) => {
-                    console.log('Closing...', event, event.params)
-                    // What a gamble... 50% chance to cancel closing
-                    if (event.params.toCreateConversation) {
-                        console.log('to show')
-                        Promise.race([this.createConversationAndForwardMessage(forwardType, messages)])
-                            .then(resolve)
-                            .catch(reject);
-                    } else if (event.params.confirm) {
-                        let conversations = event.params.conversations;
-                        let extraMessageText = event.params.extraMessageText;
-                        store.forwardMessage(forwardType, conversations, messages, extraMessageText)
-                        resolve();
-                    } else {
-                        console.log('cancel')
-                        reject();
-                    }
-                };
-
-                this.$modal.show(
-                    ForwardMessageByPickConversationView,
-                    {
-                        forwardType: forwardType,
-                        messages: messages
-                    }, {
-                        name: 'forward-by-pick-conversation-modal',
-                        width: 600,
-                        height: 480,
-                        clickToClose: false,
-                    }, {
-                        'before-close': beforeClose,
-                    })
-            }));
-        },
-
-        createConversationAndForwardMessage(forwardType, messages) {
-            return new Promise(((resolve, reject) => {
-
-                let beforeClose = (event) => {
-                    console.log('Closing...', event, event.params)
-                    if (event.params.backPickConversation) {
-                        Promise.race([this.pickConversationAndForwardMessage(forwardType, messages)])
-                            .then(resolve)
-                            .catch(reject);
-                    } else if (event.params.confirm) {
-                        let users = event.params.users;
-                        let extraMessageText = event.params.extraMessageText;
-                        store.forwardByCreateConversation(forwardType, users, messages, extraMessageText)
-                        resolve();
-                    } else {
-                        console.log('cancel')
-                        reject();
-                    }
-                };
-                this.$modal.show(
-                    ForwardMessageByCreateConversationView,
-                    {
-                        forwardType: forwardType,
-                        messages: messages,
-                        users: this.sharedContactState.friendList,
-                    }, {
-                        name: 'forward-by-create-conversation-modal',
-                        width: 600,
-                        height: 480,
-                        clickToClose: false,
-                    }, {
-                        'before-close': beforeClose,
-                    });
-            }));
-        },
         playVoice(message) {
             if (amr) {
                 amr.stop();

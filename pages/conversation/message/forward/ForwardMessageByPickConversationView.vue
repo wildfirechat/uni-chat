@@ -15,8 +15,9 @@
                         :key="index">
                         <div class="conversation-item"
                              @click.stop="onConversationItemClick(conversationInfo.conversation)">
-                            <input class="checkbox" v-bind:value="conversationInfo.conversation" type="checkbox"
-                                   v-model="sharedPickState.conversations" placeholder="">
+                            <checkbox class="checkbox" v-bind:value="conversationInfo.conversation" type="checkbox"
+                                      :checked="isConversationChecked(conversationInfo.conversation)"
+                                      v-model="sharedPickState.conversations" placeholder=""/>
                             <div class="header">
                                 <img class="avatar" :src="conversationInfo.conversation._target.portrait" alt=""/>
                             </div>
@@ -36,23 +37,24 @@
                 <span v-else>{{
                         $t('conversation.select_conversation_desc', [this.sharedPickState.conversations.length])
                     }}</span>
+                <button size="mini" @click="confirm" class="confirm">{{ $t('common.send') }}</button>
             </header>
             <div class="content">
                 <div class="picked-user-container" v-for="(conversation, index) in sharedPickState.conversations"
                      :key="index">
-                    <div class="picked-user">
+                    <div class="picked-user" @click="unpConversation(conversation)">
                         <img class="avatar" :src="conversation._target.portrait" alt="">
-                        <button @click="unpConversation(conversation)" class="unpick-button">X</button>
+                        <!--                        <view @click="unpConversation(conversation)" class="unpick-button">X</view>-->
                     </div>
                     <span class="name single-line">{{ conversation._target._displayName }}</span>
                 </div>
             </div>
-            <ForwardMessageView ref="forwardMessageView" v-if="sharedPickState.conversations.length > 0"
+            <ForwardMessageView ref="forwardMessageView"
                                 :forward-type="forwardType" :messages="messages"/>
-            <footer>
-                <button @click="cancel" class="cancel">{{ $t('common.cancel') }}</button>
-                <button @click="confirm" class="confirm">{{ $t('common.send') }}</button>
-            </footer>
+            <!--            <footer>-->
+            <!--                <button @click="cancel" class="cancel">{{ $t('common.cancel') }}</button>-->
+            <!--                <button @click="confirm" class="confirm">{{ $t('common.send') }}</button>-->
+            <!--            </footer>-->
         </div>
     </div>
 </template>
@@ -71,7 +73,7 @@ export default {
         },
         messages: {
             type: Array,
-            required: true,
+            required: false,
         },
     },
     data() {
@@ -82,6 +84,7 @@ export default {
             sharedSearchState: store.state.search,
         }
     },
+
     methods: {
         onConversationItemClick(conversation) {
             store.pickOrUnpickConversation(conversation, true)
@@ -90,32 +93,22 @@ export default {
             store.pickOrUnpickConversation(conversation, false);
         },
 
-        showForwardByCreateConversationModal() {
-            this.sharedPickState.conversations.length = 0;
-            this.$modal.hide('forward-by-pick-conversation-modal',
-                {
-                    toCreateConversation: true,
-                    forwardType: this.forwardType,
-                    messages: this.messages
-                })
+        isConversationChecked(conversation) {
+            let index = this.sharedPickState.conversations.findIndex(conv => conv.equal(conversation));
+            return index >= 0;
         },
 
-        cancel() {
-            this.sharedPickState.conversations.length = 0
-            this.$modal.hide('forward-by-pick-conversation-modal', {confirm: false})
+        showForwardByCreateConversationModal() {
+            this.sharedPickState.conversations.length = 0;
+            this.$emit('forward-target-type', 'createConversation')
         },
 
         confirm() {
             let pickedConversations = [...this.sharedPickState.conversations];
             this.sharedPickState.conversations.length = 0
-            this.$modal.hide('forward-by-pick-conversation-modal',
-                {
-                    confirm: true,
-                    conversations: pickedConversations,
-                    forwardType: this.forwardType,
-                    messages: this.messages,
-                    extraMessageText: this.$refs['forwardMessageView'].extraMessageText,
-                })
+            let extraMessageText = this.$refs['forwardMessageView'].extraMessageText
+            store.forwardMessage(this.forwardType, pickedConversations, this.messages, extraMessageText)
+            uni.navigateBack();
         },
     },
 
@@ -126,7 +119,7 @@ export default {
             } else {
                 return this.sharedConversation.conversationInfoList;
             }
-        }
+        },
     },
 
     components: {ForwardMessageView},
@@ -136,7 +129,8 @@ export default {
 <style lang="css" scoped>
 .pick-conversation-container {
     display: flex;
-    height: 100%;
+    flex-direction: column;
+    height: 100vh;
     width: 100%;
 }
 
@@ -146,7 +140,7 @@ export default {
     flex-direction: column;
     justify-content: flex-start;
     background-color: #f7f7f7;
-    width: 200px;
+    overflow: hidden;
 }
 
 .conversation-list-panel .input-container {
@@ -236,8 +230,8 @@ export default {
 }
 
 .checked-conversation-list-container {
-    flex: 1;
     display: flex;
+    min-height: 230px;
     flex-direction: column;
 }
 
@@ -259,26 +253,31 @@ export default {
     margin-right: 20px;
 }
 
+.checked-conversation-list-container header button {
+    font-size: 12px;
+    margin-right: 20px;
+    color: #4168e0;
+}
 
 .checked-conversation-list-container .content {
     height: 100%;
     flex: 1;
     display: flex;
     padding: 0 30px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: flex-start;
     align-items: flex-start;
     align-content: flex-start;
-    overflow: auto;
+    overflow: scroll;
 }
 
 .checked-conversation-list-container .content .picked-user-container {
-    width: 33%;
+    width: 20%;
     display: flex;
     flex-direction: column;
     column-count: 1;
     justify-content: center;
-    align-content: center;
+    align-items: center;
     padding: 5px 10px;
 }
 
