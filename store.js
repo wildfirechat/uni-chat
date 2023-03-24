@@ -19,7 +19,7 @@ import ForwardType from "@/pages/conversation/message/forward/ForwardType";
 import TextMessageContent from "./wfc/messages/textMessageContent";
 import SearchType from "./wfc/model/searchType";
 import Config from "./config";
-import {getItem, removeItem, setItem} from "./pages/util/storageHelper";
+import {clear, getItem, removeItem, setItem} from "./pages/util/storageHelper";
 import CompositeMessageContent from "./wfc/messages/compositeMessageContent";
 // import {getConversationPortrait} from "./ui/util/imageUtil";
 import DismissGroupNotification from "./wfc/messages/notification/dismissGroupNotification";
@@ -203,8 +203,14 @@ let store = {
             } else if (status === ConnectionStatus.ConnectionStatusLogout
                 || status === ConnectionStatus.ConnectionStatusRejected
                 || status === ConnectionStatus.ConnectionStatusSecretKeyMismatch
-                || status === ConnectionStatus.kConnectionStatusKickedOff
+                || status === ConnectionStatus.ConnectionStatusKickedOff
                 || status === ConnectionStatus.ConnectionStatusTokenIncorrect) {
+
+                // 清除 token 等
+                clear();
+                if (status === ConnectionStatus.ConnectionStatusKickedOff){
+                    wfc.disconnect();
+                }
                 _reset();
             }
         });
