@@ -58,7 +58,6 @@
 import UserListVue from "@/pages/user/UserListVue";
 import ConversationInfo from "@/wfc/model/conversationInfo";
 import store from "@/store";
-import PickUserView from "@/pages/pick/PickUserView";
 import wfc from "@/wfc/client/wfc";
 // import axios from "axios";
 import GroupMemberType from "@/wfc/model/groupMemberType";
