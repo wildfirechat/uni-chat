@@ -20,13 +20,13 @@
                         <NotificationMessageContentView :message="message" v-if="isNotificationMessage(message)"/>
                         <RecallNotificationMessageContentView :message="message" v-else-if="isRecallNotificationMessage(message)"/>
                         <NormalOutMessageContentView
-                            @click.native.capture="sharedConversationState.enableMessageMultiSelection? clickMessageItem($event, message) : null"
+                            @click.native.capture.stop="sharedConversationState.enableMessageMultiSelection? clickMessageItem($event, message) : null"
                             :message="message"
                             @touchstart.native="onTouchStart"
                             @touchmove.native="onTouchMove"
                             v-else-if="message.direction === 0"/>
                         <NormalInMessageContentView
-                            @click.native.capture="sharedConversationState.enableMessageMultiSelection ? clickMessageItem($event, message) : null"
+                            @click.native.capture.stop="sharedConversationState.enableMessageMultiSelection ? clickMessageItem($event, message) : null"
                             :message="message"
                             @touchstart.native="onTouchStart"
                             @touchmove.native="onTouchMove"
