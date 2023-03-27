@@ -19,7 +19,7 @@ import ForwardType from "@/pages/conversation/message/forward/ForwardType";
 import TextMessageContent from "./wfc/messages/textMessageContent";
 import SearchType from "./wfc/model/searchType";
 import Config from "./config";
-import {getItem, removeItem, setItem} from "./pages/util/storageHelper";
+import {clear, getItem, removeItem, setItem} from "./pages/util/storageHelper";
 import CompositeMessageContent from "./wfc/messages/compositeMessageContent";
 // import {getConversationPortrait} from "./ui/util/imageUtil";
 import DismissGroupNotification from "./wfc/messages/notification/dismissGroupNotification";
@@ -203,6 +203,10 @@ let store = {
                 || status === ConnectionStatus.ConnectionStatusSecretKeyMismatch
                 || status === ConnectionStatus.kConnectionStatusKickedOff
                 || status === ConnectionStatus.ConnectionStatusTokenIncorrect) {
+                clear();
+                if (status === ConnectionStatus.ConnectionStatusKickedOff) {
+                    wfc.disconnect();
+                }
                 _reset();
             }
         });
@@ -215,6 +219,12 @@ let store = {
             this._loadFriendList();
             this._loadFriendRequest();
             this._loadSelfUserInfo();
+            userInfos.forEach(userInfo => {
+                if (contactState.currentFriend && contactState.currentFriend.uid === userInfo.uid) {
+                    Object.assign(contactState.currentFriend, userInfo);
+                }
+            })
+
             // TODO 其他相关逻辑
         });
 

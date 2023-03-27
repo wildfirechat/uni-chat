@@ -232,7 +232,6 @@ export default {
                     console.log('updateGroupAnnouncement success', response)
                     if (response.data && response.data.code === 0) {
                         this.groupAnnouncement = this.newGroupAnnouncement;
-                        this.$refs.groupAnnouncementInput.blur();
                     }
                 },
                 fail: (err) => {

@@ -1583,17 +1583,30 @@ export class WfcManager {
     }
 
     /**
-     * 上传媒体文件
+     * 上传媒体数据
      * @param {string} fileName
-     * @param {string} fileOrData base64格式的dataUri
+     * @param {string} dataUri base64格式的dataUri
      * @param {number} mediaType 媒体类型，可选值参考{@link MessageContentMediaType}
      * @param {function (string)} successCB 回调通知上传成功之后的url
      * @param {function (number)} failCB
      * @param {function (number, number)} progressCB
      * @returns {Promise<void>}
      */
-    async uploadMedia(fileName, fileOrData, mediaType, successCB, failCB, progressCB) {
-        impl.uploadMedia(fileName, fileOrData, mediaType, successCB, failCB, progressCB);
+    async uploadMediaData(fileName, dataUri, mediaType, successCB, failCB, progressCB) {
+        impl.uploadMedia(fileName, dataUri, mediaType, successCB, failCB, progressCB);
+    }
+
+    /**
+     * 上传媒体文件
+     * @param {string} mediaPath
+     * @param {number} mediaType 媒体类型，可选值参考{@link MessageContentMediaType}
+     * @param {function (string)} successCB 回调通知上传成功之后的url
+     * @param {function (number)} failCB
+     * @param {function (number, number)} progressCB
+     * @returns {Promise<void>}
+     */
+    async uploadMediaFile(mediaPath, mediaType, successCB, failCB, progressCB) {
+        impl.uploadMediaFile(mediaPath, mediaType, successCB, failCB, progressCB);
     }
 
     getVersion() {
