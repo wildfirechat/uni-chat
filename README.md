@@ -30,6 +30,19 @@
 1. ```Android```端，可以通过```adb logcat > wfc.log```进行抓去日志，如果提示找不到```adb```命令，请参考 [这儿](https://uniapp.dcloud.net.cn/tutorial/run/run-app-faq.html)
 2. ```iOS```端，请连接```Xcode```抓取
 
+## 常见问题说明
+
+1. 如果希望普通电话，能打断音视频通话，则需要在`package.json`里面，添加如下权限声明:
+    ```xml
+       <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    ```
+2. 如何集成推送功能
+   1. `HBuilder X`里面选中`manifest.json`，然后选中`Push`-> `uniPush 1.0`
+   2. 参考[uni-push v1](https://uniapp.dcloud.net.cn/unipush-v1.html)，并进行相关配置
+   3. 编译、配置、部署 [push server getui 分支](https://github.com/wildfirechat/push_server/tree/getui)
+   4. `App.vue` 里面会调用`plus.push.getClientInfoAsync`获取推送相关的`clientId`，可以使用该`clientId`在`uni-push`后台测试推送功能。
+   5. 当设备不在线时，`im-server`会调用`push-server`，然后`push-server`调用`个推`进行推送
+
 ## 应用截图
 会话列表
 ![会话列表](./screenshots/uniapp_conversation_list.jpeg)

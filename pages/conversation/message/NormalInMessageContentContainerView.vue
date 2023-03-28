@@ -6,8 +6,9 @@
             <div class="message-avatar-content-container">
                 <div class="avatar-container">
                     <checkbox id="checkbox" v-if="sharedConversationState.enableMessageMultiSelection" type="checkbox"
-                           :value="message"
-                           v-model="sharedPickState.messages"/>
+                              :value="message"
+                              :checked="isMessageChecked"
+                              v-model="sharedPickState.messages"/>
                     <img
                         @click="onClickUserPortrait(message.from)"
                         class="avatar"
@@ -20,9 +21,8 @@
                     <div class="flex-column flex-align-start">
                         <div class="flex-row">
                             <MessageContentContainerView class="message-content-container"
-                                                         v-bind:class="{highlight:highLight}"
                                                          :message="message"
-                                                         />
+                                                         @longpress.native="openMessageContextMenu($event, message)"/>
                             <!--                            <LoadingView v-if="isDownloading"/>-->
                         </div>
                         <QuoteMessageView style="padding: 5px 0; max-width: 80%"
@@ -73,6 +73,10 @@ export default {
                 }
             })
         },
+        openMessageContextMenu(event, message) {
+            this.$parent.$emit('openMessageContextMenu', event, message)
+            this.highLight = true;
+        },
     },
     mounted() {
         if (this.message.messageContent.quoteInfo) {
@@ -93,6 +97,10 @@ export default {
     computed: {
         isDownloading() {
             return store.isDownloadingMessage(this.message.messageId);
+        },
+
+        isMessageChecked() {
+            return this.sharedPickState.messages.findIndex(m => m.messageId === this.message.messageId) >= 0;
         }
     },
     components: {

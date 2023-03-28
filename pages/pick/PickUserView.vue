@@ -19,11 +19,11 @@
             <header>
                 <span v-if="checkedUsers.length === 0">{{ $t('pick.picked_contact') }}</span>
                 <span v-else>{{ $t('pick.picked_contact') + this.checkedUsers.length }}</span>
-                <button size="mini" @click="confirm"> {{confirmTitle}}</button>
+                <button size="mini" @click="confirm"> {{ confirmTitle }}</button>
             </header>
-            <div class="content">
-                <div class="picked-user-container" v-for="(user, index) in checkedUsers" :key="index">
-                    <div class="picked-user">
+            <div class="content" ref="pickedUserContainer">
+                <div class="picked-user" v-for="(user, index) in checkedUsers" :key="index" @click="unpick(user)">
+                    <div class="avatar-container">
                         <img class="avatar" :src="user.portrait" alt="">
                     </div>
                     <span class="name single-line">{{ user.displayName }}</span>
@@ -81,6 +81,7 @@ export default {
         return {
             sharedPickState: store.state.pick,
             filterQuery: '',
+            scrollLeft:0,
         }
     },
 
@@ -154,11 +155,22 @@ export default {
             })
         },
         filterUsers() {
+            console.log('filterUsers', this.filterQuery)
             if (this.filterQuery) {
                 return store.filterUsers(this.users, this.filterQuery);
             } else {
                 return this.users;
             }
+        }
+    },
+
+    watch:{
+        checkedUsers(){
+            // uniapp 里面无效，不知道为啥
+            this.$nextTick(() => {
+                this.$refs.pickedUserContainer.scrollLeft = this.$refs.pickedUserContainer.scrollWidth;
+                this.scrollLeft = this.$refs.pickedUserContainer.scrollWidth;
+            });
         }
     },
 
@@ -264,21 +276,20 @@ export default {
     overflow: scroll;
 }
 
-.checked-contact-list-container .content .picked-user-container {
+.checked-contact-list-container .content .picked-user{
     display: flex;
     flex-direction: column;
     column-count: 1;
     justify-content: center;
-    align-content: center;
+    align-items: center;
     padding: 5px 5px;
 }
 
-.checked-contact-list-container .content .picked-user-container .name {
-    width: 100%;
+.checked-contact-list-container .content .picked-user .name {
     font-size: 12px;
 }
 
-.checked-contact-list-container .content .picked-user-container .picked-user {
+.checked-contact-list-container .content .picked-user .avatar-container{
     position: relative;
     height: 65px;
     width: 65px;

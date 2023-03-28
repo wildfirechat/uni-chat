@@ -30,6 +30,8 @@ import MessageConfig from "./wfc/client/messageConfig";
 import PersistFlag from "./wfc/messages/persistFlag";
 import NullGroupInfo from "./wfc/model/nullGroupInfo";
 import NullUserInfo from "./wfc/model/nullUserInfo";
+import LeaveChannelChatMessageContent from "./wfc/messages/leaveChannelChatMessageContent";
+import ArticlesMessageContent from "./wfc/messages/articlesMessageContent";
 
 /**
  * 一些说明
@@ -67,6 +69,7 @@ let store = {
             quotedMessage: null,
 
             downloadingMessages: [],
+            sendingMessages: [],
 
             currentVoiceMessage: null,
 
@@ -164,10 +167,7 @@ let store = {
             connectionStatus: ConnectionStatus.ConnectionStatusUnconnected,
             isAppHidden: false,
             enableNotification: true,
-            enableMinimize: getItem('minimizable') === '1',
             enableNotificationMessageDetail: true,
-            enableCloseWindowToExit: false,
-            enableAutoLogin: false,
             uploadBigFiles: [],
             wfc: wfc,
             config: Config,
@@ -177,10 +177,7 @@ let store = {
             _reset() {
                 this.connectionStatus = ConnectionStatus.ConnectionStatusUnconnected;
                 this.enableNotification = true;
-                this.enableMinimize = getItem('minimizable') === '1';
                 this.enableNotificationMessageDetail = true;
-                this.enableCloseWindowToExit = false;
-                this.enableAutoLogin = false;
                 this.uploadBigFiles = [];
                 this.wfc = wfc;
                 this.config = Config;
@@ -201,10 +198,12 @@ let store = {
             } else if (status === ConnectionStatus.ConnectionStatusLogout
                 || status === ConnectionStatus.ConnectionStatusRejected
                 || status === ConnectionStatus.ConnectionStatusSecretKeyMismatch
-                || status === ConnectionStatus.kConnectionStatusKickedOff
+                || status === ConnectionStatus.ConnectionStatusKickedOff
                 || status === ConnectionStatus.ConnectionStatusTokenIncorrect) {
+
+                // 清除 token 等
                 clear();
-                if (status === ConnectionStatus.ConnectionStatusKickedOff) {
+                if (status === ConnectionStatus.ConnectionStatusKickedOff){
                     wfc.disconnect();
                 }
                 _reset();
@@ -219,12 +218,6 @@ let store = {
             this._loadFriendList();
             this._loadFriendRequest();
             this._loadSelfUserInfo();
-            userInfos.forEach(userInfo => {
-                if (contactState.currentFriend && contactState.currentFriend.uid === userInfo.uid) {
-                    Object.assign(contactState.currentFriend, userInfo);
-                }
-            })
-
             // TODO 其他相关逻辑
         });
 
@@ -913,7 +906,6 @@ let store = {
      * @return {Promise<boolean>}
      */
     async sendFile(conversation, file) {
-        console.log('send file', file)
         if (file.size && file.size > 100 * 1024 * 1024) {
             if (!wfc.isSupportBigFilesUpload() || conversation.type === ConversationType.SecretChat) {
                 console.log('file too big, and not support upload big file')
@@ -953,7 +945,7 @@ let store = {
                 messageContent = new ImageMessageContent(fileOrLocalPath, remotePath);
                 break;
             case MessageContentMediaType.Video:
-                messageContent = new VideoMessageContent(fileOrLocalPath, remotePath, '', videoDuration);
+                messageContent = new VideoMessageContent(fileOrLocalPath, remotePath, '', 0);
                 break;
             case MessageContentMediaType.File:
                 messageContent = new FileMessageContent(fileOrLocalPath, remotePath);
@@ -1453,7 +1445,7 @@ let store = {
             console.log('search', query)
             searchState.contactSearchResult = this.filterContact(query);
             searchState.groupSearchResult = this.filterGroupConversation(query);
-            searchState.conversationSearchResult = this.filterConversation(query);
+            searchState.conversationSearchResult = this.searchConversation(query);
             // searchState.messageSearchResult = this.searchMessage(query);
             // 默认不搜索新用户
             this.searchUser(query);
@@ -1642,10 +1634,6 @@ let store = {
         miscState.enableNotification = setting === null || setting === '1'
         setting = getItem(userId + '-' + 'notificationDetail');
         miscState.enableNotificationMessageDetail = setting === null || setting === '1'
-        miscState.enableCloseWindowToExit = getItem(userId + '-' + 'closeWindowToExit') === '1'
-        miscState.enableAutoLogin = getItem(userId + '-' + 'autoLogin') === '1'
-        setting = getItem('minimizable')
-        miscState.enableMinimize = setting === null || setting === '1'
     },
 
     setEnableNotification(enable) {
@@ -1653,26 +1641,9 @@ let store = {
         setItem(contactState.selfUserInfo.uid + '-' + 'notification', enable ? '1' : '0')
     },
 
-    setEnableMinimize(enable) {
-        miscState.enableMinimize = enable;
-        setItem('minimizable', enable ? '1' : '0')
-        currentWindow.minimizable = enable;
-    },
-
     setEnableNotificationDetail(enable) {
         miscState.enableNotificationMessageDetail = enable;
         setItem(contactState.selfUserInfo.uid + '-' + 'notificationDetail', enable ? '1' : '0')
-    },
-
-    setEnableCloseWindowToExit(enable) {
-        miscState.enableCloseWindowToExit = enable;
-        setItem(contactState.selfUserInfo.uid + '-' + 'closeWindowToExit', enable ? '1' : '0')
-        ipcRenderer.send('enable-close-window-to-exit', enable)
-    },
-
-    setEnableAutoLogin(enable) {
-        miscState.enableAutoLogin = enable;
-        setItem(contactState.selfUserInfo.uid + '-' + 'autoLogin', enable ? '1' : '0')
     },
 
     // clone一下，别影响到好友列表

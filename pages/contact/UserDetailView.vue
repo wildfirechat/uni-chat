@@ -6,7 +6,7 @@
                 <p>你好，野火</p>
             </div>
             <div>
-                <img class="avatar" :src="user.portrait" @click="onClickUserPortrait">
+                <img class="avatar" :src="sharedStateContact.currentFriend.portrait">
             </div>
         </div>
         <div class="content">
@@ -14,7 +14,7 @@
                 <li>
                     <label>{{ $t('common.alias') }}</label>
                     <div class="alias">
-                        <input type="text" ref="input" :value="user.friendAlias" placeholder="备注名" @keyup.enter="updateFriendAlias"/>
+                        <input type="text" ref="input" :value="sharedStateContact.currentFriend.friendAlias" placeholder="备注名" @keyup.enter="updateFriendAlias"/>
                     </div>
                 </li>
                 <li>
@@ -43,20 +43,17 @@ import store from "../../store";
 import ConversationType from "../../wfc/model/conversationType";
 import Conversation from "../../wfc/model/conversation";
 import wfc from "../../wfc/client/wfc";
-import MessageContentMediaType from "../../wfc/messages/messageContentMediaType";
-import ModifyMyInfoEntry from "../../wfc/model/modifyMyInfoEntry";
-import ModifyMyInfoType from "../../wfc/model/modifyMyInfoType";
 
 export default {
     name: "UserDetailView",
     data() {
         return {
+            sharedStateContact: store.state.contact,
             user: store.state.contact.currentFriend,
         }
     },
 
     mounted() {
-        this.user = this.sharedStateContact.currentFriend;
         wfc.getUserInfo(this.user.uid, true);
         // uni.setNavigationBarTitle({
         //     title:this.user._displayName,
@@ -75,7 +72,7 @@ export default {
         },
         updateFriendAlias() {
             let friendAlias = this.$refs.input.value;
-            if (friendAlias.trim() && friendAlias !== this.user.friendAlias) {
+            if (friendAlias.trim() && friendAlias !== this.sharedStateContact.currentFriend.friendAlias) {
                 wfc.setFriendAlias(this.user.uid, friendAlias,
                     () => {
                         // do nothing
@@ -86,69 +83,31 @@ export default {
                     })
             }
         },
-        addFriend() {
+        addFriend(){
             let userInfo = wfc.getUserInfo(wfc.getUserId());
             let reason = '你好，我是' + userInfo.displayName;
             wfc.sendFriendRequest(this.user.uid, reason, '', () => {
-                uni.navigateBack({
-                    delta: 1
-                })
+                uni.showToast({
+                    title: '好友请求发送成 ',
+                    icon: 'none'
+                });
+                setTimeout(() => {
+                    uni.navigateBack({
+                        delta: 1
+                    })
+                }, 1000)
             }, err => {
                 uni.showToast({
                     title: '好友请求发送失败 ' + err,
                     icon: 'none'
                 });
             })
-        },
-        onClickUserPortrait() {
-            if (this.user.uid === wfc.getUserId()) {
-                // TODO
-                uni.chooseImage({
-                    // count: _self.limit ? _self.limit  - _self.fileList.length : 999,
-                    sourceType: ['album', 'camera'],
-                    sizeType: ['original', 'compressed'],
-                    count: 1,
-                    success: (e) => {
-                        console.log('choose image', e.tempFilePaths, e.tempFiles);
-                        e.tempFilePaths.forEach(path => {
-                            let filePath;
-                            if (path.startsWith('file://')) {
-                                filePath = path.substring('file://'.length);
-                            } else {
-                                filePath = plus.io.convertLocalFileSystemURL(path)
-                            }
-                            //store.sendFile(this.conversationInfo.conversation, filePath);
-                            wfc.uploadMediaFile(filePath, MessageContentMediaType.Portrait, url => {
-                                console.log('upload media success', url)
-
-                                let entry = new ModifyMyInfoEntry();
-                                entry.type = ModifyMyInfoType.Modify_Portrait;
-                                entry.value = url;
-
-                                wfc.modifyMyInfo([entry], () => {
-                                    //this.userInfo.portrait = url;
-                                    // 会触发userInfosUpdate 通知
-                                    console.log('modify my info success')
-                                }, (err) => {
-                                    console.log('modify my info error', err)
-                                })
-
-                            }, err => {
-                                console.log('upload media error', err)
-
-                            }, (progress, total) => {
-                                console.log('upload media progress', progress, total);
-                            })
-                        })
-                    }
-                })
-            }
         }
     },
     computed: {
         name: function () {
             let name;
-            let friend = this.user;
+            let friend = this.sharedStateContact.currentFriend;
             if (friend.displayName) {
                 name = friend.displayName;
             } else {
@@ -163,7 +122,7 @@ export default {
         isFriend() {
             return wfc.isMyFriend(this.user.uid);
         },
-        isSelf() {
+        isSelf(){
             return this.user.uid === wfc.getUserId();
         }
     }

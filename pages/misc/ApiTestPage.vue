@@ -3,8 +3,6 @@
         <button @click="setUserEnableReceipt">setUserEnableReceipt</button>
         <button @click="modifyMyInfo">modifyMyInfo</button>
         <button @click="systemInfo">SystemInfo</button>
-        <button @click="startConference(false)">发起视频互动会议</button>
-        <button @click="startConference(true)">发起音频互动会议</button>
     </div>
 
 </template>
@@ -38,23 +36,6 @@ export default {
         },
         systemInfo() {
             console.log('systemInfo', uni.getSystemInfoSync())
-        },
-        startConference(audioOnly) {
-            if (wfcUIKit) {
-                if (wfcUIKit.isSupportConference()) {
-                    wfcUIKit.startConference('', audioOnly, '', wfc.getUserId(), '测试会议', 'uni-chat 发起的测试会议', false, false, false, '');
-                } else {
-                    uni.showToast({
-                        title: '当前音视频插件不支持会议功能，请联系野火官方',
-                        icon: 'none',
-                    });
-                }
-            } else {
-                uni.showToast({
-                    title: '未导入野火IM音视频插件',
-                    icon: 'none',
-                });
-            }
         },
     }
 }

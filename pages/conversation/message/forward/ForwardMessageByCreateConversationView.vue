@@ -20,24 +20,25 @@
                 <h2>{{ $t('conversation.forward_title') }}</h2>
                 <span v-if="sharedPickState.users.length === 0">{{ $t('conversation.picked_contact') }}</span>
                 <span v-else>{{ $t('conversation.picked_contact') + this.sharedPickState.users.length }}</span>
+                <button size="mini" @click="confirm" class="confirm">{{ $t('common.send') }}</button>
             </header>
             <div class="content">
                 <div class="picked-user-container" v-for="(user, index) in sharedPickState.users" :key="index">
-                    <div class="picked-user">
+                    <div class="picked-user" @click="unpick(user)">
                         <img class="avatar" :src="user.portrait" :alt="user + index">
-                        <button @click="unpick(user)" class="unpick-button">x</button>
+                        <!--                        <button @click="unpick(user)" class="unpick-button">x</button>-->
                     </div>
                     <span class="name single-line">{{ user.displayName }}</span>
                 </div>
             </div>
 
-            <ForwardMessageView ref="forwardMessageView" v-if="sharedPickState.users.length > 0"
+            <ForwardMessageView ref="forwardMessageView"
                                 :forward-type="forwardType"
                                 :messages="messages"/>
-            <footer>
-                <button @click="cancel" class="cancel">{{ $t('common.cancel') }}</button>
-                <button @click="confirm" class="confirm">{{ $t('common.send') }}</button>
-            </footer>
+            <!--            <footer>-->
+            <!--                <button @click="cancel" class="cancel">{{ $t('common.cancel') }}</button>-->
+            <!--                <button @click="confirm" class="confirm">{{ $t('common.send') }}</button>-->
+            <!--            </footer>-->
         </div>
     </div>
 </template>
@@ -51,10 +52,6 @@ import Config from "@/config";
 export default {
     name: "ForwardMessageByCreateConversationView",
     props: {
-        users: {
-            type: Array,
-            required: true,
-        },
         forwardType: {
             // 可参考ForwardType
             type: Number,
@@ -67,6 +64,7 @@ export default {
     },
     data() {
         return {
+            users: store.state.contact.friendList,
             sharedPickState: store.state.pick,
             query: '',
         }
@@ -78,36 +76,21 @@ export default {
 
         backPickConversation() {
             this.sharedPickState.users.length = 0
-            this.$modal.hide('forward-by-create-conversation-modal',
-                {
-                    backPickConversation: true,
-                    forwardType: this.forwardType,
-                    messages: this.messages,
-                })
-        },
-
-        cancel() {
-            this.sharedPickState.users.length = 0
-            this.$modal.hide('forward-by-create-conversation-modal', {confirm: false})
+            this.$emit('forward-target-type', 'pickConversation')
         },
 
         confirm() {
             let pickedUsers = [...this.sharedPickState.users];
             this.sharedPickState.users.length = 0
-            this.$modal.hide('forward-by-create-conversation-modal',
-                {
-                    confirm: true,
-                    users: pickedUsers,
-                    forwardType: this.forwardType,
-                    messages: this.messages,
-                    extraMessageText: this.$refs['forwardMessageView'].extraMessageText,
-                })
+            let extraMessageText = this.$refs['forwardMessageView'].extraMessageText;
+            store.forwardByCreateConversation(this.forwardType, pickedUsers, this.messages, extraMessageText)
+            uni.navigateBack();
         },
     },
 
     computed: {
         filteredUsers() {
-            let result ;
+            let result;
             if (this.query && this.query.trim()) {
                 result = store.filterContact(this.query)
             } else {
@@ -127,7 +110,8 @@ export default {
 <style lang="css" scoped>
 .pick-user-container {
     display: flex;
-    height: 100%;
+    flex-direction: column;
+    height: 100vh;
     width: 100%;
 }
 
@@ -137,6 +121,7 @@ export default {
     flex-direction: column;
     justify-content: flex-start;
     background-color: #f7f7f7;
+    overflow: hidden;
 }
 
 .user-list-panel .input-container {
@@ -174,9 +159,9 @@ export default {
 }
 
 .checked-user-list-container {
-    flex: 1;
     display: flex;
     flex-direction: column;
+    min-height: 230px;
 }
 
 .checked-user-list-container header {
@@ -197,21 +182,27 @@ export default {
     margin-right: 20px;
 }
 
+.checked-user-list-container header button {
+    font-size: 12px;
+    margin-right: 20px;
+    color: #4168e0;
+}
+
 
 .checked-user-list-container .content {
     height: 100%;
     flex: 1;
     display: flex;
     padding: 0 30px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: flex-start;
     align-items: flex-start;
     align-content: flex-start;
-    overflow: auto;
+    overflow: scroll;
 }
 
 .checked-user-list-container .content .picked-user-container {
-    width: 33%;
+    width: 20%;
     display: flex;
     flex-direction: column;
     column-count: 1;

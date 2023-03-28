@@ -83,7 +83,12 @@ export default class Message {
             }
 
             msg.messageUid = Long.fromValue(msg.messageUid);
-            msg.timestamp = Long.fromValue(msg.timestamp).toNumber();
+            if (msg.timestamp){
+                msg.timestamp = Long.fromValue(msg.timestamp).toNumber();
+            } else {
+                // 移动端
+                msg.timestamp = Long.fromValue(msg.serverTime).toNumber();
+            }
             msg.localExtra = obj.localExtra;
             if (!msg.from){
                 // 移动端

@@ -4,7 +4,7 @@
             <view class="wf-message-input-toolbar">
                 <view class="wf-input-button-icon wxfont" @click="toggleVoice" :class="showVoice ? 'keyboard' : 'voice'"></view>
                 <view class="wf-input-voice-container" v-if="showVoice">
-                    <view class="wf-input-voice-button" @longpress="startRecord" @touchend="endRecord">按住说话</view>
+                    <AudioInputView  :conversation-info="conversationInfo"></AudioInputView>
                 </view>
                 <view v-else style="width: 100%">
                     <view class="wf-input-text-container">
@@ -53,12 +53,6 @@
                 </scroll-view>
             </view>
         </view>
-        <!--        <zmm-upload-image chooseType="chooseMedia" :show="false" ref="upload" @allComplete="upLoadallComplete" @oneComplete="upLoadoneComplete"></zmm-upload-image>-->
-        <!-- #ifndef H5 -->
-        <view class="wf-voice-recorder" v-show="sharedMiscState.isRecording">
-            <zmm-recorder :show="sharedMiscState.isRecording" :conversationInfo="conversationInfo" ref="recorder"/>
-        </view>
-        <!-- #endif -->
     </view>
 </template>
 
@@ -73,9 +67,11 @@ import emojiStickerConfig from "./emojiStickerConfig";
 import StickerMessageContent from "../../wfc/messages/stickerMessageContent";
 import Config from "../../config";
 import QuoteInfo from "../../wfc/model/quoteInfo";
+import AudioInputView from "./message/AudioInputView.vue";
 
 export default {
     name: "MessageInputView",
+    components: {AudioInputView},
     props: {
         conversationInfo: {
             type: ConversationInfo,
@@ -477,6 +473,7 @@ export default {
     border-radius: 24rpx;
     background: #fff;
     display: flex;
+    flex: 1;
     flex-direction: row;
     align-items: center;
 }

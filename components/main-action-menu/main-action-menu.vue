@@ -88,10 +88,20 @@ export default {
             })
         },
         go2ScanQrCode() {
-            uni.showToast({
-                title: 'TODO 扫一扫',
-                icon: 'none'
-            })
+            uni.scanCode({
+                success: function (res) {
+                    console.log('条码类型：' + res.scanType);
+                    console.log('条码内容：' + res.result);
+                    if (res.result){
+                        // TODO
+                       // wildfirechat://pcsession/xxxx
+                        uni.showToast({
+                            title: '扫码成功: ' + res.result,
+                            icon: 'none',
+                        });
+                    }
+                }
+            });
         },
         showAnimation() {
             this.animation.opacity(1).step();

@@ -96,7 +96,7 @@ export default {
 }
 
 .forward-message p {
-    padding: 5px 10px;
+    padding: 0 10px;
     border-radius: 5px;
     word-wrap: break-word;
     word-break: break-all;
@@ -105,11 +105,15 @@ export default {
     overflow: hidden;
     background-color: #e7e7e7;
     text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    outline: none;
 }
 
 .forward-message img {
     max-width: 200px;
-    max-height: 200px;
+    max-height: 100px;
     border-radius: 3px;
 }
 

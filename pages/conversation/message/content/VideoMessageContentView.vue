@@ -4,7 +4,9 @@
                @click="preview"
                :src="thumbnailUri()"
                />
-        <view class="wxfont play play-button"></view>
+        <view class="wxfont play play-button"
+              @click="preview"
+        />
     </div>
 </template>
 

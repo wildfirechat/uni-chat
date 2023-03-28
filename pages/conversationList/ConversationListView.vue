@@ -1,5 +1,6 @@
 <template>
     <view class="conversation-list" @scroll="onScroll">
+        <view v-if="connectionStatusDesc" style="text-align: center; padding: 5px 0">{{ connectionStatusDesc}}</view>
         <uni-list :border="true" @scroll="onScroll">
             <view
                 @click="showConversation(conversationInfo)"
@@ -21,12 +22,14 @@
 import ConversationItemView from "./ConversationItemView";
 import store from "../../store";
 import wfc from "../../wfc/client/wfc";
+import ConnectionStatus from "../../wfc/client/connectionStatus";
 
 export default {
     name: 'ConversationListView',
     data() {
         return {
             sharedConversationState: store.state.conversation,
+            sharedMiscState: store.state.misc,
 
             showContextMenu: false,
             contextMenuX: 0,
@@ -47,7 +50,7 @@ export default {
                 break;
             case 1:
                 uni.navigateTo({
-                    url:'/pages/search/SearchPortalPage'
+                    url: '/pages/search/SearchPortalPage'
                 });
                 break;
             default:
@@ -123,7 +126,7 @@ export default {
                     break;
                 case 'mark':
                     let conversation = t.conversationInfo.conversation;
-                    if (t.conversationInfo._unread === 0){
+                    if (t.conversationInfo._unread === 0) {
                         wfc.markConversationAsUnread(conversation, true);
                     } else {
                         wfc.clearConversationUnreadStatus(conversation);
@@ -141,6 +144,27 @@ export default {
     },
     activated() {
         this.scrollActiveElementCenter();
+    },
+
+    computed: {
+        connectionStatusDesc() {
+            let desc = '';
+            switch (this.sharedMiscState.connectionStatus) {
+                case ConnectionStatus.ConnectionStatusConnecting:
+                    desc = '正在连接...';
+                    break;
+                case ConnectionStatus.ConnectionStatusReceiveing:
+                    desc = '正在同步...';
+                    break;
+                case ConnectionStatus.ConnectionStatusConnected:
+                    desc = '';
+                    break;
+                case ConnectionStatus.ConnectionStatusUnconnected:
+                    desc = '连接失败';
+                    break;
+            }
+            return desc;
+        }
     },
 
     components: {

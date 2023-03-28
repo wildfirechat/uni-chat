@@ -411,20 +411,6 @@ function _loadVideo(file) {
     }
 }
 
-function videoDuration(file) {
-    return new Promise(
-        (resolve, reject) => {
-            let video = document.getElementById('bgvid');
-            video.onplay = () => {
-                resolve(video.duration);
-            };
-            video.onerror = () => {
-                resolve(0);
-            };
-            _loadVideo(file)
-            console.log('----------', video);
-        });
-}
 
 function dataURItoBlob(dataURI) {
     // convert base64 to raw binary data held in a string

@@ -14,21 +14,22 @@
                              @scroll="onScroll">
                     <view v-for="(message) in sharedConversationState.currentConversationMessageList"
                           :id="'id-'+ message.messageId"
-                          @touchmove="test"
                           :key="message.messageId">
                         <!--todo 不同的消息类型 notification in out-->
 
                         <NotificationMessageContentView :message="message" v-if="isNotificationMessage(message)"/>
                         <RecallNotificationMessageContentView :message="message" v-else-if="isRecallNotificationMessage(message)"/>
                         <NormalOutMessageContentView
-                            @click.native.capture="sharedConversationState.enableMessageMultiSelection? clickMessageItem($event, message) : null"
+                            @click.native.capture.stop="sharedConversationState.enableMessageMultiSelection? clickMessageItem($event, message) : null"
                             :message="message"
-                            @longpress.native="showMessageContextMenu($event, message)"
+                            @touchstart.native="onTouchStart"
+                            @touchmove.native="onTouchMove"
                             v-else-if="message.direction === 0"/>
                         <NormalInMessageContentView
-                            @click.native.capture="sharedConversationState.enableMessageMultiSelection ? clickMessageItem($event, message) : null"
+                            @click.native.capture.stop="sharedConversationState.enableMessageMultiSelection ? clickMessageItem($event, message) : null"
                             :message="message"
-                            @longpress.native="showMessageContextMenu($event, message)"
+                            @touchstart.native="onTouchStart"
+                            @touchmove.native="onTouchMove"
                             v-else/>
                     </view>
                 </scroll-view>
@@ -72,8 +73,6 @@ import store from "@/store";
 import wfc from "../../wfc/client/wfc";
 import {numberValue, stringValue} from "@/wfc/util/longUtil";
 import MultiSelectActionView from "@/pages/conversation/MessageMultiSelectActionView";
-// import ForwardMessageByPickConversationView from "@/pages/conversation/message/forward/ForwardMessageByPickConversationView";
-// import ForwardMessageByCreateConversationView from "@/pages/conversation/message/forward/ForwardMessageByCreateConversationView";
 import ForwardType from "@/pages/conversation/message/forward/ForwardType";
 import FileMessageContent from "@/wfc/messages/fileMessageContent";
 import ImageMessageContent from "@/wfc/messages/imageMessageContent";
@@ -118,6 +117,9 @@ export default {
             dragAndDropEnterCount: 0,
 
             showContextMenu: false,
+            isScroll: false,
+            touchStartX: 0,
+            touchStartY: 0,
             contextMenuX: 0,
             contextMenuY: 0,
             contextMenuItems: [],
@@ -194,17 +196,6 @@ export default {
 
     methods: {
         toggleMessageMultiSelectionActionView(message) {
-            if (!this.sharedConversationState.enableMessageMultiSelection) {
-                this.saveMessageListViewFlexGrow = this.$refs['conversationMessageList'].style.flexGrow;
-                this.savedMessageListViewHeight = this.$refs['conversationMessageList'].style.height;
-                this.$refs['conversationMessageList'].style.flexGrow = 1;
-            } else {
-                if (this.saveMessageListViewFlexGrow !== -1 && this.savedMessageListViewHeight !== -1) {
-                    this.$refs['conversationMessageList'].style.height = this.savedMessageListViewHeight;
-                    this.$refs['conversationMessageList'].style.flexGrow = this.saveMessageListViewFlexGrow;
-                }
-            }
-            this.sharedPickState.messages.forEach(m => console.log(m.messageId));
             store.toggleMessageMultiSelection(message);
         },
 
@@ -254,14 +245,6 @@ export default {
             // this.showContextMenu = false;
         },
 
-        test() {
-            this.showContextMenu = false;
-            uni.hideKeyboard();
-        },
-
-        onMenuClose() {
-            this.$emit('contextMenuClosed')
-        },
         onMessageSenderContextMenuClose() {
             console.log('onMessageSenderContextMenuClose')
         },
@@ -374,28 +357,10 @@ export default {
             wfc.recallMessage(message.messageUid, null, null);
         },
 
-        delMessage(message) {
-            this.$alert({
-                title: ' 删除消息',
-                content: '确定删除消息？',
-                confirmText: '本地删除',
-                cancelText: '远程删除',
-                cancelCallback: () => {
-                    wfc.deleteRemoteMessageByUid(message.messageUid, null, null)
-                },
-                confirmCallback: () => {
-                    wfc.deleteMessage(message.messageId);
-                }
-            })
-        },
-
         forward(message) {
-            return this.pickConversationAndForwardMessage(ForwardType.NORMAL, [message]);
-        },
-
-        _forward(message) {
-            this.forward(message).catch(() => {
-                // do nothing
+            this.$forward({
+                forwardType: ForwardType.NORMAL,
+                messages: [message],
             });
         },
 
@@ -424,6 +389,13 @@ export default {
         },
 
         favMessage(message) {
+            // fixme 收藏
+            // TODO 收藏
+            uni.showToast({
+                title: 'TODO ',
+                icon: 'none'
+            });
+            return;
             let favItem = FavItem.fromMessage(message);
             axios.post('/fav/add', {
                 messageUid: stringValue(favItem.messageUid),
@@ -467,78 +439,6 @@ export default {
             this.toggleMessageMultiSelectionActionView(message);
         },
 
-        pickConversationAndForwardMessage(forwardType, messages) {
-            return new Promise(((resolve, reject) => {
-                let beforeClose = (event) => {
-                    console.log('Closing...', event, event.params)
-                    // What a gamble... 50% chance to cancel closing
-                    if (event.params.toCreateConversation) {
-                        console.log('to show')
-                        Promise.race([this.createConversationAndForwardMessage(forwardType, messages)])
-                            .then(resolve)
-                            .catch(reject);
-                    } else if (event.params.confirm) {
-                        let conversations = event.params.conversations;
-                        let extraMessageText = event.params.extraMessageText;
-                        store.forwardMessage(forwardType, conversations, messages, extraMessageText)
-                        resolve();
-                    } else {
-                        console.log('cancel')
-                        reject();
-                    }
-                };
-
-                this.$modal.show(
-                    ForwardMessageByPickConversationView,
-                    {
-                        forwardType: forwardType,
-                        messages: messages
-                    }, {
-                        name: 'forward-by-pick-conversation-modal',
-                        width: 600,
-                        height: 480,
-                        clickToClose: false,
-                    }, {
-                        'before-close': beforeClose,
-                    })
-            }));
-        },
-
-        createConversationAndForwardMessage(forwardType, messages) {
-            return new Promise(((resolve, reject) => {
-
-                let beforeClose = (event) => {
-                    console.log('Closing...', event, event.params)
-                    if (event.params.backPickConversation) {
-                        Promise.race([this.pickConversationAndForwardMessage(forwardType, messages)])
-                            .then(resolve)
-                            .catch(reject);
-                    } else if (event.params.confirm) {
-                        let users = event.params.users;
-                        let extraMessageText = event.params.extraMessageText;
-                        store.forwardByCreateConversation(forwardType, users, messages, extraMessageText)
-                        resolve();
-                    } else {
-                        console.log('cancel')
-                        reject();
-                    }
-                };
-                this.$modal.show(
-                    ForwardMessageByCreateConversationView,
-                    {
-                        forwardType: forwardType,
-                        messages: messages,
-                        users: this.sharedContactState.friendList,
-                    }, {
-                        name: 'forward-by-create-conversation-modal',
-                        width: 600,
-                        height: 480,
-                        clickToClose: false,
-                    }, {
-                        'before-close': beforeClose,
-                    });
-            }));
-        },
         playVoice(message) {
             if (amr) {
                 amr.stop();
@@ -567,7 +467,26 @@ export default {
         },
 
 
+        onTouchStart(e) {
+            this.isScroll = false
+            this.touchStartX = e.touches[0].clientX
+            this.touchStartY = e.touches[0].clientY
+        },
+
+        onTouchMove(e) {
+            uni.hideKeyboard();
+
+            let delX = e.touches[0].clientX - this.touchStartX
+            let delY = e.touches[0].clientY - this.touchStartY
+            if (Math.abs(delX) > 5 || Math.abs(delY) > 5) {
+                this.isScroll = true
+            }
+        },
+
         showMessageContextMenu(e, message) {
+            if (this.isScroll) {
+                return;
+            }
             this.contextMenuX = e.touches[0].clientX;
             this.contextMenuY = e.touches[0].clientY;
 
@@ -587,9 +506,14 @@ export default {
                 })
             }
             this.contextMenuItems.push({
-                title: '删除',
+                title: '本地删除',
                 message: message,
                 tag: 'delete',
+            })
+            this.contextMenuItems.push({
+                title: '远程删除',
+                message: message,
+                tag: 'deleteRemote',
             })
             if (this.isForwardable(message)) {
                 this.contextMenuItems.push({
@@ -612,6 +536,11 @@ export default {
                     tag: 'quote',
                 })
             }
+            this.contextMenuItems.push({
+                title: '多选',
+                message: message,
+                tag: 'multiSelection',
+            })
             this.showContextMenu = true;
 
             // <!--                    <li v-if="isCopyable(message)">-->
@@ -647,22 +576,38 @@ export default {
         },
 
         onContextMenuItemSelect(t) {
-            if (t.tag === 'delete') {
-                console.log('wfc delete message', t.message.messageId)
-                wfc.deleteMessage(t.message.messageId);
-                // wfc.deleteMessage(3100);
-            } else if (t.tag === 'forward') {
-                this.forward(t.message)
-            } else if (t.tag === 'recall') {
-                this.recallMessage(t.message);
-            } else if (t.tag === 'quote') {
-                store.quoteMessage(t.message);
-            } else {
-                uni.showToast({
-                    title: 'TODO ' + t.title,
-                    icon: 'none'
-                })
+            switch (t.tag) {
+                case 'delete':
+                    console.log('wfc delete message', t.message.messageId)
+                    wfc.deleteMessage(t.message.messageId);
+                    break;
+                case 'deleteRemote':
+                    wfc.deleteRemoteMessageByUid(t.message.messageUid, () => {
+                        console.log('delete remote message success')
+                    }, err => {
+                        console.log('delete remote message fail', err);
+                    })
+                    break;
+                case 'forward':
+                    this.forward(t.message)
+                    break;
+                case 'recall':
+                    this.recallMessage(t.message);
+                    break;
+                case 'quote':
+                    store.quoteMessage(t.message);
+                    break;
+                case 'multiSelection':
+                    this.multiSelect(t.message);
+                    break;
+                default:
+                    uni.showToast({
+                        title: 'TODO ' + t.title,
+                        icon: 'none'
+                    })
+                    break;
             }
+            this.$emit('contextMenuClosed')
         },
 
         updateConversationTitle() {
@@ -727,6 +672,9 @@ export default {
             console.log('------------- keyboardHeight', this.keyboardHeight, this.currentKeyboardHeight);
         });
         // #endif
+        this.$on('openMessageContextMenu', (event, message) => {
+            this.showMessageContextMenu(event, message)
+        });
     },
 
     updated() {

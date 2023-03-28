@@ -103,7 +103,7 @@ export default {
     },
 
     mounted() {
-        console.log('jjjjjjjjjjjjjjuserList', this.users.length);
+        console.log('userList', this.users.length);
     },
 
     activated() {
