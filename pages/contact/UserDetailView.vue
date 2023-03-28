@@ -49,9 +49,6 @@ import ModifyMyInfoType from "../../wfc/model/modifyMyInfoType";
 
 export default {
     name: "UserDetailView",
-    props: {
-        user: null,
-    },
     data() {
         return {
             user: store.state.contact.currentFriend,
