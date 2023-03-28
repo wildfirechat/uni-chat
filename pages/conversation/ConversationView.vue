@@ -24,9 +24,19 @@
                             :message="message"
                             @touchstart.native="onTouchStart"
                             @touchmove.native="onTouchMove"
-                            v-else-if="message.direction === 0"/>
+                            v-else-if="message.direction === 0 && sharedConversationState.enableMessageMultiSelection"/>
+                        <NormalOutMessageContentView
+                            :message="message"
+                            @touchstart.native="onTouchStart"
+                            @touchmove.native="onTouchMove"
+                            v-else-if="message.direction === 0 && !sharedConversationState.enableMessageMultiSelection"/>
                         <NormalInMessageContentView
                             @click.native.capture.stop="sharedConversationState.enableMessageMultiSelection ? clickMessageItem($event, message) : null"
+                            :message="message"
+                            @touchstart.native="onTouchStart"
+                            @touchmove.native="onTouchMove"
+                            v-else-if="message.direction === 1 && sharedConversationState.enableMessageMultiSelection"/>
+                        <NormalInMessageContentView
                             :message="message"
                             @touchstart.native="onTouchStart"
                             @touchmove.native="onTouchMove"
@@ -142,6 +152,9 @@ export default {
             // match:'http.*'
         }, e => {
             console.log('reject url', e.url)
+            if (this.sharedConversationState.enableMessageMultiSelection){
+                return;
+            }
             uni.navigateTo({
                 url: `/pages/misc/WebViewPage?url=${e.url}`,
                 fail: (e) => {
@@ -206,6 +219,7 @@ export default {
             if (this.sharedConversationState.enableMessageMultiSelection) {
                 store.selectOrDeselectMessage(message);
                 event.stopPropagation();
+                event.preventDefault();
             }
         },
 
