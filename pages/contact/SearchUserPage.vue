@@ -20,7 +20,7 @@ import wfc from "../../wfc/client/wfc";
 import SearchType from "../../wfc/model/searchType";
 
 export default {
-    name: "SearchUserView",
+    name: "SearchUserPage",
     components: {UserListVue},
     data() {
         return {

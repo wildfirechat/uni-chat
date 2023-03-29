@@ -27,10 +27,22 @@ const i18n = new VueI18n({
     }
 })
 
+Vue.prototype.$navigateToPage = (url, options) => {
+    uni.navigateTo({
+        url: url,
+        success: (res) => {
+            res.eventChannel.emit('options', options);
+        },
+        fail: (e) => {
+            console.log('navigate to WebViewPage error', e)
+        }
+    });
+}
+
 // 如果不存在会话页面，则入栈，如果已经存在会话页面，则返回到该页面
 Vue.prototype.$go2ConversationPage = () => {
     let pages = getCurrentPages();
-    let cvRoute = 'pages/conversation/ConversationView'
+    let cvRoute = 'pages/conversation/ConversationPage'
     let delta = 0;
     let found = false;
     for (let i = pages.length - 1; i >= 0; i--) {
@@ -50,18 +62,18 @@ Vue.prototype.$go2ConversationPage = () => {
         });
     } else {
         uni.navigateTo({
-            url: '/pages/conversation/ConversationView',
+            url: '/pages/conversation/ConversationPage',
             success: () => {
-                console.log('nav to conversationView success');
+                console.log('nav to conversationPage success');
 
             },
             fail: (err) => {
-                console.log('nav to conversationView err', err);
+                console.log('nav to conversationPage err', err);
             }
         })
     }
 }
-Vue.prototype.$scrollToBottom= () => {
+Vue.prototype.$scrollToBottom = () => {
     setTimeout(() => {
         uni.pageScrollTo({
             scrollTop: 999999,

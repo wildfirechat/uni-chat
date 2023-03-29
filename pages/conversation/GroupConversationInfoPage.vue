@@ -68,7 +68,7 @@ import EventType from "../../wfc/client/wfcEvent";
 import appServerApi from "../../api/appServerApi";
 
 export default {
-    name: "GroupConversationInfoView",
+    name: "GroupConversationInfoPage",
     props: {
         conversationInfo: {
             type: ConversationInfo,
@@ -86,7 +86,7 @@ export default {
         }
     },
     onLoad(option) {
-        console.log('GroupConversationInfoView onLoad')
+        console.log('GroupConversationInfoPage onLoad')
         // #ifdef APP-NVUE
         const eventChannel = this.$scope.eventChannel; // 兼容APP-NVUE
         // #endif
@@ -219,7 +219,7 @@ export default {
                 store.quitGroup(this.conversationInfo.conversation.target)
             }
             uni.switchTab({
-                url: '/pages/conversationList/ConversationListView',
+                url: '/pages/conversationList/ConversationListPage',
                 success: () => {
                     console.log('to conversation list success');
                 },

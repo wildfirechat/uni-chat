@@ -79,13 +79,13 @@ export default {
             } else {
                 store.setCurrentFriend(user)
                 uni.navigateTo({
-                    url: '/pages/contact/UserDetailView',
+                    url: '/pages/contact/UserDetailPage',
                     success: () => {
-                        console.log('nav to userDetailView success');
+                        console.log('nav to UserDetailPage success');
 
                     },
                     fail: (err) => {
-                        console.log('nav to userDetailView err', err);
+                        console.log('nav to UserDetailPage err', err);
                     }
                 });
             }

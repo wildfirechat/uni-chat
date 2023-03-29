@@ -20,7 +20,7 @@ import ConversationInfo from "@/wfc/model/conversationInfo";
 import store from "@/store";
 
 export default {
-    name: "SingleConversationInfoView",
+    name: "SingleConversationInfoPage",
     props: {
         conversationInfo: {
             type: ConversationInfo,
@@ -34,7 +34,7 @@ export default {
         }
     },
     onLoad(option) {
-        console.log('SingleConversationInfoView onLoad')
+        console.log('SingleConversationInfoPage onLoad')
         // #ifdef APP-NVUE
         const eventChannel = this.$scope.eventChannel; // 兼容APP-NVUE
         // #endif

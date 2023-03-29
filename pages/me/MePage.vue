@@ -39,13 +39,13 @@ export default {
         showUserInfo() {
             store.setCurrentFriend(this.user)
             uni.navigateTo({
-                url: '/pages/contact/UserDetailView',
+                url: '/pages/contact/UserDetailPage',
                 success: () => {
-                    console.log('nav to UserDetailView success');
+                    console.log('nav to UserDetailPage success');
 
                 },
                 fail: (err) => {
-                    console.log('nav to UserDetailView err', err);
+                    console.log('nav to UserDetailPage err', err);
                 }
             })
 

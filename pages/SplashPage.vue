@@ -15,14 +15,14 @@ export default {
             this.go2ConversationList();
         } else {
             uni.redirectTo({
-                url: '/pages/login/login',
+                url: '/pages/login/LoginPage',
             })
         }
     },
     methods: {
         go2ConversationList() {
             uni.switchTab({
-                url: '/pages/conversationList/ConversationListView',
+                url: '/pages/conversationList/ConversationListPage',
                 success: () => {
                     console.log('to conversation list success');
                 },

@@ -82,7 +82,7 @@ export default {
         },
         go2SearchFriend() {
             uni.navigateTo({
-                url: '/pages/contact/SearchUserView',
+                url: '/pages/contact/SearchUserPage',
                 fail: err => {
                 }
             })

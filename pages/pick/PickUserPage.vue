@@ -44,7 +44,7 @@ import store from "@/store";
 import CheckableUserListView from "@/pages/user/CheckableUserListView";
 
 export default {
-    name: "PickUserView",
+    name: "PickUserPage",
     props: {
         users: {
             type: Array,
@@ -86,7 +86,7 @@ export default {
     },
 
     onLoad(option) {
-        console.log('PickUserView onLoad')
+        console.log('PickUserPage onLoad')
         // #ifdef APP-NVUE
         const eventChannel = this.$scope.eventChannel; // 兼容APP-NVUE
         // #endif

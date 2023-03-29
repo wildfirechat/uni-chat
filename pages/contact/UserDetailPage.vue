@@ -45,7 +45,7 @@ import Conversation from "../../wfc/model/conversation";
 import wfc from "../../wfc/client/wfc";
 
 export default {
-    name: "UserDetailView",
+    name: "UserDetailPage",
     data() {
         return {
             sharedStateContact: store.state.contact,

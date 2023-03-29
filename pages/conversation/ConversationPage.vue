@@ -53,25 +53,11 @@
                               ref="messageInputView"
             />
             <MultiSelectActionView v-show="sharedConversationState.enableMessageMultiSelection"/>
-            <!--                <SingleConversationInfoView-->
-            <!--                    v-if="showConversationInfo &&  sharedConversationState.currentConversationInfo.conversation.type === 0"-->
-            <!--                    :conversation-info="sharedConversationState.currentConversationInfo"-->
-            <!--                    v-bind:class="{ active: showConversationInfo }"-->
-            <!--                    class="conversation-info-container"-->
-            <!--                />-->
-            <!--                <GroupConversationInfoView-->
-            <!--                    v-if="showConversationInfo &&  sharedConversationState.currentConversationInfo.conversation.type === 1"-->
-            <!--                    :conversation-info="sharedConversationState.currentConversationInfo"-->
-            <!--                    v-bind:class="{ active: showConversationInfo }"-->
-            <!--                    class="conversation-info-container"-->
-            <!--                />-->
         </view>
     </view>
 </template>
 
 <script>
-import SingleConversationInfoView from "@/pages/conversation/SingleConversationInfoView";
-import GroupConversationInfoView from "@/pages/conversation/GroupConversationInfoView";
 import MessageInputView from "@/pages/conversation/MessageInputView";
 import NormalOutMessageContentView from "@/pages/conversation/message/NormalOutMessageContentContainerView";
 import NormalInMessageContentView from "@/pages/conversation/message/NormalInMessageContentContainerView";
@@ -102,6 +88,7 @@ import {getItem, setItem} from "../util/storageHelper";
 
 var amr;
 export default {
+    name: 'ConversationPage',
     components: {
         MultiSelectActionView,
         NotificationMessageContentView,
@@ -109,8 +96,6 @@ export default {
         NormalInMessageContentView,
         NormalOutMessageContentView,
         MessageInputView,
-        GroupConversationInfoView,
-        SingleConversationInfoView,
     },
     // props: ["conversation"],
     data() {
@@ -172,27 +157,27 @@ export default {
     onNavigationBarButtonTap(e) {
         if (this.conversationInfo.conversation.type === ConversationType.Single) {
             uni.navigateTo({
-                url: '/pages/conversation/SingleConversationInfoView',
+                url: '/pages/conversation/SingleConversationInfoPage',
                 success: (res) => {
                     res.eventChannel.emit('conversationInfo', {
                         conversationInfo: this.conversationInfo
                     });
                 },
                 fail: (err) => {
-                    console.log('nav to SingleConversationInfoView err', err);
+                    console.log('nav to SingleConversationInfoPage err', err);
                 }
             });
 
         } else if (this.conversationInfo.conversation.type === ConversationType.Group) {
             uni.navigateTo({
-                url: '/pages/conversation/GroupConversationInfoView',
+                url: '/pages/conversation/GroupConversationInfoPage',
                 success: (res) => {
                     res.eventChannel.emit('conversationInfo', {
                         conversationInfo: this.conversationInfo
                     });
                 },
                 fail: (err) => {
-                    console.log('nav to GroupConversationInfoView err', err);
+                    console.log('nav to GroupConversationInfoPage err', err);
                 }
             });
         } else {

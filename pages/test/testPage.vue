@@ -16,7 +16,7 @@ export default {
             wfc.disconnect();
             clear();
             uni.navigateTo({
-                url: '../login/login',
+                url: '../login/LoginPage',
                 success: () => {
                     console.log('nav to test-webrtc success');
 

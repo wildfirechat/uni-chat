@@ -1801,7 +1801,7 @@ function _reset() {
 
     uni.reLaunch(
         {
-            url: '/pages/login/login'
+            url: '/pages/login/LoginPage'
         }
     );
 }

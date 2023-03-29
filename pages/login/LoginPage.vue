@@ -31,6 +31,7 @@ import ConnectionStatus from "../../wfc/client/connectionStatus";
 import appServerApi from "../../api/appServerApi";
 
 export default {
+    name: 'LoginPage',
     data() {
         return {
             focus: false,
@@ -110,7 +111,7 @@ export default {
 
         go2ConversationList() {
             uni.switchTab({
-                url: '/pages/conversationList/ConversationListView',
+                url: '/pages/conversationList/ConversationListPage',
                 success: () => {
                     console.log('to conversation list success');
                 },

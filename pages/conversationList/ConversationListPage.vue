@@ -25,7 +25,7 @@ import wfc from "../../wfc/client/wfc";
 import ConnectionStatus from "../../wfc/client/connectionStatus";
 
 export default {
-    name: 'ConversationListView',
+    name: 'ConversationListPage',
     data() {
         return {
             sharedConversationState: store.state.conversation,

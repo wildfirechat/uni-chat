@@ -50,7 +50,7 @@ import UserListVue from "../user/UserListVue";
 import UniList from "../../components/uni-list/uni-list.vue";
 
 export default {
-    name: "ContactListView",
+    name: "ContactListPage",
     components: {UniList, UserListVue, GroupListVue, FriendRequestListView},
     data() {
         return {
@@ -77,13 +77,13 @@ export default {
         setCurrentUser(userInfo) {
             store.setCurrentFriend(userInfo)
             uni.navigateTo({
-                url: './UserDetailView',
+                url: './UserDetailPage',
                 success: () => {
-                    console.log('nav to userDetailView success');
+                    console.log('nav to UserDetailPage success');
 
                 },
                 fail: (err) => {
-                    console.log('nav to userDetailView err', err);
+                    console.log('nav to UserDetailPage err', err);
                 }
             });
         },

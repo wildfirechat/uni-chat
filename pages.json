@@ -12,13 +12,13 @@
             }
         },
 		{
-			"path": "pages/login/login",
+			"path": "pages/login/LoginPage",
 			"style": {
 				"navigationBarTitleText": "登录"
 			}
 		},
 		{
-			"path": "pages/conversationList/ConversationListView",
+			"path": "pages/conversationList/ConversationListPage",
 			"style": {
 				"navigationBarTitleText": "会话列表",
                 "app-plus": {
@@ -40,7 +40,7 @@
 			}
 		},
         {
-            "path": "pages/conversation/ConversationView",
+            "path": "pages/conversation/ConversationPage",
             "style": {
                 "navigationBarTitleText": "会话详情",
                 "enablePullDownRefresh": false,
@@ -66,7 +66,7 @@
             }
         },
         {
-            "path": "pages/conversation/SingleConversationInfoView",
+            "path": "pages/conversation/SingleConversationInfoPage",
             "style": {
                 "navigationBarTitleText": "单人会话信息"
             }
@@ -78,13 +78,13 @@
             }
         },
         {
-            "path": "pages/conversation/GroupConversationInfoView",
+            "path": "pages/conversation/GroupConversationInfoPage",
             "style": {
                 "navigationBarTitleText": "群会话信息"
             }
         },
         {
-            "path": "pages/contact/SearchUserView",
+            "path": "pages/contact/SearchUserPage",
             "style": {
                 "navigationBarTitleText": "搜索用户"
             }
@@ -102,13 +102,13 @@
             }
         },
 		{
-			"path": "pages/contact/UserDetailView",
+			"path": "pages/contact/UserDetailPage",
 			"style": {
 				"navigationBarTitleText": "用户信息"
 			}
 		},
 		{
-			"path": "pages/contact/ContactListView",
+			"path": "pages/contact/ContactListPage",
 			"style": {
 				"navigationBarTitleText": "好友",
                 "app-plus": {
@@ -130,7 +130,7 @@
 			}
 		},
         {
-            "path": "pages/pick/PickUserView",
+            "path": "pages/pick/PickUserPage",
             "style": {
                 "navigationBarTitleText": "选择联系人"
             }
@@ -165,13 +165,13 @@
 		"color": "#7f8389",
 		"list": [
 			{
-				"pagePath": "pages/conversationList/ConversationListView",
+				"pagePath": "pages/conversationList/ConversationListPage",
 				"text": "会话列表",
 				"iconPath": "static/image/tabbar/message_normal.png",
 				"selectedIconPath": "static/image/tabbar/message_press.png"
 			},
 			{
-				"pagePath": "pages/contact/ContactListView",
+				"pagePath": "pages/contact/ContactListPage",
 				"text": "好友列表",
 				"iconPath": "static/image/tabbar/contact_normal.png",
 				"selectedIconPath": "static/image/tabbar/contact_press.png"

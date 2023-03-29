@@ -63,13 +63,13 @@ export default {
         onClickUserPortrait(userId) {
             store.setCurrentFriend(this.message._from);
             uni.navigateTo({
-                url: '/pages/contact/UserDetailView',
+                url: '/pages/contact/UserDetailPage',
                 success: () => {
-                    console.log('nav to UserDetailView success');
+                    console.log('nav to UserDetailPage success');
 
                 },
                 fail: (err) => {
-                    console.log('nav to UserDetailView err', err);
+                    console.log('nav to UserDetailPage err', err);
                 }
             })
         },
