@@ -154,7 +154,7 @@ export class AppServerApi {
                         if (res.data.code === 0) {
                             resolve(res.data.result);
                         } else {
-                            throw new AppServerError(response.data.code, res.data.message)
+                            throw new AppServerError(res.data.code, res.data.message)
                         }
                     } else {
                         throw new Error('request error, status code: ' + res.status)

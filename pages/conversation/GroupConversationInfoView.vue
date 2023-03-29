@@ -65,6 +65,7 @@ import GroupType from "@/wfc/model/groupType";
 import ModifyGroupInfoType from "@/wfc/model/modifyGroupInfoType";
 import Config from "../../config";
 import EventType from "../../wfc/client/wfcEvent";
+import appServerApi from "../../api/appServerApi";
 
 export default {
     name: "GroupConversationInfoView",
@@ -104,18 +105,18 @@ export default {
         })
     },
 
-    mounted(){
+    mounted() {
         wfc.eventEmitter.on(EventType.UserInfosUpdate, this.onConversationMembersUpdate)
         wfc.eventEmitter.on(EventType.GroupMembersUpdate, this.onConversationMembersUpdate)
     },
 
-    beforeDestroy(){
+    beforeDestroy() {
         wfc.eventEmitter.removeListener(EventType.UserInfosUpdate, this.onConversationMembersUpdate)
         wfc.eventEmitter.removeListener(EventType.GroupMembersUpdate, this.onConversationMembersUpdate)
     },
 
     methods: {
-        onConversationMembersUpdate(){
+        onConversationMembersUpdate() {
             this.groupMemberUserInfos = store.getConversationMemberUsrInfos(this.conversationInfo.conversation);
         },
 
@@ -170,30 +171,16 @@ export default {
         async getGroupAnnouncement() {
             let url = Config.APP_SERVER + '/get_group_announcement';
             console.log('to getGroupAnnouncement', url, this.conversationInfo.conversation.target)
-            uni.request({
-                url: Config.APP_SERVER + '/get_group_announcement',
-                method: 'POST',
-                data: {
-                    groupId: this.conversationInfo.conversation.target,
-                },
-                withCredentials: true,
-                success: (response) => {
-                    console.log('getGroupAnnouncement response ', response)
-                    if (response.data && response.data.result) {
-                        this.groupAnnouncement = response.data.result.text;
+            appServerApi.getGroupAnnouncement(this.conversationInfo.conversation.target)
+                .then(result => {
+                    if (result.text) {
+                        this.groupAnnouncement = result.text;
                     } else {
                         if (this.enableEditGroupNameOrAnnouncement) {
                             this.groupAnnouncement = this.$t('conversation.click_to_edit_group_announcement');
                         }
                     }
-                },
-                fail: (e) => {
-                    console.log('getGroupAnnouncement error', e)
-                },
-                complete: (obj) => {
-                    console.log('getGroupAnnouncement complete', obj)
-                }
-            });
+                })
         },
 
         updateGroupName() {
@@ -218,34 +205,15 @@ export default {
                 return;
             }
             console.log('updateGroupAnnouncement')
-            uni.request({
-                url: Config.APP_SERVER + '/put_group_announcement',
-                method: 'POST',
-                data: {
-                    author: wfc.getUserId(),
-                    groupId: this.conversationInfo.conversation.target,
-                    text: this.newGroupAnnouncement,
-                },
-                withCredentials: true,
-                success: (response) => {
-                    console.log('updateGroupAnnouncement success', response)
-                    if (response.data && response.data.code === 0) {
-                        this.groupAnnouncement = this.newGroupAnnouncement;
-                        this.$refs.groupAnnouncementInput.blur();
-                    }
-                },
-                fail: (err) => {
-                    console.log('updateGroupAnnouncement err', err)
-                },
-                complete: (obj) => {
-                    console.log('updateGroupAnnouncement complete', obj)
-                }
-            });
+            appServerApi.updateGroupAnnouncement(wfc.getUserId(), this.conversationInfo.conversation.target, this.newGroupAnnouncement)
+                .then(result => {
+                    this.groupAnnouncement = this.newGroupAnnouncement;
+                })
         },
 
         quitGroup() {
             let groupInfo = this.conversationInfo.conversation._target;
-            if (groupInfo.owner === store.state.contact.selfUserInfo.uid){
+            if (groupInfo.owner === store.state.contact.selfUserInfo.uid) {
                 store.quitGroup(this.conversationInfo.conversation.target)
             } else {
                 store.quitGroup(this.conversationInfo.conversation.target)
