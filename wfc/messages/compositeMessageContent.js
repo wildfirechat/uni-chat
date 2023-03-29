@@ -7,7 +7,6 @@ import Conversation from "../model/conversation";
 import Long from "long";
 import {compare} from "../util/longUtil";
 import MessagePayload from "../messages/messagePayload";
-// import {isElectron} from "../../platform";
 import ArticlesMessageContent from "./articlesMessageContent";
 
 export default class CompositeMessageContent extends MediaMessageContent {
@@ -141,11 +140,11 @@ export default class CompositeMessageContent extends MediaMessageContent {
         let str;
         if (this.file) {
             // web
-            let fileReader = new FileReader();
-            fileReader.onload(ev => {
-                this._decodeMessages(ev.target.result);
-            });
-            fileReader.readAsBinaryString(this.file);
+            // let fileReader = new FileReader();
+            // fileReader.onload(ev => {
+            //     this._decodeMessages(ev.target.result);
+            // });
+            // fileReader.readAsBinaryString(this.file);
 
         } else if (this.localPath) {
             // electron

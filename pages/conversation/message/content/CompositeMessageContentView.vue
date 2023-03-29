@@ -3,7 +3,7 @@
          @click="showCompositePage"
          v-bind:class="{out:message.direction === 0}">
         <p class="title">{{ title }}</p>
-        <p class="content" v-html="this.content"></p>
+        <p @click="showCompositePageC" class="content" v-html="this.content"></p>
         <p class="desc">{{ $t('message.records') }}</p>
     </div>
 </template>
@@ -13,7 +13,6 @@ import Message from "@/wfc/messages/message";
 import {parser as emojiParse} from "@/emoji/emoji";
 import wfc from "@/wfc/client/wfc";
 import ConversationType from "@/wfc/model/conversationType";
-import {stringValue} from "@/wfc/util/longUtil";
 
 export default {
     name: "CompositeMessageContentView",
@@ -44,29 +43,24 @@ export default {
     },
 
     methods: {
+        showCompositePageC(){
+            console.log('showCompositePageC');
+            this.showCompositePage();
+        },
         showCompositePage() {
-            if (false) {
-            } else {
-                // fixme
-                // let CompositeMessagePage = require('../../../CompositeMessagePage').default;
-                let beforeClose = () => {
-                    // todo
-                };
-                this.$modal.show(
-                    CompositeMessagePage,
-                    {
+            console.log('to navigate to CompositeMessagePage')
+            uni.navigateTo({
+                url: `/pages/conversation/message/CompositeMessagePage`,
+                success: (res) => {
+                    console.log('navigate to CompositeMessagePage success')
+                    res.eventChannel.emit('options', {
                         message: this.message,
-                        isInCompositeView:true,
-                    }, {
-                        name: 'show-composite-message-modal' + '-' + stringValue(this.message.messageUid),
-                        width: 800,
-                        height: 600,
-                        clickToClose: true,
-                    }, {
-                        'before-close': beforeClose,
                     });
-
-            }
+                },
+                fail: (e) => {
+                    console.log('navigate to CompositeMessagePage error', e)
+                }
+            });
         }
     }
 }

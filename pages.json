@@ -60,6 +60,12 @@
             }
         },
         {
+            "path": "pages/conversation/message/CompositeMessagePage",
+            "style": {
+                "navigationBarTitleText": "组合消息预览"
+            }
+        },
+        {
             "path": "pages/conversation/SingleConversationInfoView",
             "style": {
                 "navigationBarTitleText": "单人会话信息"
