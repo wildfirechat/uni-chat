@@ -28,6 +28,7 @@ import wfcUIKit from "../../wfc/uikit/wfcUIKit";
 import Config from '../../config';
 import {getItem, setItem} from "../util/storageHelper";
 import ConnectionStatus from "../../wfc/client/connectionStatus";
+import appServerApi from "../../api/appServerApi";
 
 export default {
     data() {
@@ -65,52 +66,25 @@ export default {
         },
 
         login(phone, code) {
-            let appServer = Config.APP_SERVER + '/login';
-            let clientId = wfc.getClientId();
             console.log('login', wfc.getClientId(), Config.getWFCPlatform());
-            uni.request({
-                url: appServer,
-                data: {
-                    mobile: phone,
-                    code: code,
-                    clientId: clientId,
-                    platform: Config.getWFCPlatform(),
-                },
-                header: {
-                    'content-type': 'application/json' // 默认值
+            appServerApi.loginWithAuthCode(phone, code)
+                .then(result => {
+                    console.log('login result', result);
+                    let userId = result.userId;
+                    let token = result.token;
+                    wfc.connect(userId, token);
+                    setItem('userId', userId);
+                    setItem('token', token)
 
-                },
-                method: 'POST',
-
-                success: (res) => {
-                    if (res.statusCode === 200) {
-                        let loginResult = res.data;
-
-                        if (loginResult.code === 0) {
-                            let userId = loginResult.result.userId;
-                            let token = loginResult.result.token;
-                            wfc.connect(userId, token);
-                            setItem('userId', userId);
-                            setItem('token', token)
-
-                            let authToken = res.header['authToken'];
-                            if (!authToken){
-                                authToken = res.header['authtoken'];
-                            }
-
-                            console.log('setupAppserver', Config.APP_SERVER, authToken);
-                            wfcUIKit.setupAppServer(Config.APP_SERVER, authToken);
-
-
-                            this.go2ConversationList();
-
-                        } else {
-                            console.log('login failed', loginResult);
-                        }
-                    }
-                }
-
-            });
+                    this.go2ConversationList();
+                })
+                .catch(r => {
+                    console.log('login failed', r)
+                    uni.showToast({
+                        title: r,
+                        icon: 'none',
+                    });
+                });
         },
 
         bindAuthCodeTap: function (e) {
@@ -119,24 +93,19 @@ export default {
         },
 
         authCode(phone) {
-            let appServer = Config.APP_SERVER + '/send_code';
-            uni.request({
-                url: appServer,
-                data: {
-                    mobile: phone
-                },
-                header: {
-                    'content-type': 'application/json' // 默认值
-                },
-                method: 'POST',
-                success(res) {
-                    console.log(res.data);
-
-                    if (res.statusCode === 200) {
-                        console.log('发送验证码成功');
-                    }
-                }
-            });
+            appServerApi.requestAuthCode(phone)
+                .then(result => {
+                    uni.showToast({
+                        title: '发送验证码成功',
+                        icon: 'none',
+                    });
+                })
+                .catch(reason => {
+                    uni.showToast({
+                        title: reason,
+                        icon: 'none',
+                    });
+                })
         },
 
         go2ConversationList() {
@@ -185,7 +154,7 @@ export default {
     font-size: 14px;
 }
 
-.confirm-button{
+.confirm-button {
     margin-top: 20px;
 }
 
