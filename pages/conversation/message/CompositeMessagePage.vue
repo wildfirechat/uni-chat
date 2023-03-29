@@ -1,7 +1,7 @@
 <template>
     <section class="composite-page">
-        <div v-if="!compositeMessage">
-            {{ 'Null CompositeMessagePage' }}
+        <div v-if="!compositeMessage" style="display: flex; justify-content: center; align-items: center">
+            加载中...
         </div>
         <ul v-else>
             <li v-for="(message, index) in compositeMessage.messageContent.messages"
@@ -69,13 +69,6 @@ import VideoMessageContentView from "@/pages/conversation/message/content/VideoM
 import FileMessageContentView from "@/pages/conversation/message/content/FileMessageContentView";
 import StickerMessageContentView from "@/pages/conversation/message/content/StickerMessageContentView";
 import UnknowntMessageContentView from "@/pages/conversation/message/content/UnknownMessageContentView";
-import Message from "../../../wfc/messages/message";
-import {stringValue} from "@/wfc/util/longUtil";
-import wfc from "@/wfc/client/wfc";
-import FavItem from "@/wfc/model/favItem";
-import Conversation from "@/wfc/model/conversation";
-// import axios from "axios";
-// import {isElectron} from "@/platform";
 
 export default {
     name: "CompositeMessagePage",
