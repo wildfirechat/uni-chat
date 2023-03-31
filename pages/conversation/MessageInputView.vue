@@ -4,14 +4,14 @@
             <view class="wf-message-input-toolbar">
                 <view class="wf-input-button-icon wxfont" @click="toggleVoice" :class="showVoice ? 'keyboard' : 'voice'"></view>
                 <view class="wf-input-voice-container" v-if="showVoice">
-                    <AudioInputView  :conversation-info="conversationInfo"></AudioInputView>
+                    <AudioInputView :conversation-info="conversationInfo"></AudioInputView>
                 </view>
                 <view v-else style="width: 100%">
                     <view class="wf-input-text-container">
-                        <textarea ref="textarea" @focus="onInputFocus" :focus="inputFocus" class="wf-input-textarea" v-model="text" placeholder="" hold-keyboard confirm-type="send" @confirm="send(text)" :maxlength="-1" auto-height/>
+                        <textarea ref="textarea" @focus="onInputFocus" :focus="inputFocus" class="wf-input-textarea" @input="onInput" :value="text" placeholder="" hold-keyboard confirm-type="send" @confirm="send(text)" :maxlength="-1" auto-height/>
                     </view>
                     <view v-if="sharedConversationState.quotedMessage" class="quote-message-container">
-                        <view class="quoted-message single-line">{{sharedConversationState.quotedMessage.messageContent.digest(sharedConversationState.quotedMessage)}}</view>
+                        <view class="quoted-message single-line">{{ sharedConversationState.quotedMessage.messageContent.digest(sharedConversationState.quotedMessage) }}</view>
                         <view class="cancel icon-ion-close" @click="cancelQuote"></view>
                     </view>
                 </view>
@@ -138,13 +138,52 @@ export default {
             localData: {},
             sharedMiscState: store.state.misc,
             sharedConversationState: store.state.conversation,
+            mentions: [],
+            groupMemberUserInfos: [],
         };
     },
 
     mounted() {
+        console.log('mounted', this.conversationInfo);
+        if (this.conversationInfo.conversation.type === ConversationType.Group) {
+            this.groupMemberUserInfos = store.getGroupMemberUserInfos(this.conversationInfo.conversation.target, false, false);
+        }
     },
 
     methods: {
+        onInput(event) {
+            let inserting = false;
+            if (event.detail.value.length > this.text.length) {
+                inserting = true;
+            }
+            this.text = event.detail.value;
+            const cursor = event.detail.cursor;
+            if (this.conversationInfo.conversation.type === ConversationType.Group) {
+                if (inserting) {
+                    console.log('ooo', inserting, this.text.charAt(cursor -1));
+                    if (inserting && this.text.length > 0 && this.text.charAt(cursor - 1) === '@') {
+                        const onPickUser = user => {
+                            this.text = this.text.substring(0, cursor - 1) + `@${user.displayName} ` + this.text.substring(cursor);
+                            this.mentions.push(user);
+                        };
+                        let atAll = {
+                            uid: '@all',
+                            displayName: '所有人',
+                            portrait: this.conversationInfo.conversation._target.portrait,
+                        }
+                        this.$pickUser(
+                            {
+                                users: [atAll, ...this.groupMemberUserInfos],
+                                showCategoryLabel: false,
+                                successCB: onPickUser,
+                            })
+                    }
+                }
+            } else {
+                // deleting
+            }
+
+        },
         send() {
             if (this.text) {
                 let textMessageContent = new TextMessageContent(this.text)
@@ -154,10 +193,41 @@ export default {
                     textMessageContent.setQuoteInfo(quoteInfo);
                     store.quoteMessage(null);
                 }
+                if (this.conversationInfo.conversation.type === ConversationType.Group && this.mentions.length > 0) {
+                    const regex = /@\S+(\s|$)/g; // 匹配以@开始，后面跟着至少一个非空白字符，并且以空格或行尾结尾的字符串。
+                    const matches = this.text.match(regex);
+                    if (matches.length > 0) {
+                        for (let i = 0; i < matches.length; i++) {
+                            const match = matches[i].trim();
+                            if (match === '@所有人') {
+                                let index = this.mentions.findIndex(user => user.uid === '@all')
+                                if (index >= 0) {
+                                    textMessageContent.mentionedType = 2;
+                                    break
+                                }
+                            } else {
+                                let index = this.mentions.findIndex(user => user.displayName === match.substring(1));
+                                if (index >= 0) {
+                                    let uid = this.mentions[index].uid;
+                                    if (!textMessageContent.mentionedTargets) {
+                                        textMessageContent.mentionedTargets = [];
+                                    }
+                                    if (textMessageContent.mentionedTargets.indexOf(uid) === -1){
+                                        textMessageContent.mentionedType = 1;
+                                        textMessageContent.mentionedTargets.push(uid);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 wfc.sendConversationMessage(this.conversationInfo.conversation, textMessageContent);
                 this.text = '';
+                this.mentions = [];
             }
         },
+
         startRecord() {
 
             this.$refs['recorder'].startRecord();
@@ -275,10 +345,9 @@ export default {
                 let ids = users.map(u => u.uid);
                 wfcUIKit.startMultiCall(this.conversationInfo.conversation.target, ids, audioOnly);
             }
-            let groupMemberUserInfos = store.getGroupMemberUserInfos(this.conversationInfo.conversation.target, false, false);
-            this.$pickUser(
+            this.$pickUsers(
                 {
-                    users: groupMemberUserInfos,
+                    users: this.groupMemberUserInfos,
                     confirmTitle: this.$t('common.confirm'),
                     showCategoryLabel: false,
                     successCB: beforeClose,
@@ -327,7 +396,7 @@ export default {
             this.currentKeyboardHeight = currentKeyboardHeight;
         },
 
-        cancelQuote(){
+        cancelQuote() {
             store.quoteMessage(null);
         }
     },
@@ -339,7 +408,7 @@ export default {
         inputFocus() {
             return !this.showExt && !this.showEmoji && !this.showVoice;
         }
-    }
+    },
 }
 </script>
 
@@ -435,7 +504,7 @@ export default {
     box-sizing: border-box;
 }
 
-.quote-message-container{
+.quote-message-container {
     overflow: auto;
     display: flex;
     background: #EBEFEF;
@@ -445,11 +514,12 @@ export default {
     padding: 5px;
     border-radius: 24rpx;
 }
-.quote-message-container .quoted-message{
+
+.quote-message-container .quoted-message {
     max-width: 250px;
 }
 
-.quote-message-container .cancel{
+.quote-message-container .cancel {
     position: absolute;
     right: 0;
     top: 0;

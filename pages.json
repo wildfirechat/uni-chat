@@ -136,6 +136,12 @@
             }
         },
         {
+            "path": "pages/pick/PickSingleUserPage",
+            "style": {
+                "navigationBarTitleText": "选择单个联系人"
+            }
+        },
+        {
             "path": "pages/me/MePage",
             "style": {
                 "navigationBarTitleText": "我的"

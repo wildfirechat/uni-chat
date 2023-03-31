@@ -22,5 +22,24 @@ export default {
                 }
             })
         };
+
+        Vue.prototype.$pickUser = function (options) {
+            uni.navigateTo({
+                url: '/pages/pick/PickSingleUserPage',
+                events: {
+                    pickedUser: user => {
+                        options.successCB && options.successCB(user);
+                    }
+                },
+
+                success: (res) => {
+                    res.eventChannel.emit('pickOptions', {
+                        users: options.users ? options.users : store.state.contact.favContactList.concat(store.state.contact.friendList),
+                        showCategoryLabel: options.showCategoryLabel !== false,
+                        confirmTitle: options.confirmTitle ? options.confirmTitle : '确定',
+                    });
+                }
+            })
+        };
     }
 }
