@@ -3,6 +3,7 @@
         <button @click="setUserEnableReceipt">setUserEnableReceipt</button>
         <button @click="modifyMyInfo">modifyMyInfo</button>
         <button @click="systemInfo">SystemInfo</button>
+        <button @click="setHiddenGroupMemberName">setHiddenGroupMemberName</button>
     </div>
 
 </template>
@@ -37,6 +38,16 @@ export default {
         systemInfo() {
             console.log('systemInfo', uni.getSystemInfoSync())
         },
+        setHiddenGroupMemberName() {
+            const groupId = 'tR16v6xx';
+            const isHiddenGroupMemberName = wfc.isHiddenGroupMemberName(groupId);
+            console.log('isHiddenGroupMemberName', isHiddenGroupMemberName)
+            wfc.setHiddenGroupMemberName(groupId, !isHiddenGroupMemberName, () => {
+                console.log('setHiddenGroupMemberName result', groupId, wfc.isHiddenGroupMemberName(groupId));
+            }, (err) => {
+                console.log('setHiddenGroupMemberName error', err);
+            })
+        }
     }
 }
 </script>
