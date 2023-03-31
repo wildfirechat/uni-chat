@@ -68,6 +68,8 @@ import StickerMessageContent from "../../wfc/messages/stickerMessageContent";
 import Config from "../../config";
 import QuoteInfo from "../../wfc/model/quoteInfo";
 import AudioInputView from "./message/AudioInputView.vue";
+import Draft from "../util/draft";
+import Mention from "../../wfc/model/mention";
 
 export default {
     name: "MessageInputView",
@@ -148,6 +150,11 @@ export default {
         if (this.conversationInfo.conversation.type === ConversationType.Group) {
             this.groupMemberUserInfos = store.getGroupMemberUserInfos(this.conversationInfo.conversation.target, false, false);
         }
+        this.restoreDraft();
+    },
+
+    beforeDestroy() {
+        this.storeDraft(this.conversationInfo)
     },
 
     methods: {
@@ -160,11 +167,12 @@ export default {
             const cursor = event.detail.cursor;
             if (this.conversationInfo.conversation.type === ConversationType.Group) {
                 if (inserting) {
-                    console.log('ooo', inserting, this.text.charAt(cursor -1));
+                    console.log('ooo', inserting, this.text.charAt(cursor - 1));
                     if (inserting && this.text.length > 0 && this.text.charAt(cursor - 1) === '@') {
                         const onPickUser = user => {
                             this.text = this.text.substring(0, cursor - 1) + `@${user.displayName} ` + this.text.substring(cursor);
                             this.mentions.push(user);
+                            this.inputFocus = true;
                         };
                         let atAll = {
                             uid: '@all',
@@ -182,6 +190,9 @@ export default {
             } else {
                 // deleting
             }
+        },
+
+        mention(){
 
         },
         send() {
@@ -212,7 +223,7 @@ export default {
                                     if (!textMessageContent.mentionedTargets) {
                                         textMessageContent.mentionedTargets = [];
                                     }
-                                    if (textMessageContent.mentionedTargets.indexOf(uid) === -1){
+                                    if (textMessageContent.mentionedTargets.indexOf(uid) === -1) {
                                         textMessageContent.mentionedType = 1;
                                         textMessageContent.mentionedTargets.push(uid);
                                     }
@@ -225,6 +236,7 @@ export default {
                 wfc.sendConversationMessage(this.conversationInfo.conversation, textMessageContent);
                 this.text = '';
                 this.mentions = [];
+                Draft.setConversationDraft(this.conversationInfo.conversation, '', null);
             }
         },
 
@@ -398,7 +410,42 @@ export default {
 
         cancelQuote() {
             store.quoteMessage(null);
-        }
+        },
+
+        restoreDraft() {
+            let draft = Draft.getConversationDraftEx(this.conversationInfo);
+            if (!draft) {
+                return;
+            }
+            console.log('restore draft', this.conversationInfo, draft);
+            store.quoteMessage(draft.quotedMessage);
+            if (this.text) {
+                console.log('inputting, ignore', draft.text)
+            } else {
+                // this.text = draft.text.replace(/ /g, '&nbsp').replace(/\n/g, '<br>');
+                this.text = draft.text;
+            }
+        },
+
+        storeDraft(conversationInfo) {
+            if (!this.text) {
+                return;
+            }
+
+            let quotedMessage = this.sharedConversationState.quotedMessage;
+            let draftText = this.text.trim();
+            let quoteInfo = quotedMessage ? QuoteInfo.initWithMessage(quotedMessage) : null;
+
+            if (draftText.length === 0) {
+                if (conversationInfo.draft !== '') {
+                    Draft.setConversationDraft(conversationInfo.conversation, draftText, quoteInfo)
+                }
+            } else {
+                if (draftText !== conversationInfo.draft) {
+                    Draft.setConversationDraft(conversationInfo.conversation, draftText, quoteInfo)
+                }
+            }
+        },
     },
     computed: {
         // quotedMessage() {

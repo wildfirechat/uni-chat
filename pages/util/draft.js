@@ -4,7 +4,7 @@ import store from "@/store";
 
 export default class Draft {
 
-    static setConversationDraft(conversation, draftText, quoteInfo, mentions) {
+    static setConversationDraft(conversation, draftText, quoteInfo, mentions = null) {
         if (!draftText && !quoteInfo) {
             wfc.setConversationDraft(conversation, '');
             return;
