@@ -37,7 +37,7 @@ import Config from "../../config";
 import UniList from "../../components/uni-list/uni-list.vue";
 
 export default {
-    name: "UserListVue",
+    name: "UserListView",
     props: {
         users: {
             type: Array,

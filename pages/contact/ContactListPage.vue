@@ -30,7 +30,7 @@
                                 <span class="desc">{{ sharedContactState.friendList.length }}</span>
                             </div>
                         </div>
-                        <UserListVue :enable-pick="false"
+                        <UserListView :enable-pick="false"
                                      :users="sharedContactState.favContactList.concat(sharedContactState.friendList)"
                                      :click-user-item-func="setCurrentUser"
                                      :padding-left="'30px'"
@@ -46,12 +46,12 @@
 import FriendRequestListView from "./FriendRequestListView";
 import GroupListVue from "./GroupListView";
 import store from "../../store";
-import UserListVue from "../user/UserListVue";
+import UserListView from "../user/UserListView.vue";
 import UniList from "../../components/uni-list/uni-list.vue";
 
 export default {
     name: "ContactListPage",
-    components: {UniList, UserListVue, GroupListVue, FriendRequestListView},
+    components: {UniList, UserListView, GroupListVue, FriendRequestListView},
     data() {
         return {
             sharedContactState: store.state.contact,

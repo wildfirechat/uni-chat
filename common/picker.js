@@ -2,7 +2,7 @@ import store from "../store";
 
 export default {
     install(Vue) {
-        Vue.prototype.$pickUser = function (options) {
+        Vue.prototype.$pickUsers = function (options) {
             uni.navigateTo({
                 url: '/pages/pick/PickUserPage',
                 events: {

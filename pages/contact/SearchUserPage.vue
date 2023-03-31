@@ -3,7 +3,7 @@
         <input class="input" type="text" v-model="keyword" :placeholder="$t('common.search')" @input="searchUser">
         <view v-if="users && users.length">
             <text class="category">搜索结果</text>
-            <UserListVue
+            <UserListView
                 class="result"
                 :enable-pick="false"
                 :users="users"
@@ -15,13 +15,13 @@
 </template>
 
 <script>
-import UserListVue from "../user/UserListVue";
+import UserListView from "../user/UserListView.vue";
 import wfc from "../../wfc/client/wfc";
 import SearchType from "../../wfc/model/searchType";
 
 export default {
     name: "SearchUserPage",
-    components: {UserListVue},
+    components: {UserListView},
     data() {
         return {
             keyword: '',

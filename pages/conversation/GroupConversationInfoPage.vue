@@ -43,7 +43,7 @@
                 <div class="icon">-</div>
                 <p>{{ $t('conversation.remove_member') }}</p>
             </div>
-            <UserListVue :users="users"
+            <UserListView :users="users"
                          :show-category-label="false"
                          :padding-left="'20px'"
             />
@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import UserListVue from "@/pages/user/UserListVue";
+import UserListView from "@/pages/user/UserListView";
 import ConversationInfo from "@/wfc/model/conversationInfo";
 import store from "@/store";
 import wfc from "@/wfc/client/wfc";
@@ -132,7 +132,7 @@ export default {
                 })
             };
             let groupMemberUserInfos = store.getGroupMemberUserInfos(this.conversationInfo.conversation.target, false);
-            this.$pickUser(
+            this.$pickUsers(
                 {
                     users: this.sharedContactState.favContactList.concat(this.sharedContactState.friendList),
                     initialCheckedUsers: groupMemberUserInfos,
@@ -154,7 +154,7 @@ export default {
                 })
             }
             let groupMemberUserInfos = store.getGroupMemberUserInfos(this.conversationInfo.conversation.target, false, false);
-            this.$pickUser(
+            this.$pickUsers(
                 {
                     users: groupMemberUserInfos,
                     confirmTitle: this.$t('common.remove'),
@@ -243,7 +243,7 @@ export default {
         }
     },
 
-    components: {UserListVue},
+    components: {UserListView},
 
     created() {
         // 这个时候，this.conversationInfo 还没数据

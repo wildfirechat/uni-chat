@@ -6,7 +6,7 @@
                 <p>{{ $t('conversation.add_member') }}</p>
             </div>
         </div>
-        <UserListVue :users="users"
+        <UserListView :users="users"
                      :show-category-label="false"
                      :padding-left="'20px'"
                      v-if="users"
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import UserListVue from "@/pages/user/UserListVue";
+import UserListView from "@/pages/user/UserListView";
 import ConversationInfo from "@/wfc/model/conversationInfo";
 import store from "@/store";
 
@@ -50,10 +50,10 @@ export default {
             });
         })
     },
-    components: {UserListVue},
+    components: {UserListView},
     methods: {
         showCreateConversationModal() {
-            this.$pickUser(
+            this.$pickUsers(
                 {
                     users: this.sharedContactState.favContactList.concat(this.sharedContactState.friendList),
                     initialCheckedUsers: [this.conversationInfo.conversation._target],

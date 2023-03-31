@@ -65,7 +65,7 @@ export default {
             users = users.filter(u => {
                 return u.uid !== Config.FILE_HELPER_ID
             });
-            this.$pickUser({
+            this.$pickUsers({
                 users: users,
                 successCB: users => {
                     // TODO 创建群聊会比较慢，可以在这儿加一个 loading 页面
