@@ -116,6 +116,15 @@ export class WfcUIKit {
     }
 
     /**
+     * 设置视频通话时的视频属性
+     * @param {number} profile 可选值参考{@link VideoProfile}
+     * @param {boolean} swapWidthHeight 是否交换宽高，默认不不用设置
+     */
+    setVideoProfile(profile, swapWidthHeight = false) {
+        uniWfcUIKit.setVideoProfile(profile, swapWidthHeight);
+    }
+
+    /**
      * 添加 ICE Server
      * @param {string} url
      * @param {string} name
