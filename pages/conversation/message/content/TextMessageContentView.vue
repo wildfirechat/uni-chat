@@ -31,7 +31,7 @@ export default {
     computed: {
         textContent() {
             try {
-                let tmp = parser(this.message.messageContent.digest(this.message));
+                let tmp = this.message.messageContent.digest(this.message);
                 // let tmp = this.message.messageContent.digest(this.message);
                 // pls refer to https://stackoverflow.com/questions/4522124/replace-leading-spaces-with-nbsp-in-javascript
                 tmp = tmp.replace(/^[ \t]+/gm, function (x) {
