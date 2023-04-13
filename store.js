@@ -1002,54 +1002,55 @@ let store = {
      * @param {function (Message[]) } callback 消息列表会回调
      */
     getMessages(conversation, fromIndex = 0, before = true, withUser = '', callback) {
-        let lmsgs = wfc.getMessages(conversation, fromIndex, before, 20);
-        if (lmsgs.length > 0) {
-            lmsgs = lmsgs.map(m => this._patchMessage(m, 0));
-            setTimeout(() => callback && callback(lmsgs), 200)
-        } else {
+        wfc.getMessagesV2(conversation, fromIndex, before, 20, withUser, msgs => {
+            msgs = msgs.map(m => this._patchMessage(m, 0));
+            //callback && callback(msgs);
+            callback && callback(msgs);
+        }, err => {
+            console.error('getMessageV2 error', err)
             callback && callback([]);
-            // 只获取本地的消息
-            // wfc.loadRemoteConversationMessages(conversation, fromUid, 20,
-            //     (msgs) => {
-            //         callback(msgs.map(m => this._patchMessage(m, 0)))
-            //     },
-            //     (error) => {
-            //         callback([])
-            //     });
-        }
+        });
     },
 
     getMessageInTypes(conversation, contentTypes, timestamp, before = true, withUser = '', callback) {
-        let lmsgs = wfc.getMessagesByTimestamp(conversation, contentTypes, timestamp, before, 20, withUser);
-        if (lmsgs.length > 0) {
-            lmsgs = lmsgs.map(m => this._patchMessage(m, 0));
-            setTimeout(() => callback && callback(lmsgs), 200)
-        } else {
+        wfc.getMessagesByTimestampV2(conversation, contentTypes, timestamp, before, 20, withUser, msgs => {
+            msgs = msgs.map(m => this._patchMessage(m, 0));
+            setTimeout(() => callback && callback(msgs), 200)
+        }, err => {
             callback && callback([]);
-        }
+        });
     },
 
     _loadCurrentConversationMessages() {
+        console.log('_loadCurrentConversationMessages')
         if (!conversationState.currentConversationInfo) {
             return;
         }
         let conversation = conversationState.currentConversationInfo.conversation;
-        let msgs = wfc.getMessages(conversation, 0, true, 20);
+        wfc.getMessagesV2(conversation, 0, true, 20, '', msgs => {
+            conversationState.currentConversationMessageList = msgs;
+            this._patchCurrentConversationMessages();
+            if (msgs.length) {
+                conversationState.currentConversationOldestMessageId = msgs[0].messageId;
+            }
+            for (let i = 0; i < msgs.length; i++) {
+                if (gt(msgs[i].messageUid, 0)) {
+                    conversationState.currentConversationOldestMessageUid = msgs[0].messageUid;
+                    break;
+                }
+            }
+        }, err => {
+            console.error('_loadCurrentConversationMessages error', err);
+        });
+    },
+
+    _patchCurrentConversationMessages() {
         let lastTimestamp = 0;
+        let msgs = conversationState.currentConversationMessageList;
         msgs.forEach(m => {
             this._patchMessage(m, lastTimestamp);
             lastTimestamp = m.timestamp;
         });
-        conversationState.currentConversationMessageList = msgs;
-        if (msgs.length) {
-            conversationState.currentConversationOldestMessageId = msgs[0].messageId;
-        }
-        for (let i = 0; i < msgs.length; i++) {
-            if (gt(msgs[i].messageUid, 0)) {
-                conversationState.currentConversationOldestMessageUid = msgs[0].messageUid;
-                break;
-            }
-        }
     },
 
     _onloadConversationMessages(conversation, messages) {
@@ -1078,13 +1079,17 @@ let store = {
         }
         let conversation = conversationState.currentConversationInfo.conversation;
         console.log('loadConversationHistoryMessage', conversation, conversationState.currentConversationOldestMessageId, stringValue(conversationState.currentConversationOldestMessageUid));
-        let lmsgs = wfc.getMessages(conversation, conversationState.currentConversationOldestMessageId, true, 20);
         let loadRemoteHistoryMessageFunc = () => {
             wfc.loadRemoteConversationMessages(conversation, [], conversationState.currentConversationOldestMessageUid, 20,
-                (msgs) => {
+                (msgs, hasMore) => {
                     console.log('loadRemoteConversationMessages response', msgs.length);
                     if (msgs.length === 0) {
-                        completeCB();
+                        // 拉回来的消息，本地全都有时，会走到这儿
+                        if (hasMore) {
+                            loadedCB();
+                        } else {
+                            completeCB();
+                        }
                     } else {
                         // 可能拉回来的时候，本地已经切换会话了
                         if (conversation.equal(conversationState.currentConversationInfo.conversation)) {
@@ -1100,20 +1105,29 @@ let store = {
                     completeCB();
                 });
         }
-        if (lmsgs.length > 0) {
-            conversationState.currentConversationOldestMessageId = lmsgs[0].messageId;
-            if (gt(lmsgs[0].messageUid, 0)) {
-                conversationState.currentConversationOldestMessageUid = lmsgs[0].messageUid;
-            }
-            let loadNewMsg = this._onloadConversationMessages(conversation, lmsgs)
-            if (!loadNewMsg) {
-                loadRemoteHistoryMessageFunc();
+
+        wfc.getMessagesV2(conversation, conversationState.currentConversationOldestMessageId, true, 20, '', lmsgs => {
+            if (lmsgs.length > 0) {
+                if (!conversation.equal(conversationState.currentConversationInfo.conversation)) {
+                    return;
+                }
+                conversationState.currentConversationOldestMessageId = lmsgs[0].messageId;
+                if (gt(lmsgs[0].messageUid, 0)) {
+                    conversationState.currentConversationOldestMessageUid = lmsgs[0].messageUid;
+                }
+                let loadNewMsg = this._onloadConversationMessages(conversation, lmsgs)
+                if (!loadNewMsg) {
+                    loadRemoteHistoryMessageFunc();
+                } else {
+                    // loadedCB();
+                    setTimeout(() => loadedCB(), 200)
+                }
             } else {
-                setTimeout(() => loadedCB(), 200)
+                loadRemoteHistoryMessageFunc();
             }
-        } else {
-            loadRemoteHistoryMessageFunc();
-        }
+        }, err => {
+            completeCB();
+        });
     },
 
     setConversationTop(conversation, top) {
