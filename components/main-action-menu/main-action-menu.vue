@@ -92,9 +92,9 @@ export default {
                 success: function (res) {
                     console.log('条码类型：' + res.scanType);
                     console.log('条码内容：' + res.result);
-                    if (res.result){
+                    if (res.result) {
                         // TODO
-                       // wildfirechat://pcsession/xxxx
+                        // wildfirechat://pcsession/xxxx
                         uni.showToast({
                             title: '扫码成功: ' + res.result,
                             icon: 'none',
@@ -114,6 +114,13 @@ export default {
         moveHandle(e) {
             this.hide()
         },
+        toggle() {
+            if (this.isActive){
+                this.hide();
+            } else {
+                this.show();
+            }
+        },
         show() {
             this.isActive = true
             setTimeout(() => {
@@ -121,8 +128,10 @@ export default {
             }, 30)
         },
         hide() {
-            this.isActive = false
-            this.hideAnimation()
+            if (this.isActive){
+                this.isActive = false
+                this.hideAnimation()
+            }
         },
         getstatusBarHeight() {
             let SystemInfo = uni.getSystemInfoSync();

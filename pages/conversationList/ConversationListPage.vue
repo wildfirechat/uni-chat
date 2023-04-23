@@ -42,13 +42,19 @@ export default {
         console.log('conversationList onShow', this.sharedConversationState.conversationInfoList.length)
     },
 
+    onHide(){
+        console.log('conversationList onHide');
+        this.$refs.mainActionMenu.hide();
+    },
+
     onNavigationBarButtonTap(e) {
         console.log('onNavigationBarButtonTap')
         switch (e.index) {
             case 0:
-                this.$refs.mainActionMenu.show();
+                this.$refs.mainActionMenu.toggle();
                 break;
             case 1:
+                this.$refs.mainActionMenu.hide();
                 uni.navigateTo({
                     url: '/pages/search/SearchPortalPage'
                 });

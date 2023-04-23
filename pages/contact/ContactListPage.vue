@@ -58,13 +58,19 @@ export default {
         }
     },
 
+    onHide(){
+        console.log('contactList onHide');
+        this.$refs.mainActionMenu.hide();
+    },
+
     onNavigationBarButtonTap(e) {
         console.log('onNavigationBarButtonTap')
         switch (e.index) {
             case 0:
-                this.$refs.mainActionMenu.show();
+                this.$refs.mainActionMenu.toggle();
                 break;
             case 1:
+                this.$refs.mainActionMenu.hide();
                 uni.navigateTo({
                     url: '/pages/search/SearchPortalPage'
                 });
