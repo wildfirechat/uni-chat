@@ -39,6 +39,15 @@ Vue.prototype.$navigateToPage = (url, options) => {
     });
 }
 
+Vue.prototype.$openWebView = url => {
+    uni.navigateTo({
+        url: `/pages/misc/WebViewPage?url=${url}`,
+        fail: (e) => {
+            console.log(e)
+        }
+    });
+}
+
 // 如果不存在会话页面，则入栈，如果已经存在会话页面，则返回到该页面
 Vue.prototype.$go2ConversationPage = () => {
     let pages = getCurrentPages();

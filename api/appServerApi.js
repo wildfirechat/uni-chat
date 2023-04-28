@@ -105,7 +105,9 @@ export class AppServerApi {
 
                     if (appAuthToken) {
                         setItem('authToken-app', appAuthToken);
-                        wfcUIKit.setupAppServer(Config.APP_SERVER, appAuthToken);
+                        if (wfcUIKit.isUIKitEnable()){
+                            wfcUIKit.setupAppServer(Config.APP_SERVER, appAuthToken);
+                        }
                     }
                     resolve(response.data.result);
                 } else {
@@ -203,7 +205,9 @@ export class AppServerApi {
                         }
 
                         console.log('setupAppserver', Config.APP_SERVER, authToken);
-                        wfcUIKit.setupAppServer(Config.APP_SERVER, authToken);
+                        if (wfcUIKit.isUIKitEnable()){
+                            wfcUIKit.setupAppServer(Config.APP_SERVER, authToken);
+                        }
 
 
                         this.go2ConversationList();

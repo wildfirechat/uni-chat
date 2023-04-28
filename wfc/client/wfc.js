@@ -8,7 +8,7 @@ import Long from 'long';
 
 import impl from '../proto/proto.min';
 import Config from "../../config";
-//import avenginekit from "../av/engine/avenginekitproxy";
+import avenginekit from "../av/engine/avenginekitproxy";
 
 
 export class WfcManager {
@@ -33,7 +33,7 @@ export class WfcManager {
     init(args = []) {
 		console.log('wfc init')
         impl.init(args);
-        //avenginekit.setup(self);
+        avenginekit.setup(self);
         //self.setProxyInfo("", "192.168.1.80", 1080, "", "");
 		console.log('wfc init end')
     }

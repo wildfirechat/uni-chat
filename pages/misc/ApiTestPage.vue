@@ -4,6 +4,7 @@
         <button @click="modifyMyInfo">modifyMyInfo</button>
         <button @click="systemInfo">SystemInfo</button>
         <button @click="setHiddenGroupMemberName">setHiddenGroupMemberName</button>
+        <button @click="openTestPage">打开 webview</button>
     </div>
 
 </template>
@@ -13,6 +14,7 @@ import wfc from "../../wfc/client/wfc";
 import ModifyMyInfoEntry from "../../wfc/model/modifyMyInfoEntry";
 import ModifyMyInfoType from "../../wfc/model/modifyMyInfoType";
 import wfcUIKit from "../../wfc/uikit/wfcUIKit";
+import EventType from "../../wfc/client/wfcEvent";
 
 export default {
     name: "ApiTestPage",
@@ -47,7 +49,16 @@ export default {
             }, (err) => {
                 console.log('setHiddenGroupMemberName error', err);
             })
-        }
+        },
+        openTestPage() {
+            //this.$openWebView('http://192.168.2.180:8081');
+            uni.navigateTo({
+                url: `/pages/voip/VoipPage`,
+                fail: (e) => {
+                    console.log(e)
+                }
+            });
+        },
     }
 }
 </script>

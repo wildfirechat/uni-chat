@@ -60,12 +60,7 @@ export default {
             );
         },
         showAbout() {
-            uni.navigateTo({
-                url: '/pages/misc/WebViewPage?url=https://wildfirechat.cn/',
-                fail: (e) => {
-                    console.log(e)
-                }
-            });
+            this.$openWebView('https://wildfirechat.cn/');
         },
         showApiTest(){
             uni.navigateTo({

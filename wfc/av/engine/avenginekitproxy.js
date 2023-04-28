@@ -3,12 +3,10 @@
  */
 
 import EventType from "../../client/wfcEvent";
-import {BrowserWindow, ipcRenderer, isElectron, PostMessageEventEmitter, remote} from "../../../platform";
 import ConversationType from "../../model/conversationType";
 import MessageContentType from "../../messages/messageContentType";
 import wfc from "../../client/wfc";
 import MessageConfig from "../../client/messageConfig";
-import DetectRTC from 'detectrtc';
 import Config from "../../../config";
 import {longValue, numberValue} from '../../util/longUtil'
 import Conversation from "../../../wfc/model/conversation";
@@ -34,6 +32,9 @@ export class AvEngineKitProxy {
     hasSpeaker = false;
     hasWebcam = false;
 
+    voipWebview;
+    voipEventListeners;
+
     /**
      * 无法正常弹出音视频通话窗口是的回调
      * 回到参数说明：-1，有音视频通话正在进行中；-2，设备不支持音视频通话，可能原因是不支持webrtc，没有摄像头或麦克风等
@@ -44,7 +45,8 @@ export class AvEngineKitProxy {
     /**
      * 音视频通话通话状态回调
      */
-    onVoipCallStatusCallback = (covnersation, ongonging) => {};
+    onVoipCallStatusCallback = (covnersation, ongonging) => {
+    };
 
     /**
      * 应用初始化的时候调用
@@ -55,29 +57,14 @@ export class AvEngineKitProxy {
             console.log('re-setup, just ignore');
             return;
         }
+        console.log('avenginekitproxy setup')
         this.wfc = wfc;
-        DetectRTC.load(() => {
-            this.isSupportVoip = DetectRTC.isWebRTCSupported;
-            this.hasMicrophone = DetectRTC.hasMicrophone;
-            // Safari 14.0 版本，hasSpeakers一直为false，先全部置为true
-            //this.hasSpeaker = DetectRTC.hasSpeakers;
-            this.hasSpeaker = true;
-            this.hasWebcam = DetectRTC.hasWebcam;
-            console.log(`detectRTC, isWebRTCSupported: ${DetectRTC.isWebRTCSupported}, hasWebcam: ${DetectRTC.hasWebcam}, hasSpeakers: ${DetectRTC.hasSpeakers}, hasMicrophone: ${DetectRTC.hasMicrophone}`, this.isSupportVoip);
-        });
-        this.event = wfc.eventEmitter;
-        this.event.on(EventType.ReceiveMessage, this.onReceiveMessage);
-        this.event.on(EventType.ConferenceEvent, this.onReceiveConferenceEvent);
+        wfc.eventEmitter.on(EventType.ReceiveMessage, this.onReceiveMessage);
+        wfc.eventEmitter.on(EventType.ConferenceEvent, this.onReceiveConferenceEvent);
     }
 
-    /**
-     * 设置渲染音视频通话界面的iframe
-     *
-     * 仅当 {@link useIframe}配置为 true时生效
-     * @param iframe
-     */
-    setVoipIframe(iframe) {
-        this.iframe = iframe;
+    setVoipWebview(webview) {
+        this.voipWebview = webview;
     }
 
     updateCallStartMessageContentListener = (event, message) => {
@@ -155,6 +142,7 @@ export class AvEngineKitProxy {
 
     // 收到消息时，timestamp已经过修正，后面使用时，不用考虑和服务器的时间差
     onReceiveMessage = (msg) => {
+        console.log('xxx remem');
         if (!Config.ENABLE_MULTI_VOIP_CALL && msg.conversation.type === ConversationType.Group) {
             console.log('not enable multi call ');
             return;
@@ -167,10 +155,11 @@ export class AvEngineKitProxy {
         let delta = wfc.getServerDeltaTime();
         if (now - (numberValue(msg.timestamp) - delta) >= 90 * 1000) {
             // 消息已失效，不做处理
+            console.log('expired msg, ignore')
             return;
         }
         let content = msg.messageContent;
-        if (this.callWin && this.conference && content.type !== MessageContentType.CONFERENCE_CONTENT_TYPE_COMMAND){
+        if (this.callWin && this.conference && content.type !== MessageContentType.CONFERENCE_CONTENT_TYPE_COMMAND) {
             console.log('in conference, ignore all other msg');
             return;
         }
@@ -182,10 +171,6 @@ export class AvEngineKitProxy {
                     // 已在音视频通话中，其他的音视频通话，又邀请自己，这儿是只是让主界面提示一下，拒绝逻辑在 engine 里面
                     this.onVoipCallErrorCallback && this.onVoipCallErrorCallback(-1);
                 }
-            }
-            if (!this.isSupportVoip || !this.hasMicrophone || !this.hasSpeaker) {
-                this.onVoipCallErrorCallback && this.onVoipCallErrorCallback(-2);
-                return;
             }
         }
 
@@ -286,53 +271,40 @@ export class AvEngineKitProxy {
     };
 
     emitToVoip(event, args) {
-        if (isElectron()) {
-            console.log('emitToVoip', event, args)
-            // renderer/main to renderer
-            if (this.callWin) {
-                // fix object of long.js can be send inter-process
-                args = JSON.stringify(args)
-                this.callWin.webContents.send(event, args);
-            } else if (this.queueEvents) {
-                this.queueEvents.push({event, args});
-            }
-        } else {
-            if (this.events) {
-                this.events.emit(event, args);
-            } else if (this.queueEvents) {
-                this.queueEvents.push({event, args});
-            }
-        }
-    }
-
-    listenMainEvent(event, listener) {
-        if (isElectron()) {
-            // listen for event from main
-            ipcRenderer.on(event, listener);
-        } else {
-            this.events.on(event, listener);
+        if (this.voipWebview) {
+            const
+                _funName = 'msgFromUniapp',
+                _data = {
+                    event,
+                    args
+                };
+            this.voipWebview.evalJS(`${_funName}(${JSON.stringify(_data)})`);
+        } else if (this.queueEvents) {
+            this.queueEvents.push({event, args});
         }
     }
 
     emitToMain(event, args) {
         console.log('emit to main', event, args);
-        if (isElectron()) {
-            // renderer to main
-            ipcRenderer.send(event, args);
-        } else {
-            this.events.emit(event, args);
-        }
+        uni.postMessage({
+            data: {
+                event,
+                args
+            },
+        });
     }
 
     listenVoipEvent = (event, listener) => {
-        if (isElectron()) {
-            // listen for event from renderer
-            ipcRenderer.on(event, listener);
-        } else {
-            if (!this.events) {
-                this.events = new PostMessageEventEmitter(this.useIframe ? window.parent : window.opener, window.location.origin);
+        if (!window.msgFromUniapp) {
+            this.voipEventListeners = [];
+            this.voipEventListeners[event] = listener;
+            window.msgFromUniapp = data => {
+                let {evt, args} = data;
+                let l = this.voipEventListeners[evt]
+                l && l(evt, args);
             }
-            this.events.on(event, listener);
+        } else {
+            this.voipEventListeners[event] = listener;
         }
     };
 
@@ -496,120 +468,12 @@ export class AvEngineKitProxy {
     }
 
     showCallUI(conversation, isConference) {
-        let type = isConference ? 'conference' : (conversation.type === ConversationType.Single ? 'single' : 'multi');
-        this.type = type;
-
-        let width = 360;
-        let height = 640;
-        let minWidth = 360;
-        let minHeight = 640;
-        switch (type) {
-            case 'single':
-                width = 360;
-                height = 640;
-                break;
-            case 'multi':
-            case 'conference':
-                width = 960;
-                height = 600;
-                minWidth = 800;
-                minHeight = 480;
-                break;
-            default:
-                break;
-        }
-        if (isElectron()) {
-            let win = new BrowserWindow(
-                {
-                    width: width,
-                    height: height,
-                    minWidth: minWidth,
-                    minHeight: minHeight,
-                    resizable: true,
-                    maximizable: true,
-                    transparent: !!isConference,
-                    frame: !isConference,
-                    webPreferences: {
-                        scrollBounce: false,
-                        nativeWindowOpen: true,
-                        nodeIntegration: true,
-                        contextIsolation: false,
-                    },
-                }
-            );
-            // const remoteMain = require("@electron/remote").require("@electron/remote/main");
-            const remoteMain = remote.require("@electron/remote/main");
-            remoteMain.enable(win.webContents);
-
-            win.webContents.on('did-finish-load', () => {
-                this.onVoipWindowReady(win);
-            });
-
-            if (localStorage.getItem("enable_voip_debug")) {
-                win.webContents.openDevTools();
+        uni.navigateTo({
+            url: `/pages/voip/VoipPage`,
+            fail: (e) => {
+                console.log(e)
             }
-            win.on('close', () => {
-                this.onVoipWindowClose();
-            });
-
-            // win.loadURL(path.join('file://', AppPath, 'src/index.html?' + type));
-            let hash = window.location.hash;
-            let url = window.location.origin;
-            if (hash) {
-                url = window.location.href.replace(hash, '#/voip');
-            } else {
-                url += "/voip"
-            }
-            url += '/' + type + '?t=' + new Date().getTime()
-            win.loadURL(url);
-            console.log('voip windows url', url)
-            win.show();
-            win.removeMenu();
-        } else {
-            console.log('location', window.location);
-            let hash = window.location.hash;
-            let url = window.location.origin;
-            if (hash) {
-                url += "/#/voip"
-            } else {
-                url += "/voip"
-            }
-            url += '/' + type + '?t=' + new Date().getTime()
-
-            let win;
-            let iframe = this.iframe;
-            if (iframe) {
-                if (iframe.src) {
-                    iframe.src = url;
-                    iframe.contentWindow.location.reload();
-                }
-                iframe.src = url;
-                win = iframe.contentWindow;
-            } else {
-                win = window.open(url, '_blank', `width=${width},height=${height},left=200,top=200,toolbar=no,menubar=no,resizable=no,location=no,maximizable=no,resizable=no,dialog=yes`);
-            }
-            if (!win) {
-                console.log('can not open voip window');
-                return;
-            }
-            if (iframe) {
-                iframe.onload = () => {
-                    console.log('iframe loaded');
-                    this.onVoipWindowReady(win);
-                }
-            } else {
-                win.addEventListener('load', () => {
-                    this.onVoipWindowReady(win);
-                }, true);
-            }
-
-            // pls refer to https://stackoverflow.com/questions/52448909/onbeforeunload-not-working-inside-react-component
-            // In react, if you need to handle DOM events not already provided by React you have to add DOM listeners after the component is mounted
-            // 所以这儿延时一下
-            setTimeout(() => {
-                win.addEventListener('beforeunload', this.onVoipWindowClose);
-            }, 600)
-        }
+        });
     }
 
     onVoipWindowClose = (event) => {
