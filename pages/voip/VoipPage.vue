@@ -1,6 +1,6 @@
 <template>
     <view>
-        <web-view ref="web" src="http://192.168.2.180:8081" @message="receiveMessage" @onPostMessage="receivePostMessage"></web-view>
+        <web-view ref="web" src="http://192.168.2.180:8081" @message="webviewEventListener" @onPostMessage="webviewEventListener"></web-view>
     </view>
 
 </template>
@@ -14,6 +14,7 @@ export default {
     data() {
         return {
             voipWebview: null,
+            webviewEventListener: avenginekitproxy.webviewEventListener,
         }
     },
 

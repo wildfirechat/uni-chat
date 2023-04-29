@@ -65,6 +65,13 @@ export class AvEngineKitProxy {
 
     setVoipWebview(webview) {
         this.voipWebview = webview;
+
+        if (this.queueEvents.length > 0) {
+            this.queueEvents.forEach((eventArgs) => {
+                console.log('process queued event', eventArgs);
+                this.emitToVoip(eventArgs.event, eventArgs.args);
+            })
+        }
     }
 
     updateCallStartMessageContentListener = (event, message) => {
@@ -294,6 +301,25 @@ export class AvEngineKitProxy {
         });
     }
 
+    // called by uniapp
+    webviewEventListener = data => {
+        let {evt, args} = data;
+        switch (evt){
+            case 'voip-message':
+                this.setVoipWebview(evt, args);
+                break;
+            case 'conference-request':
+                this.sendConferenceRequestListener(evt, args);
+                break;
+            case 'update-call-start-message':
+                this.updateCallStartMessageContentListener(evt, args);
+                break;
+            default:
+                break;
+        }
+    }
+
+    // called by webview
     listenVoipEvent = (event, listener) => {
         if (!window.msgFromUniapp) {
             this.voipEventListeners = [];
@@ -307,6 +333,7 @@ export class AvEngineKitProxy {
             this.voipEventListeners[event] = listener;
         }
     };
+
 
     /**
      * 发起音视频通话
