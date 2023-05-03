@@ -1,13 +1,16 @@
 <template>
     <div class="call-start-message-container"
+         @click="startVoipCall"
          v-bind:class="{out:message.direction === 0}">
         <i class="icon-ion-android-call"></i>
-        <p class="text" v-html="this.textContent"></p>
+        <p class="text" v-html="this.textContent" @click="startVoipCall"></p>
     </div>
 </template>
 
 <script>
 import Message from "@/wfc/messages/message";
+import avenginekitproxy from "../../../../wfc/av/engine/avenginekitproxy";
+import permision from "../../../../common/permission";
 
 export default {
     name: "CallStartMessageContentView",
@@ -18,6 +21,42 @@ export default {
         }
     },
     mounted() {
+    },
+    methods: {
+        async checkPermission() {
+            let status = permision.isIOS ? await permision.requestIOS('record') :
+                await permision.requestAndroid('android.permission.MODIFY_AUDIO_SETTINGS');
+
+            if (status === null || status === 1) {
+                status = 1;
+            } else if (status === 2) {
+                uni.showModal({
+                    content: "系统麦克风已关闭",
+                    confirmText: "确定",
+                    showCancel: false,
+                    success: function (res) {
+                    }
+                })
+            } else {
+                uni.showModal({
+                    content: "需要麦克风权限",
+                    confirmText: "设置",
+                    success: function (res) {
+                        if (res.confirm) {
+                            permision.gotoAppSetting();
+                        }
+                    }
+                })
+            }
+            return status;
+        },
+        async startVoipCall() {
+            let status = await this.checkPermission();
+            if (status === 1) {
+                console.log('startVoipCall')
+                avenginekitproxy.startCall(this.message.conversation, true, [this.message.conversation.target], '');
+            }
+        }
     },
 
     computed: {

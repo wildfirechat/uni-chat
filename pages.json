@@ -164,6 +164,12 @@
             "style": {
                 "navigationBarTitleText": "API测试"
             }
+        },
+        {
+            "path": "pages/voip/VoipPage",
+            "style": {
+                "navigationBarTitleText": " 音视频通话"
+            }
         }
     ],
 	"tabBar": {
