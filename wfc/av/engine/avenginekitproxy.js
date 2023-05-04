@@ -34,6 +34,7 @@ export class AvEngineKitProxy {
 
     voipWebview;
     voipEventListeners;
+    webviewReady = false;
 
     /**
      * 无法正常弹出音视频通话窗口是的回调
@@ -65,8 +66,9 @@ export class AvEngineKitProxy {
 
     setVoipWebview(webview) {
         this.voipWebview = webview;
+        this.webviewReady = false;
 
-        if (this.queueEvents.length > 0) {
+        if (this.webviewReady && this.queueEvents.length > 0) {
             this.queueEvents.forEach((eventArgs) => {
                 console.log('process queued event', eventArgs);
                 this.emitToVoip(eventArgs.event, eventArgs.args);
@@ -285,6 +287,7 @@ export class AvEngineKitProxy {
                     event,
                     args
                 };
+            // 这儿的延时目前是必须的，要等音视频页面加载完成，并监听相关事件
             setTimeout(() => {
                 console.log('emitToVoip', _data);
                 this.voipWebview.evalJS(`${_funName}(${JSON.stringify(_data)})`);
@@ -294,6 +297,7 @@ export class AvEngineKitProxy {
         }
     }
 
+    // emit to uniapp
     emitToMain(event, args) {
         console.log('emit to main', event, args);
         uni.postMessage({
@@ -317,6 +321,9 @@ export class AvEngineKitProxy {
                 break;
             case 'update-call-start-message':
                 this.updateCallStartMessageContentListener(event, args);
+                break;
+            case 'voip-webview-ready':
+                this.webviewReady = true;
                 break;
             default:
                 break;
@@ -502,8 +509,9 @@ export class AvEngineKitProxy {
     }
 
     showCallUI(conversation, isConference) {
+        let type = isConference ? 'conference' : (conversation.type === ConversationType.Single ? 'single' : 'multi');
         uni.navigateTo({
-            url: `/pages/voip/VoipPage`,
+            url: `/pages/voip/VoipPage?type=${type}`,
             fail: (e) => {
                 console.log(e)
             }
