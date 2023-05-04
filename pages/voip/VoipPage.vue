@@ -25,8 +25,8 @@ export default {
         option.type = 'conference';
         console.log('onLoad voip type', option.type);
         let authToken = getItem('authToken')
-        const voipWebUrl = 'https://192.168.2.180:8080';
-        this.voipWebUrl = `${voipWebUrl}?type=${option.type}&authToken=${authToken}`;
+        const voipBaseWebUrl = 'https://192.168.2.180:8080';
+        this.voipWebUrl = `${voipBaseWebUrl}?type=${option.type}&authToken=${authToken}`;
         console.log('ooo', this.voipWebUrl)
     },
 
