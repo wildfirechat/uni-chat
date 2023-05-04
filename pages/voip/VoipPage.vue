@@ -14,7 +14,7 @@ export default {
     data() {
         return {
             voipWebview: null,
-            webviewEventListener: avenginekitproxy.webviewEventListener,
+            webviewEventListener: avenginekitproxy.voipWebviewEventListener,
             voipWebUrl: '',
             webviewInternal: 0,
         }
@@ -26,6 +26,7 @@ export default {
     },
 
     onUnload() {
+        console.log('onUnload setVoipWebview to null')
         avenginekitproxy.setVoipWebview(null);
     },
 
@@ -42,6 +43,7 @@ export default {
             let voipWebview = currentWebview.children()[0]
             if (voipWebview) {
                 avenginekitproxy.setVoipWebview(voipWebview);
+                console.log('setWebview');
                 clearInterval(this.webviewInternal);
             }
         }, 100)
