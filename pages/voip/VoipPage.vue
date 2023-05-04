@@ -7,6 +7,7 @@
 
 <script>
 import avenginekitproxy from "../../wfc/av/engine/avenginekitproxy";
+import {getItem} from "../util/storageHelper";
 
 export default {
     name: "ApiTestPage",
@@ -21,8 +22,12 @@ export default {
     },
 
     onLoad(option) {
+        option.type = 'conference';
         console.log('onLoad voip type', option.type);
-        this.voipWebUrl = 'https://192.168.2.180:8080?type=' + option.type;
+        let authToken = getItem('authToken')
+        const voipWebUrl = 'https://192.168.2.180:8080';
+        this.voipWebUrl = `${voipWebUrl}?type=${option.type}&authToken=${authToken}`;
+        console.log('ooo', this.voipWebUrl)
     },
 
     onUnload() {

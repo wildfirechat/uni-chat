@@ -204,6 +204,8 @@ export class AppServerApi {
                             authToken = res.header['authtoken'];
                         }
 
+                        setItem('authToken', authToken);
+
                         console.log('setupAppserver', Config.APP_SERVER, authToken);
                         if (wfcUIKit.isUIKitEnable()){
                             wfcUIKit.setupAppServer(Config.APP_SERVER, authToken);
