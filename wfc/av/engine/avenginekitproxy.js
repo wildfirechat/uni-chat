@@ -10,6 +10,7 @@ import MessageConfig from "../../client/messageConfig";
 import Config from "../../../config";
 import {longValue, numberValue} from '../../util/longUtil'
 import Conversation from "../../../wfc/model/conversation";
+import app from "../../../main";
 
 // main window renderer process -> voip window renderer process
 // voip window renderer process -> main process -> main window renderer process
@@ -97,6 +98,27 @@ export class AvEngineKitProxy {
         }, err => {
             cb(args.requestId, err, null);
         })
+    }
+
+    // call by uniapp
+    pickGroupMembers = (event, args) => {
+        let {groupId, initialCheckedUsers, uncheckableUsers, requestId} = args;
+        let memberIds = wfc.getGroupMemberIds(groupId);
+        let groupMembers = wfc.getUserInfos(memberIds, groupId);
+        console.log('pickGroupMembers', app, args)
+        app.$pickUsers({
+            users: groupMembers,
+            initialCheckedUsers,
+            uncheckableUsers,
+            showCategoryLabel:false,
+            successCB: users => {
+                this.emitToVoip('pickGroupMembersResult', {
+                    error: 0,
+                    requestId,
+                    users
+                })
+            }
+        });
     }
 
     updateCallStartMessageContentListener = (event, message) => {
@@ -342,7 +364,10 @@ export class AvEngineKitProxy {
                 this.updateCallStartMessageContentListener(event, args);
                 break;
             case 'getUserInfo':
-                this.getUserInfoListener(event, args)
+                this.getUserInfoListener(event, args);
+                break;
+            case 'pickGroupMembers':
+                this.pickGroupMembers(event, args);
                 break;
             default:
                 break;
