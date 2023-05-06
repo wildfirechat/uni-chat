@@ -108,3 +108,5 @@ if (wfcUIKit.isUIKitEnable()) {
 store.init();
 
 app.$mount()
+
+export default app
