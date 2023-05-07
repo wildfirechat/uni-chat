@@ -24,10 +24,10 @@ export class AvEngineKitProxy {
     callId;
     inviteMessageUid;
     participants = [];
-    isSupportVoip = false;
-    hasMicrophone = false;
-    hasSpeaker = false;
-    hasWebcam = false;
+    isSupportVoip = true;
+    hasMicrophone = true;
+    hasSpeaker = true;
+    hasWebcam = true;
 
     voipWebview;
     voipEventListeners;
@@ -110,7 +110,7 @@ export class AvEngineKitProxy {
             users: groupMembers,
             initialCheckedUsers,
             uncheckableUsers,
-            showCategoryLabel:false,
+            showCategoryLabel: false,
             successCB: users => {
                 this.emitToVoip('pickGroupMembersResult', {
                     error: 0,
@@ -119,6 +119,21 @@ export class AvEngineKitProxy {
                 })
             }
         });
+    }
+
+    didCallEndWithReason(event, reason) {
+        // 如果 pages.json 里面了改了VoipPage 页面的 path，这儿需要进行相应的修改
+        const voipPageRoute = 'pages/voip/VoipPage'
+        let pages = getCurrentPages();
+        let delta = 0;
+        for (let i = pages.length - 1; i >= 0; i--) {
+            let page = pages[i];
+            delta++;
+            if (page.route === voipPageRoute) {
+                break;
+            }
+        }
+        uni.navigateBack({delta})
     }
 
     updateCallStartMessageContentListener = (event, message) => {
@@ -332,7 +347,7 @@ export class AvEngineKitProxy {
             setTimeout(() => {
                 console.log('emitToVoip', _data);
                 this.voipWebview.evalJS(`${_funName}(${JSON.stringify(_data)})`);
-            }, 2000)
+            }, 1000)
         } else if (this.queueEvents) {
             this.queueEvents.push({event, args});
         }
@@ -368,6 +383,9 @@ export class AvEngineKitProxy {
                 break;
             case 'pickGroupMembers':
                 this.pickGroupMembers(event, args);
+                break;
+            case 'didCallEndWithReason':
+                this.didCallEndWithReason(event, args);
                 break;
             default:
                 break;
