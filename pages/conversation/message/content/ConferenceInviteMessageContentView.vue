@@ -2,14 +2,15 @@
     <div class="conference-invite-message-container"
          @click="showConferenceInfo"
          v-bind:class="{out:message.direction === 0}">
-        <div class="flex-row flex-align-center">
+        <div class="flex-row flex-align-center"
+             @click="showConferenceInfo">
             <img class="avatar" alt="host" :src="portrait">
             <div class="flex-1">
                 <p class="single-line title">{{ message.messageContent.title }} </p>
                 <p class="single-line desc">{{ message.messageContent.desc }}</p>
             </div>
         </div>
-        <p class="type">会议邀请</p>
+        <p class="type" @click="showConferenceInfo">会议邀请</p>
     </div>
 </template>
 
@@ -17,7 +18,7 @@
 import Message from "@/wfc/messages/message";
 import store from "@/store";
 import ConversationType from "@/wfc/model/conversationType";
-import wfcUIKit from "../../../../wfc/uikit/wfcUIKit";
+import avenginekitproxy from "../../../../wfc/av/engine/avenginekitproxy";
 
 export default {
     name: "ConferenceInviteMessageContentView",
@@ -31,20 +32,23 @@ export default {
     },
 
     methods: {
+        // 不知道最外层的 click 事件为啥不生效，故加了多个 click 事件处理
         showConferenceInfo() {
             console.log('showConferenceInfo')
-            if (wfcUIKit.isSupportConference()) {
-                console.log('showConferenceInfo 0')
-                let cmc = this.message.messageContent;
-                wfcUIKit.showConferenceInfo(cmc.callId, cmc.pin);
-                console.log('showConferenceInfo 1')
-            } else {
-                console.log('not support conference')
-                uni.showToast({
-                    title: '不支持会议功能',
-                    icon: 'none',
-                });
-            }
+            let cmc = this.message.messageContent;
+            avenginekitproxy.joinConference(cmc.callId, cmc.audioOnly, cmc.pin, cmc.host, cmc.title, cmc.desc, cmc.audience, cmc.advanced, false, false)
+            // if (wfcUIKit.isSupportConference()) {
+            //     console.log('showConferenceInfo 0')
+            //     let cmc = this.message.messageContent;
+            //     wfcUIKit.showConferenceInfo(cmc.callId, cmc.pin);
+            //     console.log('showConferenceInfo 1')
+            // } else {
+            //     console.log('not support conference')
+            //     uni.showToast({
+            //         title: '不支持会议功能',
+            //         icon: 'none',
+            //     });
+            // }
         }
     },
 
