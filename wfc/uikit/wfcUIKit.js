@@ -1,4 +1,4 @@
-const uniWfcUIKit = uni.requireNativePlugin("wf-uni-wfc-uikit");
+const uniWfcUIKit = {};
 
 export class WfcUIKit {
 

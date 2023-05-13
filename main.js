@@ -91,11 +91,11 @@ const app = new Vue({
 
 app.store = store;
 wfc.init();
-if (wfcUIKit.isUIKitEnable()) {
-    Config.ICE_SERVERS.forEach(iceServer => {
-        wfcUIKit.addICEServer(iceServer.uri, iceServer.userName, iceServer.password);
-    })
-}
+// if (wfcUIKit.isUIKitEnable()) {
+//     Config.ICE_SERVERS.forEach(iceServer => {
+//         wfcUIKit.addICEServer(iceServer.uri, iceServer.userName, iceServer.password);
+//     })
+// }
 store.init();
 
 app.$mount()
