@@ -48,7 +48,7 @@ export default class Config {
      */
     static RECALL_REEDIT_TIME_LIMIT = 60;
 
-    static platform = -1;
+    static platform = 5;
     static getWFCPlatform() {
         if (Config.platform > 0){
            return Config.platform;
