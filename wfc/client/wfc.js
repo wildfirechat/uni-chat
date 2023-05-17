@@ -1951,6 +1951,10 @@ export class WfcManager {
         impl.setMyCustomState(customState, customText, successCB, failCB)
     }
 
+    getAuthCode(appId, appType, host, successCB, failCB) {
+        impl.getAuthCode(appId, appType, host, successCB, failCB);
+    }
+
     notify(title, content){
         impl.notify(title, content)
     }
