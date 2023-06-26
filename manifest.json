@@ -19,7 +19,9 @@
         /* 模块配置 */
         "modules" : {
             "VideoPlayer" : {},
-            "Push" : {}
+            "Push" : {},
+            "Record" : {},
+            "Camera" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -43,7 +45,13 @@
                 "abiFilters" : [ "armeabi-v7a", "arm64-v8a", "x86" ]
             },
             /* ios打包配置 */
-            "ios" : {},
+            "ios" : {
+                "privacyDescription" : {
+                    "NSCameraUsageDescription" : "视频通话",
+                    "NSMicrophoneUsageDescription" : "音频通话及语音消息",
+                    "NSPhotoLibraryUsageDescription" : "发送图片消息"
+                }
+            },
             /* SDK配置 */
             "sdkConfigs" : {
                 "ad" : {},
