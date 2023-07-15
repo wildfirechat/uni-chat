@@ -69,9 +69,10 @@ export class WfcManager {
      * 连接服务器
      * @param {string} userId 用户id
      * @param {string} token 用户token，生成token时，所使用的clientId，一定要通过{@link getClientId}获取
+     * @return {number} 返回上一次活动时间。如果间隔时间较长，可以加个第一次登录的等待提示界面，在等待时同步所有的用户信息/群组信息/频道信息等。
      */
     connect(userId, token) {
-        impl.connect(userId, token);
+        return impl.connect(userId, token);
     }
 
     /**
@@ -1666,12 +1667,13 @@ export class WfcManager {
      * @param {MessageContent} messageContent 具体的消息内容，一定要求是{@link MessageContent} 的子类，不能是普通的object
      * @param {number} status 消息状态，可选值参考{@link MessageStatus}
      * @param {boolean} notify 是否触发onReceiveMessage
+     * @param {[string]} toUsers 定向发送给会话中的某些用户；为空，则发给所有人；另外对单聊会话，本参数无效
      * @param {Number} serverTime 服务器时间，精度到毫秒
      *
      * @return {Message} 插入的消息
      */
-    insertMessage(conversation, messageContent, status, notify = false, serverTime = 0) {
-        return impl.insertMessage(conversation, messageContent, status, notify, serverTime);
+    insertMessage(conversation, messageContent, status, notify = false, toUsers = [], serverTime = 0) {
+        return impl.insertMessage(conversation, messageContent, status, notify, toUsers, serverTime);
     }
 
     /**
