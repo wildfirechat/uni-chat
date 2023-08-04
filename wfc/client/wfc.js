@@ -8,6 +8,8 @@ import Long from 'long';
 
 import impl from '../proto/proto.min';
 import Config from "../../config";
+import EventType from "./wfcEvent";
+import ConnectionStatus from "./connectionStatus";
 //import avenginekit from "../av/engine/avenginekitproxy";
 
 
@@ -20,7 +22,19 @@ export class WfcManager {
     eventEmitter = new EventEmitter();
 
     constructor() {
-        impl.eventEmitter = this.eventEmitter;
+        impl.eventEmitter = {
+            emit: (ev, ...args) => {
+                if (ev === EventType.ConnectionStatusChanged || ev === EventType.UserOnlineEvent) {
+                    self.eventEmitter.emit(ev, ...args)
+                } else {
+                    if (impl.connectionStatus === ConnectionStatus.ConnectionStatusConnected) {
+                        self.eventEmitter.emit(ev, ...args)
+                    } else {
+                        // ignore
+                    }
+                }
+            }
+        };
     }
 
 
