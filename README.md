@@ -43,6 +43,11 @@
    4. `App.vue` 里面会调用`plus.push.getClientInfoAsync`获取推送相关的`clientId`，可以使用该`clientId`在`uni-push`后台测试推送功能。
    5. 当设备不在线时，`im-server`会调用`push-server`，然后`push-server`调用`个推`进行推送
 
+3. 打包失败：请确认是否执行过```npm install```命令。
+4. iPhone上打开会话页面报错`SyntaxError: Invalid regular expression: invalid group specifier name __ERROR`
+
+    `anchorme`只能使用`2.1.2`版本，不支持`3.x`版本，可参数这个[issue](https://github.com/alexcorvi/anchorme.js/issues/133)
+
 ## 应用截图
 会话列表
 ![会话列表](./screenshots/uniapp_conversation_list.jpeg)
