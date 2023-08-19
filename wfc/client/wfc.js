@@ -70,6 +70,12 @@ export class WfcManager {
         return impl.getClientId();
     }
 
+    /**
+     * 获取协议栈版本号
+     */
+    getProtoRevision() {
+        return impl.getProtoRevision();
+    }
     /*
      * 启用国密加密。注意需要服务器端同步开启国密配置
      */
@@ -84,20 +90,7 @@ export class WfcManager {
      * @return {number} 返回上一次活动时间。如果间隔时间较长，可以加个第一次登录的等待提示界面，在等待时同步所有的用户信息/群组信息/频道信息等。
      */
     connect(userId, token) {
-        return impl.connect(userId, token);
-    }
-
-    /**
-     * 设置代理，只支持socks5代理
-     *
-     * @param {String} host       代理host，host和ip必须至少有一个。
-     * @param {String} ip         代理IP，host和ip必须至少有一个。
-     * @param {number} port       代理端口
-     * @param {String} username   username
-     * @param {String} password   password
-     */
-    setProxyInfo(host, ip, port, username, password) {
-        impl.setProxyInfo(host, ip, port, username, password);
+        impl.connect(userId, token);
     }
 
     /**
@@ -175,39 +168,6 @@ export class WfcManager {
      */
     setBackupAddress(backupHost, backupPort) {
         impl.setBackupAddress(backupHost, backupPort);
-    }
-
-    /**
-     * 设置协议栈短连接UA。
-     *
-     * @param {string} userAgent 协议栈短连接使用的UA
-     */
-    setProtoUserAgent(userAgent) {
-        impl.setProtoUserAgent(userAgent);
-    }
-
-    /**
-     * 添加协议栈短连接自定义Header
-     *
-     * @param {string} header 协议栈短连接使用的UA
-     * @param {string} value 协议栈短连接使用的UA
-     */
-    addHttpHeader(header, value) {
-        impl.addHttpHeader(header, value)
-    }
-
-    /**
-     * 设备从睡眠中恢复
-     */
-    onAppResume() {
-        impl.onAppResume();
-    }
-
-    /**
-     * 设备进入睡眠状态
-     */
-    onAppSuspend() {
-        impl.onAppSuspend();
     }
 
     /**
@@ -347,6 +307,7 @@ export class WfcManager {
     }
 
     /**
+     * web 端，只匹配群名称和群备注名
      * 本地搜索群组
      * @param keyword 搜索关键字
      * @returns {[GroupSearchResult]}
@@ -783,6 +744,26 @@ export class WfcManager {
     }
 
     /**
+     * 设置群备注
+     * @param {string} groupId 群id
+     * @param {string} remark 群备注
+     * @param successCB
+     * @param failCB
+     */
+    async setGroupRemark(groupId, remark, successCB, failCB) {
+        impl.setGroupRemark(groupId, remark, successCB, failCB);
+    }
+
+    /**
+     *  获取群备注
+     * @param {string} groupId 群id
+     * @return 群备注
+     */
+    getGroupRemark(groupId) {
+        return impl.setGroupRemark(groupId);
+    }
+
+    /**
      * 获取保存到通讯录的群id列表
      * @returns {[string]}
      */
@@ -811,6 +792,28 @@ export class WfcManager {
         impl.setFavGroup(groupId, fav, successCB, failCB);
     }
 
+    /**
+     * 获取当前用户所有群组ID，此方法消耗资源较大，不建议高频使用。
+     *
+     * @param {function ([string])} successCB
+     * @param {function (number)} failCB
+     * @returns {Promise<void>}
+     */
+    async getMyGroups(successCB, failCB) {
+        impl.getMyGroups(successCB, failCB);
+    }
+
+    /**
+     * 获取用户共同群组ID
+     *
+     * @param {string} userId
+     * @param {function ([string])} successCB
+     * @param {function (number)} failCB
+     * @returns {Promise<void>}
+     */
+    async getCommonGroups(userId, successCB, failCB) {
+        impl.getCommonGroups(userId, successCB, failCB);
+    }
     /**
      * 获取用户设置，保存格式可以理解为：scope + key => value
      * @param {number} scope 命名空间，可选值参考{@link UserSettingScope}
@@ -980,6 +983,19 @@ export class WfcManager {
         return impl.getChannelInfo(channelId, refresh);
     }
 
+
+    isEnableSecretChat() {
+        return false;
+    }
+
+    isUserEnableSecretChat() {
+        return false;
+    }
+
+    setUserEnableSecretChat(enable, successCB, failCB) {
+        // do nothing
+    }
+
     /**
      * 修改频道信息
      * @param {string} channelId 频道id
@@ -1034,12 +1050,24 @@ export class WfcManager {
     }
 
     /**
+     * @deprecated 已废弃，请使用{@link getRemoteListenedChannels}
      * 获取所收听的频道id列表
      * @returns {[string]}
      */
     getListenedChannels() {
         return impl.getListenedChannels();
     }
+
+    /**
+     * 从服务端获取所收听的频道id列表
+     * @param {function([String])} successCB
+     * @param {function(number)} failCB
+     *
+     */
+    getRemoteListenedChannels(successCB, failCB) {
+        impl.getRemoteListenedChannels(successCB, failCB);
+    }
+
 
     /**
      * 销毁频道
@@ -1157,6 +1185,15 @@ export class WfcManager {
      */
     clearConversationUnreadStatus(conversation) {
         impl.clearConversationUnreadStatus(conversation);
+    }
+
+    /**
+     * 清楚会话消息中指定消息id之前的消息（包含）未读状态
+     * @param {Conversation} conversation 目标会话
+     * @param {int} messageId 消息id
+     */
+    clearUnreadStatusBeforeMessage(conversation, messageId) {
+        impl.clearUnreadStatusBeforeMessage(conversation, messageId);
     }
 
     /**
@@ -1380,7 +1417,7 @@ export class WfcManager {
      *
      * @param {[number]} conversationTypes 会话类型列表，可选值参考{@link  ConversationType}
      * @param {[number]} lines 会话线路列表
-     * @param {[number]} messageStatuses 消息状态，可选值参考{@link MessageStatus}
+     * @param {[number]} messageStatus 消息状态，可选值参考{@link MessageStatus}
      * @param {number} fromIndex 本参数暂时无效! messageId，表示从那一条消息开始获取
      * @param {boolean} before 本参数暂时无效! true, 获取fromIndex之前的消息，即更旧的消息；false，获取fromIndex之后的消息，即更新的消息。都不包含fromIndex对应的消息
      * @param {number} count 本参数暂时无效! 获取多少条消息
@@ -1388,8 +1425,8 @@ export class WfcManager {
      * @param {function (Message)} successCB
      * @param failCB
      */
-    getMessagesEx2V2(conversationTypes, lines, messageStatuses, fromIndex, before, count, withUser, successCB, failCB) {
-        impl.getMessagesEx2V2(conversationTypes, lines, messageStatuses, fromIndex, before, count, withUser, successCB, failCB);
+    getMessagesEx2V2(conversationTypes, lines, messageStatus, fromIndex, before, count, withUser, successCB, failCB) {
+        impl.getMessagesEx2V2(conversationTypes, lines, messageStatus, fromIndex, before, count, withUser, successCB, failCB);
     }
 
     /**
@@ -1466,7 +1503,7 @@ export class WfcManager {
      * @param {[number]} contentTypes 消息类型列表，可选值参考{@link MessageContentType}
      * @param {number | Long} beforeUid 消息uid，表示拉取本条消息之前的消息
      * @param {number} count
-     * @param {function ([Message])} successCB
+     * @param {function ([Message], boolean)} successCB
      * @param failCB
      */
     loadRemoteConversationMessages(conversation, contentTypes, beforeUid, count, successCB, failCB) {
@@ -1657,7 +1694,26 @@ export class WfcManager {
         impl.sendMessageEx(message, toUsers, preparedCB, progressCB, successCB, failCB);
     }
 
-    // 更新了原始消息的内容
+    /**
+     * 发送已经保存的消息，参考{@link sendMessage}
+     * @param message
+     * @param expireDuration
+     * @param successCB
+     * @param failCB
+     * @returns {Promise<void>}
+     */
+    async sendSavedMessage(message, expireDuration, successCB, failCB) {
+        impl.sendSavedMessage(message, expireDuration, successCB, failCB);
+    }
+
+    /**
+     * 取消发送消息，仅媒体类消息可以取消
+     * @param messageId 消息ID
+     * @returns 是否取消成功
+     */
+    cancelSendingMessage(messageId) {
+        return impl.cancelSendingMessage(messageId);
+    }
     /**
      * 撤回消息
      * @param {Long} messageUid
@@ -1757,7 +1813,7 @@ export class WfcManager {
     /**
      * 上传媒体文件
      * @param {string} fileName
-     * @param {string} fileOrData base64格式的dataUri
+     * @param {string | File} fileOrData base64格式的dataUri 或者 File
      * @param {number} mediaType 媒体类型，可选值参考{@link MessageContentMediaType}
      * @param {function (string)} successCB 回调通知上传成功之后的url
      * @param {function (number)} failCB
@@ -1828,7 +1884,7 @@ export class WfcManager {
      * @return {boolean}
      */
     isCommercialServer() {
-        return impl.isCommercialServer();
+        return true;
     }
 
     /**
@@ -1869,15 +1925,6 @@ export class WfcManager {
      * @param conversation
      * @return {Map<string, Long>}
      */
-    getConversationDelivery(conversation) {
-        return impl.getConversationDelivery(conversation);
-    }
-
-    /**
-     *
-     * @param conversation
-     * @return {Map<string, Long>}
-     */
     getConversationRead(conversation) {
         return impl.getConversationRead(conversation);
     }
@@ -1887,23 +1934,25 @@ export class WfcManager {
      * @param {Conversation} conversation 会话
      * @param {String} fromUser 来源用户
      * @param {Long} beforeMessageUid 消息uid，表示获取此消息uid之前的文件记录
+     * @param {int} order 排序。0 按照时间逆序；1 按照时间顺序；2 按照大小逆序；3 按照大小顺序。
      * @param {number} count 数量
      * @param {function (FileRecord[])} successCB 成功回调
      * @param {function (number)} failCB 失败回调
      */
-    getConversationFileRecords(conversation, fromUser, beforeMessageUid, count, successCB, failCB) {
-        impl.getConversationFileRecords(conversation, fromUser, beforeMessageUid, count, successCB, failCB);
+    getConversationFileRecords(conversation, fromUser, beforeMessageUid, order, count, successCB, failCB) {
+        impl.getConversationFileRecords(conversation, fromUser, beforeMessageUid, order, count, successCB, failCB);
     }
 
     /**
      * 获取我发送的文件记录
      * @param {Long} beforeMessageUid 消息uid，表示获取此消息uid之前的文件记录
+     * @param {int} order 排序。0 按照时间逆序；1 按照时间顺序；2 按照大小逆序；3 按照大小顺序。
      * @param {number} count 数量
      * @param {function (FileRecord[])} successCB 成功回调
      * @param {function (number)} failCB 失败回调
      */
-    getMyFileRecords(beforeMessageUid, count, successCB, failCB) {
-        impl.getMyFileRecords(beforeMessageUid, count, successCB, failCB);
+    getMyFileRecords(beforeMessageUid, order, count, successCB, failCB) {
+        impl.getMyFileRecords(beforeMessageUid, order, count, successCB, failCB);
     }
 
     /**
@@ -1922,24 +1971,26 @@ export class WfcManager {
      * @param {Conversation} conversation 会话，如果为空则获取当前用户所有收到和发出的文件记录
      * @param {string} fromUser 文件发送用户，如果为空则获取该用户发出的文件记录
      * @param {Long | string} beforeMessageId 起始消息的消息id
+     * @param {int} order 排序。0 按照时间逆序；1 按照时间顺序；2 按照大小逆序；3 按照大小顺序。
      * @param {number} count
      * @param {function (FileRecord[])} successCB
      * @param {function (number)} failCB
      */
-    searchFiles(keyword, conversation, fromUser, beforeMessageId, count, successCB, failCB) {
-        impl.searchFiles(keyword, conversation, fromUser, beforeMessageId, count, successCB, failCB)
+    searchFiles(keyword, conversation, fromUser, beforeMessageId, order, count, successCB, failCB) {
+        impl.searchFiles(keyword, conversation, fromUser, beforeMessageId, order, count, successCB, failCB)
     }
 
     /**
      * 搜索我自己的远程文件记录
      * @param keyword
      * @param beforeMessageUid
+     * @param {int} order 排序。0 按照时间逆序；1 按照时间顺序；2 按照大小逆序；3 按照大小顺序。
      * @param count
      * @param successCB
      * @param failCB
      */
-    searchMyFiles(keyword, beforeMessageUid, count, successCB, failCB) {
-        impl.searchMyFiles(keyword, beforeMessageUid, count, successCB, failCB);
+    searchMyFiles(keyword, beforeMessageUid, order, count, successCB, failCB) {
+        impl.searchMyFiles(keyword, beforeMessageUid, order, count, successCB, failCB);
     }
 
     /**
@@ -2016,25 +2067,12 @@ export class WfcManager {
         impl.getAuthCode(appId, appType, host, successCB, failCB);
     }
 
-    notify(title, content){
-        impl.notify(title, content)
+    requireLock(lockId, duration, successCB, failCB) {
+        impl.requireLock(lockId, duration, successCB, failCB);
     }
 
-    clearAllNotification(){
-        impl.clearAllNotification();
-    }
-
-    /**
-     * 设置推送 token
-     * @param {number} type
-     * @param {string} token
-     */
-    setDeviceToken(type, token){
-        impl.setDeviceToken(7, token);
-    }
-
-    chooseFile(type, successCB, failCB){
-        impl.chooseFile(type, successCB, failCB)
+    releaseLock(lockId, successCB, failCB) {
+        impl.releaseLock(lockId, successCB, failCB);
     }
 
     _getStore() {
@@ -2071,6 +2109,20 @@ export class WfcManager {
      */
     b64_to_utf8(str) {
         return decodeURIComponent(escape(atob(str)));
+    }
+
+    b64_to_arrayBuffer(str) {
+        let binary_string = atob(str);
+        let len = binary_string.length;
+        let bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binary_string.charCodeAt(i);
+        }
+        return bytes.buffer;
+    }
+
+    arrayBuffer_to_b64(data) {
+        return Buffer.from(data).toString('base64');
     }
 
     unescape (str) {

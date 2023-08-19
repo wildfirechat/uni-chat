@@ -83,12 +83,7 @@ export default class Message {
             }
 
             msg.messageUid = Long.fromValue(msg.messageUid);
-            if (msg.timestamp){
             msg.timestamp = Long.fromValue(msg.timestamp).toNumber();
-            } else {
-                // 移动端
-                msg.timestamp = Long.fromValue(msg.serverTime).toNumber();
-            }
             msg.localExtra = obj.localExtra;
             if (!msg.from) {
                 // 移动端
@@ -133,6 +128,10 @@ export default class Message {
             let contentClazz = MessageConfig.getMessageContentClazz(obj.content.type);
             if (contentClazz) {
                 let content = new contentClazz();
+                if (obj.content.__notLoaded) {
+                    content.__notLoaded = true;
+                    content.type = obj.content.type;
+                } else {
                     try {
                         if (obj.content.data && obj.content.data.length > 0) {
                             obj.content.binaryContent = encode(obj.content.data);
@@ -151,7 +150,9 @@ export default class Message {
                             return null;
                         }
                     }
+                }
                 msg.messageContent = content;
+
                 if (content instanceof UnknownMessageContent) {
                     console.log('unknownMessage Content', obj)
                 }

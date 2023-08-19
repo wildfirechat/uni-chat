@@ -43,6 +43,9 @@ export default class Config {
     // 文件传输助手ID
     static FILE_HELPER_ID = 'wfc_file_transfer';
 
+    // 登录时，每个会话最多加载多少条未读消息
+    static MAX_TO_LOAD_UNREAD_COUNT_PER_CONVERSATION = 99;
+
     /**
      * 允许重新编辑多长时间内的撤回消息，单位是秒
      */
