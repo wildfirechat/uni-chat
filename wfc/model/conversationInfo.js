@@ -25,15 +25,12 @@ export default class ConversationInfo {
         let conversationInfo = Object.assign(new ConversationInfo(), obj);
         conversationInfo.top = obj.isTop;
         delete conversationInfo.isTop;
-        if(obj.conversation){
+        if (obj.conversation) {
             conversationInfo.conversation = new Conversation(obj.conversation.type, obj.conversation.target, obj.conversation.line);
-        }else{
+        } else {
             conversationInfo.conversation = new Conversation(obj.conversationType, obj.target, obj.line);
         }
         conversationInfo.lastMessage = Message.fromProtoMessage(obj.lastMessage);
-        if (conversationInfo.draft && conversationInfo.lastMessage && gt(conversationInfo.lastMessage.timestamp, 0)) {
-            conversationInfo.timestamp = conversationInfo.lastMessage.timestamp;
-        }
         if (!conversationInfo.timestamp){
             conversationInfo.timestamp = 0;
         }

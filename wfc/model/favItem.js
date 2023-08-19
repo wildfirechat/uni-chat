@@ -11,8 +11,8 @@ import MessagePayload from "../messages/messagePayload";
 import SoundMessageContent from "../messages/soundMessageContent";
 import Long from "long";
 import UnknownMessageContent from "../messages/unknownMessageContent";
-
 import Config from '../../config'
+
 export default class FavItem {
     id;
     messageUid;
@@ -91,6 +91,13 @@ export default class FavItem {
                 let compositeContent = message.messageContent;
                 favItem.title = compositeContent.title;
                 let payload = compositeContent.encode();
+                if (payload.remoteMediaUrl) {
+                    let str = wfc.b64_to_utf8(payload.binaryContent);
+                    let obj = JSON.parse(str)
+                    obj['remote_url'] = payload.remoteMediaUrl;
+                    str = JSON.stringify(obj);
+                    payload.binaryContent = wfc.utf8_to_b64(str);
+                }
                 favItem.data = payload.binaryContent;
                 break;
             case MessageContentType.Voice:
@@ -101,7 +108,7 @@ export default class FavItem {
                 }
                 favItem.data = JSON.stringify(data);
                 break;
-            // TODO
+        // TODO
             // case MessageContentType.Link:
             //     break
             default:
@@ -122,7 +129,6 @@ export default class FavItem {
         }
         let content;
         try {
-
         switch (this.favType) {
             case MessageContentType.Text:
                 content = new TextMessageContent(this.title);
@@ -154,6 +160,8 @@ export default class FavItem {
                     payload.type = this.favType;
                     payload.content = this.title;
                     payload.binaryContent = this.data;
+                        let obj = JSON.parse(this.data);
+                        payload.remoteMediaUrl = obj['remote_url'];
                     content.decode(payload)
                 }
                 break;
@@ -163,7 +171,7 @@ export default class FavItem {
                     content.duration = this.data.duration;
                 }
                 break;
-            // TODO
+        // TODO
             // case MessageContentType.Link:
             //     break
             default:

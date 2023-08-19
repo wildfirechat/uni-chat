@@ -38,15 +38,12 @@ export class WfcManager {
         };
     }
 
-
     /**
      * 初始化，请参考本demo的用法
-     * 只可以在主窗口调用，其他窗口调用之后，会导致主窗口通知失效。
-     * 如果其他窗口想调用wfc里面的非通知方法，可以参考{@link attach}
      * @param {[]} args，pc 时，传入[node实例]; web 时，可以传入Config配置对象，配置项，请参考{@link Config}
      */
     init(args = []) {
-		console.log('wfc init')
+        console.log('wfc init');
         impl.init(args);
         //avenginekit.setup(self);
         //self.setProxyInfo("", "192.168.1.80", 1080, "", "");
@@ -289,12 +286,26 @@ export class WfcManager {
      * @param {function (number)} fail 失败回调
      */
     getUserInfoEx(userId, refresh, success, fail) {
-        impl.getUserInfoEx(userId, refresh, (info) => {
-            if (!info.portrait || info.portrait.startsWith(Config.APP_SERVER)) {
-                info.portrait = this.defaultUserPortrait(info);
+        impl.getUserInfoEx(userId, refresh, success, fail);
             }
-            success && success(info);
-        }, fail);
+
+    /**
+     * 批量从服务端拉取用户信息
+     * @param {[string]} userIds 用户ids
+     * @param {function ([UserInfo])} successCB 成功回调
+     * @param {function (Number)} failCB 失败回调
+     */
+    getUserInfosEx(userIds,  successCB, failCB) {
+        impl.getUserInfosEx(userIds, userInfos => {
+            userInfos.forEach((u)=>{
+                if(!u.portrait || u.portrait.startsWith(Config.APP_SERVER)){
+                    u.portrait = this.defaultUserPortrait(u);
+                }
+            });
+            successCB && successCB(userInfos);
+        }, err => {
+            failCB && failCB(err);
+        });
     }
 
     /**
@@ -507,12 +518,12 @@ export class WfcManager {
     }
 
     /**
-     * 设置全管理员
+     * 设置群管理员
      * @param {string} groupId 群id
      * @param {boolean} isSet true，设置；false，取消设置
      * @param {[string]} memberIds 将被设置为管理或取消管理远的群成员的用户id
      * @param {[number]} lines 默认传[0]即可
-     * @param {TODO } notifyContent 默认传null即可
+     * @param {Object} notifyContent 默认传null即可
      * @param {function ()} successCB
      * @param {function (number)} failCB
      * @returns {Promise<void>}
@@ -535,6 +546,12 @@ export class WfcManager {
         return info;
     }
 
+    /**
+     * 批量获取群信息
+     * @param {[string]} groupIds 群id
+     * @param {boolean} refresh 是否刷新，如果刷新，且有更新的话，会通过{@link eventEmitter}通知
+     * @returns {[GroupInfo]}
+     */
     getGroupInfos(groupIds, refresh = false) {
         let infos = impl.getGroupInfos(groupIds, refresh);
         infos.forEach(info => {
@@ -1078,7 +1095,7 @@ export class WfcManager {
     /**
      * 会话置顶或取消置顶
      * @param {Conversation} conversation 需要置顶或取消置顶的会话
-     * @param {int} top 置顶优先级
+     * @param {number} top > 0, 置顶，可以根据这个值进行置顶排序；0，取消置顶
      * @param {function ()} successCB
      * @param {function (number)} failCB
      */
@@ -1161,7 +1178,10 @@ export class WfcManager {
     }
 
     /**
-     * 清楚所有消息的未读状态
+     * 清除所有消息的未读状态
+     *
+     * 特别注意1：本方法只清除了底层数据库中的未读状态，并未清理 UI 层会话列表中的未读状态，UI 层会话列表中的未读状态，需要手动重置。
+     * 特别注意2：本方法不会触发{@link ConversationInfoUpdate} 事件
      */
     clearAllUnreadStatus() {
         impl.clearAllUnreadStatus();
@@ -1526,10 +1546,11 @@ export class WfcManager {
      * 搜索消息
      * @param {Conversation} conversation 目标会话
      * @param {string} keyword 关键字
+     * @param {string} withUser 目标用户
      * @returns {[Message]}
      */
-    searchMessage(conversation, keyword) {
-        return impl.searchMessage(conversation, keyword);
+    searchMessage(conversation, keyword, withUser = '') {
+        return impl.searchMessage(conversation, keyword, withUser);
     }
 
     /**
@@ -1539,10 +1560,11 @@ export class WfcManager {
      * @param {boolean} desc 逆序排列
      * @param {int} limit 返回数量
      * @param {int} offset 偏移
+     * @param {string} withUser 目标用户
      * @returns {Message[]}
      */
-    searchMessageEx(conversation, keyword, desc, limit, offset) {
-        return impl.searchMessageEx(conversation, keyword, desc, limit, offset);
+    searchMessageEx(conversation, keyword, desc, limit, offset, withUser = '') {
+        return impl.searchMessageEx(conversation, keyword, desc, limit, offset, withUser);
     }
 
     /**
@@ -1553,10 +1575,11 @@ export class WfcManager {
      * @param {boolean} desc 逆序排列
      * @param {int} limit 返回数量
      * @param {int} offset 偏移
+     * @param {string} withUser 目标用户
      * @returns {Message[]}
      */
-    searchMessageByTypes(conversation, keyword, contentTypes, desc, limit, offset) {
-        return impl.searchMessageByTypes(conversation, keyword, contentTypes, desc, limit, offset);
+    searchMessageByTypes(conversation, keyword, contentTypes, desc, limit, offset, withUser = '') {
+        return impl.searchMessageByTypes(conversation, keyword, contentTypes, desc, limit, offset, withUser);
     }
 
     /**
@@ -1569,10 +1592,11 @@ export class WfcManager {
      * @param {boolean} desc 逆序排列
      * @param {int} limit 返回数量
      * @param {int} offset 偏移
+     * @param {string} withUser 目标用户
      * @returns {Message[]}
      */
-    searchMessageByTypesAndTimes(conversation, keyword, contentTypes, startTime, endTime, desc, limit, offset) {
-        return impl.searchMessageByTypesAndTimes(conversation, keyword, contentTypes, startTime, endTime, desc, limit, offset);
+    searchMessageByTypesAndTimes(conversation, keyword, contentTypes, startTime, endTime, desc, limit, offset, withUser = '') {
+        return impl.searchMessageByTypesAndTimes(conversation, keyword, contentTypes, startTime, endTime, desc, limit, offset, withUser);
     }
 
     /**
@@ -1584,10 +1608,11 @@ export class WfcManager {
      * @param {number} fromIndex messageId，表示从那一条消息开始获取
      * @param {boolean} desc 逆序排列
      * @param {number} count 最大数量
+     * @param {string} withUser 目标用户
      * @returns {[Message]}
      */
-    searchMessageEx2(conversationTypes, lines, contentTypes, keyword, fromIndex, desc, count) {
-        return impl.searchMessageEx2(conversationTypes, lines, contentTypes, keyword, fromIndex, desc, count);
+    searchMessageEx2(conversationTypes, lines, contentTypes, keyword, fromIndex, desc, count, withUser = '') {
+        return impl.searchMessageEx2(conversationTypes, lines, contentTypes, keyword, fromIndex, desc, count, withUser);
     }
 
     /**
@@ -1601,7 +1626,7 @@ export class WfcManager {
      * @param {function (number)} failCB
      * @returns {Promise<void>}
      */
-    async sendConversationMessage(conversation, messageContent, toUsers, preparedCB, progressCB, successCB, failCB) {
+    async sendConversationMessage(conversation, messageContent, toUsers = [], preparedCB = null, progressCB = null, successCB = null, failCB = null) {
         impl.sendConversationMessage(conversation, messageContent, toUsers, preparedCB, progressCB, successCB, failCB);
     }
 
@@ -1702,13 +1727,12 @@ export class WfcManager {
      * @param {MessageContent} messageContent 具体的消息内容，一定要求是{@link MessageContent} 的子类，不能是普通的object
      * @param {number} status 消息状态，可选值参考{@link MessageStatus}
      * @param {boolean} notify 是否触发onReceiveMessage
-     * @param {[string]} toUsers 定向发送给会话中的某些用户；为空，则发给所有人；另外对单聊会话，本参数无效
      * @param {Number} serverTime 服务器时间，精度到毫秒
      *
      * @return {Message} 插入的消息
      */
-    insertMessage(conversation, messageContent, status, notify = false, toUsers = [], serverTime = 0) {
-        return impl.insertMessage(conversation, messageContent, status, notify, toUsers, serverTime);
+    insertMessage(conversation, messageContent, status, notify = false, serverTime = 0) {
+        return impl.insertMessage(conversation, messageContent, status, notify, serverTime);
     }
 
     /**

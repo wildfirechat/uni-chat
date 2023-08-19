@@ -8,6 +8,7 @@ import Long from "long";
 import {compare} from "../util/longUtil";
 import MessagePayload from "../messages/messagePayload";
 import ArticlesMessageContent from "./articlesMessageContent";
+import MessageContentMediaType from "./messageContentMediaType";
 
 export default class CompositeMessageContent extends MediaMessageContent {
     title = '';
@@ -16,7 +17,7 @@ export default class CompositeMessageContent extends MediaMessageContent {
     loaded = false;
 
     constructor() {
-        super(MessageContentType.Composite_Message, '', '')
+        super(MessageContentType.Composite_Message, MessageContentMediaType.General, '')
     }
 
     setMessages(msgs) {
@@ -104,12 +105,6 @@ export default class CompositeMessageContent extends MediaMessageContent {
             let blob = new Blob([str]);
             let fileName = 'wcf-' + new Date().getTime() + '.data';
             this.file = new File([blob], fileName);
-            // if (isElectron()) {
-            //     this.localPath = require('tmp').tmpNameSync() + fileName;
-            //     require('fs').writeFileSync(this.localPath, str);
-            //     payload.localMediaPath = this.localPath;
-            //     payload.mediaType = MessageContentType.File;
-            // }
             obj = {
                 ms: binArr,
             }
@@ -140,24 +135,13 @@ export default class CompositeMessageContent extends MediaMessageContent {
         let str;
         if (this.file) {
             // web
-            // let fileReader = new FileReader();
-            // fileReader.onload(ev => {
-            //     this._decodeMessages(ev.target.result);
-            // });
-            // fileReader.readAsBinaryString(this.file);
+            let fileReader = new FileReader();
+            fileReader.onload(ev => {
+                this._decodeMessages(ev.target.result);
+            });
+            fileReader.readAsBinaryString(this.file);
 
         } else if (this.localPath) {
-            // electron
-            // if (isElectron()) {
-            //     const fs = require("fs");
-            //     if (fs.existsSync(this.localPath)) {
-            //         const buffer = fs.readFileSync(this.localPath);
-            //         str = buffer.toString();
-            //         this._decodeMessages(str);
-            //     } else {
-            //         console.log('media composite message not downloaded', this.remotePath);
-            //     }
-            // }
         }
 
         if (!str) {

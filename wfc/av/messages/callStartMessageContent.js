@@ -22,7 +22,7 @@ export default class CallStartMessageContent extends MessageContent {
      * 7, Timeout,
      * 8, AcceptByOtherClient
      */
-    status;
+    status = 0;
     audioOnly;
     pin;
 
@@ -57,7 +57,7 @@ export default class CallStartMessageContent extends MessageContent {
             audioOnly:this.audioOnly,
             participants:this.targetIds,
         }
-        payload.pushData = JSON.toString(pushData);
+        payload.pushData = JSON.stringify(pushData);
         return payload;
     }
 
