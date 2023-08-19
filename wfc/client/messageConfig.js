@@ -63,7 +63,6 @@ import MultiCallOngoingMessageContent from "../av/messages/multiCallOngoingMessa
 import JoinCallRequestMessageContent from "../av/messages/joinCallRequestMessageContent";
 import RichNotificationMessageContent from "../messages/notification/richNotificationMessageContent";
 import ArticlesMessageContent from "../messages/articlesMessageContent";
-
 import ChannelMenuEventMessageContent from "../messages/channelMenuEventMessageContent";
 import EnterChannelChatMessageContent from "../messages/enterChannelChatMessageContent";
 import LeaveChannelChatMessageContent from "../messages/leaveChannelChatMessageContent";
@@ -213,13 +212,13 @@ export default class MessageConfig {
         },
         {
             name: 'friendGreeting',
-            flag: PersistFlag.No_Persist,
+            flag: PersistFlag.Persist,
             type: MessageContentType.Friend_Added,
             contentClazz: FriendGreetingNotification,
         },
         {
             name: 'friendAdded',
-            flag: PersistFlag.No_Persist,
+            flag: PersistFlag.Persist,
             type: MessageContentType.Friend_Greeting,
             contentClazz: FriendAddedNotification,
         },

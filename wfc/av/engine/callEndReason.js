@@ -20,4 +20,6 @@ export default class CallEndReason {
     static RoomNotExist = 14;
     static RoomParticipantsFull = 15;
 
+    static Interrupted = 16;
+    static RemoteInterrupted = 17;
 }
