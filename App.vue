@@ -1,6 +1,5 @@
 <script>
 import store from "./store";
-import wfc from "./wfc/client/wfc";
 
 export default {
   onLaunch: function () {
