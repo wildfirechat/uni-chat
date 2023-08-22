@@ -32,7 +32,7 @@
             </ul>
         </div>
         <div class="footer">
-            <a v-if="isFriend" @click="this.chat">{{ $t('message.send_message') }}</a>
+            <a v-if="isFriend" @click="chat">{{ $t('message.send_message') }}</a>
             <a v-else-if="!isSelf" @click="addFriend">添加好友</a>
         </div>
     </div>
