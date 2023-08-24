@@ -11,7 +11,7 @@ import Config from "../../config";
 import EventType from "./wfcEvent";
 import ConnectionStatus from "./connectionStatus";
 import NullUserInfo from "../model/nullUserInfo";
-//import avenginekit from "../av/engine/avenginekitproxy";
+import avenginekit from "../av/engine/avenginekitproxy";
 
 
 export class WfcManager {
@@ -45,7 +45,7 @@ export class WfcManager {
     init(args = []) {
         console.log('wfc init');
         impl.init(args);
-        //avenginekit.setup(self);
+        avenginekit.setup(self);
         //self.setProxyInfo("", "192.168.1.80", 1080, "", "");
 		console.log('wfc init end')
     }

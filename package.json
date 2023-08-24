@@ -6,6 +6,7 @@
   "license": "MIT",
   "dependencies": {
     "anchorme": "^2.1.2",
+    "detectrtc": "^1.4.1",
     "emojilib": "^3.0.6",
     "long": "^5.2.0",
     "resize-image": "^0.1.0",

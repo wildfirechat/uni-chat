@@ -70,6 +70,7 @@ import QuoteInfo from "../../wfc/model/quoteInfo";
 import AudioInputView from "./message/AudioInputView.vue";
 import Draft from "../util/draft";
 import Mention from "../../wfc/model/mention";
+import avenginekitproxy from "../../wfc/av/engine/avenginekitproxy";
 
 export default {
     name: "MessageInputView",
@@ -354,8 +355,9 @@ export default {
         },
 
         voip(audioOnly) {
+            console.log('voip ', audioOnly);
             if (this.conversationInfo.conversation.type === ConversationType.Single) {
-                wfcUIKit.startSingleCall(this.conversationInfo.conversation.target, audioOnly)
+                avenginekitproxy.startCall(this.conversationInfo.conversation, audioOnly, [this.conversationInfo.conversation.target]);
             } else if (this.conversationInfo.conversation.type === ConversationType.Group) {
                 this.showPickGroupMemberToVoipModal(audioOnly)
             }

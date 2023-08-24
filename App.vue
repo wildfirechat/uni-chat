@@ -2,6 +2,7 @@
 import store from "./store";
 import {getItem} from "./pages/util/storageHelper";
 import wfc from "./wfc/client/wfc";
+import avenginekit from "./wfc/av/internal/engine.min";
 
 export default {
     onLaunch: function () {
@@ -32,6 +33,11 @@ export default {
         }
         // #endif
     },
+    mounted() {
+        // 必须
+        avenginekit.setup();
+    },
+
     onHide: function () {
         console.log("App Hide");
         store.state.misc.isAppHidden = true;

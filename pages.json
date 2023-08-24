@@ -148,6 +148,12 @@
             }
         },
         {
+            "path": "pages/voip/Single",
+            "style": {
+              "navigationBarTitleText": "单人音视频通话"
+            }
+        },
+        {
             "path": "pages/misc/WebViewPage",
             "style": {
                 "navigationBarTitleText": "页面加载中..."
