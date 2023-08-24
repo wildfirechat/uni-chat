@@ -192,7 +192,7 @@ export default {
             }
         },
 
-        mention(){
+        mention() {
 
         },
         send() {
@@ -331,13 +331,22 @@ export default {
                 sizeType: ['original', 'compressed'],
                 success: (e) => {
                     console.log('choose image', e.tempFilePaths);
-                    e.tempFilePaths.forEach(path => {
+                    e.tempFilePaths.forEach(async path => {
                         let filePath;
+                        // #ifdef APP-PLUS
                         if (path.startsWith('file://')) {
                             filePath = path.substring('file://'.length);
                         } else {
                             filePath = plus.io.convertLocalFileSystemURL(path)
                         }
+                        // #endif
+                        // #ifdef H5
+                        filePath = await fetch(path).then(res => res.blob())
+                            .then(blob => {
+                                let name = `${new Date().getTime()}.${blob.type.substring(blob.type.lastIndexOf('/') + 1)}`;
+                                return new File([blob], name)
+                            })
+                        // #endif
                         store.sendFile(this.conversationInfo.conversation, filePath);
                     })
                 }
@@ -372,31 +381,49 @@ export default {
                 // count: _self.limit ? _self.limit  - _self.fileList.length : 999,
                 sourceType: ['camera'],
                 sizeType: ['original', 'compressed'],
-                success: (e) => {
+                success: async (e) => {
                     console.log('choose video', e);
                     let duration = e.duration;
                     let path = e.tempFilePath;
                     let filePath;
+                    // #ifdef APP-PLUS
                     if (path.startsWith('file://')) {
                         filePath = path.substring('file://'.length);
                     } else {
                         filePath = plus.io.convertLocalFileSystemURL(path)
                     }
+                    // #endif
+                    // #ifdef H5
+                    filePath = await fetch(path).then(res => res.blob())
+                        .then(blob => {
+                            let name = `${new Date().getTime()}.${blob.type.substring(blob.type.lastIndexOf('/') + 1)}`;
+                            return new File([blob], name)
+                        })
+                    // #endif
                     store.sendFile(this.conversationInfo.conversation, filePath, duration);
                 }
             })
         },
 
         chooseFile() {
-            wfc.chooseFile('all', (file) => {
+            wfc.chooseFile('all', async (file) => {
                     console.log('choose file', file);
                     let path = file.path;
                     let filePath;
+                    // #ifdef APP-PLUS
                     if (path.startsWith('file://')) {
                         filePath = path.substring('file://'.length);
                     } else {
                         filePath = plus.io.convertLocalFileSystemURL(path)
                     }
+                    // #endif
+                    // #ifdef H5
+                    filePath = await fetch(path).then(res => res.blob())
+                        .then(blob => {
+                            let name = `${new Date().getTime()}.${blob.type.substring(blob.type.lastIndexOf('/') + 1)}`;
+                            return new File([blob], name)
+                        })
+                    // #endif
                     file.path = filePath;
                     store.sendFile(this.conversationInfo.conversation, file);
                 }
