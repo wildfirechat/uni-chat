@@ -366,7 +366,9 @@ export default {
         showPickGroupMemberToVoipModal(audioOnly) {
             let beforeClose = (users) => {
                 let ids = users.map(u => u.uid);
-                wfcUIKit.startMultiCall(this.conversationInfo.conversation.target, ids, audioOnly);
+                this.$nextTick(() => {
+                    avenginekitproxy.startCall(this.conversationInfo.conversation, audioOnly, ids);
+                })
             }
             this.$pickUsers(
                 {

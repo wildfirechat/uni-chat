@@ -150,7 +150,13 @@
         {
             "path": "pages/voip/Single",
             "style": {
-              "navigationBarTitleText": "单人音视频通话"
+                "navigationBarTitleText": "单人音视频通话"
+            }
+        },
+        {
+            "path": "pages/voip/Multi",
+            "style": {
+                "navigationBarTitleText": " 多人音视频通话"
             }
         },
         {

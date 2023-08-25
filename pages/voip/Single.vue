@@ -46,7 +46,7 @@
                     <div class="local-media-container">
                         <video v-if="status === 4 || localStream"
                                ref="localVideo"
-                               id="localVideo"
+                               :id="'localVideo'"
                                class="localVideo me"
                                :srcObject.prop="localStream"
                                muted
@@ -57,7 +57,7 @@
                     <div class="remote-media-container">
                         <video v-if="status ===4"
                                @click="switchVideoType()"
-                               id="remoteVideo"
+                               :id="'remoteVideo'"
                                ref="remoteVideo"
                                class="video"
                                :srcObject.prop="remoteStream"
