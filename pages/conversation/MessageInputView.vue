@@ -366,9 +366,9 @@ export default {
         showPickGroupMemberToVoipModal(audioOnly) {
             let beforeClose = (users) => {
                 let ids = users.map(u => u.uid);
-                this.$nextTick(() => {
+                setTimeout(() => {
                     avenginekitproxy.startCall(this.conversationInfo.conversation, audioOnly, ids);
-                })
+                }, 200)
             }
             this.$pickUsers(
                 {
