@@ -435,6 +435,7 @@ export default {
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 999;
 }
 
 .local-media-container .avatar {
@@ -444,7 +445,7 @@ export default {
 
 .localVideo {
     width: 200px;
-    height: auto;
+    height: 200px;
     position: absolute;
     top: 0;
     background-color: #cccccc;
