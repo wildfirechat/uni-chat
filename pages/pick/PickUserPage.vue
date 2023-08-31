@@ -19,7 +19,7 @@
             <header>
                 <span v-if="checkedUsers.length === 0">{{ $t('pick.picked_contact') }}</span>
                 <span v-else>{{ $t('pick.picked_contact') + this.checkedUsers.length }}</span>
-                <button size="mini" @click="confirm"> {{ confirmTitle }}</button>
+                <button size="mini" v-bind:class="{disabled: checkedUsers.length === 0}" :disabled="checkedUsers.length === 0" @click="confirm"> {{ confirmTitle }}</button>
             </header>
             <div class="content" ref="pickedUserContainer">
                 <div class="picked-user" v-for="(user, index) in checkedUsers" :key="index" @click="unpick(user)">
@@ -203,6 +203,7 @@ export default {
     display: flex;
     align-items: center;
     width: 100%;
+    padding-top: 10px;
 }
 
 .input-container input {
@@ -300,6 +301,10 @@ export default {
     height: 45px;
     margin: 10px 10px;
     border-radius: 3px;
+}
+
+.disabled {
+    color: lightgrey !important;
 }
 
 </style>
