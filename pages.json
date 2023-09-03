@@ -142,6 +142,12 @@
             }
         },
         {
+            "path": "pages/discovery/DiscoveryPage",
+            "style": {
+                "navigationBarTitleText": "发现"
+            }
+        },
+        {
             "path": "pages/me/MePage",
             "style": {
                 "navigationBarTitleText": "我的"
@@ -172,16 +178,22 @@
 		"list": [
 			{
 				"pagePath": "pages/conversationList/ConversationListPage",
-				"text": "会话列表",
+				"text": "野火",
 				"iconPath": "static/image/tabbar/message_normal.png",
 				"selectedIconPath": "static/image/tabbar/message_press.png"
 			},
 			{
 				"pagePath": "pages/contact/ContactListPage",
-				"text": "好友列表",
+				"text": "通讯录",
 				"iconPath": "static/image/tabbar/contact_normal.png",
 				"selectedIconPath": "static/image/tabbar/contact_press.png"
 			},
+            {
+                "pagePath": "pages/discovery/DiscoveryPage",
+                "text": " 发现",
+                "iconPath": "static/image/tabbar/discovery_normal.png",
+                "selectedIconPath": "static/image/tabbar/discovery_press.png"
+            },
             {
                 "pagePath": "pages/me/MePage",
                 "text": "我的",
