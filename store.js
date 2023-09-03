@@ -202,7 +202,7 @@ let store = {
 
                 // 清除 token 等
                 clear();
-                if (status === ConnectionStatus.ConnectionStatusKickedOff){
+                if (status === ConnectionStatus.ConnectionStatusKickedOff) {
                     wfc.disconnect();
                 }
                 _reset();
@@ -635,10 +635,13 @@ let store = {
         if (!conversationInfo) {
             if (conversationState.currentConversationInfo) {
                 let conversation = conversationState.currentConversationInfo.conversation;
-                wfc.unwatchOnlineState(conversation.type, [conversation.target]);
-                if (conversation.type === ConversationType.Channel) {
+                if ([ConversationType.Single, ConversationType.Group].indexOf(conversation.type) >= 0) {
+                    wfc.unwatchOnlineState(conversation.type, [conversation.target]);
+                } else if (conversation.type === ConversationType.Channel) {
                     let content = new LeaveChannelChatMessageContent();
                     wfc.sendConversationMessage(conversation, content);
+                } else if (conversation.type === ConversationType.ChatRoom) {
+                    wfc.quitChatroom(conversation.target)
                 }
             }
             conversationState.currentConversationInfo = null;
@@ -672,6 +675,8 @@ let store = {
         if (conversation.type === ConversationType.Channel) {
             let content = new EnterChannelChatMessageContent();
             wfc.sendConversationMessage(conversation, content);
+        } else if (conversation.type === ConversationType.ChatRoom) {
+            wfc.joinChatroom(conversation.target);
         }
         conversationState.currentConversationInfo = conversationInfo;
         conversationState.shouldAutoScrollToBottom = true;
@@ -1030,6 +1035,7 @@ let store = {
                     break;
                 }
             }
+            console.log('_loadCurrentConversationMessages success', conversation, msgs)
         }, err => {
             console.error('_loadCurrentConversationMessages error', err);
         });
@@ -1169,6 +1175,7 @@ let store = {
         // TODO
         // _from
         // _showTime
+        console.log('__patchMessage', m)
         if (m.conversation.type === ConversationType.Single) {
             m._from = userInfoMap ? userInfoMap.get(m.from) : wfc.getUserInfo(m.from, false, '');
         }

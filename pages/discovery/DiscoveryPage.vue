@@ -1,22 +1,22 @@
 <template>
-    <div class="discovery-container">
+    <div class="chatroom-container">
         <div class="item" @click="showChatroomList">
-            <image src="/static/image/icon/ic_chatroom.png">
+            <image src="/static/image/icon/ic_chatroom.png"/>
             <text>聊天室</text>
             <i class="icon-ion-ios-arrow-right"></i>
         </div>
         <div class="item" @click="showRobotConversation">
-            <image src="/static/image/icon/ic_robot.png">
+            <image src="/static/image/icon/ic_robot.png"/>
             <text>机器人</text>
             <i class="icon-ion-ios-arrow-right"></i>
         </div>
         <div class="item" @click="showChannelList">
-            <image src="/static/image/icon/ic_channel.png">
+            <image src="/static/image/icon/ic_channel.png"/>
             <text>频道</text>
             <i class="icon-ion-ios-arrow-right"></i>
         </div>
         <div class="item" @click="showDevGuide">
-            <image src="/static/image/icon/ic_dev_docs.png">
+            <image src="/static/image/icon/ic_dev_docs.png"/>
             <text>开发手册</text>
             <i class="icon-ion-ios-arrow-right"></i>
         </div>
@@ -44,7 +44,12 @@ export default {
             });
         },
         showChatroomList() {
-            this.todo();
+            uni.navigateTo({
+                url: '/pages/discovery/ChatroomListPage',
+                fail: (e) => {
+                    console.log(e)
+                }
+            });
         },
         showRobotConversation() {
             let conversation = new Conversation(ConversationType.Single, "FireRobot", 0);
@@ -68,7 +73,7 @@ export default {
 
 <style scoped>
 
-.discovery-container {
+.chatroom-container {
     display: flex;
     flex-direction: column;
     align-items: center;

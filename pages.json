@@ -148,6 +148,12 @@
             }
         },
         {
+            "path": "pages/discovery/ChatroomListPage",
+            "style": {
+                "navigationBarTitleText": "聊天室列表"
+            }
+        },
+        {
             "path": "pages/me/MePage",
             "style": {
                 "navigationBarTitleText": "我的"
