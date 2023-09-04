@@ -97,8 +97,8 @@ export default {
 }
 
 .item image {
-    max-width: 15px;
-    max-height: 15px;
+    max-width: 20px;
+    max-height: 20px;
     margin-right: 10px;
 }
 

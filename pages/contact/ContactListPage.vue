@@ -2,63 +2,52 @@
     <div class="contact-list">
         <uni-list>
             <view>
-
-                <div>
-                    <div @click="showNewFriends" class="category-item-container">
-                        <i class="arrow right" v-bind:class="{down: sharedContactState.expandFriendRequestList}"></i>
-                        <div class="category-item">
-                            <span class="title">{{ $t('contact.new_friend') }}</span>
-                            <span class="desc" style="color: red" v-if="sharedContactState.unreadFriendRequestCount > 0">{{ sharedContactState.unreadFriendRequestCount }}</span>
-                        </div>
-                    </div>
-                    <FriendRequestListView v-if="sharedContactState.expandFriendRequestList"/>
-                </div>
-                <div>
-                    <div @click="showGroups" class="category-item-container">
-                        <i class="arrow right" v-bind:class="{down: sharedContactState.expandGroup}"></i>
-                        <div class="category-item">
-                            <span class="title">{{ $t('contact.group') }}</span>
-                            <span class="desc">{{ sharedContactState.favGroupList.length }}</span>
-                        </div>
-                    </div>
-                    <GroupListVue v-if="sharedContactState.expandGroup"/>
-                    <div>
-                        <div @click="showContacts" class="category-item-container">
-                            <i class="arrow right" v-bind:class="{down: sharedContactState.expandFriendList}"></i>
-                            <div class="category-item">
-                                <span class="title">{{ $t('contact.contact') }}</span>
-                                <span class="desc">{{ sharedContactState.friendList.length }}</span>
-                            </div>
-                        </div>
-                        <UserListView :enable-pick="false"
-                                     :users="sharedContactState.favContactList.concat(sharedContactState.friendList)"
-                                     :click-user-item-func="setCurrentUser"
-                                     :padding-left="'30px'"
-                                     v-if="sharedContactState.expandFriendList"/>
+                <div @click="showNewFriends" class="category-item-container">
+                    <image src="/static/image/icon/ic_new_friend.png"/>
+                    <div class="category-item">
+                        <span class="title">{{ $t('contact.new_friend') }}</span>
+                        <span class="desc" style="color: red" v-if="sharedContactState.unreadFriendRequestCount > 0">{{ sharedContactState.unreadFriendRequestCount }}</span>
                     </div>
                 </div>
+                <div @click="showGroups" class="category-item-container">
+                    <image src="/static/image/icon/ic_group_chat.png"/>
+                    <div class="category-item">
+                        <span class="title">{{ $t('contact.group') }}</span>
+                        <span class="desc">{{ sharedContactState.favGroupList.length }}</span>
+                    </div>
+                </div>
+                <div @click="showChannels" class="category-item-container">
+                    <image src="/static/image/icon/ic_channel_1.png"/>
+                    <div class="category-item">
+                        <span class="title">{{ $t('contact.channel') }}</span>
+                        <span class="desc">{{ sharedContactState.channelList.length }}</span>
+                    </div>
+                </div>
+                <UserListView :enable-pick="false"
+                              :users="sharedContactState.favContactList.concat(sharedContactState.friendList)"
+                              :click-user-item-func="setCurrentUser"
+                              :padding-left="'10px'"
+                              v-if="sharedContactState.expandFriendList"/>
             </view>
         </uni-list>
         <main-action-menu ref="mainActionMenu"></main-action-menu>
     </div>
 </template>
 <script>
-import FriendRequestListView from "./FriendRequestListView";
-import GroupListVue from "./GroupListView";
 import store from "../../store";
 import UserListView from "../user/UserListView.vue";
 import UniList from "../../components/uni-list/uni-list.vue";
 
 export default {
     name: "ContactListPage",
-    components: {UniList, UserListView, GroupListVue, FriendRequestListView},
+    components: {UniList, UserListView},
     data() {
         return {
             sharedContactState: store.state.contact,
         }
     },
 
-    onHide(){
+    onHide() {
         console.log('contactList onHide');
         this.$refs.mainActionMenu.hide();
     },
@@ -94,10 +83,40 @@ export default {
             });
         },
         showNewFriends() {
-            store.toggleFriendRequestList();
+            uni.navigateTo({
+                url: './NewFriendListPage',
+                success: () => {
+                    console.log('nav to NewFriendListPage success');
+
+                },
+                fail: (err) => {
+                    console.log('nav to NewFriendListPage err', err);
+                }
+            });
         },
         showGroups() {
-            store.toggleGroupList();
+            uni.navigateTo({
+                url: './GroupListPage',
+                success: () => {
+                    console.log('nav to GroupListPage success');
+
+                },
+                fail: (err) => {
+                    console.log('nav to GroupListPage err', err);
+                }
+            });
+        },
+        showChannels() {
+            uni.navigateTo({
+                url: './ChannelListPage',
+                success: () => {
+                    console.log('nav to ChannelListPage success');
+
+                },
+                fail: (err) => {
+                    console.log('nav to ChannelListPage err', err);
+                }
+            });
         },
         showContacts() {
             store.toggleFriendList();
@@ -111,14 +130,15 @@ export default {
 
 .contact-list {
     height: 100%;
+    overflow: auto;
 }
 
 .category-item-container {
-    height: 40px;
+    height: 50px;
     display: flex;
     align-items: center;
     z-index: 1000;
-    padding-left: 15px;
+    padding-left: 10px;
     color: #262626;
     font-size: 14px;
     /* #ifndef APP-PLUS-NVUE */
@@ -126,7 +146,12 @@ export default {
     /* #endif */
     position: sticky;
     background-color: #fafafa;
-    top: var(--window-top);
+}
+
+.category-item-container image {
+    max-width: 40px;
+    max-height: 40px;
+    margin-right: 10px;
 }
 
 .category-item {
@@ -137,34 +162,6 @@ export default {
 
 .category-item span:last-of-type {
     margin-right: 15px;
-}
-
-.arrow {
-    border: solid #b9b9b9;
-    border-width: 0 1px 1px 0;
-    display: inline-block;
-    padding: 3px;
-    margin-right: 10px;
-}
-
-.right {
-    transform: rotate(-45deg);
-    -webkit-transform: rotate(-45deg);
-}
-
-.left {
-    transform: rotate(135deg);
-    -webkit-transform: rotate(135deg);
-}
-
-.up {
-    transform: rotate(-135deg);
-    -webkit-transform: rotate(-135deg);
-}
-
-.down {
-    transform: rotate(45deg);
-    -webkit-transform: rotate(45deg);
 }
 
 </style>

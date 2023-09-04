@@ -14,7 +14,8 @@
     "contact": {
         "new_friend": "New friend",
         "group": "Group Chat",
-        "contact": "Contact"
+        "contact": "Contact",
+        "channel": "Channel"
     },
     "friend_request": {
         "request": "Friend Request",

@@ -8,24 +8,24 @@
                     <div class="new-friend-item">
                         <img class="avatar" :src="friendRequest._target.portrait">
                         <div class="info">
-                            <div class="name-action">
-                                <span class="name single-line">{{ friendRequest._target.displayName }}</span>
-                                <span v-if="friendRequest.status === 1" class="status">{{
-                                        $t('friend_request.accepted')
-                                    }}</span>
-                                <button v-else-if="friendRequest.status === 0" class="accept" size="mini"
-                                        @click="accept(friendRequest)">{{
-                                        $t('common.add')
-                                    }}
-                                </button>
-                                <span
-                                    v-else-if="friendRequest.status === 3" class="status">{{
-                                        $t('friend_request.denied')
-                                    }}</span>
+                            <div class="name">
+                                <span class="single-line">{{ friendRequest._target.displayName }}</span>
+                                <p class="reason single-line">{{
+                                        friendRequest.reason ? friendRequest.reason : $t('friend_request.im') + friendRequest._target.displayName
+                                    }}</p>
                             </div>
-                            <p class="reason single-line">{{
-                                    friendRequest.reason ? friendRequest.reason : $t('friend_request.im') + friendRequest._target.displayName
-                                }}</p>
+                            <span v-if="friendRequest.status === 1" class="status">{{
+                                    $t('friend_request.accepted')
+                                }}</span>
+                            <button v-else-if="friendRequest.status === 0" class="accept" size="mini"
+                                    @click="accept(friendRequest)">{{
+                                    $t('common.add')
+                                }}
+                            </button>
+                            <span
+                                v-else-if="friendRequest.status === 3" class="status">{{
+                                    $t('friend_request.denied')
+                                }}</span>
                         </div>
                     </div>
                 </div>
@@ -59,6 +59,10 @@ export default {
             wfc.handleFriendRequest(friendRequest.target, true, "", () => {
                 friendRequest.status = 1;
             }, (err) => {
+                uni.showToast({
+                    title: '添加好友失败 ' + err,
+                    icon: 'none',
+                });
                 console.log('accept friend request error', err)
             })
         },
@@ -93,7 +97,7 @@ export default {
 
 <style lang="css" scoped>
 .new-friend-item-container {
-    padding-left: 30px;
+    padding-left: 10px;
 }
 
 .avatar {
@@ -105,44 +109,41 @@ export default {
 .new-friend-item {
     display: flex;
     width: 100%;
-    padding: 10px 15px 10px 0;
+    padding: 10px 10px 10px 0;
     align-items: center;
     font-size: 13px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 0.5px solid #e0e0e0;
 }
 
 
-.new-friend-item-container.active {
-    background-color: #d6d6d6;
-}
-
-.new-friend-item-container:hover {
-    background-color: #d6d6d6;
-}
+//.new-friend-item-container.active {
+//    background-color: #d6d6d6;
+//}
+//
+//.new-friend-item-container:hover {
+//    background-color: #d6d6d6;
+//}
 
 .new-friend-item .info {
     margin-left: 10px;
     flex: 1;
-}
-
-.new-friend-item .info .name-action {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.new-friend-item .info .name-action .name {
+.new-friend-item .info .name {
     flex: 1;
 }
 
-.new-friend-item .info .name-action .accept {
+.new-friend-item .info .accept {
     text-align: center;
     color: white;
     background: #4168e0;
     border: solid 1px #4168e0;
 }
 
-.new-friend-item .info .name-action .status {
+.new-friend-item .info .status {
     color: #b2b2b2;
 }
 

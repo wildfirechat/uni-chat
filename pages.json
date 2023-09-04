@@ -147,6 +147,34 @@
             }
         },
         {
+            "path": "pages/contact/NewFriendListPage",
+            "style": {
+                "navigationBarTitleText": "新朋友",
+                "app-plus": {
+                    "titleNView": {
+                        "buttons": [
+                            {
+                                "text": "\ue657",
+                                "fontSrc": "/static/wx_iconfont.ttf",
+                                "fontSize": "28px"
+                            },
+                            {
+                                "text": "\ue636",
+                                "fontSrc": "/static/wx_iconfont.ttf",
+                                "fontSize": "26px"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "path": "pages/contact/GroupListPage",
+            "style": {
+                "navigationBarTitleText": "我的群组"
+            }
+        },
+        {
             "path": "pages/pick/PickUserPage",
             "style": {
                 "navigationBarTitleText": "选择联系人"

@@ -26,6 +26,7 @@ export default {
     },
     methods: {
         showGroup(group) {
+            console.log('xxx gr', group);
             store.setCurrentGroup(group)
         }
     },
@@ -41,7 +42,7 @@ export default {
 
 .group-item {
     height: 50px;
-    padding: 5px 10px 5px 30px;
+    padding: 5px 10px;
     display: flex;
     font-size: 13px;
     align-items: center;

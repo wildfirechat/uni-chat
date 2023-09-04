@@ -14,7 +14,8 @@
   "contact": {
     "new_friend": "新的朋友",
     "group": "群聊",
-    "contact": "聯系人"
+    "contact": "聯系人",
+    "channel": "频道"
   },
   "friend_request": {
     "request": "好友請求",

@@ -11,6 +11,7 @@ import Config from "../../config";
 import EventType from "./wfcEvent";
 import ConnectionStatus from "./connectionStatus";
 import NullUserInfo from "../model/nullUserInfo";
+
 //import avenginekit from "../av/engine/avenginekitproxy";
 
 
@@ -47,7 +48,7 @@ export class WfcManager {
         impl.init(args);
         //avenginekit.setup(self);
         //self.setProxyInfo("", "192.168.1.80", 1080, "", "");
-		console.log('wfc init end')
+        console.log('wfc init end')
     }
 
     /**
@@ -224,7 +225,14 @@ export class WfcManager {
      * @returns {[GroupInfo]} 参考{@link GroupInfo}
      */
     getFavGroupList() {
-        return impl.getMyGroupList();
+        let groupInfos = impl.getMyGroupList();
+        groupInfos.map(info => {
+            if (!info.portrait || info.portrait.startsWith(Config.APP_SERVER)) {
+                info.portrait = this.defaultGroupPortrait(info);
+            }
+            return info;
+        })
+        return groupInfos;
     }
 
     /**
@@ -287,7 +295,7 @@ export class WfcManager {
      */
     getUserInfoEx(userId, refresh, success, fail) {
         impl.getUserInfoEx(userId, refresh, success, fail);
-            }
+    }
 
     /**
      * 批量从服务端拉取用户信息
@@ -295,10 +303,10 @@ export class WfcManager {
      * @param {function ([UserInfo])} successCB 成功回调
      * @param {function (Number)} failCB 失败回调
      */
-    getUserInfosEx(userIds,  successCB, failCB) {
+    getUserInfosEx(userIds, successCB, failCB) {
         impl.getUserInfosEx(userIds, userInfos => {
-            userInfos.forEach((u)=>{
-                if(!u.portrait || u.portrait.startsWith(Config.APP_SERVER)){
+            userInfos.forEach((u) => {
+                if (!u.portrait || u.portrait.startsWith(Config.APP_SERVER)) {
                     u.portrait = this.defaultUserPortrait(u);
                 }
             });
@@ -1406,6 +1414,7 @@ export class WfcManager {
     getMessagesByTimestampV2(conversation, contentTypes, timestamp, before, count, withUser, successCB, failCB) {
         impl.getMessagesByTimestampV2(conversation, contentTypes, timestamp, before, count, withUser, successCB, failCB);
     }
+
     /**
      * 获取用户会话消息
      * @param {string} userId 用户id
@@ -1483,7 +1492,7 @@ export class WfcManager {
      * @param {function ([Message])} successCB
      * @param failCB
      */
-    loadRemoteConversationMessagesEx(conversation, contentTypes, beforeUid, count, filterLocalMessage, successCB, failCB){
+    loadRemoteConversationMessagesEx(conversation, contentTypes, beforeUid, count, filterLocalMessage, successCB, failCB) {
         impl.loadRemoteMessages(conversation, contentTypes, beforeUid, count, successCB, failCB, filterLocalMessage);
     }
 
@@ -1496,7 +1505,7 @@ export class WfcManager {
      * @param {function ([Message])} successCB
      * @param failCB
      */
-    loadRemoteLineMessages(line, contentTypes, beforeUid, count, successCB, failCB){
+    loadRemoteLineMessages(line, contentTypes, beforeUid, count, successCB, failCB) {
         impl.loadRemoteLineMessages(line, contentTypes, beforeUid, count, successCB, failCB)
     }
 
@@ -1510,7 +1519,7 @@ export class WfcManager {
      * @param {function ([Message])} successCB
      * @param failCB
      */
-    loadRemoteLineMessages(line, contentTypes, beforeUid, count, filterLocalMessage, successCB, failCB){
+    loadRemoteLineMessages(line, contentTypes, beforeUid, count, filterLocalMessage, successCB, failCB) {
         impl.loadRemoteLineMessages(line, contentTypes, beforeUid, count, successCB, failCB, filterLocalMessage)
     }
 
@@ -1520,7 +1529,7 @@ export class WfcManager {
      * @param {function ([Message])} successCB
      * @param failCB
      */
-    loadRemoteMessage(messageUid, successCB, failCB){
+    loadRemoteMessage(messageUid, successCB, failCB) {
         impl.loadRemoteMessage(messageUid, successCB, failCB);
     }
 
@@ -1684,12 +1693,12 @@ export class WfcManager {
      * @param {function ()} successCB
      * @param {function (number)} failCB
      */
-    deleteRemoteMessageByUid(msgUid, successCB, failCB){
+    deleteRemoteMessageByUid(msgUid, successCB, failCB) {
         impl.deleteRemoteMessage(msgUid, successCB, failCB);
     }
 
     /**
-    * 更新远程消息消息内容，只有专业版支持。客户端仅能更新自己发送的消息，更新的消息类型不能变，更新的消息类型是服务配置允许更新的内容。Server API更新则没有限制。
+     * 更新远程消息消息内容，只有专业版支持。客户端仅能更新自己发送的消息，更新的消息类型不能变，更新的消息类型是服务配置允许更新的内容。Server API更新则没有限制。
      * @param {Long | string} msgUid 消息uid
      * @param {MessageContent} messageContent 具体的消息内容，一定要求是{@link MessageContent} 的子类，不能是普通的object
      * @param {boolean} distribute 是否重新分发给其他客户端
@@ -1697,7 +1706,7 @@ export class WfcManager {
      * @param {function ()} successCB
      * @param {function (number)} failCB
      */
-    updateRemoteMessageContent(msgUid, messageContent, distribute, updateLocal, successCB, failCB){
+    updateRemoteMessageContent(msgUid, messageContent, distribute, updateLocal, successCB, failCB) {
         impl.updateRemoteMessageContent(msgUid, messageContent, distribute, updateLocal, successCB, failCB);
     }
 
@@ -1786,14 +1795,14 @@ export class WfcManager {
         return impl.isSupportBigFilesUpload();
     }
 
-   /**
-    * 获取上传链接。一般用户大文件上传。
-    * @param {string} fileName
-    * @param {number} mediaType 媒体类型，可选值参考{@link MessageContentMediaType}
-    * @param {string} contentType HTTP请求的ContentType header，为空时默认为"application/octet-stream"
-    * @param {function (string, string)} successCB 回调通知上传成功之后的url
-    * @param {function (number)} failCB
-    */
+    /**
+     * 获取上传链接。一般用户大文件上传。
+     * @param {string} fileName
+     * @param {number} mediaType 媒体类型，可选值参考{@link MessageContentMediaType}
+     * @param {string} contentType HTTP请求的ContentType header，为空时默认为"application/octet-stream"
+     * @param {function (string, string)} successCB 回调通知上传成功之后的url
+     * @param {function (number)} failCB
+     */
     getUploadMediaUrl(fileName, mediaType, contentType, successCB, failCB) {
         impl.getUploadMediaUrl(fileName, mediaType, contentType, successCB, failCB);
     }
@@ -1979,7 +1988,7 @@ export class WfcManager {
         impl.sendConferenceRequest(sessionId, roomId, request, data, advance, callback);
     }
 
-    isUserOnlineStateEnabled(){
+    isUserOnlineStateEnabled() {
         return impl.isUserOnlineStateEnabled();
     }
 
@@ -1991,15 +2000,15 @@ export class WfcManager {
      * @param {function(UserOnlineState[])} successCB
      * @param {function(number)} failCB
      */
-    watchOnlineState(type, targets, duration, successCB, failCB){
+    watchOnlineState(type, targets, duration, successCB, failCB) {
         impl.watchOnlineState(type, targets, duration, successCB, failCB);
     }
 
-    unwatchOnlineState(type, targets, successCB, failCB){
+    unwatchOnlineState(type, targets, successCB, failCB) {
         impl.unwatchOnlineState(type, targets, successCB, failCB);
     }
 
-    setMyCustomState(customState, customText, successCB, failCB){
+    setMyCustomState(customState, customText, successCB, failCB) {
         impl.setMyCustomState(customState, customText, successCB, failCB)
     }
 
@@ -2007,11 +2016,11 @@ export class WfcManager {
         impl.getAuthCode(appId, appType, host, successCB, failCB);
     }
 
-    notify(title, content){
+    notify(title, content) {
         impl.notify(title, content)
     }
 
-    clearAllNotification(){
+    clearAllNotification() {
         impl.clearAllNotification();
     }
 
@@ -2020,11 +2029,11 @@ export class WfcManager {
      * @param {number} type
      * @param {string} token
      */
-    setDeviceToken(type, token){
+    setDeviceToken(type, token) {
         impl.setDeviceToken(7, token);
     }
 
-    chooseFile(type, successCB, failCB){
+    chooseFile(type, successCB, failCB) {
         impl.chooseFile(type, successCB, failCB)
     }
 
@@ -2064,13 +2073,13 @@ export class WfcManager {
         return decodeURIComponent(escape(atob(str)));
     }
 
-    unescape (str) {
+    unescape(str) {
         return (str + '==='.slice((str.length + 3) % 4))
             .replace(/-/g, '+')
             .replace(/_/g, '/')
     }
 
-    escape (str) {
+    escape(str) {
         return str.replace(/\+/g, '-')
             .replace(/\//g, '_')
             .replace(/=/g, '')
