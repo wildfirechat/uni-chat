@@ -1,36 +1,30 @@
 <template>
-    <div>
-        <ul>
-            <li v-for="(friendRequest,index) in sharedContactState.friendRequestList" :key="index"
-                @click="showFriendRequest(friendRequest)">
-                <div class="new-friend-item-container"
-                     v-bind:class="{active :sharedContactState.currentFriendRequest && sharedContactState.currentFriendRequest.target === friendRequest.target}">
-                    <div class="new-friend-item">
-                        <img class="avatar" :src="friendRequest._target.portrait">
-                        <div class="info">
-                            <div class="name">
-                                <span class="single-line">{{ friendRequest._target.displayName }}</span>
-                                <p class="reason single-line">{{
-                                        friendRequest.reason ? friendRequest.reason : $t('friend_request.im') + friendRequest._target.displayName
-                                    }}</p>
-                            </div>
-                            <span v-if="friendRequest.status === 1" class="status">{{
-                                    $t('friend_request.accepted')
-                                }}</span>
-                            <button v-else-if="friendRequest.status === 0" class="accept" size="mini"
-                                    @click="accept(friendRequest)">{{
-                                    $t('common.add')
-                                }}
-                            </button>
-                            <span
-                                v-else-if="friendRequest.status === 3" class="status">{{
-                                    $t('friend_request.denied')
-                                }}</span>
-                        </div>
-                    </div>
+    <div class="new-friend-item-container">
+        <div v-for="(friendRequest,index) in sharedContactState.friendRequestList" :key="index"
+             @click="showFriendRequest(friendRequest)"
+             class="new-friend-item">
+            <img class="avatar" :src="friendRequest._target.portrait">
+            <div class="info">
+                <div class="name">
+                    <span class="single-line">{{ friendRequest._target.displayName }}</span>
+                    <p class="reason single-line">{{
+                            friendRequest.reason ? friendRequest.reason : $t('friend_request.im') + friendRequest._target.displayName
+                        }}</p>
                 </div>
-            </li>
-        </ul>
+                <span v-if="friendRequest.status === 1" class="status">{{
+                        $t('friend_request.accepted')
+                    }}</span>
+                <button v-else-if="friendRequest.status === 0" class="accept" size="mini"
+                        @click="accept(friendRequest)">{{
+                        $t('common.add')
+                    }}
+                </button>
+                <span
+                    v-else-if="friendRequest.status === 3" class="status">{{
+                        $t('friend_request.denied')
+                    }}</span>
+            </div>
+        </div>
     </div>
 
 </template>
@@ -98,6 +92,7 @@ export default {
 <style lang="css" scoped>
 .new-friend-item-container {
     padding-left: 10px;
+    height: 100vh;
 }
 
 .avatar {
@@ -112,17 +107,26 @@ export default {
     padding: 10px 10px 10px 0;
     align-items: center;
     font-size: 13px;
-    border-bottom: 0.5px solid #e0e0e0;
+    position: relative;
 }
 
+.new-friend-item::after {
+    content: ""; /* 使伪元素可见 */
+    position: absolute;
+    left: 50px; /* 偏移量 */
+    right: 0;
+    bottom: 0;
+    border-bottom: 1px solid #f3f3f3; /* 定义边框样式 */
+}
 
-//.new-friend-item-container.active {
-//    background-color: #d6d6d6;
-//}
 //
 //.new-friend-item-container:hover {
 //    background-color: #d6d6d6;
 //}
+
+.new-friend-item:active {
+    background-color: #d6d6d6;
+}
 
 .new-friend-item .info {
     margin-left: 10px;

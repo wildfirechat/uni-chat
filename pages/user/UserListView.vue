@@ -158,11 +158,6 @@ export default {
     --user-item-padding-left: 30px;
 }
 
-ul {
-    list-style: none;
-    width: 100%;
-}
-
 .avatar {
     width: 40px;
     height: 40px;
@@ -187,7 +182,6 @@ ul {
 
 .contact-item .label p {
     padding: 5px 5px 5px 0;
-    //border-bottom: 1px solid #e0e0e0;
 }
 
 .contact-item .label.sticky {
@@ -200,6 +194,16 @@ ul {
     display: flex;
     width: 100%;
     align-items: center;
+    position: relative;
+}
+
+.contact-item .content::after {
+    content: ""; /* 使伪元素可见 */
+    position: absolute;
+    left: 60px; /* 偏移量 */
+    right: 0;
+    bottom: 0;
+    border-bottom: 1px solid #f4f4f4; /* 定义边框样式 */
 }
 
 .contact-item .content span {
