@@ -342,7 +342,14 @@ export class WfcManager {
      * @returns {Promise<void>}
      */
     async searchUser(keyword, searchType, page, successCB, failCB) {
-        impl.searchUser(keyword, searchType, page, successCB, failCB);
+        impl.searchUser(keyword, searchType, page, (keyword, userInfos) => {
+            userInfos.forEach((u) => {
+                if (!u.portrait || u.portrait.startsWith(Config.APP_SERVER)) {
+                    u.portrait = this.defaultUserPortrait(u)
+                }
+            });
+            successCB && successCB(keyword, userInfos);
+        }, failCB);
     }
 
     /**
@@ -351,7 +358,13 @@ export class WfcManager {
      * @returns {[UserInfo]}
      */
     searchFriends(keyword) {
-        return impl.searchFriends(keyword);
+        let userInfos = impl.searchFriends(keyword);
+        userInfos.forEach((u) => {
+            if (!u.portrait || u.portrait.startsWith(Config.APP_SERVER)) {
+                u.portrait = this.defaultUserPortrait(u)
+            }
+        });
+        return userInfos;
     }
 
     /**
