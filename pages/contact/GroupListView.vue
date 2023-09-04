@@ -1,20 +1,17 @@
 <template>
     <div>
-        <ul>
-            <li v-for="(group, index) in sharedContactState.favGroupList" :key="index" @click="showGroup(group)">
-                <div class="group-item"
-                     v-bind:class="{active: sharedContactState.currentGroup && sharedContactState.currentGroup.target === group.target}">
-                    <img class="avatar" :src="group.portrait">
-                    <span class="single-line">{{ group.name }}</span>
-                </div>
-            </li>
-        </ul>
+        <div class="group-item" v-for="(group, index) in sharedContactState.favGroupList" :key="index" @click="showGroup(group)">
+            <img class="avatar" :src="group.portrait">
+            <span class="single-line">{{ group.name }}</span>
+        </div>
     </div>
 
 </template>
 
 <script>
 import store from "../../store";
+import Conversation from "../../wfc/model/conversation";
+import ConversationType from "../../wfc/model/conversationType";
 
 export default {
     name: "GroupListView",
@@ -26,8 +23,9 @@ export default {
     },
     methods: {
         showGroup(group) {
-            console.log('xxx gr', group);
-            store.setCurrentGroup(group)
+            let conversation = new Conversation(ConversationType.Group, group.target, 0);
+            store.setCurrentConversation(conversation);
+            this.$go2ConversationPage();
         }
     },
 }
@@ -48,7 +46,7 @@ export default {
     align-items: center;
 }
 
-.group-item.active {
+.group-item:active {
     background-color: #d6d6d6;
 }
 

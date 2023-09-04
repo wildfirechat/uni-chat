@@ -4,7 +4,6 @@
     </uni-list>
 </template>
 <script>
-import FriendRequestListView from "./FriendRequestListView";
 import store from "../../store";
 import UniList from "../../components/uni-list/uni-list.vue";
 import GroupListView from "./GroupListView.vue";
