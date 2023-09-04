@@ -124,7 +124,7 @@ export default {
 
 <style scoped>
 .conversation-item-container {
-    padding-left: 12px;
+    padding-left: 10px;
 }
 
 .conversation-item-container:active {
@@ -142,8 +142,7 @@ export default {
 
 .header {
     height: 100%;
-    padding: 10px 12px 10px 0;
-    margin-right: 2px;
+    padding: 10px 10px 10px 0;
     position: relative;
 }
 

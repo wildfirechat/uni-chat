@@ -1,8 +1,9 @@
 <template>
     <view class="conversation-list" @scroll="onScroll">
-        <view v-if="connectionStatusDesc" style="text-align: center; padding: 5px 0">{{ connectionStatusDesc}}</view>
+        <view v-if="connectionStatusDesc" style="text-align: center; padding: 5px 0">{{ connectionStatusDesc }}</view>
         <uni-list :border="true" @scroll="onScroll">
             <view
+                class="conversation-item"
                 @click="showConversation(conversationInfo)"
                 v-for="conversationInfo in sharedConversationState.conversationInfoList"
                 :key="conversationInfoKey(conversationInfo)"
@@ -42,7 +43,7 @@ export default {
     onShow() {
         console.log('conversationList onShow', this.sharedConversationState.conversationInfoList.length)
         let userId = getItem('userId');
-        if (!userId){
+        if (!userId) {
             // 被踢等，需要退到登录页面
             // 本来应当在启动应用，连接状态变化时处理，但可能会切换失败
             // Waiting to navigate to: /pages/conversationList/ConversationListPage, do not operate continuously: /pages/login/LoginPage.
@@ -54,7 +55,7 @@ export default {
         }
     },
 
-    onHide(){
+    onHide() {
         console.log('conversationList onHide');
         this.$refs.mainActionMenu.hide();
     },
@@ -201,6 +202,19 @@ export default {
 
 .conversation-list .top {
     background-color: #f1f1f1;
+}
+
+.conversation-item {
+    position: relative;
+}
+
+.conversation-item::after {
+    content: ""; /* 使伪元素可见 */
+    position: absolute;
+    left: 65px; /* 偏移量 */
+    right: 0;
+    bottom: 0;
+    border-bottom: 1px solid #f4f4f4; /* 定义边框样式 */
 }
 
 </style>
