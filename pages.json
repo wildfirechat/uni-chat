@@ -1,26 +1,26 @@
 {
-	"pages": [
+    "pages": [
         {
             "path": "pages/SplashPage",
             "style": {
                 "navigationBarTitleText": "",
-				"navigationStyle": "custom",
-				"app-plus": {
-					"animationType": "none",
-					"animationDuration": 100
-				}
+                "navigationStyle": "custom",
+                "app-plus": {
+                    "animationType": "none",
+                    "animationDuration": 100
+                }
             }
         },
-		{
-			"path": "pages/login/LoginPage",
-			"style": {
-				"navigationBarTitleText": "登录"
-			}
-		},
-		{
-			"path": "pages/conversationList/ConversationListPage",
-			"style": {
-				"navigationBarTitleText": "会话列表",
+        {
+            "path": "pages/login/LoginPage",
+            "style": {
+                "navigationBarTitleText": "登录"
+            }
+        },
+        {
+            "path": "pages/conversationList/ConversationListPage",
+            "style": {
+                "navigationBarTitleText": "会话列表",
                 "app-plus": {
                     "titleNView": {
                         "buttons": [
@@ -37,8 +37,8 @@
                         ]
                     }
                 }
-			}
-		},
+            }
+        },
         {
             "path": "pages/conversation/ConversationPage",
             "style": {
@@ -55,7 +55,7 @@
                         ]
                     },
                     "softinputMode": "adjustResize",
-                    "bounce":"none"
+                    "bounce": "none"
                 }
             }
         },
@@ -90,6 +90,23 @@
             }
         },
         {
+            "path": "pages/contact/ChannelListPage",
+            "style": {
+                "navigationBarTitleText": " 频道列表",
+                "app-plus": {
+                    "titleNView": {
+                        "buttons": [
+                            {
+                                "text": "\ue657",
+                                "fontSrc": "/static/wx_iconfont.ttf",
+                                "fontSize": "28px"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
             "path": "pages/search/SearchPortalPage",
             "style": {
                 "navigationBarTitleText": "搜索"
@@ -101,16 +118,16 @@
                 "navigationBarTitleText": " 会话消息搜索"
             }
         },
-		{
-			"path": "pages/contact/UserDetailPage",
-			"style": {
-				"navigationBarTitleText": "用户信息"
-			}
-		},
-		{
-			"path": "pages/contact/ContactListPage",
-			"style": {
-				"navigationBarTitleText": "好友",
+        {
+            "path": "pages/contact/UserDetailPage",
+            "style": {
+                "navigationBarTitleText": "用户信息"
+            }
+        },
+        {
+            "path": "pages/contact/ContactListPage",
+            "style": {
+                "navigationBarTitleText": "好友",
                 "app-plus": {
                     "titleNView": {
                         "buttons": [
@@ -127,8 +144,8 @@
                         ]
                     }
                 }
-			}
-		},
+            }
+        },
         {
             "path": "pages/pick/PickUserPage",
             "style": {
@@ -178,22 +195,22 @@
             }
         }
     ],
-	"tabBar": {
-		"selectedColor": "#3B62E0",
-		"color": "#7f8389",
-		"list": [
-			{
-				"pagePath": "pages/conversationList/ConversationListPage",
-				"text": "野火",
-				"iconPath": "static/image/tabbar/message_normal.png",
-				"selectedIconPath": "static/image/tabbar/message_press.png"
-			},
-			{
-				"pagePath": "pages/contact/ContactListPage",
-				"text": "通讯录",
-				"iconPath": "static/image/tabbar/contact_normal.png",
-				"selectedIconPath": "static/image/tabbar/contact_press.png"
-			},
+    "tabBar": {
+        "selectedColor": "#3B62E0",
+        "color": "#7f8389",
+        "list": [
+            {
+                "pagePath": "pages/conversationList/ConversationListPage",
+                "text": "野火",
+                "iconPath": "static/image/tabbar/message_normal.png",
+                "selectedIconPath": "static/image/tabbar/message_press.png"
+            },
+            {
+                "pagePath": "pages/contact/ContactListPage",
+                "text": "通讯录",
+                "iconPath": "static/image/tabbar/contact_normal.png",
+                "selectedIconPath": "static/image/tabbar/contact_press.png"
+            },
             {
                 "pagePath": "pages/discovery/DiscoveryPage",
                 "text": " 发现",
@@ -206,14 +223,14 @@
                 "iconPath": "static/image/tabbar/me_normal.png",
                 "selectedIconPath": "static/image/tabbar/me_press.png"
             }
-		]
-	},
-	"sitemapLocation": "sitemap.json",
-	"globalStyle": {
-		"backgroundTextStyle": "light",
-		"navigationBarBackgroundColor": "#fff",
-		"navigationBarTitleText": "野火IM",
-		"navigationBarTextStyle": "black"
-	},
-	"subPackages": []
+        ]
+    },
+    "sitemapLocation": "sitemap.json",
+    "globalStyle": {
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "野火IM",
+        "navigationBarTextStyle": "black"
+    },
+    "subPackages": []
 }

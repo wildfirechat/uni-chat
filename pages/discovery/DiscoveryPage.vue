@@ -57,7 +57,12 @@ export default {
             this.$go2ConversationPage();
         },
         showChannelList() {
-            this.todo();
+            uni.navigateTo({
+                url: '/pages/contact/ChannelListPage',
+                fail: (e) => {
+                    console.log(e)
+                }
+            });
         },
         showDevGuide() {
             uni.navigateTo({

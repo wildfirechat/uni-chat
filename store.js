@@ -33,6 +33,7 @@ import NullUserInfo from "./wfc/model/nullUserInfo";
 import LeaveChannelChatMessageContent from "./wfc/messages/leaveChannelChatMessageContent";
 import ArticlesMessageContent from "./wfc/messages/articlesMessageContent";
 import EnterChannelChatMessageContent from "./wfc/messages/enterChannelChatMessageContent";
+import NullChannelInfo from "./wfc/model/NullChannelInfo";
 
 /**
  * 一些说明
@@ -106,6 +107,7 @@ let store = {
             friendList: [],
             friendRequestList: [],
             favGroupList: [],
+            channelList: [],
             favContactList: [],
 
             selfUserInfo: null,
@@ -225,6 +227,7 @@ let store = {
             this._loadDefaultConversationList();
             this._loadFavContactList();
             this._loadFavGroupList();
+            this._loadChannelList();
             this._loadCurrentConversationMessages();
         });
 
@@ -259,6 +262,7 @@ let store = {
 
         wfc.eventEmitter.on(EventType.ChannelInfosUpdate, (groupInfos) => {
             this._loadDefaultConversationList();
+            this._loadChannelList();
         });
 
         wfc.eventEmitter.on(EventType.ConversationInfoUpdate, (conversationInfo) => {
@@ -451,6 +455,7 @@ let store = {
     _loadDefaultData() {
         console.log('store.js', '_loadDefaultData');
         this._loadFavGroupList();
+        this._loadChannelList();
         this._loadFriendList();
         this._loadFavContactList();
         this._loadFriendRequest();
@@ -1402,7 +1407,10 @@ let store = {
     _loadChannelList() {
         let channelIds = wfc.getListenedChannels();
         if (channelIds) {
-            contactState.channelList = channelIds.map(channleId => wfc.getChannelInfo(channleId, false));
+            contactState.channelList = channelIds.map(channelId => wfc.getChannelInfo(channelId, false));
+            contactState.channelList = contactState.channelList.filter(ch => {
+                return !(ch instanceof NullChannelInfo)
+            });
         }
     },
     _loadFavContactList() {

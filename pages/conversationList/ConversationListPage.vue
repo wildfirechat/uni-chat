@@ -23,6 +23,7 @@ import ConversationItemView from "./ConversationItemView";
 import store from "../../store";
 import wfc from "../../wfc/client/wfc";
 import ConnectionStatus from "../../wfc/client/connectionStatus";
+import {getItem} from "../util/storageHelper";
 
 export default {
     name: 'ConversationListPage',
@@ -40,6 +41,17 @@ export default {
 
     onShow() {
         console.log('conversationList onShow', this.sharedConversationState.conversationInfoList.length)
+        let userId = getItem('userId');
+        if (!userId){
+            // 被踢等，需要退到登录页面
+            // 本来应当在启动应用，连接状态变化时处理，但可能会切换失败
+            // Waiting to navigate to: /pages/conversationList/ConversationListPage, do not operate continuously: /pages/login/LoginPage.
+            uni.reLaunch(
+                {
+                    url: '/pages/login/LoginPage'
+                }
+            );
+        }
     },
 
     onHide(){
