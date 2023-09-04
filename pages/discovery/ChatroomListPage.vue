@@ -48,11 +48,11 @@ export default {
 
 .item {
     width: 100%;
+    height: 50px;
     padding: 10px 10px;
     background: white;
     display: flex;
     align-items: center;
-    border-bottom: 0.5px solid #d6d6d6;
 }
 
 .item image {

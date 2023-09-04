@@ -34,11 +34,6 @@ export default {
 </script>
 
 <style scoped>
-.avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 3px;
-}
 
 .channel-item {
     height: 50px;
@@ -55,6 +50,12 @@ export default {
 
 .channel-item span {
     margin-left: 10px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 3px;
 }
 
 </style>
