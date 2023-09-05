@@ -1,6 +1,6 @@
 <template>
     <view class="conversation-list" @scroll="onScroll">
-        <view v-if="connectionStatusDesc" style="text-align: center; padding: 5px 0">{{ connectionStatusDesc }}</view>
+        <view v-if="connectionStatusDesc || unread === undefined" style="text-align: center; padding: 5px 0">{{ connectionStatusDesc }}</view>
         <uni-list :border="true" @scroll="onScroll">
             <view
                 class="conversation-item"
@@ -159,7 +159,7 @@ export default {
                     break;
 
             }
-        }
+        },
     },
     activated() {
         this.scrollActiveElementCenter();
@@ -183,6 +183,22 @@ export default {
                     break;
             }
             return desc;
+        },
+        unread() {
+            let count = 0;
+            this.sharedConversationState.conversationInfoList.forEach(info => {
+                if (info.isSilent) {
+                    return;
+                }
+                let unreadCount = info.unreadCount;
+                count += unreadCount.unread;
+            });
+            // side
+            uni.setTabBarBadge({
+                index: 0,
+                text: '' + count
+            })
+            return count;
         }
     },
 
