@@ -194,10 +194,16 @@ export default {
                 count += unreadCount.unread;
             });
             // side
-            uni.setTabBarBadge({
-                index: 0,
-                text: '' + count
-            })
+            if (count > 0) {
+                uni.setTabBarBadge({
+                    index: 0,
+                    text: '' + count
+                })
+            } else {
+               uni.removeTabBarBadge({
+                   index: 0
+               })
+            }
             return count;
         }
     },
