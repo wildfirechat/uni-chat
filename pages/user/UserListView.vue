@@ -190,7 +190,7 @@ export default {
 }
 
 .contact-item .content {
-    padding: 5px 5px 5px 0;
+    padding: 10px 5px 10px 0;
     display: flex;
     width: 100%;
     align-items: center;

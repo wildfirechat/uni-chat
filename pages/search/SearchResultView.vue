@@ -2,7 +2,7 @@
     <section class="search-result-container">
         <div v-if="!showEmptyView" class="search-result">
             <ul style="display: block">
-                <li class="search-result-category-container" v-if="sharedSearchState.userSearchResult.length > 0">
+                <li class="search-result-category-container" v-if="options.user && sharedSearchState.userSearchResult.length > 0">
                     <label>{{ $t('search.new_user') }}</label>
                     <ul>
                         <li v-for="(user, index) in toShowUserList" :key="index">
@@ -13,13 +13,13 @@
                             </div>
                         </li>
                     </ul>
-                    <div v-if="!shouldShowAllUser&& this.sharedSearchState.userSearchResult.length > 5"
+                    <div v-if="!shouldShowAllUser && this.sharedSearchState.userSearchResult.length > 5"
                          class="show-all"
                          @click.stop="showAllUser">
                         {{ $t('search.view_all') + this.sharedSearchState.userSearchResult.length }}
                     </div>
                 </li>
-                <li class="search-result-category-container" v-if="sharedSearchState.contactSearchResult.length > 0">
+                <li class="search-result-category-container" v-if="options.contact && sharedSearchState.contactSearchResult.length > 0">
                     <label>{{ $t('common.contact') }}</label>
                     <ul>
                         <li v-for="(contact, index) in toShowContactList" :key="index">
@@ -35,7 +35,7 @@
                         {{ $t('search.view_all') + this.sharedSearchState.contactSearchResult.length }}
                     </div>
                 </li>
-                <li class="search-result-category-container" v-if="sharedSearchState.groupSearchResult.length > 0">
+                <li class="search-result-category-container" v-if="options.group && sharedSearchState.groupSearchResult.length > 0">
                     <label>{{ $t('contact.group') }}</label>
                     <ul>
                         <li v-for="(group, index) in toShowGroupList" :key="index">
@@ -51,7 +51,7 @@
                         {{ $t('search.view_all') + this.sharedSearchState.groupSearchResult.length }}
                     </div>
                 </li>
-                <li class="search-result-category-container" v-if="sharedSearchState.conversationSearchResult.length > 0">
+                <li class="search-result-category-container" v-if="options.conversation && sharedSearchState.conversationSearchResult.length > 0">
                     <label>聊天记录</label>
                     <ul>
                         <li v-for="(convR, index) in toShowConversationList" :key="index">
@@ -68,12 +68,6 @@
                          class="show-all"
                          @click.stop="showAllConversation">
                         {{ $t('search.view_all') + this.sharedSearchState.conversationSearchResult.length }}
-                    </div>
-                </li>
-                <li class="search-result-category-container" v-if="sharedMiscState.isElectron">
-                    <label>{{ $t('search.message_history') }}</label>
-                    <div class="search-result-item message" @click="showMessageHistoryPage">
-                        <p>{{ $t('search.search_message_history') }} </p>
                     </div>
                 </li>
             </ul>
@@ -93,9 +87,25 @@ import wfc from "../../wfc/client/wfc";
 
 export default {
     name: "SearchResultView",
-    props: [
-        "query"
-    ],
+    props: {
+        query: {
+            required: false,
+            type: String,
+            default: '',
+        },
+        options: {
+            required: false,
+            type: Object,
+            default: () => {
+                return {
+                    user: true,
+                    contact: true,
+                    conversation: true,
+                    group: true,
+                }
+            }
+        }
+    },
     data() {
         return {
             sharedSearchState: store.state.search,
@@ -109,6 +119,18 @@ export default {
 
     mounted() {
         // do nothing
+        let enableCount = 0;
+        for (const key in this.options) {
+            if (this.options[key]) {
+                enableCount++;
+            }
+        }
+        if (enableCount === 1) {
+            this.shouldShowAllUser = this.options.user;
+            this.shouldShowAllContact = this.options.contact;
+            this.shouldShowAllGroup = this.options.group;
+            this.shouldShowAllConversation = this.options.conversation;
+        }
     },
 
     beforeDestroy() {
@@ -121,9 +143,9 @@ export default {
         // }
         // or
         query() {
-            console.log('searchView query changed:', this.query)
-            store.setSearchQuery(this.query)
-        }
+            console.log('searchView query changed:', this.query, this.options)
+            // store.setSearchQuery(this.query, this.options)
+        },
     },
 
     methods: {

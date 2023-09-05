@@ -373,7 +373,14 @@ export class WfcManager {
      * @returns {[GroupSearchResult]}
      */
     searchGroups(keyword) {
-        return impl.searchGroups(keyword);
+        let results = impl.searchGroups(keyword);
+        results.forEach(r => {
+            let info = r.groupInfo;
+                if (!info.portrait || info.portrait.startsWith(Config.APP_SERVER)) {
+                    info.portrait = this.defaultGroupPortrait(info);
+                }
+        })
+        return results;
     }
 
     /**

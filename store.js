@@ -1459,16 +1459,24 @@ let store = {
         contactState.expandFriendList = !contactState.expandFriendList;
     },
 
-    setSearchQuery(query) {
+    setSearchQuery(query, options) {
         searchState.query = query;
         if (query) {
-            console.log('search', query)
-            searchState.contactSearchResult = this.filterContact(query);
-            searchState.groupSearchResult = this.filterGroupConversation(query);
-            searchState.conversationSearchResult = this.searchConversation(query);
+            console.log('search', query, options)
+            if (options.contact) {
+                searchState.contactSearchResult = this.filterContact(query);
+            }
+            if (options.group) {
+                searchState.groupSearchResult = this.filterGroupConversation(query);
+            }
+            if (options.conversation) {
+                searchState.conversationSearchResult = this.searchConversation(query);
+            }
             // searchState.messageSearchResult = this.searchMessage(query);
             // 默认不搜索新用户
-            this.searchUser(query);
+            if (options.user) {
+                this.searchUser(query);
+            }
 
         } else {
             searchState.contactSearchResult = [];

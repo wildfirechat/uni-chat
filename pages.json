@@ -154,12 +154,12 @@
                     "titleNView": {
                         "buttons": [
                             {
-                                "text": "\ue657",
+                                "text": "\ue63f",
                                 "fontSrc": "/static/wx_iconfont.ttf",
-                                "fontSize": "28px"
+                                "fontSize": "20px"
                             },
                             {
-                                "text": "\ue636",
+                                "text": "\uE611",
                                 "fontSrc": "/static/wx_iconfont.ttf",
                                 "fontSize": "26px"
                             }

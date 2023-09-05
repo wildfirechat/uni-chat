@@ -7,6 +7,7 @@
 import FriendRequestListView from "./FriendRequestListView";
 import store from "../../store";
 import UniList from "../../components/uni-list/uni-list.vue";
+import wfc from "../../wfc/client/wfc";
 
 export default {
     name: "ContactListPage",
@@ -22,10 +23,17 @@ export default {
         console.log('onNavigationBarButtonTap')
         switch (e.index) {
             case 0:
+                // TODO 现在还不支持 clearFriendRequest api
+                // wfc.clearFriendRequest(true)
+                // wfc.clearFriendRequest(false)
+                uni.showToast({
+                    title: 'TODO',
+                    icon: 'none'
+                });
                 break;
             case 1:
                 uni.navigateTo({
-                    url: '/pages/search/SearchPortalPage'
+                    url: '/pages/search/SearchPortalPage?user=true&contact=false&group=false&conversation=false'
                 });
                 break;
             default:
