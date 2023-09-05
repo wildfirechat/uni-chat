@@ -40,7 +40,7 @@ import ConversationType from "../../wfc/model/conversationType";
 import Conversation from "../../wfc/model/conversation";
 
 export default {
-    name: "FriendRequestDetailView",
+    name: "FriendRequestDetailPage",
     props: {},
     data() {
         return {
@@ -52,7 +52,7 @@ export default {
         chat() {
             let conversation = new Conversation(ConversationType.Single, this.sharedStateContact.currentFriendRequest.target, 0);
             store.setCurrentConversation(conversation);
-            this.$router.replace('/home');
+            this.$go2ConversationPage();
         }
     },
     computed: {

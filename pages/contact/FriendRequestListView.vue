@@ -48,6 +48,16 @@ export default {
     methods: {
         showFriendRequest(friendRequest) {
             store.setCurrentFriendRequest(friendRequest);
+            uni.navigateTo({
+                url: '/pages/contact/FriendRequestDetailPage',
+                success: () => {
+                    console.log('nav to FriendRequestDetailPage success');
+
+                },
+                fail: (err) => {
+                    console.log('nav to FriendRequestDetailPage err', err);
+                }
+            });
         },
         accept(friendRequest) {
             wfc.handleFriendRequest(friendRequest.target, true, "", () => {

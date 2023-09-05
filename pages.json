@@ -115,13 +115,19 @@
         {
             "path": "pages/search/SearchConversationMessagePage",
             "style": {
-                "navigationBarTitleText": " 会话消息搜索"
+                "navigationBarTitleText": "会话消息搜索"
             }
         },
         {
             "path": "pages/contact/UserDetailPage",
             "style": {
                 "navigationBarTitleText": "用户信息"
+            }
+        },
+        {
+            "path": "pages/contact/FriendRequestDetailPage",
+            "style": {
+                "navigationBarTitleText": "好友请求"
             }
         },
         {
