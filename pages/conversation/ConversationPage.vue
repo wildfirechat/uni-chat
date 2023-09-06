@@ -700,11 +700,11 @@ export default {
     computed: {
         conversationTitle() {
             let info = this.sharedConversationState.currentConversationInfo;
-            return info.conversation._target._displayName;
+            return !info ? '' : info.conversation._target._displayName;
         },
         targetUserOnlineStateDesc() {
             let info = this.sharedConversationState.currentConversationInfo;
-            return info.conversation._targetOnlineStateDesc;
+            return info ? info.conversation._targetOnlineStateDesc : null;
         },
         loadingIdentifier() {
             let conversation = this.sharedConversationState.currentConversationInfo.conversation;

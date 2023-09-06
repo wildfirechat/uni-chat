@@ -7,7 +7,7 @@
 
 <script>
 import Message from "@/wfc/messages/message";
-import {parser} from "@/emoji/emoji";
+import {parser as emojiParse} from "@/emoji/emoji";
 
 export default {
     name: "TextMessageContentView",
@@ -26,27 +26,32 @@ export default {
     },
 
     methods: {
+        escapeHtml(text) {
+            return text.replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/ /g, '&nbsp;')
+                .replace(/<script/gi, "&lt;script")
+                .replace(/<iframe/gi, "&lt;iframe");
+        }
     },
 
     computed: {
         textContent() {
-            try {
-                let tmp = this.message.messageContent.digest(this.message);
-                // let tmp = this.message.messageContent.digest(this.message);
-                // pls refer to https://stackoverflow.com/questions/4522124/replace-leading-spaces-with-nbsp-in-javascript
-                tmp = tmp.replace(/^[ \t]+/gm, function (x) {
-                    return new Array(x.length + 1).join('&nbsp;')
-                })
-                tmp = tmp.replace(/<script/gi, "&lt;script");
-                tmp = tmp.replace(/<iframe/gi, "&lt;iframe");
-                if (tmp.indexOf('<img') >= 0) {
-                    tmp = tmp.replace(/<img/g, '<img style="max-width:400px;"')
-                    return tmp;
+            let content = this.message.messageContent.digest(this.message);
+            let lines = content.split('\n');
+            if (lines.length > 1) {
+                content = lines.map(line => `<span>${this.escapeHtml(line)}</span>\n`).reduce((total, cv, ci, arr) => total + cv, '');
+            } else {
+               content = this.escapeHtml(content)
                 }
-                return tmp;
-            }catch (e) {
-				return this.message.messageContent.digest(this.message);
+            content = emojiParse(content);
+            // tmp = marked.parse(tmp);
+            if (content.indexOf('<img') >= 0) {
+                content = content.replace(/<img/g, '<img style="max-width:400px;"')
+                return content;
             }
+            return content;
         }
     }
 }

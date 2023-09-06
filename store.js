@@ -1180,7 +1180,6 @@ let store = {
         // TODO
         // _from
         // _showTime
-        console.log('__patchMessage', m)
         if (m.conversation.type === ConversationType.Single) {
             m._from = userInfoMap ? userInfoMap.get(m.from) : wfc.getUserInfo(m.from, false, '');
         }

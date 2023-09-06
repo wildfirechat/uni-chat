@@ -1,5 +1,5 @@
 import anchorme from "anchorme";
-import uEmojiParser from './universal-emoji-parser'
+import twemoji from "twemoji";
 
 const emoji = [];
 
@@ -25,7 +25,7 @@ function parser(text) {
     //     text = decodeText = text.split(`${e}`).join(`<a target="_blank" class="${className}"></a>`);
     // });
 
-    let emoji = uEmojiParser.parse(decodeText);
+    let emoji = twemoji.parse(decodeText);
     // emoji = emoji.replace(/src="https:\/\/twemoji\.maxcdn\.com\/v\/[0-9.]+\//g, 'src="' + twemoji_base_url)
     return emoji;
 }

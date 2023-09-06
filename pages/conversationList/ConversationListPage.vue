@@ -159,7 +159,7 @@ export default {
                     break;
 
             }
-        },
+        }
     },
     activated() {
         this.scrollActiveElementCenter();
