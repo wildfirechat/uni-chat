@@ -97,7 +97,7 @@ export default {
     flex-direction: column;
     align-items: center;
     width: 100%;
-    height: 100vh;
+    height: var(--page-full-height-without-header-and-tabbar);
     background: #fafafa;
 }
 

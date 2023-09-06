@@ -746,7 +746,7 @@ export default {
 .conversation-content-container {
     position: relative;
     display: flex;
-    height: 100vh;
+    height: var(--page-full-height-without-header);
     overflow: hidden;
     flex-direction: column;
     background-color: #f3f3f3;

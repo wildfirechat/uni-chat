@@ -1,5 +1,5 @@
 <template>
-    <div class="chatroom-container">
+    <div class="discovery-container">
         <div class="item" @click="showChatroomList">
             <image src="/static/image/icon/ic_chatroom.png"/>
             <text>聊天室</text>
@@ -78,13 +78,14 @@ export default {
 
 <style scoped>
 
-.chatroom-container {
+.discovery-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
-    height: 100vh;
+    height: var(--page-full-height-without-header-and-tabbar);
     background: #fafafa;
+    overflow: hidden;
 }
 
 .item {

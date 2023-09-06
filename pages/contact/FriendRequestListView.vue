@@ -102,7 +102,6 @@ export default {
 <style lang="css" scoped>
 .new-friend-item-container {
     padding-left: 10px;
-    height: 100vh;
 }
 
 .avatar {

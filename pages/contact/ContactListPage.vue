@@ -129,7 +129,7 @@ export default {
 <style lang="css" scoped>
 
 .contact-list {
-    height: 100%;
+    height: var(--page-full-height-without-header-and-tabbar);
     overflow: auto;
 }
 

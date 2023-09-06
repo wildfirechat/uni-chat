@@ -1,7 +1,10 @@
 <template>
-    <uni-list>
-        <FriendRequestListView/>
-    </uni-list>
+    
+    <view class="friend-request-list">
+        <uni-list>
+            <FriendRequestListView/>
+        </uni-list>
+    </view>
 </template>
 <script>
 import FriendRequestListView from "./FriendRequestListView";
@@ -45,5 +48,9 @@ export default {
 </script>
 
 <style lang="css" scoped>
+.friend-request-list {
+    height: var(--page-full-height-without-header);
+    overflow: auto;
+}
 
 </style>

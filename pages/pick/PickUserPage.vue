@@ -183,7 +183,7 @@ export default {
     display: flex;
     flex-direction: column;
     position: relative;
-    height: 100vh;
+    height: var(--page-full-height-without-header);
     width: 100%;
     overflow: hidden;
 }

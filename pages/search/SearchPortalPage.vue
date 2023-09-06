@@ -47,7 +47,8 @@ export default {
 <style scoped>
 
 .search-portal-container {
-    height: 100vh;
+    height: var(--page-full-height-without-header);
+    overflow: auto;
     position: relative;
 }
 
@@ -58,7 +59,7 @@ export default {
     border-bottom: 1px solid lightgrey;
     position: fixed;
     width: 100%;
-    top: 0;
+    top: var(--uni-page-header-height);
     left: 0;
     background-color: white;
     z-index: 99;
