@@ -1,13 +1,13 @@
 @font-face {
     font-family: "customicons"; /* Project id 2878519 */
-    src: url('/static/customicons.ttf') format('truetype');
+    src: url('/static/iconfonts/customicons.ttf') format('truetype');
 }
 
 .customicons {
     font-family: "customicons" !important;
 }
 
-.youxi:before {
+.game:before {
     content: "\e60e";
 }
 
@@ -21,7 +21,7 @@
 
 @font-face {
     font-family: "wxfont";
-    src: url('/static/wx_iconfont.ttf') format('truetype');
+    src: url('/static/iconfonts/wx_iconfont.ttf') format('truetype');
 }
 
 .wxfont {

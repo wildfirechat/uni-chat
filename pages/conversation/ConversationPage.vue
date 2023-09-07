@@ -9,7 +9,7 @@
             <view class="message-list-container">
                 <scroll-view ref="conversationMessageList" class="message-list" scroll-y="true" :scroll-top="scrollTop" :scroll-into-view="'id-' + lastMessageId"
                              refresher-enabled="true" :refresher-triggered="triggered"
-                             :refresher-threshold="45" refresher-background="lightgreen" @refresherpulling="onPulling"
+                             :refresher-threshold="45" @refresherpulling="onPulling"
                              @refresherrefresh="onRefresh" @refresherrestore="onRestore" @refresherabort="onAbort"
                              @scroll="onScroll">
                     <view v-for="(message) in sharedConversationState.currentConversationMessageList"
@@ -774,5 +774,10 @@ export default {
     height: 100%;
     overflow: auto;
 }
+
+>>> .uni-scroll-view-refresher {
+    max-height: 100px; /* 设置下拉刷新区域的最大高度为200像素 */
+}
+
 
 </style>
