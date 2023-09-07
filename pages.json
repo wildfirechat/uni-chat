@@ -26,12 +26,12 @@
                         "buttons": [
                             {
                                 "text": "\ue657",
-                                "fontSrc": "/static/wx_iconfont.ttf",
+                                "fontSrc": "/static/iconfonts/wx_iconfont.ttf",
                                 "fontSize": "28px"
                             },
                             {
                                 "text": "\ue636",
-                                "fontSrc": "/static/wx_iconfont.ttf",
+                                "fontSrc": "/static/iconfonts/wx_iconfont.ttf",
                                 "fontSize": "26px"
                             }
                         ]
@@ -49,7 +49,7 @@
                         "buttons": [
                             {
                                 "text": "\ue623",
-                                "fontSrc": "/static/wx_iconfont.ttf",
+                                "fontSrc": "/static/iconfonts/wx_iconfont.ttf",
                                 "fontSize": "28px"
                             }
                         ]
@@ -98,7 +98,7 @@
                         "buttons": [
                             {
                                 "text": "\ue657",
-                                "fontSrc": "/static/wx_iconfont.ttf",
+                                "fontSrc": "/static/iconfonts/wx_iconfont.ttf",
                                 "fontSize": "28px"
                             }
                         ]
@@ -139,12 +139,12 @@
                         "buttons": [
                             {
                                 "text": "\ue657",
-                                "fontSrc": "/static/wx_iconfont.ttf",
+                                "fontSrc": "/static/iconfonts/wx_iconfont.ttf",
                                 "fontSize": "28px"
                             },
                             {
                                 "text": "\ue636",
-                                "fontSrc": "/static/wx_iconfont.ttf",
+                                "fontSrc": "/static/iconfonts/wx_iconfont.ttf",
                                 "fontSize": "26px"
                             }
                         ]
@@ -161,12 +161,12 @@
                         "buttons": [
                             {
                                 "text": "\ue63f",
-                                "fontSrc": "/static/wx_iconfont.ttf",
+                                "fontSrc": "/static/iconfonts/wx_iconfont.ttf",
                                 "fontSize": "20px"
                             },
                             {
                                 "text": "\uE611",
-                                "fontSrc": "/static/wx_iconfont.ttf",
+                                "fontSrc": "/static/iconfonts/wx_iconfont.ttf",
                                 "fontSize": "26px"
                             }
                         ]
