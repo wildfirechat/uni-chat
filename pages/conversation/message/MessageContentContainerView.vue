@@ -1,4 +1,5 @@
 <template>
+    <!-- 如果不添加一个层级的话，直接子 view 上的 @click不生效，原因未知 -->
     <div>
         <TextMessageContentView :message="message"
                                 v-if="message.messageContent.type === 1"
