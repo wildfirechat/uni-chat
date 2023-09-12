@@ -132,7 +132,7 @@ export default {
             text: '',
             timer: '',
             talkTo: '',
-            keyboardHeight: 0,
+            keyboardHeight: 300,
             currentKeyboardHeight: 0,
             windowHeight: 0,
             longTapItemKey: '',

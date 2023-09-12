@@ -31,7 +31,6 @@ export default {
     },
     methods: {
         thumbnailUri(){
-            console.log('xxx thumbnailUri 000')
             if (this.message.status === MessageStatus.Sending){
                 return Config.DEFAULT_VIDEO_POSTER;
             }else {

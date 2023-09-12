@@ -48,7 +48,7 @@ export default {
             this.showCompositePage();
         },
         showCompositePage() {
-            console.log('to navigate to CompositeMessagePage')
+            console.log('to navigate to CompositeMessagePage', this.message)
             uni.navigateTo({
                 url: `/pages/conversation/message/CompositeMessagePage`,
                 success: (res) => {

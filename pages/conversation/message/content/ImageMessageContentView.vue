@@ -1,15 +1,16 @@
 <template>
     <div class="image-content-container">
-        <img v-show="imageLoaded === false" @click="preview(message)"
+        <img ref="thumbnail" v-show="imageLoaded === false" @click="preview(message)"
              v-bind:src="'data:video/jpeg;base64,' + message.messageContent.thumbnail">
-        <img v-show="imageLoaded" @click="preview(message)" @load="onImageLoaded"
+        <img ref="img" v-show="imageLoaded" @click="preview(message)" @load="onImageLoaded"
              draggable="true"
              v-bind:src="message.messageContent.remotePath">
     </div>
 </template>
 
 <script>
-import Message from "@/wfc/messages/message";
+import Message from "../../../../wfc/messages/message";
+import {scaleDown} from "../../../util/imageUtil";
 
 export default {
     name: "ImageMessageContentView",
@@ -27,6 +28,19 @@ export default {
     data() {
         return {
             imageLoaded: false,
+        }
+    },
+    mounted() {
+        let iw = this.message.messageContent.imageWidth;
+        let ih = this.message.messageContent.imageHeight;
+        if (iw && ih) {
+            let size = scaleDown(iw, ih, 300, 300);
+            if (size) {
+                this.$refs.img.style.height = size.height + 'px';
+                this.$refs.img.style.width = size.width + 'px';
+                this.$refs.thumbnail.style.height = size.height + 'px';
+                this.$refs.thumbnail.style.width = size.width + 'px';
+            }
         }
     },
     methods: {
@@ -58,10 +72,11 @@ export default {
 }
 
 .image-content-container img {
-    max-height: 200px;
-    max-width: 200px;
+    max-height: 300px;
+    max-width: 300px;
     border-radius: 5px;
     overflow: hidden;
+    object-fit: scale-down;
 }
 
 .right-arrow:before {

@@ -74,7 +74,7 @@ export default {
         fileIcon() {
             let fileName = this.message.messageContent.name;
             let icon = helper.getFiletypeIcon(fileName.substring(fileName.lastIndexOf('.') + 1))
-            return require("@/assets/images/filetypes/" + icon);
+            return require("@/static/image/filetypes/" + icon);
         },
 
         downloadStats() {

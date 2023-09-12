@@ -1,18 +1,16 @@
 <template>
-    <div ref="container" class="audio-message-container" :style="widthStyle" @click="playVoice">
+    <div ref="container" class="audio-message-container" :style="widthStyle" @click.prevent="playVoice">
         <p v-if="message.direction === 0" class="duration">{{ duration }}"</p>
         <div class="volume-container">
             <i v-show="!message._isPlaying" class="icon-ion-android-volume-up"></i>
-            <ScaleLoader v-show="message._isPlaying" :color="'#d2d2d2'" :height="'15px'" :width="'3px'"/>
+            <span v-show="message._isPlaying">播放中...</span>
         </div>
-        <!--        <div class="dot"></div>-->
         <p v-if="message.direction === 1" class="duration">{{ duration }}"</p>
     </div>
 </template>
 
 <script>
 import Message from "@/wfc/messages/message";
-import ScaleLoader from 'vue-spinner/src/ScaleLoader'
 import store from "@/store";
 
 export default {
@@ -37,12 +35,15 @@ export default {
         if (this.duration) {
             let width = Math.ceil(this.duration / 60 * 300);
             width = width < 70 ? 70 : width;
-			console.log('audo message Content', this.$refs.container);
-            this.$refs.container.style.setProperty('--voice-width', width + 'px')
+			console.log('audio message Content', this.$refs.container.style);
+            // this.$refs.container.style.setProperty('--voice-width', width + 'px')
+            // TODO
+            // style 是 undefined
         }
     },
     methods: {
         playVoice() {
+            console.log('play voice')
             this.$set(this.message, '_isPlaying', true)
             store.playVoice(this.message)
         },
@@ -61,10 +62,11 @@ export default {
             }
             return seconds;
         },
+        playingDesc() {
+            // TODO
+        }
     },
-    components: {
-        ScaleLoader
-    }
+    components: {}
 }
 </script>
 

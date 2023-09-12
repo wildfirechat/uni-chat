@@ -1,8 +1,4 @@
 import resizeImage from "resize-image";
-import wfc from '../../wfc/client/wfc';
-import ConversationType from "../../wfc/model/conversationType";
-import Config from "../../config";
-import GroupMemberType from "../../wfc/model/groupMemberType";
 
 function mergeImages(sources = [], options = {}) {
     // Defaults
@@ -251,87 +247,32 @@ function mergeImages(sources = [], options = {}) {
     })
 }
 
-
-let groupPortraitMap = new Map();
-
-async function getConversationPortrait(conversation) {
-    let portrait = '';
-    switch (conversation.type) {
-        case ConversationType.Single:
-            let u = wfc.getUserInfo(conversation.target, false);
-            portrait = u.portrait;
-            break;
-        case ConversationType.Group:
-            portrait = await getGroupPortrait(conversation.target);
-            break;
-        case ConversationType.Channel:
-            break;
-        case ConversationType.ChatRoom:
-            break;
-        default:
-            break;
+async function genGroupPortrait(groupMemberUsers) {
+    let groupMemberPortraits = [];
+    for (let i = 0; i < Math.min(9, groupMemberUsers.length); i++) {
+        groupMemberPortraits.push(groupMemberUsers[i].portrait)
     }
-
-    if (!portrait) {
-        switch (conversation.type) {
-            case ConversationType.Single:
-                portrait = 'assets/images/user-fallback.png';
-                break;
-            case ConversationType.Group:
-                portrait = 'assets/images/default_group_avatar.png';
-                break;
-            default:
-                break;
-        }
-    }
-
-    return portrait;
+    return await mergeImages(groupMemberPortraits);
 }
 
-async function getGroupPortrait(groupId) {
-    let groupInfo = wfc.getGroupInfo(groupId, false);
-    if (groupInfo.portrait) {
-        return groupInfo.portrait;
-    }
-
-    let portrait = groupPortraitMap.get(groupId);
-    let now = new Date().getTime();
-    if (!portrait || now - portrait.timestamp > 10 * 1000) {
-        let groupMembers = wfc.getGroupMembers(groupId, false);
-        if (!groupMembers || groupMembers.length === 0) {
-            return Config.DEFAULT_PORTRAIT_URL;
-        }
-        groupMembers = groupMembers.filter(m => m.type !== GroupMemberType.Removed);
-        let groupMemberPortraits = [];
-        for (let i = 0; i < Math.min(9, groupMembers.length); i++) {
-            groupMemberPortraits.push(groupMembers[i].getPortrait())
-        }
-        portrait = await mergeImages(groupMemberPortraits)
-        groupPortraitMap.set(groupId, {timestamp: now, uri: portrait})
-        return portrait;
-    } else {
-        return portrait.uri;
-    }
-}
-
-// return data uri
+// return {data uri, width, height}
 function imageThumbnail(file) {
     return new Promise((resolve, reject) => {
         var img = new Image();
         img.setAttribute('crossOrigin', 'anonymous');
         img.onload = () => {
-            let resizedCanvas = resizeImage.resize2Canvas(img, 320, 240);
+            let resizedCanvas = resizeImage.resize2Canvas(img, 200, 200);
             resizedCanvas.toBlob((blob) => {
                 var reader = new FileReader();
                 reader.readAsDataURL(blob);
                 reader.onloadend = () => {
                     let base64data = reader.result;
-                    resolve(base64data);
+                    resolve({thumbnail: base64data, width: img.naturalWidth, height: img.naturalHeight});
                 }
                 reader.onerror = () => {
                     resolve(null);
                 }
-            }, 'image/jpeg', 0.6);
+            }, 'image/jpeg', 0.4);
         };
         img.onerror = () => {
             resolve(null);
@@ -352,7 +293,7 @@ function imageThumbnail(file) {
     });
 }
 
-// return data uri
+// return {data uri, width, height}
 function videoThumbnail(file) {
     return new Promise(
         (resolve, reject) => {
@@ -368,19 +309,19 @@ function videoThumbnail(file) {
                 var img = document.createElement("img");
                 img.src = canvas.toDataURL();
                 img.onload = () => {
-                    let resizedCanvas = resizeImage.resize2Canvas(img, 320, 240);
+                    let resizedCanvas = resizeImage.resize2Canvas(img, 200, 200);
                     resizedCanvas.toBlob((blob) => {
                         var reader = new FileReader();
                         reader.readAsDataURL(blob);
                         reader.onloadend = () => {
                             let base64data = reader.result;
-                            resolve(base64data);
+                            resolve({thumbnail: base64data, width: video.videoWidth, height: video.videoHeight});
                             video.src = null;
                         };
                         reader.onerror = () => {
                             resolve(null);
                         }
-                    }, 'image/jpeg', 0.6);
+                    }, 'image/jpeg', 0.4);
                 };
                 img.onerror = () => {
                     resolve(null);
@@ -411,6 +352,20 @@ function _loadVideo(file) {
     }
 }
 
+function videoDuration(file) {
+    return new Promise(
+        (resolve, reject) => {
+            let video = document.getElementById('bgvid');
+            video.onplay = () => {
+                resolve(video.duration);
+            };
+            video.onerror = () => {
+                resolve(0);
+            };
+            _loadVideo(file)
+            console.log('----------', video);
+        });
+}
 
 function dataURItoBlob(dataURI) {
     // convert base64 to raw binary data held in a string
@@ -435,5 +390,22 @@ function fileFromDataUri(dataUri, fileName) {
     return resultFile;
 }
 
+function scaleDown(width, height, maxWidth, maxHeight) {
+    if (width < maxWidth && height < maxHeight) {
+        return {width, height}
+    }
 
-export {mergeImages, getConversationPortrait, videoThumbnail, videoDuration, imageThumbnail, fileFromDataUri};
+    const widthRatio = maxWidth / width;
+    const heightRatio = maxHeight / height;
+
+    // 计算比例最小的缩放倍数
+    const scale = Math.min(widthRatio, heightRatio);
+
+    // 缩放后的宽度和高度
+    const scaledWidth = width * scale;
+    const scaledHeight = height * scale;
+
+    return {width: Math.ceil(scaledWidth), height: Math.ceil(scaledHeight)};
+}
+
+export {mergeImages, genGroupPortrait, videoThumbnail, videoDuration, imageThumbnail, fileFromDataUri, scaleDown};

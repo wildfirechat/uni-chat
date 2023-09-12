@@ -90,12 +90,15 @@ export default {
         // 监听openerUsers事件，获取上一页面通过eventChannel传送到当前页面的数据
         eventChannel.on('options', (options) => {
             this.message = options.message;
-            this.compositeMessage = this.message;
-            store._patchMessage(this.compositeMessage, 0);
-            this.loadMediaCompositeMessage(this.compositeMessage);
+            store._patchMessage(this.message, 0);
+            if (this.message.messageContent.remotePath) {
+                this.loadMediaCompositeMessage(this.message);
+            } else {
+            	this.compositeMessage = this.message;
+            }
 
             uni.setNavigationBarTitle({
-                title: this.compositeMessage.messageContent.title
+                title: this.message.messageContent.title
             });
         })
     },
@@ -107,13 +110,14 @@ export default {
     methods: {
         loadMediaCompositeMessage(msg) {
             let content = msg.messageContent;
-            console.log('to load', content.remotePath);
+            console.log('to load', msg, content.remotePath);
             uni.request({
                 url: content.remotePath,
                 dataType: 'string',
                 success: (res) => {
                     content._decodeMessages(res.data);
-                    store._patchMessage(this.compositeMessage, 0);
+                    store._patchMessage(this.message, 0);
+                    this.compositeMessage = this.message;
                     content.loaded = true;
                 }
             })
