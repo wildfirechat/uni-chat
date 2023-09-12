@@ -3,7 +3,7 @@
         <p v-if="message.direction === 0" class="duration">{{ duration }}"</p>
         <div class="volume-container">
             <i v-show="!message._isPlaying" class="icon-ion-android-volume-up"></i>
-            <span v-show="message._isPlaying">播放中...</span>
+            <i v-show="message._isPlaying" class="icon-ion-pause"></i>
         </div>
         <p v-if="message.direction === 1" class="duration">{{ duration }}"</p>
     </div>
@@ -20,32 +20,30 @@ export default {
             type: Message,
             required: true,
         },
-
-        data() {
-            return {}
-        },
-
-        widthStyle() {
-            return {
-                width: '10px',
+    },
+    data() {
+        return {
+            widthStyle: {
+                width: '100px'
             }
-        },
+        }
     },
     mounted() {
         if (this.duration) {
             let width = Math.ceil(this.duration / 60 * 300);
-            width = width < 70 ? 70 : width;
-			console.log('audio message Content', this.$refs.container.style);
-            // this.$refs.container.style.setProperty('--voice-width', width + 'px')
-            // TODO
-            // style 是 undefined
+            width = width < 100 ? 100 : width;
+            this.widthStyle.width = width + 'px';
+            console.log('audio message Content', width);
         }
     },
     methods: {
         playVoice() {
-            console.log('play voice')
-            this.$set(this.message, '_isPlaying', true)
-            store.playVoice(this.message)
+            this.$set(this.message, '_isPlaying', !this.message._isPlaying)
+            if (this.message._isPlaying) {
+                store.playVoice(this.message)
+            } else {
+                store.playVoice(null)
+            }
         },
     },
 
@@ -75,10 +73,9 @@ export default {
 .audio-message-container {
     margin: 0 10px;
     display: flex;
-    width: 100%;
     align-items: center;
-    --voice-width: 200px;
     justify-content: flex-end;
+    max-width: 250px;
 }
 
 .audio-message-container audio {
@@ -87,9 +84,9 @@ export default {
 }
 
 .volume-container {
+    flex: 1;
     display: flex;
     height: 40px;
-    width: var(--voice-width);
     min-width: 55px;
     background: white;
     border-radius: 5px;
