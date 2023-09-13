@@ -44,6 +44,7 @@
             "style": {
                 "navigationBarTitleText": "会话详情",
                 "enablePullDownRefresh": false,
+                "disableScroll": true,
                 "app-plus": {
                     "titleNView": {
                         "buttons": [
