@@ -7,7 +7,7 @@
               :dummy_just_for_reactive="currentVoiceMessage"
         >
             <view class="message-list-container">
-                <scroll-view ref="conversationMessageList" class="message-list" scroll-y="true" :scroll-top="scrollTop" :scroll-into-view="'id-' + lastMessageId"
+                <scroll-view ref="conversationMessageList" class="message-list" scroll-y="true" :scroll-top="scrollTop"
                              refresher-enabled="true" :refresher-triggered="triggered"
                              :refresher-threshold="45" @refresherpulling="onPulling"
                              @refresherrefresh="onRefresh" @refresherrestore="onRestore" @refresherabort="onAbort"
@@ -137,7 +137,7 @@ export default {
             // match:'http.*'
         }, e => {
             console.log('reject url', e.url)
-            if (this.sharedConversationState.enableMessageMultiSelection){
+            if (this.sharedConversationState.enableMessageMultiSelection) {
                 return;
             }
             uni.navigateTo({
@@ -625,7 +625,7 @@ export default {
         },
 
         onPulling(e) {
-            console.log("onpulling", e);
+            // console.log("onpulling", e);
         },
         onRefresh() {
             console.log('onRresh...')
@@ -654,16 +654,7 @@ export default {
         },
 
         scrollToBottom() {
-            // 获取滚动视图的高度
-            uni.createSelectorQuery()
-                .select('.uni-scroll-view')
-                .fields({size: true}, (res) => {
-                    if (res) {
-                        // 滚动到底部，scrollTop 设置为滚动视图高度
-                        this.scrollTop = res.height;
-                    }
-                })
-                .exec();
+            this.scrollTop = 999999 + this.lastMessageId;
         }
     },
 
@@ -684,10 +675,8 @@ export default {
             if (this.$refs.messageInputView) {
                 this.$refs.messageInputView.onKeyboardHeightChange(this.keyboardHeight, res.height);
             }
-            this.scrollTop = 99919;
-            this.$nextTick(() => {
-                this.scrollTop = 99999;
-            })
+            this.scrollTop = 99999;
+
             // currentKeyboardHeight 显示扩展面板的时候，也应当置上
             console.log('------------- keyboardHeight', this.keyboardHeight, this.currentKeyboardHeight);
         });
@@ -703,7 +692,7 @@ export default {
         }
         console.log('conversationView updated', this.sharedConversationState.shouldAutoScrollToBottom)
         if (this.sharedConversationState.shouldAutoScrollToBottom) {
-            this.scrollTop = 99998;
+            this.scrollToBottom();
         } else {
             // 用户滑动到上面之后，收到新消息，不自动滑动到最下面
         }
