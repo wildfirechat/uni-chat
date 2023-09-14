@@ -2,7 +2,7 @@
     <div class="file-message-container"
          @click="clickFile"
          v-bind:class="{out:message.direction === 0}">
-        <img :src="fileIcon" alt="">
+        <image :src="fileIcon" alt="">
         <div class="flex-column flex-align-start" draggable="true" @dragstart="dragFile($event)">
             <p class="file-name">{{ this.message.messageContent.name }}</p>
             <p class="file-size single-line">{{ size }}</p>
@@ -33,23 +33,27 @@ export default {
     },
     methods: {
         clickFile() {
-            // TODO
-            // if (isElectron()) {
-            //     let localPath = this.message.messageContent.localPath;
-            //     if (localPath && fs.existsSync(localPath)) {
-            //         shell.openPath(localPath);
-            //     } else {
-            //         if (!this.isDownloading()) {
-            //             downloadFile(this.message)
-            //             store.addDownloadingMessage(this.message.messageId)
-            //         } else {
-            //             // TODO toast 下载中
-            //             console.log('file isDownloading')
-            //         }
-            //     }
-            // } else {
-            //     downloadFile(this.message)
-            // }
+            uni.downloadFile({
+                url: this.message.messageContent.remotePath,
+                success: res => {
+                    let filePath = res.tempFilePath;
+                    console.log('download file success', filePath);
+                    uni.openDocument({
+                        filePath: filePath,
+                        showMenu: true,
+                        success: (res) => {
+                            console.log('打开文档成功');
+                        },
+                        fail: (res) => {
+                            console.log('打开文档失败', res);
+                            uni.showToast({
+                                title: '打开文档失败',
+                                icon: 'none',
+                            });
+                        }
+                    });
+                }
+            });
         },
 
         dragFile(event) {
@@ -99,7 +103,7 @@ export default {
     min-width: 150px;
 }
 
-.file-message-container img {
+.file-message-container image {
     width: 32px;
     height: 32px;
     margin-right: 10px;
