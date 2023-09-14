@@ -44,8 +44,10 @@ export default {
 }
 
 .sticker-content-container img {
-    max-height: 200px;
-    max-width: 200px;
+    width: 100px;
+    height: 100px;
+    max-height: 100px;
+    max-width: 100px;
     border-radius: 5px;
     overflow: hidden;
 }
