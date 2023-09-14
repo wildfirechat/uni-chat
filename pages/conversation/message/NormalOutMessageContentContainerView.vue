@@ -123,7 +123,6 @@ export default {
             }
 
             let timestamp = this.message.timestamp;
-            let deliveries = this.sharedConversationState.currentConversationDeliveries;
             let readEntries = this.sharedConversationState.currentConversationRead;
 
             if (conversation.type === ConversationType.Group) {
@@ -131,36 +130,31 @@ export default {
                 if (!groupMembers || groupMembers.length === 0) {
                     // do nothing
                 } else {
-                    let receivedUserIds = [];
                     let readUserIds = [];
-                    let unReceiveUserIds = [];
+                    let unreadUserIds = [];
                     groupMembers.forEach(memberId => {
-                        let recvDt = deliveries ? deliveries.get(memberId) : 0;
                         let readDt = readEntries ? readEntries.get(memberId) : 0;
                         if (readDt && gte(readDt, timestamp)) {
                             readUserIds.push(memberId);
-                        } else if (recvDt && gte(recvDt, timestamp)) {
-                            receivedUserIds.push(memberId)
                         } else {
-                            unReceiveUserIds.push(memberId)
+                            unreadUserIds.push(memberId)
                         }
                     });
                     let readUsers = store.getUserInfos(readUserIds, conversation.target)
-                    let receivedUsers = store.getUserInfos(receivedUserIds, conversation.target)
-                    let unreceiveUsers = store.getUserInfos(unReceiveUserIds, conversation.target)
+                    let unreadUsers = store.getUserInfos(unreadUserIds, conversation.target)
 
-                    this.$modal.show(
-                        MessageReceiptDetailView,
-                        {
-                            readUsers: readUsers,
-                            receivedUsers: receivedUsers,
-                            unreceiveUsers: unreceiveUsers,
-                        }, {
-                            name: 'message-receipt-detail-modal',
-                            width: 480,
-                            height: 300,
-                            clickToClose: true,
-                        }, {})
+                    // TODO 消息已读页面
+                    // this.$modal.show(
+                    //     MessageReceiptDetailView,
+                    //     {
+                    //         readUsers: readUsers,
+                    //         unreceiveUsers: unreadUsers,
+                    //     }, {
+                    //         name: 'message-receipt-detail-modal',
+                    //         width: 480,
+                    //         height: 300,
+                    //         clickToClose: true,
+                    //     }, {})
                 }
             }
         },
@@ -171,21 +165,16 @@ export default {
             let conversation = this.message.conversation;
             let timestamp = this.message.timestamp;
             let receiptDesc = ''
-            let deliveries = this.sharedConversationState.currentConversationDeliveries;
             let readEntries = this.sharedConversationState.currentConversationRead;
 
             if (conversation.type === ConversationType.Single) {
                 let readDt = readEntries ? readEntries.get(conversation.target) : 0
                 readDt = readDt ? readDt : 0;
-                let recvDt = deliveries ? deliveries.get(conversation.target) : 0;
-                recvDt = recvDt ? recvDt : 0;
 
                 if (gte(readDt, timestamp)) {
                     receiptDesc = "已读";
-                } else if (gte(recvDt, timestamp)) {
-                    receiptDesc = "已送达";
                 } else {
-                    receiptDesc = "未送达";
+                    receiptDesc = "未读";
                 }
             } else {
                 let groupMembers = wfc.getGroupMemberIds(conversation.target, false);
@@ -193,27 +182,20 @@ export default {
                     receiptDesc = '';
                 } else {
                     let memberCount = groupMembers.length;
-                    let recvCount = 0;
                     let readCount = 0;
 
-                    let receivedUserIds = [];
                     let readUserIds = [];
-                    let unReceiveUserIds = [];
+                    let unreadUserIds = [];
                     groupMembers.forEach(memberId => {
-                        let recvDt = deliveries ? deliveries.get(memberId) : 0;
                         let readDt = readEntries ? readEntries.get(memberId) : 0;
                         if (readDt && gte(readDt, timestamp)) {
                             readCount++;
                             readUserIds.push(memberId);
-                            recvCount++;
-                        } else if (recvDt && gte(recvDt, timestamp)) {
-                            recvCount++;
-                            receivedUserIds.push(memberId)
                         } else {
-                            unReceiveUserIds.push(memberId)
+                            unreadUserIds.push(memberId)
                         }
                     });
-                    receiptDesc = `已送达 ${recvCount}/${memberCount}，已读 ${readCount}/${memberCount}`
+                    receiptDesc = `已读 ${readCount}/${memberCount}`
                 }
             }
             return receiptDesc;
