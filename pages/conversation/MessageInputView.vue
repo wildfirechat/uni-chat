@@ -29,12 +29,6 @@
                     <view class="wf-ext-item-text">{{ v.title }}</view>
                 </view>
             </view>
-            <!--            <scroll-view :scroll-y="true" v-if="showEmoji" class="wf-emoji-container">-->
-            <!--                <view class="wf-emoji-content">-->
-            <!--                    <view class="emoji-item" @click="onClickEmoji(v)" v-for="(v,i) in emojiList" :key="i">{{ v }}</view>-->
-
-            <!--                </view>-->
-            <!--            </scroll-view>-->
             <view v-if="showEmoji" class="wf-stickers-container" :style="'height: ' + keyboardHeight + 'px'">
                 <view class="category-container">
                     <view class="category" v-for="(v, i) in emojiStickerList" :key="i" @click="onCategoryClick(i)">
@@ -167,7 +161,6 @@ export default {
             const cursor = event.detail.cursor;
             if (this.conversationInfo.conversation.type === ConversationType.Group) {
                 if (inserting) {
-                    console.log('ooo', inserting, this.text.charAt(cursor - 1));
                     if (inserting && this.text.length > 0 && this.text.charAt(cursor - 1) === '@') {
                         const onPickUser = user => {
                             this.text = this.text.substring(0, cursor - 1) + `@${user.displayName} ` + this.text.substring(cursor);
@@ -238,17 +231,6 @@ export default {
                 this.mentions = [];
                 Draft.setConversationDraft(this.conversationInfo.conversation, '', null);
             }
-        },
-
-        startRecord() {
-
-            this.$refs['recorder'].startRecord();
-            this.sharedMiscState.isRecording = true;
-        },
-
-        endRecord() {
-            this.$refs['recorder'].stopRecord();
-            this.sharedMiscState.isRecording = false;
         },
 
         minimizeMessageInputView() {
