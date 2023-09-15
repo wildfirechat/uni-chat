@@ -4,7 +4,7 @@
             <view class="header">
                 <img class="avatar" draggable="false" :src="conversationInfo.conversation._target.portrait" alt=""
                      @error="imgUrlAlt"/>
-                <em v-if="unread > 0" class="badge" v-bind:class="{silent:conversationInfo.isSilent}">{{ unread }}</em>
+                <em v-if="unread > 0" class="badge" v-bind:class="{silent:conversationInfo.isSilent}">{{ unread > 99 ? '99' : unread }}</em>
             </view>
             <view class="content-container">
                 <view class="title-time-container">
