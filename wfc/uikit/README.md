@@ -9,7 +9,7 @@
 ## 音视频免费版使用说明
 音视频免费版使用比较简单，部署turn服务后，然后添加turn服务配置后直接使用就行。
 ```dart
-Rtckit.addICEServer('turn:turn.wildfirechat.net:3478', 'wfchat', 'wfchat1');
+wfcUIKit.addICEServer('turn:turn.wildfirechat.net:3478', 'wfchat', 'wfchat1');
 ```
 
 ## 音视频高级版的使用说明
@@ -22,6 +22,6 @@ Rtckit.addICEServer('turn:turn.wildfirechat.net:3478', 'wfchat', 'wfchat1');
 
 使用应用服务有2中场景，一种场景是没有修改登录逻辑，使用应用服务进行登录，这种方式比较简单，现在demo可以直接使用。另外一种场景是把登录逻辑移动到客户的服务上去，当登录成功后再去IM服务为用户获取token，这时需要多做一项任务，调用应用服务的登录接口（需要做一定的二开，方便实现客户服务调用应用服务模拟登录），为用户获取应用服务的authToken，然后把IMtoken和应用服务的authToken一起返回给客户端，调用下述方法把token传递给原生层：
 ```dart
-Rtckit.setupAppServer(Config.APP_Server_Address, authToken!);
+wfcUIKit.setupAppServer(Config.APP_Server_Address, authToken!);
 ```
 这样原生的代码就可以调用应用服务的会议业务。
