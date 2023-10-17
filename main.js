@@ -8,6 +8,7 @@ import wfc from "./wfc/client/wfc";
 import wfcUIKit from "./wfc/uikit/wfcUIKit";
 import Config from "./config";
 import forward from "./common/forward";
+import pttClient from "./wfc/ptt/pttClient";
 
 Vue.config.productionTip = false
 
@@ -96,6 +97,10 @@ if (wfcUIKit.isUIKitEnable()) {
         wfcUIKit.addICEServer(iceServer.uri, iceServer.userName, iceServer.password);
     })
 }
+if (pttClient.isPttClientEnable()) {
+    pttClient.init();
+}
+
 store.init();
 
 app.$mount()

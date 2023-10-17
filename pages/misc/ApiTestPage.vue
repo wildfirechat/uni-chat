@@ -4,6 +4,7 @@
         <button @click="modifyMyInfo">modifyMyInfo</button>
         <button @click="systemInfo">SystemInfo</button>
         <button @click="setHiddenGroupMemberName">setHiddenGroupMemberName</button>
+        <button @click="pttRequestTalk">pttRequestTalk</button>
     </div>
 
 </template>
@@ -13,6 +14,10 @@ import wfc from "../../wfc/client/wfc";
 import ModifyMyInfoEntry from "../../wfc/model/modifyMyInfoEntry";
 import ModifyMyInfoType from "../../wfc/model/modifyMyInfoType";
 import wfcUIKit from "../../wfc/uikit/wfcUIKit";
+import pttClient from "../../wfc/ptt/pttClient";
+import Conversation from "../../wfc/model/conversation";
+import ConversationType from "../../wfc/model/conversationType";
+import TalkingCallback from "../../wfc/ptt/talkingCallback";
 
 export default {
     name: "ApiTestPage",
@@ -47,6 +52,10 @@ export default {
             }, (err) => {
                 console.log('setHiddenGroupMemberName error', err);
             })
+        },
+        pttRequestTalk() {
+            let conv = new Conversation(ConversationType.Group, 0, "1f7qmws2k");
+            pttClient.requestTalk(conv, 0, new TalkingCallback())
         }
     }
 }
