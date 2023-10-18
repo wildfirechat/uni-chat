@@ -26,12 +26,12 @@ export class PttClient {
     static SINGLE_CHAT_SEND_VOICE_MESSAGE = true;
     static GROUP_CHAT_SEND_VOICE_MESSAGE = true;
     /**
-     * 单位是毫秒
+     * 单位是秒
      */
     static SINGLE_CHAT_MAX_SPEAK_TIME = 60;
 
     /**
-     * 单位是毫秒
+     * 单位是秒
      */
     static GROUP_CHAT_MAX_SPEAK_TIME = 60;
 
@@ -77,13 +77,10 @@ export class PttClient {
             // this.log = [this.interpreter(e), ...this.log];
         });
 
-        console.log('register....', MessageConfig.MessageContents.length)
         wfc.registerMessageContent('pttSoundMessage', PersistFlag.Persist_And_Count, 23, PttSoundMessageContent)
-        console.log('register pttSoundMessage result', MessageConfig.getMessageContentClazz(23).type)
-        console.log('register end....', MessageConfig.MessageContents.length)
 
         // for test
-        this._eventTest();
+        // this._eventTest();
     }
 
     uninit() {
@@ -93,12 +90,12 @@ export class PttClient {
     /**
      * 请求说话
      * @param conversation
-     * @param {Number} prioriy 对讲优先级，默认优先级都是0，数字越高，优先级越高
+     * @param {Number} priority 对讲优先级，默认优先级都是0，数字越高，优先级越高
      * @param {TalkingCallback} talkingCallback
      */
-    requestTalk(conversation, prioriy, talkingCallback) {
+    requestTalk(conversation, priority, talkingCallback) {
         let strConv = JSON.stringify(conversation);
-        uniWfcPttClient.requestTalk(strConv, prioriy,
+        uniWfcPttClient.requestTalk(strConv, priority,
             args => {
                 talkingCallback && talkingCallback.onStartTalking(conversation)
             },
@@ -115,9 +112,9 @@ export class PttClient {
     }
 
     // 说话结束
-    releaseTalk(conversation) {
+    releaseTalking(conversation) {
         let strConv = JSON.stringify(conversation);
-        uniWfcPttClient.releaseTalk(strConv);
+        uniWfcPttClient.releaseTalking(strConv);
     }
 
     /**

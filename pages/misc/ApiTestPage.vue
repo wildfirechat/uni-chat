@@ -13,7 +13,6 @@
 import wfc from "../../wfc/client/wfc";
 import ModifyMyInfoEntry from "../../wfc/model/modifyMyInfoEntry";
 import ModifyMyInfoType from "../../wfc/model/modifyMyInfoType";
-import wfcUIKit from "../../wfc/uikit/wfcUIKit";
 import pttClient from "../../wfc/ptt/pttClient";
 import Conversation from "../../wfc/model/conversation";
 import ConversationType from "../../wfc/model/conversationType";

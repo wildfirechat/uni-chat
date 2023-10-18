@@ -3,8 +3,12 @@
         <view class="wf-message-input-container">
             <view class="wf-message-input-toolbar">
                 <view class="wf-input-button-icon wxfont" @click="toggleVoice" :class="showVoice ? 'keyboard' : 'voice'"></view>
+                <view class="wf-input-button-icon wxfont" v-if="isPttEnable" @click="togglePtt" :class="showPtt ? 'keyboard' : 'voice_playing'"></view>
                 <view class="wf-input-voice-container" v-if="showVoice">
                     <AudioInputView :conversation-info="conversationInfo"></AudioInputView>
+                </view>
+                <view class="wf-input-voice-container" v-else-if="showPtt">
+                    <PttAudioInputView :conversation-info="conversationInfo"></PttAudioInputView>
                 </view>
                 <view v-else style="width: 100%">
                     <view class="wf-input-text-container">
@@ -62,12 +66,16 @@ import StickerMessageContent from "../../wfc/messages/stickerMessageContent";
 import Config from "../../config";
 import QuoteInfo from "../../wfc/model/quoteInfo";
 import AudioInputView from "./message/AudioInputView.vue";
+import PttAudioInputView from "./message/PttAudioInputView.vue";
 import Draft from "../util/draft";
-import Mention from "../../wfc/model/mention";
+import pttClient from "../../wfc/ptt/pttClient";
 
 export default {
     name: "MessageInputView",
-    components: {AudioInputView},
+    components: {
+        AudioInputView,
+        PttAudioInputView
+    },
     props: {
         conversationInfo: {
             type: ConversationInfo,
@@ -82,6 +90,8 @@ export default {
             hideSendButton: Config.getWFCPlatform() === 1 || Config.getWFCPlatform() === 8,
             showRecorder: false,
             showVoice: false,
+            showPtt: false,
+            isPttEnable: pttClient.isPttClientEnable(),
             extList: [
                 {
                     title: '相册',
@@ -248,6 +258,14 @@ export default {
 
         toggleVoice() {
             this.showVoice = !this.showVoice;
+            this.showPtt = false;
+            this.showEmoji = false;
+            this.showExt = false;
+        },
+
+        togglePtt() {
+            this.showPtt = !this.showPtt;
+            this.showVoice = false;
             this.showEmoji = false;
             this.showExt = false;
         },
@@ -257,12 +275,14 @@ export default {
             this.showEmoji = !this.showEmoji;
             this.showExt = false;
             this.showVoice = false;
+            this.showPtt = false;
 
         },
         toggleExt() {
             this.showExt = !this.showExt;
             this.showEmoji = false;
             this.showVoice = false;
+            this.showPtt = false;
         },
 
         onClickExt(ext) {
