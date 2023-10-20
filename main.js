@@ -92,7 +92,7 @@ const app = new Vue({
 
 app.store = store;
 wfc.init();
-if (wfcUIKit.isUIKitEnable()) {
+if (wfcUIKit.isUIKitEnable() && Config.ICE_SERVERS) {
     Config.ICE_SERVERS.forEach(iceServer => {
         wfcUIKit.addICEServer(iceServer.uri, iceServer.userName, iceServer.password);
     })
