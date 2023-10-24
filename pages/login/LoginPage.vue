@@ -1,19 +1,20 @@
 <template>
     <view class="page-body">
-        <view class="page-section">
+        <view class="login-type-title">验证码登录</view>
+        <view class="mobile-container">
             <view>请输入手机号</view>
             <view>
-                <view>
-                    <input class="weui-input" @input="bindPhoneInput" type="number" placeholder="手机号"></input>
+                <view class="mobile-input-container">
+                    <input class="input" @input="bindPhoneInput" type="number" placeholder="手机号"></input>
                 </view>
             </view>
         </view>
 
-        <view class="page-section">
+        <view class="auth-code-container">
             <view>请输入验证码</view>
-            <view class="auth-code-container">
+            <view class="auth-code-input-container">
                 <input @input="bindCodeInput" type="number" placeholder="验证码"></input>
-                <button :disabled="phone.length !== 11" @tap="bindAuthCodeTap">获取验证码</button>
+                <button size="mini" :disabled="phone.length !== 11" @tap="bindAuthCodeTap">获取验证码</button>
             </view>
         </view>
 
@@ -45,12 +46,12 @@ export default {
 
     onShow() {
         console.log('login onShow');
-        if((Config.APP_SERVER.indexOf('wildfirechat') >= 0 && Config.IM_SERVER_HOST.indexOf('wildfirechat') === -1)
-            || (Config.APP_SERVER.indexOf('wildfirechat') === -1 && Config.IM_SERVER_HOST.indexOf('wildfirechat') >= 0)){
-                console.error('!!!! 严重错误!!!! Config.APP_SERVER 和 Config.IM_SERVER_HOST要一起修改，不能一个用官方服务，一个用自己部署的服务');
-        } else if(Config.IM_SERVER_HOST.indexOf(':') >= 0){
+        if ((Config.APP_SERVER.indexOf('wildfirechat') >= 0 && Config.IM_SERVER_HOST.indexOf('wildfirechat') === -1)
+            || (Config.APP_SERVER.indexOf('wildfirechat') === -1 && Config.IM_SERVER_HOST.indexOf('wildfirechat') >= 0)) {
+            console.error('!!!! 严重错误!!!! Config.APP_SERVER 和 Config.IM_SERVER_HOST要一起修改，不能一个用官方服务，一个用自己部署的服务');
+        } else if (Config.IM_SERVER_HOST.indexOf(':') >= 0) {
             console.error('!!!! 严重错误!!!! Config.IM_SERVER_HOST 不能包含端口，只需要 HOST 即可');
-        } else if(Config.IM_SERVER_HOST.indexOf('http') >= 0){
+        } else if (Config.IM_SERVER_HOST.indexOf('http') >= 0) {
             console.error('!!!! 严重错误!!!! Config.IM_SERVER_HOST 不能包含http，只需要 HOST 即可');
         }
     },
@@ -131,32 +132,66 @@ export default {
     padding: 20rpx;
 }
 
-.page-section {
+.login-type-title {
+    margin-top: 120rpx;
+    font-size: 24px;
+    margin-bottom: 30rpx;
+}
+
+.mobile-container {
     margin-top: 20rpx;
 }
 
+.mobile-input-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 40px;
+}
+
+.mobile-input-container input {
+    color: #3f64e4;
+    font-size: 14px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.mobile-input-container .uni-input-input:focus {
+    border-bottom: 1px solid #3f64e4;
+}
+
 .auth-code-container {
+    margin-top: 30rpx;
+}
+
+.auth-code-input-container {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    height: 50px;
-    /*background-color: green;*/
+    height: 40px;
 }
 
-.auth-code-container input {
+.auth-code-input-container input {
+    color: #3f64e4;
     flex: 1;
-    padding-right: 5px;
+    margin-right: 5px;
+    font-size: 14px;
+    border-bottom: 1px solid #e0e0e0;
 }
 
-.auth-code-container button {
-    /*background-color: red;*/
-    font-size: 14px;
+.auth-code-input-container .uni-input-input:focus {
+    border-bottom: 1px solid #3f64e4;
 }
+
+
+//.auth-code-container button {
+//    /*background-color: red;*/
+//    font-size: 13px;
+//}
 
 .confirm-button {
-    margin-top: 20px;
+    margin-top: 30px;
 }
 
 /*.other-button-hover {*/
