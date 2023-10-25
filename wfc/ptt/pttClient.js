@@ -59,7 +59,7 @@ export class PttClient {
 
     // 初始化
     init() {
-        uniWfcPttClient.init({
+        uniWfcPttClient.initClient({
             enableFullDuplex: PttClient.ENABLE_FULL_DUPLEX,
             enableGlobalPtt: PttClient.ENABLE_GLOBAL_PTT,
             enablePriorityMode: PttClient.ENABLE_PRIORITY_MODE,
