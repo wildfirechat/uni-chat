@@ -130,12 +130,13 @@ export default {
 <style>
 .page-body {
     padding: 20rpx;
+    height: 100vh;
 }
 
 .login-type-title {
     margin-top: 120rpx;
     font-size: 24px;
-    margin-bottom: 30rpx;
+    margin-bottom: 50rpx;
 }
 
 .mobile-container {
@@ -150,7 +151,6 @@ export default {
 }
 
 .mobile-input-container input {
-    color: #3f64e4;
     font-size: 14px;
     border-bottom: 1px solid #e0e0e0;
 }
@@ -173,7 +173,6 @@ export default {
 }
 
 .auth-code-input-container input {
-    color: #3f64e4;
     flex: 1;
     margin-right: 5px;
     font-size: 14px;
@@ -184,21 +183,8 @@ export default {
     border-bottom: 1px solid #3f64e4;
 }
 
-
-//.auth-code-container button {
-//    /*background-color: red;*/
-//    font-size: 13px;
-//}
-
 .confirm-button {
-    margin-top: 30px;
+    margin-top: 40px;
 }
 
-/*.other-button-hover {*/
-/*    background-color: #7497f1;*/
-/*}*/
-
-/*.button-hover {*/
-/*    background-color: #4168e0;*/
-/*}*/
 </style>
