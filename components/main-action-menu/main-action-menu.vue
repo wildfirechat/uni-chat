@@ -30,6 +30,8 @@
 <script>
 import Config from "../../config";
 import store from "../../store";
+import WfcScheme from "../../wfcScheme";
+import wfc from "../../wfc/client/wfc";
 
 export default {
     data() {
@@ -89,16 +91,17 @@ export default {
         },
         go2ScanQrCode() {
             uni.scanCode({
-                success: function (res) {
+                success: (res) => {
                     console.log('条码类型：' + res.scanType);
                     console.log('条码内容：' + res.result);
                     if (res.result) {
                         // TODO
                         // wildfirechat://pcsession/xxxx
-                        uni.showToast({
-                            title: '扫码成功: ' + res.result,
-                            icon: 'none',
-                        });
+                        this.onScanQrCode(res.result)
+                        // uni.showToast({
+                        //     title: '扫码成功: ' + res.result,
+                        //     icon: 'none',
+                        // });
                     }
                 }
             });
@@ -115,7 +118,7 @@ export default {
             this.hide()
         },
         toggle() {
-            if (this.isActive){
+            if (this.isActive) {
                 this.hide();
             } else {
                 this.show();
@@ -128,7 +131,7 @@ export default {
             }, 30)
         },
         hide() {
-            if (this.isActive){
+            if (this.isActive) {
                 this.isActive = false
                 this.hideAnimation()
             }
@@ -138,6 +141,34 @@ export default {
             // #ifdef H5
             this.height = SystemInfo.safeArea.top + SystemInfo.windowTop;
             // #endif
+        },
+        onScanQrCode(qrcode) {
+            let prefix = qrcode.substring(0, qrcode.lastIndexOf('/') + 1)
+            let value = qrcode.substring(qrcode.lastIndexOf('/') + 1)
+            switch (prefix) {
+                case WfcScheme.QR_CODE_PREFIX_USER:
+                    wfc.getUserInfoEx(value, false, userInfo => {
+                        store.setCurrentFriend(userInfo);
+                        uni.navigateTo({
+                            url: '/pages/contact/UserDetailPage',
+                            success: () => {
+                                console.log('nav to UserDetailPage success');
+                            },
+                            fail: (err) => {
+                                console.log('nav to UserDetailPage err', err);
+                            }
+                        })
+                    }, err => {
+
+                    })
+                    break;
+                default:
+                    uni.showToast({
+                        title: '不支持该二维码: ' + qrcode,
+                        icon: 'none',
+                    });
+                    break;
+            }
         }
     }
 };
