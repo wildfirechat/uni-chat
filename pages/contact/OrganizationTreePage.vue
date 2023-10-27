@@ -53,7 +53,9 @@ export default {
     },
     mounted() {
         this.loadAndShowOrganization(this.sharedContactState.currentOrganization);
-        uni.setti
+        uni.setNavigationBarTitle({
+            title: this.sharedContactState.currentOrganization.name
+        });
     },
     methods: {
         loadAndShowOrganization(org) {
