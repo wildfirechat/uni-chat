@@ -98,6 +98,7 @@ let store = {
             currentFriendRequest: null,
             currentGroup: null,
             currentFriend: null,
+            currentOrganization: null,
 
             expandFriendRequestList: false,
             expandFriendList: true,
@@ -115,6 +116,7 @@ let store = {
                 this.currentFriendRequest = null;
                 this.currentGroup = null;
                 this.currentFriend = null;
+                this.currentOrganization = null;
 
                 this.expandFriendRequestList = false;
                 this.expandFriendList = true;
@@ -1431,19 +1433,31 @@ let store = {
     setCurrentFriendRequest(friendRequest) {
         contactState.currentFriendRequest = friendRequest;
         contactState.currentFriend = null;
+        contactState.currentOrganization = null;
         contactState.currentGroup = null;
     },
 
     setCurrentFriend(friend) {
         contactState.currentFriendRequest = null;
         contactState.currentFriend = friend;
+        contactState.currentOrganization = null;
         contactState.currentGroup = null;
     },
 
     setCurrentGroup(group) {
         contactState.currentFriendRequest = null;
         contactState.currentFriend = null;
+        contactState.currentOrganization = null;
         contactState.currentGroup = group;
+    },
+
+
+    setCurrentOrganization(organization) {
+        contactState.currentFriendRequest = null;
+        contactState.currentFriend = null;
+        contactState.currentGroup = null;
+        // contactState.currentChannel = null;
+        contactState.currentOrganization = organization;
     },
 
     toggleGroupList() {

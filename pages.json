@@ -91,6 +91,12 @@
             }
         },
         {
+            "path": "pages/contact/OrganizationTreePage",
+            "style": {
+                "navigationBarTitleText": "组织结构"
+            }
+        },
+        {
             "path": "pages/contact/ChannelListPage",
             "style": {
                 "navigationBarTitleText": " 频道列表",

@@ -25,7 +25,6 @@
 
 <script>
 import wfc from "../../wfc/client/wfc";
-import wfcUIKit from "../../wfc/uikit/wfcUIKit";
 import Config from '../../config';
 import {getItem, setItem} from "../util/storageHelper";
 import ConnectionStatus from "../../wfc/client/connectionStatus";

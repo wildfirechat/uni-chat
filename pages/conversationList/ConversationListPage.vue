@@ -25,6 +25,7 @@ import store from "../../store";
 import wfc from "../../wfc/client/wfc";
 import ConnectionStatus from "../../wfc/client/connectionStatus";
 import {getItem} from "../util/storageHelper";
+import organizationServerApi from "../../api/organizationServerApi";
 
 export default {
     name: 'ConversationListPage',
@@ -176,6 +177,7 @@ export default {
                     desc = '正在同步...';
                     break;
                 case ConnectionStatus.ConnectionStatusConnected:
+                    organizationServerApi.login().then(r => console.log('xxx org login result', r)).catch(reason => console.log('xxxx logini fail ', reason));
                     desc = '';
                     break;
                 case ConnectionStatus.ConnectionStatusUnconnected:
@@ -200,9 +202,9 @@ export default {
                     text: '' + count
                 })
             } else {
-               uni.removeTabBarBadge({
-                   index: 0
-               })
+                uni.removeTabBarBadge({
+                    index: 0
+                })
             }
             return count;
         }
