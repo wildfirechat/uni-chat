@@ -53,9 +53,9 @@ export default {
     },
     mounted() {
         this.loadAndShowOrganization(this.sharedContactState.currentOrganization);
-        uni.setNavigationBarTitle({
-            title: this.sharedContactState.currentOrganization.name
-        });
+        // uni.setNavigationBarTitle({
+        //     title: this.sharedContactState.currentOrganization.name
+        // });
     },
     methods: {
         loadAndShowOrganization(org) {
@@ -115,6 +115,7 @@ export default {
 
 .breadcrumb a {
     text-decoration: none;
+    font-size: 13px;
 }
 
 .breadcrumb li:not(:last-child)::after {
@@ -134,7 +135,6 @@ export default {
 }
 
 .member-list-container {
-    margin: 5px 5px 20px 5px;
     flex: 1;
     overflow-y: scroll;
 }
@@ -145,7 +145,6 @@ export default {
     align-items: center;
     height: 56px;
     padding: 0 10px;
-    border-radius: 5px;
     font-size: 14px;
 }
 

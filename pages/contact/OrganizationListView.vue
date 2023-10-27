@@ -64,8 +64,9 @@ export default {
     height: 50px;
     padding: 5px 10px 5px 10px;
     display: flex;
-    font-size: 13px;
+    font-size: 14px;
     align-items: center;
+    background-color: #fafafa;
 }
 
 //.organization-item.active {
