@@ -22,7 +22,7 @@ import store from "@/store";
 import UserListView from "../user/UserListView.vue";
 
 export default {
-    name: "PickUserPage",
+    name: "PickSingleUserPage",
     props: {
         users: {
             type: Array,
