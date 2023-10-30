@@ -142,27 +142,35 @@ export class WfcUIKit {
     enableNativeNotification(enable) {
         uniWfcUIKit.enableNativeNotification(enable);
     }
-	
-	/**
-	 * 获取当前通话会话
-	 * 
-	 * @@return {callSession}
-	 */
-	currentCallSession() {
-		let result = uniWfcUIKit.currentCallSession();
-		if (result === '') {
-		    return null;
-		}
-		
-		return Object.assign(new CallSession(), JSON.parse(result));
-	}
-	
-	/**
-	 * @param {Object} callId 通话ID
-	 */
-	endCall(callId) {
-		uniWfcUIKit.endCall(callId);
-	}
+
+    /**
+     * 获取当前通话会话
+     *
+     * @@return {callSession}
+     */
+    currentCallSession() {
+        let result = uniWfcUIKit.currentCallSession();
+        if (result === '') {
+            return null;
+        }
+
+        return Object.assign(new CallSession(), JSON.parse(result));
+    }
+
+    /**
+     * @param {Object} callId 通话ID
+     */
+    endCall(callId) {
+        uniWfcUIKit.endCall(callId);
+    }
+
+    setVideoView(userId, ref) {
+        uniWfcUIKit.setVideoView(userId, ref);
+    }
+
+    setRemoteVideoView(userId, ref) {
+        uniWfcUIKit.setRemoteVideoView(userId, ref);
+    }
 }
 
 const self = new WfcUIKit();
