@@ -4,8 +4,14 @@ import {getItem} from "./pages/util/storageHelper";
 import wfc from "./wfc/client/wfc";
 
 export default {
+    data() {
+        return {
+            wfc: null,
+        }
+    },
     onLaunch: function () {
         console.log("App Launch");
+        this.wfc = wfc;
         // #ifdef APP-PLUS
         plus.push.getClientInfoAsync((info) => {
             let cid = info["clientid"];

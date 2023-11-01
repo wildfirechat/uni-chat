@@ -34,6 +34,7 @@ import LeaveChannelChatMessageContent from "./wfc/messages/leaveChannelChatMessa
 import ArticlesMessageContent from "./wfc/messages/articlesMessageContent";
 import EnterChannelChatMessageContent from "./wfc/messages/enterChannelChatMessageContent";
 import NullChannelInfo from "./wfc/model/NullChannelInfo";
+import CallStartMessageContent from "./wfc/av/messages/callStartMessageContent";
 
 /**
  * 一些说明
@@ -74,6 +75,8 @@ let store = {
 
             currentVoiceMessage: null,
 
+            currentCallStartMessage: null,
+
             _reset() {
                 this.currentConversationInfo = null;
                 this.conversationInfoList = []
@@ -91,6 +94,7 @@ let store = {
                 this.quotedMessage = null;
                 this.downloadingMessages = [];
                 this.currentVoiceMessage = null;
+                this.currentCallStartMessage = null;
             }
         },
 
@@ -284,6 +288,26 @@ let store = {
             }
             if (!hasMore) {
                 this._reloadConversation(msg.conversation)
+
+                // TODO 判断下，如果现在正在处理音视频通话界面，直接忽略
+                if (msg.messageContent instanceof CallStartMessageContent) {
+                    let delta = wfc.getServerDeltaTime();
+                    let now = new Date().getTime();
+                    if (msg.direction === 1 && now - (numberValue(msg.timestamp) - delta) < 60 * 1000) {
+                        uni.navigateTo({
+                            url: '/pages/voip/Single',
+                            success: (res) => {
+                                console.log('navigate to voip/Single success')
+                                res.eventChannel.emit('callOptions', {
+                                    callStartMessageId: msg.messageId
+                                });
+                            },
+                            fail: (e) => {
+                                console.log('navigate to WebViewPage error', e)
+                            }
+                        })
+                    }
+                }
             }
             if (conversationState.currentConversationInfo && msg.conversation.equal(conversationState.currentConversationInfo.conversation)) {
                 if (msg.messageContent instanceof DismissGroupNotification

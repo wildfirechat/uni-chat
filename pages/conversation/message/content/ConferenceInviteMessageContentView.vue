@@ -32,12 +32,11 @@ export default {
 
     methods: {
         showConferenceInfo() {
-            console.log('showConferenceInfo')
             if (wfcUIKit.isSupportConference()) {
-                console.log('showConferenceInfo 0')
                 let cmc = this.message.messageContent;
-                wfcUIKit.showConferenceInfo(cmc.callId, cmc.pin);
-                console.log('showConferenceInfo 1')
+                console.log('conference ', cmc);
+                wfcUIKit.joinConference(cmc.callId, cmc.audioOnly, cmc.pin, cmc.host, cmc.title, cmc.desc, cmc.audience, cmc.advanced, false, false)
+                //wfcUIKit.showConferenceInfo(cmc.callId, cmc.pin);
             } else {
                 console.log('not support conference')
                 uni.showToast({

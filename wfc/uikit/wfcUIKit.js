@@ -157,6 +157,10 @@ export class WfcUIKit {
         return Object.assign(new CallSession(), JSON.parse(result));
     }
 
+    answerCall(callId, audioOnly) {
+        uniWfcUIKit.answerCall(callId, audioOnly);
+    }
+
     /**
      * @param {Object} callId 通话ID
      */

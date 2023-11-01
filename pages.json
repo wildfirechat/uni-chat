@@ -230,6 +230,12 @@
             }
         },
         {
+            "path": "pages/voip/Single",
+            "style": {
+                "navigationBarTitleText": "音视频通话"
+            }
+        },
+        {
             "path": "pages/misc/ApiTestPage",
             "style": {
                 "navigationBarTitleText": "API测试"
