@@ -2,16 +2,19 @@
 import store from "./store";
 import {getItem} from "./pages/util/storageHelper";
 import wfc from "./wfc/client/wfc";
+import avengineKit from "./wfc/av/engine/avengineKit";
 
 export default {
     data() {
         return {
             wfc: null,
+            avengineKit: null,
         }
     },
     onLaunch: function () {
         console.log("App Launch");
         this.wfc = wfc;
+        this.avengineKit = avengineKit;
         // #ifdef APP-PLUS
         plus.push.getClientInfoAsync((info) => {
             let cid = info["clientid"];

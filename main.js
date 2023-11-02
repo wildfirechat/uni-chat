@@ -9,6 +9,8 @@ import wfcUIKit from "./wfc/uikit/wfcUIKit";
 import Config from "./config";
 import forward from "./common/forward";
 import pttClient from "./wfc/ptt/pttClient";
+import avengineKit from "./wfc/av/engine/avengineKit";
+import avengineCallback from "./wfc/av/engine/avengineCallback";
 
 Vue.config.productionTip = false
 
@@ -92,9 +94,10 @@ const app = new Vue({
 
 app.store = store;
 wfc.init();
-if (wfcUIKit.isUIKitEnable() && Config.ICE_SERVERS) {
+if (avengineKit.isAVEngineKitEnable() && Config.ICE_SERVERS) {
+    avengineKit.init();
     Config.ICE_SERVERS.forEach(iceServer => {
-        wfcUIKit.addICEServer(iceServer.uri, iceServer.userName, iceServer.password);
+        avengineKit.addICEServer(iceServer.uri, iceServer.userName, iceServer.password);
     })
 }
 if (pttClient.isPttClientEnable()) {
