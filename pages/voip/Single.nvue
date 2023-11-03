@@ -12,49 +12,48 @@
         </p>
         <div class="container" v-if="session">
             <!--audio-->
-            <div class="content-container" v-if="audioOnly">
+            <div v-if="audioOnly" class="content-container">
                 <div class="local-media-container">
                     <img class="avatar" :src="selfUserInfo.portrait">
                 </div>
                 <div class="remote-media-container">
                     <img class="avatar" :src="participantUserInfo.portrait">
-                    <p>{{ participantUserInfo.displayName }}</p>
-                    <p v-if="status === 1">等待对方接听</p>
-                    <p v-else-if="status === 2">邀请你语音聊天</p>
-                    <p v-else-if="status === 3">接听中...</p>
-
-                    <p v-if="status === 4">{{ duration }}</p>
+                    <text class="desc">{{ participantUserInfo.displayName }}</text>
+                    <text class="desc" v-if="callState === 1">等待对方接听</text>
+                    <text class="desc" v-else-if="callState === 2">邀请你语音聊天</text>
+                    <text class="desc" v-else-if="callState === 3">接听中...</text>
+                    <text class="desc" v-else-if="callState === 4">{{ duration }}</text>
                 </div>
             </div>
 
             <!--video-->
             <div v-else class="content-container">
                 <div class="local-media-container">
-                    <UIKit-Video-CallView v-show="status === 4"
+                    <UIKit-Video-CallView v-if="callState === 4"
                                           ref="localVideo"
                                           class="localVideo me"
                     />
-                    <img v-else class="avatar" :src="selfUserInfo.portrait">
+                    <img v-if="callState !== 4" class="avatar" :src="selfUserInfo.portrait">
                 </div>
                 <div class="remote-media-container">
-                    <UIKit-Video-CallView v-show="status ===4"
+                    <UIKit-Video-CallView v-if="callState ===4"
                                           @click="switchVideoType()"
                                           ref="remoteVideo"
                                           class="video"
                     />
-                    <div v-else class="flex-column flex-justify-center flex-align-center">
+                    <div v-if="callState !== 4" class="flex-column flex-justify-center flex-align-center">
                         <img class="avatar" :src="participantUserInfo.portrait">
-                        <p>{{ participantUserInfo.displayName }}</p>
-                        <p v-if="status === 1">等待对方接听</p>
-                        <p v-else-if="status === 2">邀请你视频聊天</p>
-                        <p v-else-if="status === 3">接听中...</p>
+                        <text class="desc">{{ participantUserInfo.displayName }}</text>
+                        <text class="desc" v-if="callState === 1">等待对方接听</text>
+                        <text class="desc" v-else-if="callState === 2">邀请你视频聊天</text>
+                        <text class="desc" v-else-if="callState === 3">接听中...</text>
                     </div>
                 </div>
             </div>
 
             <!--actions-->
             <!--incoming-->
-            <div v-if="status === 2" class="action-container">
+            <div v-if="callState === 2" class="action-container">
                 <div class="action">
                     <img @click="hangup" class="action-img" src='@/assets/images/av_hang_up.png'/>
                 </div>
@@ -67,28 +66,28 @@
                 <!--          </div>-->
             </div>
             <!--outgoing-->
-            <div v-if="status === 1" class="action-container">
+            <div v-if="callState === 1" class="action-container" style="background: lightgrey">
                 <div class="action">
                     <img @click="hangup" class="action-img" src='@/assets/images/av_hang_up.png'/>
                 </div>
             </div>
 
             <!--connected-->
-            <div v-if="status === 4" class="action-container">
+            <div v-if="callState === 4" class="action-container">
                 <div class="action">
                     <img @click="hangup" class="action-img" src='@/assets/images/av_hang_up.png'/>
                 </div>
                 <div class="action">
                     <img v-if="!audioMuted" @click="mute" class="action-img" src='@/assets/images/av_mute.png'/>
                     <img v-else @click="mute" class="action-img" src='@/assets/images/av_mute_hover.png'/>
-                    <p>静音</p>
+                    <text class="desc">静音</text>
                 </div>
                 <div v-if="!audioOnly && false" class="action">
                     <img @click="screenShare" class="action-img" src='@/assets/images/av_share.png'/>
                 </div>
                 <div v-if="!audioOnly" class="action">
                     <img @click="down2voice" class="action-img" src='@/assets/images/av_float_audio.png'/>
-                    <p>切换到语音聊天</p>
+                    <text class="desc">切换到语音聊天</text>
                 </div>
 
             </div>
@@ -100,30 +99,26 @@
     // import CallSessionCallback from "../../wfc/av/engine/callSessionCallback";
     import CallState from "../../wfc/av/engine/callState";
     import VideoType from "../../wfc/av/engine/videoType";
-    import Config from "../../config";
-    import ConversationType from "../../wfc/model/conversationType";
-    import wfcUIKit from "../../wfc/uikit/wfcUIKit";
-    import avengineKit from "../../wfc/av/engine/avengineKit";
     import CallSessionCallback from "../../wfc/av/engine/callSessionCallback";
+    import avengineKit from "../../wfc/av/engine/avengineKit";
 
     export default {
         name: 'Single',
         data() {
             return {
+                // why? 直接引入 wfc 会报 require not defined 错误
                 wfc: getApp().wfc,
                 session: null,
-                audioMuted: false,
                 audioOnly: false,
-                muted: false,
-                status: 2,
+                audioMuted: false,
+                videoMuted: false,
+                callState: 0,
                 startTimestamp: 0,
                 currentTimestamp: 0,
-                videoInputDeviceIndex: 0,
-                autoPlayInterval: 0,
                 showWebrtcTip: false,
 
                 ringAudio: null,
-                userId: null,
+                targetUserId: null,
             }
         },
 
@@ -139,6 +134,8 @@
             eventChannel.on('callOptions', (options) => {
                 console.log('callOptions', options, getApp(), getApp().wfc)
                 this.session = options.callSession;
+                this.targetUserId = options.callSession.conversation.target;
+                this.callState = Number(this.session.state);
                 this.audioOnly = this.session.audioOnly;
             })
         },
@@ -192,8 +189,8 @@
                         }
                     }
 
-                    this.status = state;
-                    console.log('didChangeState', state)
+                    this.callState = state;
+                    console.log('didChangeState', typeof state, state, this.callState)
                     if (state === CallState.STATUS_CONNECTED) {
                         if (this.startTimestamp === 0) {
                             this.startTimestamp = new Date().getTime();
@@ -202,9 +199,9 @@
                             }, 1000)
                         }
                         this.$nextTick(() => {
-                            console.log('nextTick didCreateLocalVideoTrack', this.status)
-                            // avengineKit.setVideoView(this.wfc.getUserId(), this.$refs.localVideo.ref)
-                            // avengineKit.setRemoteVideoView(userId, this.$refs.remoteVideo.ref)
+                            avengineKit.setVideoView(this.wfc.getUserId(), this.$refs.localVideo.ref)
+                            avengineKit.setRemoteVideoView(this.targetUserId, this.$refs.remoteVideo.ref)
+                            console.log('setRemoteVideoView', this.targetUserId, this.$refs.remoteVideo.ref)
                         })
                     } else if (state === CallState.STATUS_IDLE) {
                         if (this.timer) {
@@ -212,7 +209,7 @@
                         }
                     }
 
-                    console.log('status change', state)
+                    console.log('callState change', state, this.callState)
                 };
 
                 sessionCallback.didChangeMode = (audioOnly) => {
@@ -221,17 +218,16 @@
 
                 sessionCallback.didCreateLocalVideoTrack = () => {
                     console.log('didCreateLocalVideoTrack')
-                    setTimeout(() => {
-                        avengineKit.setVideoView(this.wfc.getUserId(), this.$refs.localVideo.ref)
-                    }, 500)
+                    // setTimeout(() => {
+                    //     avengineKit.setVideoView(this.wfc.getUserId(), this.$refs.localVideo.ref)
+                    // }, 500)
                 };
 
                 sessionCallback.didReceiveRemoteVideoTrack = (userId) => {
                     console.log('didReceiveRemoteVideoTrack', userId)
-                    setTimeout(() => {
+                    if (this.$refs.remoteVideo) {
                         avengineKit.setRemoteVideoView(userId, this.$refs.remoteVideo.ref)
-                    })
-                    this.userId = userId;
+                    }
                 };
 
                 sessionCallback.didCallEndWithReason = (reason) => {
@@ -240,7 +236,7 @@
                 }
                 sessionCallback.didVideoMuted = (userId, muted) => {
                     console.log('didVideoMuted', userId, muted);
-                    this.muted = muted;
+                    this.videoMuted = muted;
                 };
 
                 sessionCallback.didMediaLostPacket = (media, lostPacket) => {
@@ -269,40 +265,31 @@
                     // console.log('didReportAudioVolume', userId, volume)
                 }
 
-                console.log('single setsessionCallback')
+                console.log('single setSessionCallback')
+                // why?
+                // 下面是个人理解，没有找到相关的文档说明，可能理解有所偏差，甚至完全不对
+                // .nvue 和 .vue 是由不同的渲染引擎渲染的，avengineKit 会在两个渲染引擎中都存在一个实例
+                // main.js 由 .vue 渲染引擎引入，并注册了相关事件，从插件来的通知，也只会发送到该渲染引擎，故此处需要用 .vue 渲染引擎里面的 avengineKit 实例
+                // beforeDestroy 方法也在 .vue 渲染引起之前，故 beforeDestroy 也需要使用 getApp().avengineKit
                 getApp().avengineKit.setSessionCallback(sessionCallback)
             },
 
             answer() {
                 console.log('answer');
-                wfcUIKit.answerCall(this.session.callId, false);
+                avengineKit.answerCall(this.session.callId, false);
             },
 
             hangup() {
                 console.log('hangup');
                 let callId = this.session.callId;
-                wfcUIKit.endCall(callId);
+                avengineKit.endCall(callId);
             },
 
             switchCamera() {
                 if (!this.session || this.session.isScreenSharing()) {
                     return;
                 }
-                // The order is significant - the default capture devices will be listed first.
-                // navigator.mediaDevices.enumerateDevices()
-                navigator.mediaDevices.enumerateDevices().then(devices => {
-                    devices = devices.filter(d => d.kind === 'videoinput');
-                    if (devices.length < 2) {
-                        console.log('switchCamera error, no more video input device')
-                        return;
-                    }
-                    this.videoInputDeviceIndex++;
-                    if (this.videoInputDeviceIndex >= devices.length) {
-                        this.videoInputDeviceIndex = 0;
-                    }
-                    this.session.setVideoInputDeviceId(devices[this.videoInputDeviceIndex].deviceId)
-                    console.log('setVideoInputDeviceId', devices[this.videoInputDeviceIndex]);
-                })
+                // TODO
             },
 
             mute() {
@@ -354,11 +341,12 @@
             this.setupSessionCallback();
         },
         beforeDestroy() {
+            getApp().avengineKit.endCall(this.session.callId);
         },
 
         computed: {
             participantUserInfo() {
-                //             targetId = session.getParticipantIds().get(0);
+                // //             targetId = session.getParticipantIds().get(0);
                 let initiator = this.session.initiator;
                 let inviter = this.session.inviter;
                 let userInfo;
@@ -392,12 +380,15 @@
         width: 750rpx;
         flex: 1;
         display: flex;
+        flex-direction: column;
         position: relative;
+        background: rgb(41, 41, 41)
     }
 
     .content-container {
         width: 750rpx;
         flex: 1;
+        display: flex;
         flex-direction: column;
         position: relative;
     }
@@ -420,6 +411,9 @@
         flex-direction: column;
         align-items: center;
         font-size: 12px;
+    }
+
+    .action-container .action .desc {
         color: white;
     }
 
@@ -441,13 +435,16 @@
         align-items: center;
         width: 750rpx;
         flex: 1;
+    }
+
+    .remote-media-container .desc {
         color: white;
-        /*background-color: rebeccapurple;*/
     }
 
 
     .local-media-container {
         position: absolute;
+        height: 200px;
         top: 0;
         left: 0;
     }
@@ -460,14 +457,9 @@
     .localVideo {
         width: 200px;
         height: 200px;
-        position: absolute;
-        top: 0;
-        background-color: #cccccc;
-        left: 0;
     }
 
     .localVideo.me {
-        -webkit-transform: scaleX(-1);
         transform: scaleX(-1);
     }
 

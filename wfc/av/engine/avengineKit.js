@@ -21,13 +21,13 @@ export class AVEngineKit {
     init() {
         avengineKitPlugin.initAVEngineKit();
         plus.globalEvent.addEventListener("wfc-av-event", (e) => {
-            console.debug('wfc-av-event', e);
+            // console.debug('wfc-av-event', e);
             self._handleNativeAVEngineEvent(e);
             // this.log = [this.interpreter(e), ...this.log];
         });
 
         plus.globalEvent.addEventListener("wfc-av-session-event", (e) => {
-            console.debug('wfc-av-session-event', e);
+            // console.debug('wfc-av-session-event', e);
             self._handleNativeCallSessionEvent(e);
             // this.log = [this.interpreter(e), ...this.log];
         });
@@ -37,7 +37,7 @@ export class AVEngineKit {
         let args = e.args;
         if (this.avengineCallback) {
             let func = this.avengineCallback[args[0]]
-            console.log('avengineCallback', func, ...args.slice(1))
+            //console.log('avengineCallback', func, ...args.slice(1))
             if (func) {
                 func(...args.slice(1));
             }

@@ -5,12 +5,10 @@ import VueI18n from 'vue-i18n'
 import {getItem} from "./pages/util/storageHelper";
 import picker from "./common/picker";
 import wfc from "./wfc/client/wfc";
-import wfcUIKit from "./wfc/uikit/wfcUIKit";
 import Config from "./config";
 import forward from "./common/forward";
 import pttClient from "./wfc/ptt/pttClient";
 import avengineKit from "./wfc/av/engine/avengineKit";
-import avengineCallback from "./wfc/av/engine/avengineCallback";
 
 Vue.config.productionTip = false
 
