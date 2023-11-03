@@ -18,16 +18,30 @@ export class AvengineCallback {
 
     shouldStartRing(isIncoming) {
         console.log('shouldStartRing', isIncoming);
+        // TODO ring
     }
 
     shouldStopRing() {
         console.log('shouldStopRing')
-
+        // TODO stop ring
     }
 
     didCallEnded(reason, duration) {
+        // TODO toast
         console.log('didCallEnded', reason, duration)
-        // TODO 关闭音视频通话页面
+        let pages = getCurrentPages();
+        let singleVoipRoute = 'pages/voip/Single'
+        let multiVoipRoute = 'pages/voip/Single'
+        let curRoute = pages[pages.length - 1].route;
+
+        if (curRoute === singleVoipRoute || curRoute === multiVoipRoute) {
+            uni.navigateBack({
+                delta: 1,
+                fail: err => {
+                    console.log('nav back to conversationView err', err);
+                }
+            });
+        }
     }
 }
 

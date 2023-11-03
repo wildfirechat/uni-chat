@@ -49,15 +49,20 @@ export class AVEngineKit {
         if (this.sessionCallback) {
             let func = this.sessionCallback[args[0]]
             if (func) {
-                func(...args.slice(1));
+                // 类型不对时，特殊处理
+                if (args[0] === 'didChangeState') {
+                    func(Number(args[1]));
+                } else if (args[0] === 'didCallEndWithReason') {
+                    func(Number(args[1]));
+                } else {
+                    func(...args.slice(1));
+                }
             }
         }
     }
 
-    setSessionCallback(cb){
-        console.log('setSessionCallback 00', cb)
+    setSessionCallback(cb) {
         this.sessionCallback = cb;
-        console.log('setSessionCallback 11', this.sessionCallback, self.sessionCallback)
     }
 
     /**
