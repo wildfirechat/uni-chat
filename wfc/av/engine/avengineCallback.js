@@ -5,21 +5,26 @@ export class AvengineCallback {
     onReceiveCall(session) {
         console.log('onReceiveCall', session)
         session = Object.assign(new CallSession(), JSON.parse(session));
+        let url;
         if (session.conversation.type === ConversationType.Single) {
+            url = '/pages/voip/Single'
+        } else if (session.conversation.type === ConversationType.Group) {
+            // TODO multi
+            url = '/pages/voip/Multi'
+        }
+        if (url) {
             uni.navigateTo({
-                url: '/pages/voip/Single',
+                url: url,
                 success: (res) => {
-                    console.log('navigate to voip/Single success')
+                    console.log(`navigate to ${url} success`)
                     res.eventChannel.emit('callOptions', {
                         callSession: session,
                     });
                 },
                 fail: (e) => {
-                    console.log('navigate to voip/Single error', e)
+                    console.log(`navigate to ${url} error`, e)
                 }
             })
-        } else if (session.conversation.type === ConversationType.Group) {
-            // TODO multi
         }
     }
 
@@ -38,7 +43,7 @@ export class AvengineCallback {
         console.log('didCallEnded', reason, duration)
         let pages = getCurrentPages();
         let singleVoipRoute = 'pages/voip/Single'
-        let multiVoipRoute = 'pages/voip/Single'
+        let multiVoipRoute = 'pages/voip/Multi'
         let curRoute = pages[pages.length - 1].route;
 
         if (curRoute === singleVoipRoute || curRoute === multiVoipRoute) {

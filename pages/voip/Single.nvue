@@ -167,27 +167,9 @@
 
                 // 可能回调多次
                 sessionCallback.didChangeState = (state) => {
-                    // 响铃示例代码
-                    if (state === CallState.STATUS_OUTGOING) {
-                        console.log('start outgoing ring')
-                        // this.ringAudio = new Audio(require("@/assets/audios/incoming_call_ring.mp3"))
-                        this.ringAudio.loop = true;
-                        this.ringAudio.play();
-                    } else if (state === CallState.STATUS_INCOMING) {
-                        // 由于浏览器的限制，web 端，可能不能自动播放！！!
-                        // 另外，微信收到音视频通话邀请时，也没有声音
-                        // this.ringAudio = new Audio(require("@/assets/audios/incoming_call_ring.mp3"))
-                        // this.ringAudio.loop = true;
-                        // this.ringAudio.play();
-                    } else {
-                        if (this.ringAudio) {
-                            this.ringAudio.pause();
-                            this.ringAudio = null;
-                        }
-                    }
+                    console.log('didChangeState', typeof state, state, this.callState)
 
                     this.callState = state;
-                    console.log('didChangeState', typeof state, state, this.callState)
                     if (state === CallState.STATUS_CONNECTED) {
                         if (this.startTimestamp === 0) {
                             this.startTimestamp = new Date().getTime();
@@ -196,7 +178,7 @@
                             }, 1000)
                         }
                         this.$nextTick(() => {
-                            avengineKit.setVideoView(this.wfc.getUserId(), this.$refs.localVideo.ref)
+                            avengineKit.setLocalVideoView(this.wfc.getUserId(), this.$refs.localVideo.ref)
                             avengineKit.setRemoteVideoView(this.targetUserId, this.$refs.remoteVideo.ref)
                             console.log('setRemoteVideoView', this.targetUserId, this.$refs.remoteVideo.ref)
                         })
@@ -386,7 +368,7 @@
 
     .action-container {
         width: 750rpx;
-        height: 200rpx;
+        height: 160rpx;
         position: absolute;
         bottom: 0;
         left: 0;

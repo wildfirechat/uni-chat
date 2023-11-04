@@ -3,6 +3,7 @@ import avengineCallback from "./avengineCallback";
 const avengineKitPlugin = uni.requireNativePlugin("wf-uni-wfc-uikit");
 
 import CallSession from './callSession';
+import ParticipantProfile from "./participantProfile";
 
 export class AVEngineKit {
 
@@ -194,12 +195,41 @@ export class AVEngineKit {
         avengineKitPlugin.endCall(callId);
     }
 
-    setVideoView(userId, ref) {
+    setLocalVideoView(userId, ref) {
         avengineKitPlugin.setVideoView(userId, ref);
     }
 
     setRemoteVideoView(userId, ref, screenSharing = false) {
-        avengineKitPlugin.setRemoteVideoView(userId, false, ref);
+        avengineKitPlugin.setRemoteVideoView(userId, screenSharing, ref);
+    }
+
+    getParticipantProfiles() {
+        let str = avengineKitPlugin.getParticipantProfiles()
+        if (!str) {
+            return [];
+        }
+        let profiles = [];
+        let ps = JSON.parse(str);
+        ps.map(p => {
+            profiles.push(Object.assign(new ParticipantProfile(), p));
+        });
+        return profiles;
+    }
+
+    getParticipantProfile(userId, screenSharing){
+        let str = avengineKitPlugin.getParticipantProfile(userId, screenSharing);
+        if (!str) {
+            return null;
+        }
+        return Object.assign(new ParticipantProfile(), JSON.parse(str))
+    }
+
+    getMyProfile() {
+        let str = avengineKitPlugin.getMyProfile();
+        if (!str) {
+            return null;
+        }
+        return Object.assign(new ParticipantProfile(), JSON.parse(str))
     }
 }
 

@@ -359,7 +359,7 @@ export default {
             if (this.conversationInfo.conversation.type === ConversationType.Single) {
                 let callSession = avengineKit.startSingleCall(this.conversationInfo.conversation.target, audioOnly)
                 if (callSession) {
-                    this.$go2VoipSinglePage(callSession);
+                    this.$go2VoipPage(true, callSession);
                 }
             } else if (this.conversationInfo.conversation.type === ConversationType.Group) {
                 this.showPickGroupMemberToVoipModal(audioOnly)
@@ -370,9 +370,12 @@ export default {
             let beforeClose = (users) => {
                 let ids = users.map(u => u.uid);
                 let callSession = avengineKit.startMultiCall(this.conversationInfo.conversation.target, ids, audioOnly);
-                if (callSession) {
-                    // TODO multi
-                }
+                // 不加延时的话，不能正常切换页面，会报莫名其妙的错误
+                setTimeout(() => {
+                    if (callSession) {
+                        this.$go2VoipPage(false, callSession);
+                    }
+                }, 50)
             }
             this.$pickUsers(
                 {

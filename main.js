@@ -83,17 +83,18 @@ Vue.prototype.$scrollToBottom = () => {
         app.$forceUpdate()
     }, 100);
 }
-Vue.prototype.$go2VoipSinglePage = (callSession) => {
+Vue.prototype.$go2VoipPage = (single, callSession) => {
+    let url = single ? '/pages/voip/Single' : '/pages/voip/Multi'
     uni.navigateTo({
-        url: '/pages/voip/Single',
+        url: url,
         success: (res) => {
-            console.log('navigate to voip/Single success')
+            console.log(`navigate to ${url} success`)
             res.eventChannel.emit('callOptions', {
                 callSession: callSession,
             });
         },
         fail: (e) => {
-            console.log('navigate to WebViewPage error', e)
+            console.log(`navigate to ${url} error`, e)
         }
     })
 }
