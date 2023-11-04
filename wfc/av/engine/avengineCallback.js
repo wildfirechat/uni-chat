@@ -1,18 +1,26 @@
+import ConversationType from "../../model/conversationType";
+import CallSession from "./callSession";
+
 export class AvengineCallback {
     onReceiveCall(session) {
         console.log('onReceiveCall', session)
-        uni.navigateTo({
-            url: '/pages/voip/Single',
-            success: (res) => {
-                console.log('navigate to voip/Single success')
-                res.eventChannel.emit('callOptions', {
-                    callSession: session,
-                });
-            },
-            fail: (e) => {
-                console.log('navigate to WebViewPage error', e)
-            }
-        })
+        session = Object.assign(new CallSession(), JSON.parse(session));
+        if (session.conversation.type === ConversationType.Single) {
+            uni.navigateTo({
+                url: '/pages/voip/Single',
+                success: (res) => {
+                    console.log('navigate to voip/Single success')
+                    res.eventChannel.emit('callOptions', {
+                        callSession: session,
+                    });
+                },
+                fail: (e) => {
+                    console.log('navigate to voip/Single error', e)
+                }
+            })
+        } else if (session.conversation.type === ConversationType.Group) {
+            // TODO multi
+        }
     }
 
     shouldStartRing(isIncoming) {

@@ -60,7 +60,6 @@ import ConversationInfo from "../../wfc/model/conversationInfo";
 import wfc from "../../wfc/client/wfc";
 import store from "../../store";
 import ConversationType from "../../wfc/model/conversationType";
-import wfcUIKit from "../../wfc/uikit/wfcUIKit";
 import emojiStickerConfig from "./emojiStickerConfig";
 import StickerMessageContent from "../../wfc/messages/stickerMessageContent";
 import Config from "../../config";
@@ -69,6 +68,7 @@ import AudioInputView from "./message/AudioInputView.vue";
 import PttAudioInputView from "./message/PttAudioInputView.vue";
 import Draft from "../util/draft";
 import pttClient from "../../wfc/ptt/pttClient";
+import avengineKit from "../../wfc/av/engine/avengineKit";
 
 export default {
     name: "MessageInputView",
@@ -357,7 +357,10 @@ export default {
 
         voip(audioOnly) {
             if (this.conversationInfo.conversation.type === ConversationType.Single) {
-                wfcUIKit.startSingleCall(this.conversationInfo.conversation.target, audioOnly)
+                let callSession = avengineKit.startSingleCall(this.conversationInfo.conversation.target, audioOnly)
+                if (callSession) {
+                    this.$go2VoipSinglePage(callSession);
+                }
             } else if (this.conversationInfo.conversation.type === ConversationType.Group) {
                 this.showPickGroupMemberToVoipModal(audioOnly)
             }
@@ -366,7 +369,10 @@ export default {
         showPickGroupMemberToVoipModal(audioOnly) {
             let beforeClose = (users) => {
                 let ids = users.map(u => u.uid);
-                wfcUIKit.startMultiCall(this.conversationInfo.conversation.target, ids, audioOnly);
+                let callSession = avengineKit.startMultiCall(this.conversationInfo.conversation.target, ids, audioOnly);
+                if (callSession) {
+                    // TODO multi
+                }
             }
             this.$pickUsers(
                 {

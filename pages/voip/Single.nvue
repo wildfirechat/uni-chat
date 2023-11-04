@@ -6,10 +6,7 @@
 <!--static STATUS_CONNECTED = 4;-->
 <!--}-->
 <template>
-    <div class="flex-column flex-align-center flex-justify-center;" style="flex: 1; display: flex;">
-        <p class="webrtc-tip" v-if="showWebrtcTip">
-            上线前，请部署 turn 服务，野火官方 turn 服务只能开发测试使用!!!
-        </p>
+    <div style="flex: 1; display: flex;">
         <div class="container" v-if="session">
             <!--audio-->
             <div v-if="audioOnly" class="content-container">
@@ -66,7 +63,7 @@
                 <!--          </div>-->
             </div>
             <!--outgoing-->
-            <div v-if="callState === 1" class="action-container" style="background: lightgrey">
+            <div v-if="callState === 1" class="action-container">
                 <div class="action">
                     <img @click="hangup" class="action-img" src='@/assets/images/av_hang_up.png'/>
                 </div>
@@ -347,14 +344,8 @@
         computed: {
             participantUserInfo() {
                 // //             targetId = session.getParticipantIds().get(0);
-                let initiator = this.session.initiator;
-                let inviter = this.session.inviter;
-                let userInfo;
-                if (initiator === this.wfc.getUserId()) {
-                    userInfo = this.wfc.getUserInfo(inviter);
-                } else {
-                    userInfo = this.wfc.getUserInfo(initiator);
-                }
+                let conversaiton = this.session.conversation;
+                let userInfo = this.wfc.getUserInfo(conversaiton.target, false);
                 return userInfo;
             },
             selfUserInfo() {

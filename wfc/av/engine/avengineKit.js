@@ -66,20 +66,14 @@ export class AVEngineKit {
     }
 
     /**
-     *
-     * @param {Conversation} conversation 会话
-     */
-    startConversation(conversation) {
-        avengineKitPlugin.startConversation(JSON.stringify(conversation));
-    }
-
-    /**
      * 发起单人音视频通话
      * @param {string} userId 用户 id
      * @param {boolean} audioOnly 是否是音频通话
+     * @return {CallSession}
      */
     startSingleCall(userId, audioOnly) {
-        avengineKitPlugin.startSingleCall(userId, audioOnly);
+        let sessionStr = avengineKitPlugin.startSingleCall(userId, audioOnly);
+        return !sessionStr ? null : Object.assign(new CallSession(), JSON.parse(sessionStr));
     }
 
     /**
@@ -87,13 +81,14 @@ export class AVEngineKit {
      * @param {string} groupId 群 id
      * @param {[string]} participants 参与者 id，要求是群成员
      * @param {boolean} audioOnly 是否是音频通话
+     * @return {CallSession}
      */
     startMultiCall(groupId, participants, audioOnly) {
-        avengineKitPlugin.startMultiCall(groupId, participants, audioOnly)
+        let sessionStr = avengineKitPlugin.startMultiCall(groupId, participants, audioOnly)
+        return !sessionStr ? null : Object.assign(new CallSession(), JSON.parse(sessionStr));
     }
 
     /**
-     * @deprecated 已废弃
      * 开始会议
      * @param {string} callId 会议id
      * @param {boolean} audioOnly 是否仅仅开启音频; true，音频会议；false，视频会议
@@ -105,13 +100,14 @@ export class AVEngineKit {
      * @param {boolean} advance 是否为高级会议，当预计参与人员很多的时候，开需要开启超级会议
      * @param {boolean} record 是否开启服务端录制
      * @param {string} callExtra  通话附件信息，会议的所有参与者都能看到该附加信息
+     * @return {CallSession}
      */
     startConference(callId, audioOnly, pin, host, title, desc, audience, advance, record = false, callExtra = '') {
-        avengineKitPlugin.startConference(callId, audioOnly, pin, host, title, desc, audience, advance, record, callExtra);
+        let sessionStr = avengineKitPlugin.startConference(callId, audioOnly, pin, host, title, desc, audience, advance, record, callExtra);
+        return !sessionStr ? null : Object.assign(new CallSession(), JSON.parse(sessionStr));
     }
 
     /**
-     * @deprecated 已废弃
      * 加入会议
      * @param {string} callId 会议id
      * @param {string} audioOnly 是否只开启音频
@@ -124,34 +120,11 @@ export class AVEngineKit {
      * @param {boolean} muteAudio 是否是静音加入会议
      * @param {boolean} muteVideo 是否是关闭摄像头加入会议
      * @param {string} callExtra 通话附加信息，会议的所有参与者都能看到该附加信息
+     * @return {CallSession}
      */
     joinConference(callId, audioOnly, pin, host, title, desc, audience, advance, muteAudio, muteVideo, callExtra = '') {
-        avengineKitPlugin.joinConference(callId, audioOnly, pin, host, title, desc, audience, advance, muteAudio, muteVideo, callExtra);
-    }
-
-    /**
-     * 设置 app server 信息
-     * @param {string} appServerAddress 应用服务地址
-     * @param {string} authToken 成功登录应用服务后，返回的authToken header
-     */
-    setupAppServer(appServerAddress, authToken) {
-        avengineKitPlugin.setupAppServer(appServerAddress, authToken);
-    }
-
-    /**
-     * 打开原生会议详情界面
-     * @param {string} conferenceId 会议号
-     * @param {string} password 会议密码
-     */
-    showConferenceInfo(conferenceId, password) {
-        avengineKitPlugin.showConferenceInfo(conferenceId, password)
-    }
-
-    /**
-     * 打开原生会议入口界面
-     */
-    showConferencePortal() {
-        avengineKitPlugin.showConferencePortal();
+        let sessionStr = avengineKitPlugin.joinConference(callId, audioOnly, pin, host, title, desc, audience, advance, muteAudio, muteVideo, callExtra);
+        return !sessionStr ? null : Object.assign(new CallSession(), JSON.parse(sessionStr));
     }
 
     /**
