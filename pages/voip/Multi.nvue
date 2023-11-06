@@ -175,10 +175,8 @@
                         }
 
                         this.$nextTick(() => {
-                            console.log('xxxx setLocalView', this.$refs.localVideo.ref)
                             avengineKit.setLocalVideoView(this.selfUserInfo.uid, this.$refs.localVideo.ref)
                             this.participantUserInfos.forEach(u => {
-                                console.log('xxxxxx', u.uid, this.$refs['remoteVideo-' + u.uid][0].ref, this.$refs['remoteVideo-' + u.uid][0]);
                                 avengineKit.setRemoteVideoView(u.uid, this.$refs['remoteVideo-' + u.uid][0].ref, false)
                             });
                         });

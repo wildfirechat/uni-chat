@@ -111,13 +111,13 @@ export class AVEngineKit {
     /**
      * 加入会议
      * @param {string} callId 会议id
-     * @param {string} audioOnly 是否只开启音频
+     * @param {boolean} audioOnly 是否只开启音频
      * @param {string} pin 会议pin码
      * @param {string} host 会议主持人
      * @param {string} title 会议标题
      * @param {string} desc 会议描述
-     * @param {string} audience 是否是以观众角色入会
-     * @param {string} advance 是否是高级会议
+     * @param {boolean} audience 是否是以观众角色入会
+     * @param {boolean} advance 是否是高级会议
      * @param {boolean} muteAudio 是否是静音加入会议
      * @param {boolean} muteVideo 是否是关闭摄像头加入会议
      * @param {string} callExtra 通话附加信息，会议的所有参与者都能看到该附加信息
@@ -126,6 +126,26 @@ export class AVEngineKit {
     joinConference(callId, audioOnly, pin, host, title, desc, audience, advance, muteAudio, muteVideo, callExtra = '') {
         let sessionStr = avengineKitPlugin.joinConference(callId, audioOnly, pin, host, title, desc, audience, advance, muteAudio, muteVideo, callExtra);
         return !sessionStr ? null : Object.assign(new CallSession(), JSON.parse(sessionStr));
+    }
+
+    /**
+     * 离开会议
+     * @param {string} callId 会议id
+     * @param {boolean} destroyRoom 是否销毁会议，主持有效
+     */
+    leaveConference(callId, destroyRoom = false) {
+        avengineKitPlugin.leaveConference(callId, destroyRoom);
+    }
+
+    /**
+     *  仅会议版有效
+     * 设置参与者的 videoType
+     * @param {string} userId 用户 id
+     * @param {boolean} screenSharing 是否是屏幕共享
+     * @param {number} videoType 视频流类型，可选值参考{@link VideoType}
+     */
+    setParticipantVideoType(userId, screenSharing, videoType){
+        avengineKitPlugin.setParticipantVideoType(userId, screenSharing, videoType);
     }
 
     /**
@@ -216,7 +236,7 @@ export class AVEngineKit {
         return profiles;
     }
 
-    getParticipantProfile(userId, screenSharing){
+    getParticipantProfile(userId, screenSharing) {
         let str = avengineKitPlugin.getParticipantProfile(userId, screenSharing);
         if (!str) {
             return null;

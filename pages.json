@@ -244,7 +244,13 @@
         {
             "path": "pages/voip/conference/ConferenceInfoPage",
             "style": {
-                "navigationBarTitleText": " 会议详情"
+                "navigationBarTitleText": "会议详情"
+            }
+        },
+        {
+            "path": "pages/voip/conference/ConferencePage",
+            "style": {
+                "navigationBarTitleText": "音视频会议"
             }
         },
         {

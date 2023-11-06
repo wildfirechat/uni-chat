@@ -30,6 +30,10 @@ class ConferenceManager {
         avenginekitproxy.listenVoipEvent('message', this.onReceiveMessage);
     }
 
+    setConferenceInfo(conferenceInfo){
+        this.conferenceInfo = conferenceInfo;
+    }
+
     getConferenceInfo(conferenceId) {
         // TODO password
         conferenceApi.queryConferenceInfo(conferenceId, '')
@@ -319,20 +323,21 @@ class ConferenceManager {
 
     addHistory(conferenceInfo, durationMS) {
         console.log('addHistory', conferenceInfo, durationMS);
-        let tmp = localStorage.getItem('historyConfList');
-        let historyList = JSON.parse(tmp);
-        historyList = historyList ? historyList : [];
-        conferenceInfo.endTime = Math.ceil(conferenceInfo.startTime + durationMS / 1000);
-        let index = historyList.findIndex(info => info.conferenceId === conferenceInfo.conferenceId)
-        if (index >= 0) {
-            historyList[index] = conferenceInfo;
-        } else {
-            historyList.push(conferenceInfo);
-            if (historyList.length > 50) {
-                historyList = historyList.shift();
-            }
-        }
-        localStorage.setItem('historyConfList', JSON.stringify(historyList, null, ''));
+        // TODO
+        // let tmp = localStorage.getItem('historyConfList');
+        // let historyList = JSON.parse(tmp);
+        // historyList = historyList ? historyList : [];
+        // conferenceInfo.endTime = Math.ceil(conferenceInfo.startTime + durationMS / 1000);
+        // let index = historyList.findIndex(info => info.conferenceId === conferenceInfo.conferenceId)
+        // if (index >= 0) {
+        //     historyList[index] = conferenceInfo;
+        // } else {
+        //     historyList.push(conferenceInfo);
+        //     if (historyList.length > 50) {
+        //         historyList = historyList.shift();
+        //     }
+        // }
+        // localStorage.setItem('historyConfList', JSON.stringify(historyList, null, ''));
     }
 
     getHistoryConference() {

@@ -3,18 +3,21 @@ import store from "./store";
 import {getItem} from "./pages/util/storageHelper";
 import wfc from "./wfc/client/wfc";
 import avengineKit from "./wfc/av/engine/avengineKit";
+import conferenceManager from "./pages/voip/conference/conferenceManager";
 
 export default {
     data() {
         return {
             wfc: null,
             avengineKit: null,
+            conferenceManager: null,
         }
     },
     onLaunch: function () {
         console.log("App Launch");
         this.wfc = wfc;
         this.avengineKit = avengineKit;
+        this.conferenceManager = conferenceManager;
         // #ifdef APP-PLUS
         plus.push.getClientInfoAsync((info) => {
             let cid = info["clientid"];

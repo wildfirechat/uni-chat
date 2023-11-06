@@ -128,9 +128,11 @@ export default {
         joinConference() {
             let info = this.conferenceInfo;
             console.log('joinConference', info);
-            let audience = !this.enableVideo && !this.enableAudio
-            avenginekitproxy.joinConference(info.conferenceId, false, info.pin, info.owner, info.conferenceTitle, '', audience, info.advance, !this.enableAudio, !this.enableVideo);
-            this.$modal.hide('conference-info-modal');
+            this.$navigateToPage('/pages/voip/conference/ConferencePage', {
+                conferenceInfo: this.conferenceInfo,
+                muteAudio: !this.enableAudio,
+                muteVideo: !this.enableVideo
+            });
         },
     },
     computed: {
@@ -148,8 +150,6 @@ export default {
         },
         audience() {
             return !(this.conferenceInfo.owner === conferenceManager.selfUserId || !this.conferenceInfo.audience || this.conferenceInfo.allowSwitchMode)
-                // Safari 浏览器，不支持直接静音自动播放音视频
-                || navigator.vendor.indexOf('Apple') > 0
         },
         enableDestroy() {
             return this.conferenceInfo.owner === conferenceManager.selfUserId && new Date().getTime() < this.conferenceInfo.startTime * 1000;
