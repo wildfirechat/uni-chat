@@ -1,6 +1,5 @@
 <template>
     <div class="conference-info-container">
-        <h2>会议详情</h2>
         <div class="item-container">
             <div class="item">
                 <p class="title">会议主题</p>
@@ -33,14 +32,15 @@
             <div class="item">
                 <label>
                     开启视频
-                    <input :disabled="audience" v-model="enableVideo" type="checkbox">
                 </label>
+                <checkbox :disabled="audience" v-model="enableVideo"/>
             </div>
-            <div class="item">
+            <!--            不知道为啥，下面的 class 没生效-->
+            <div class="item" style="display: flex; flex-direction: row; justify-content: space-between; padding: 12px 20px; border-spacing: 20px;">
                 <label>
                     开启音频
-                    <input :disabled="audience" v-model="enableAudio" type="checkbox">
                 </label>
+                <checkbox :disabled="audience" v-model="enableAudio"/>
             </div>
         </div>
 
@@ -63,30 +63,58 @@
 
 <script>
 import wfc from "../../../wfc/client/wfc";
-import avenginekitproxy from "../../../wfc/av/engine/avenginekitproxy";
 import conferenceApi from "../../../api/conferenceApi";
 import conferenceManager from "./conferenceManager";
 
 export default {
-    name: "ConferenceInfoView",
-    props: {
-        conferenceInfo: {
-            type: Object,
-            required: true,
-        }
-    },
+    name: "ConferenceInfoPage",
     data() {
         return {
+            conferenceInfo: {},
             enableVideo: false,
             enableAudio: false,
             ownerName: '',
         }
     },
+    onLoad(option) {
+        console.log('voip/conference/ConferenceInfoPage onLoad')
+        // #ifdef APP-NVUE
+        const eventChannel = this.$scope.eventChannel; // 兼容APP-NVUE
+        // #endif
+        // #ifndef APP-NVUE
+        const eventChannel = this.getOpenerEventChannel();
+        // #endif
+        // 监听openerUsers事件，获取上一页面通过eventChannel传送到当前页面的数据
+        eventChannel.on('options', (options) => {
+            console.log('options', options)
+            let conferenceId = options.conferenceId;
+            let password = options.password;
+            this.getConferenceInfo(conferenceId, password);
+        })
+    },
     mounted() {
         console.log('conferenceInfo', this.conferenceInfo);
         this.ownerName = wfc.getUserDisplayName(this.conferenceInfo.owner);
     },
+
     methods: {
+        getConferenceInfo(conferenceId, password) {
+            conferenceApi.queryConferenceInfo(conferenceId, password)
+                .then(info => {
+                    this.conferenceInfo = info;
+
+                })
+                .catch(reason => {
+                    console.error('queryConferenceInfo error', reason);
+                    uni.navigateBack({
+                        delta: 1,
+                        fail: err => {
+                            console.log('nav back from ConferenceInfoPage err', err);
+                        }
+                    });
+                });
+
+        },
         favConference() {
             conferenceApi.favConference(this.conferenceInfo.conferenceId)
                 .then(r => {
@@ -163,11 +191,6 @@ export default {
     padding: 12px 20px;
     border-spacing: 20px;
 }
-
-
-/*.item:active {*/
-/*    background: #d6d6d6;*/
-/*}*/
 
 .item:not(:last-of-type) {
     border-bottom: 1px solid #f1f1f1;

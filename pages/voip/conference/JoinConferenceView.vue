@@ -22,7 +22,7 @@
 
 <script>
 import conferenceApi from "../../../api/conferenceApi";
-import ConferenceInfoView from "./ConferenceInfoView.vue";
+import ConferenceInfoView from "./ConferenceInfoPage.vue";
 
 export default {
     name: "CreateConferenceView",

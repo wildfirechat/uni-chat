@@ -75,7 +75,7 @@ import CreateConferenceView from "./CreateConferenceView";
 import JoinConferenceView from "./JoinConferenceView";
 import OrderConferenceView from "./OrderConferenceView";
 import conferenceApi from "../../../api/conferenceApi";
-import ConferenceInfoView from "./ConferenceInfoView";
+import ConferenceInfoPage from "./ConferenceInfoPage.vue";
 import conferenceManager from "./conferenceManager";
 import wfc from "../../../wfc/client/wfc";
 
@@ -184,7 +184,7 @@ export default {
                 console.log('Close...', event)
             };
             this.$modal.show(
-                ConferenceInfoView,
+                ConferenceInfoPage,
                 {
                     conferenceInfo: info,
                 }, {
