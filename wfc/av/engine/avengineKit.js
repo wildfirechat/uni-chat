@@ -196,7 +196,7 @@ export class AVEngineKit {
     }
 
     setLocalVideoView(userId, ref) {
-        avengineKitPlugin.setVideoView(userId, ref);
+        avengineKitPlugin.setLocalVideoView(userId, ref);
     }
 
     setRemoteVideoView(userId, ref, screenSharing = false) {

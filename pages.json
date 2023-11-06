@@ -242,6 +242,12 @@
             }
         },
         {
+            "path": "pages/voip/conference/ConferenceInfoPage",
+            "style": {
+                "navigationBarTitleText": " 会议详情"
+            }
+        },
+        {
             "path": "pages/misc/ApiTestPage",
             "style": {
                 "navigationBarTitleText": "API测试"

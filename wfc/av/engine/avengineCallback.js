@@ -17,7 +17,7 @@ export class AvengineCallback {
                 url: url,
                 success: (res) => {
                     console.log(`navigate to ${url} success`)
-                    res.eventChannel.emit('callOptions', {
+                    res.eventChannel.emit('options', {
                         callSession: session,
                     });
                 },

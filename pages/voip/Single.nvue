@@ -128,8 +128,8 @@
             const eventChannel = this.getOpenerEventChannel();
             // #endif
             // 监听openerUsers事件，获取上一页面通过eventChannel传送到当前页面的数据
-            eventChannel.on('callOptions', (options) => {
-                console.log('callOptions', options, getApp(), getApp().wfc)
+            eventChannel.on('options', (options) => {
+                console.log('options', options, getApp(), getApp().wfc)
                 this.session = options.callSession;
                 this.targetUserId = options.callSession.conversation.target;
                 this.callState = Number(this.session.state);
