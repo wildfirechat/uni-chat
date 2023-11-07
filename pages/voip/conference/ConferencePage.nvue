@@ -223,19 +223,22 @@
                 let callExtra = '';
                 console.log('join conference', conferenceInfo.conferenceId, audioOnly, conferenceInfo.pin, conferenceInfo.owner, conferenceInfo.conferenceTitle, '', audience, conferenceInfo.advance, muteAudio, muteVideo, callExtra)
                 let session = avengineKit.currentCallSession();
-                if (!session) {
-                    session = avengineKit.joinConference(conferenceInfo.conferenceId, audioOnly, conferenceInfo.pin, conferenceInfo.owner, conferenceInfo.conferenceTitle, '', audience, conferenceInfo.advance, muteAudio, muteVideo, callExtra);
+                if (session) {
+                    avengineKit.leaveConference(session.callId, false);
                 }
+                session = avengineKit.joinConference(conferenceInfo.conferenceId, audioOnly, conferenceInfo.pin, conferenceInfo.owner, conferenceInfo.conferenceTitle, '', audience, conferenceInfo.advance, muteAudio, muteVideo, callExtra);
                 if (session) {
                     this.session = session;
                     this.conferenceManager.setConferenceInfo(conferenceInfo);
 
                     let selfProfile = avengineKit.getMyProfile();
                     let selfUserInfo = this.profile2UserInfo(selfProfile)
+                    console.log('xxxx selfProfile', selfProfile);
                     this.selfUserInfo = selfUserInfo;
                     this.participantUserInfos.push(selfUserInfo);
 
                     let participantProfiles = avengineKit.getParticipantProfiles();
+                    console.log('xxx participantProfiles', participantProfiles)
                     for (const p of participantProfiles) {
                         let userInfo = this.profile2UserInfo(p);
                         this.participantUserInfos.push(userInfo);
@@ -261,7 +264,6 @@
                     this.status = state;
                     if (state === CallState.STATUS_CONNECTED) {
                         // 比如没有摄像头，但发起视频通话时，会自动 muteVideo
-                        this.selfUserInfo._isVideoMuted = this.session.videoMuted;
                         if (this.startTimestamp === 0) {
                             this.startTimestamp = new Date().getTime();
                             this.timer = setInterval(() => {
@@ -275,10 +277,10 @@
                     }
                 };
 
-                sessionCallback.didCreateLocalVideoTrack = (stream, screenShare) => {
-                    console.log('didCreateLocalVideoTrack', screenShare)
-                    this.selfUserInfo._isVideoMuted = false;
-                    this.selfUserInfo._isScreenSharing = screenShare;
+                sessionCallback.didCreateLocalVideoTrack = (screenShare) => {
+                    console.log('didCreateLocalVideoTrack 00', screenShare)
+                    // this.selfUserInfo._isVideoMuted = false;
+                    // this.selfUserInfo._isScreenSharing = screenShare;
                 };
 
                 sessionCallback.didRotateLocalVideoTrack = (stream) => {
@@ -287,8 +289,8 @@
 
                 sessionCallback.didScreenShareEnded = () => {
                     console.log('didScreenShareEnded', this.session.videoMuted, this.session.audioMuted);
-                    this.selfUserInfo._isScreenSharing = false;
-                    this.selfUserInfo._isVideoMuted = this.session.videoMuted;
+                    // this.selfUserInfo._isScreenSharing = false;
+                    // this.selfUserInfo._isVideoMuted = this.session.videoMuted;
                 }
 
                 sessionCallback.didCreateLocalVideoTrackError = () => {
@@ -309,6 +311,7 @@
                 sessionCallback.didParticipantJoined = (userId, screenSharing) => {
                     console.log('didParticipantJoined', userId, screenSharing)
                     let profile = avengineKit.getParticipantProfile(userId, screenSharing);
+                    console.log('didParticipantJoined profile', profile)
                     let userInfo = this.profile2UserInfo(profile);
                     this.participantUserInfos.push(userInfo);
                     console.log('joined', userInfo, profile.audience, this.participantUserInfos.length);
@@ -361,14 +364,22 @@
 
                 sessionCallback.didChangeType = (userId, audience, screenSharing) => {
                     console.log('didChangeType', userId, audience, screenSharing);
-                    this.participantUserInfos.forEach(u => {
+                    let found = false;
+                    for (const u of this.participantUserInfos) {
                         if (u.uid === userId && u._isScreenSharing === screenSharing) {
                             u._isAudience = audience;
                             if (this.speakingVideoParticipant && this.speakingVideoParticipant.uid === u.uid) {
                                 this.speakingVideoParticipant = null;
                             }
+                            found = true;
+                            break;
                         }
-                    })
+                    }
+                    if (!found){
+                        let profile = avengineKit.getParticipantProfile(userId, screenSharing);
+                        let userInfo = this.profile2UserInfo(profile);
+                        this.participantUserInfos.push(userInfo);
+                    }
                 };
 
                 sessionCallback.didReportAudioVolume = (userId, volume) => {
@@ -412,11 +423,11 @@
                             this.selfUserInfo._isVideoMuted = this.session.videoMuted;
                             return;
                         }
-                        let profile = avengineKit.getParticipantProfile(p.uid, false);
+                        let profile = avengineKit.getParticipantProfile(p, false);
                         if (!profile) {
                             return;
                         }
-                        console.log('conference', 'didMuteStateChanged', p, profile.videoMuted, profile.audioMuted);
+                        console.log('conference', 'didMuteStateChanged', p, profile, profile.videoMuted, profile.audioMuted);
                         this.participantUserInfos.forEach(u => {
                             if (u.uid === p && u._isScreenSharing === false) {
                                 u._isVideoMuted = profile.videoMuted;
@@ -783,7 +794,7 @@
             },
 
             speakingUserName() {
-                if (!this.selfUserInfo){
+                if (!this.selfUserInfo) {
                     return ''
                 }
                 let maxVolume = this.selfUserInfo._volume;
