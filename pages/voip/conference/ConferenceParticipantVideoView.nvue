@@ -74,13 +74,7 @@
         //     }
         // },
         mounted() {
-            console.log('xxxx----------', this.participant, this.selfUserInfo)
-            if (this.participant.uid === this.selfUserInfo.uid) {
-                avengineKit.setLocalVideoView(this.participant.uid, this.$refs.remoteVideoView.ref)
-            } else {
-                avengineKit.setRemoteVideoView(this.participant.uid, this.$refs.remoteVideoView.ref, false)
-            }
-
+            this.setupVideoView();
         },
         methods: {
             // onDbClickVideo() {
@@ -97,6 +91,16 @@
             //         }
             //     }
             // },
+
+            setupVideoView() {
+                if (!this.participant._isVideoMuted) {
+                    if (this.participant.uid === this.selfUserInfo.uid) {
+                        avengineKit.setLocalVideoView(this.participant.uid, this.$refs.remoteVideoView.ref)
+                    } else {
+                        avengineKit.setRemoteVideoView(this.participant.uid, this.$refs.remoteVideoView.ref, false)
+                    }
+                }
+            },
 
             switchVideoType(userId, screenSharing) {
                 if (!this.session) {
@@ -152,6 +156,24 @@
                     name = user.name;
                 }
                 return name;
+            },
+            // FYI: https://stackoverflow.com/questions/62729380/vue-watch-outputs-same-oldvalue-and-newvalue
+            isVideoMuted() {
+                return this.participant._isAudience || this.participant._isVideoMuted;
+            }
+        },
+        watch: {
+            isVideoMuted: {
+                // deep: true,
+                handler(newValue, oldValue) {
+                    console.log('watch participant', oldValue, newValue)
+                    if (oldValue && !newValue) {
+                        this.$nextTick(() => {
+                            console.log('watch participant setupVideoView', this.$refs.remoteVideoView.ref);
+                            this.setupVideoView();
+                        })
+                    }
+                }
             }
         }
     }
