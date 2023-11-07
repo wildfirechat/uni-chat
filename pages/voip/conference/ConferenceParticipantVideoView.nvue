@@ -3,8 +3,9 @@
          v-bind:class="{highlight: participant._volume > 0}">
         <UIKit-Video-CallView v-if="!participant._isAudience && !participant._isVideoMuted"
                               @dblclick="onDbClickVideo"
+                              ref="remoteVideoView"
                               class="video"
-                              />
+        />
         <div v-else
              class="avatar-container">
             <img class="avatar" :src="participant.portrait" :alt="participant">
@@ -25,6 +26,7 @@
 <script>
     import CallState from "../../../wfc/av/engine/callState";
     import VideoType from "../../../wfc/av/engine/videoType";
+    import avengineKit from "../../../wfc/av/engine/avengineKit";
     // import conferenceManager from "./conferenceManager";
 
     export default {
@@ -35,6 +37,10 @@
                 required: true
             },
             session: {
+                type: Object,
+                required: true,
+            },
+            selfUserInfo: {
                 type: Object,
                 required: true,
             }
@@ -67,21 +73,30 @@
         //         }
         //     }
         // },
+        mounted() {
+            console.log('xxxx----------', this.participant, this.selfUserInfo)
+            if (this.participant.uid === this.selfUserInfo.uid) {
+                avengineKit.setLocalVideoView(this.participant.uid, this.$refs.remoteVideoView.ref)
+            } else {
+                avengineKit.setRemoteVideoView(this.participant.uid, this.$refs.remoteVideoView.ref, false)
+            }
+
+        },
         methods: {
-            onDbClickVideo() {
-                if (conferenceManager.isOwner()) {
-                    conferenceManager.requestFocus(this.participant.uid);
-                } else {
-                    if (conferenceManager.conferenceInfo.focus) {
-                        this.$notify({
-                            text: '主持人已设置了焦点用户',
-                            type: 'warn'
-                        });
-                    } else {
-                        conferenceManager.localFocusUser = this.participant;
-                    }
-                }
-            },
+            // onDbClickVideo() {
+            //     if (conferenceManager.isOwner()) {
+            //         conferenceManager.requestFocus(this.participant.uid);
+            //     } else {
+            //         if (conferenceManager.conferenceInfo.focus) {
+            //             this.$notify({
+            //                 text: '主持人已设置了焦点用户',
+            //                 type: 'warn'
+            //             });
+            //         } else {
+            //             conferenceManager.localFocusUser = this.participant;
+            //         }
+            //     }
+            // },
 
             switchVideoType(userId, screenSharing) {
                 if (!this.session) {
@@ -146,8 +161,8 @@
     .participant-video-item {
         display: flex;
         position: relative;
-        width: var(--participant-video-item-width);
-        height: var(--participant-video-item-height);
+        width: 200px;
+        height: 200px;
         /*background-color: rebeccapurple;*/
 
         flex-direction: column;
@@ -155,6 +170,11 @@
         align-items: center;
         border: 1px solid black;
         background: #2d3033;
+    }
+
+    .video {
+        width: 200px;
+        height: 200px;
     }
 
     .participant-video-item.highlight {
@@ -214,10 +234,10 @@
     }
 
     .participant-video-item > video {
-        max-width: 100%;
-        max-height: 100%;
-        width: 100%;
-        height: 100%;
+        max-width: 200px;
+        max-height: 200px;
+        width: 200px;
+        height: 200px;
         object-fit: cover;
     }
 
