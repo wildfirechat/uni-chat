@@ -144,7 +144,7 @@ export class AVEngineKit {
      * @param {boolean} screenSharing 是否是屏幕共享
      * @param {number} videoType 视频流类型，可选值参考{@link VideoType}
      */
-    setParticipantVideoType(userId, screenSharing, videoType){
+    setParticipantVideoType(userId, screenSharing, videoType) {
         avengineKitPlugin.setParticipantVideoType(userId, screenSharing, videoType);
     }
 
@@ -213,6 +213,22 @@ export class AVEngineKit {
      */
     endCall(callId) {
         avengineKitPlugin.endCall(callId);
+    }
+
+    muteVideo(mute) {
+        avengineKitPlugin.muteVideo(mute)
+    }
+
+    muteAudio(mute) {
+        avengineKitPlugin.muteAudio(mute);
+    }
+
+    downgrade2Voice() {
+        avengineKitPlugin.downgrade2Voice();
+    }
+
+    switchCamera() {
+        avengineKitPlugin.switchCamera();
     }
 
     setLocalVideoView(userId, ref) {

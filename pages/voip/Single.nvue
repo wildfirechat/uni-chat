@@ -146,21 +146,18 @@
                 if (!this.session) {
                     return
                 }
-                let userId = this.session.getParticipantIds()[0];
-                let subscriber = this.session.getSubscriber(userId, false);
-                if (subscriber) {
-                    let currentVideoType = subscriber.currentVideoType;
-                    let videoType = VideoType.NONE;
-                    if (currentVideoType === VideoType.NONE) {
-                        videoType = VideoType.BIG_STREAM;
-                    } else if (currentVideoType === VideoType.BIG_STREAM) {
-                        videoType = VideoType.SMALL_STREAM;
-                    } else if (currentVideoType === VideoType.SMALL_STREAM) {
-                        videoType = VideoType.NONE;
-                    }
-                    console.log('setParticipantVideoType', userId, videoType);
-                    this.session.setParticipantVideoType(userId, false, videoType);
+                let userId = this.participantUserInfo.uid;
+                let currentVideoType = VideoType.BIG_STREAM;
+                let videoType = VideoType.NONE;
+                if (currentVideoType === VideoType.NONE) {
+                    videoType = VideoType.BIG_STREAM;
+                } else if (currentVideoType === VideoType.BIG_STREAM) {
+                    videoType = VideoType.SMALL_STREAM;
+                } else if (currentVideoType === VideoType.SMALL_STREAM) {
+                    videoType = VideoType.NONE;
                 }
+                console.log('setParticipantVideoType', userId, videoType);
+                avengineKit.setParticipantVideoType(userId, false, videoType);
             },
             setupSessionCallback() {
                 let sessionCallback = new CallSessionCallback();
@@ -265,26 +262,22 @@
             },
 
             switchCamera() {
-                if (!this.session || this.session.isScreenSharing()) {
+                if (!this.session) {
                     return;
                 }
-                // TODO
+                avengineKit.switchCamera();
             },
 
             mute() {
-                let enable = this.audioMuted ? true : false;
-                this.session.setAudioEnabled(enable)
+                this.audioMuted = !this.audioMuted;
+                avengineKit.muteAudio(this.audioMuted)
             },
 
             down2voice() {
-                this.session.downgrade2Voice();
+                avengineKit.downgrade2Voice();
             },
+
             screenShare() {
-                if (this.session.isScreenSharing()) {
-                    this.session.stopScreenShare();
-                } else {
-                    this.session.startScreenShare();
-                }
             },
             timestampFormat(timestamp) {
                 timestamp = ~~(timestamp / 1000);
