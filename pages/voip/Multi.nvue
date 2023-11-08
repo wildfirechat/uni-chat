@@ -144,20 +144,16 @@
         },
         methods: {
             switchVideoType(userId, screenSharing) {
-                // TODO
-                // let subscriber = this.session.getSubscriber(userId, screenSharing);
-                // if (subscriber) {
-                //     let currentVideoType = subscriber.currentVideoType;
-                //     let videoType = VideoType.NONE;
-                //     if (currentVideoType === VideoType.NONE) {
-                //         videoType = VideoType.BIG_STREAM;
-                //     } else if (currentVideoType === VideoType.BIG_STREAM) {
-                //         videoType = VideoType.SMALL_STREAM;
-                //     } else if (currentVideoType === VideoType.SMALL_STREAM) {
-                //         videoType = VideoType.NONE;
-                //     }
-                //     this.session.setParticipantVideoType(userId, screenSharing, videoType);
-                // }
+                let currentVideoType = VideoType.BIG_STREAM;
+                let videoType = VideoType.NONE;
+                if (currentVideoType === VideoType.NONE) {
+                    videoType = VideoType.BIG_STREAM;
+                } else if (currentVideoType === VideoType.BIG_STREAM) {
+                    videoType = VideoType.SMALL_STREAM;
+                } else if (currentVideoType === VideoType.SMALL_STREAM) {
+                    videoType = VideoType.NONE;
+                }
+                avengineKit.setParticipantVideoType(userId, screenSharing, videoType);
             },
             setupSessionCallback() {
                 let sessionCallback = new CallSessionCallback();
@@ -276,36 +272,24 @@
             },
 
             switchCamera() {
-                if (!this.session || this.session.isScreenSharing()) {
+                if (!this.session) {
                     return;
                 }
-                // The order is significant - the default capture devices will be listed first.
-                // navigator.mediaDevices.enumerateDevices()
-                navigator.mediaDevices.enumerateDevices().then(devices => {
-                    devices = devices.filter(d => d.kind === 'videoinput');
-                    if (devices.length < 2) {
-                        console.log('switchCamera error, no more video input device')
-                        return;
-                    }
-                    this.videoInputDeviceIndex++;
-                    if (this.videoInputDeviceIndex >= devices.length) {
-                        this.videoInputDeviceIndex = 0;
-                    }
-                    this.session.setVideoInputDeviceId(devices[this.videoInputDeviceIndex].deviceId)
-                    console.log('setVideoInputDeviceId', devices[this.videoInputDeviceIndex]);
-                })
+                avengineKit.switchCamera();
             },
 
             mute() {
-                let toMute = this.session.audioMuted ? false : true;
+                let toMute = !this.session.audioMuted;
+                this.session.audioMuted = toMute;
                 this.selfUserInfo._isAudioMuted = toMute;
-                this.session.muteAudio(toMute)
+                avengineKit.muteAudio(toMute)
             },
 
             muteVideo() {
-                let toMute = this.session.videoMuted ? false : true;
+                let toMute = !this.session.videoMuted;
+                this.session.videoMuted = toMute;
                 this.selfUserInfo._isVideoMuted = toMute;
-                this.session.muteVideo(toMute)
+                avengineKit.muteVideo(toMute)
             },
 
             down2voice() {
@@ -313,26 +297,25 @@
             },
 
             screenShare() {
-                if (this.session.isScreenSharing()) {
-                    this.session.stopScreenShare();
-                } else {
-                    this.session.startScreenShare();
-                }
             },
 
             invite() {
-                let successCB = users => {
-                    let userIds = users.map(u => u.uid);
-                    this.session.inviteNewParticipants(userIds);
-                }
-                this.$pickContact({
-                    successCB,
-                    users: this.session.groupMemberUserInfos,
-                    initialCheckedUsers: [...this.session.participantUserInfos, this.session.selfUserInfo],
-                    uncheckableUsers: [...this.session.participantUserInfos, this.session.selfUserInfo],
-                    showCategoryLabel: false,
-                    confirmTitle: '确定',
-                });
+                let beforeClose = (users) => {
+                    let ids = users.map(u => u.uid);
+                    console.log('picked users', ids)
+                    avengineKit.inviteNewParticipants(ids);
+                };
+                let groupMemberUserInfos = getApp().store.getGroupMemberUserInfos(this.session.conversation.target, false);
+                getApp().$pickUsers(
+                    {
+                        users: groupMemberUserInfos,
+                        initialCheckedUsers: [...this.participantUserInfos, this.selfUserInfo],
+                        uncheckableUsers: [...this.participantUserInfos, this.selfUserInfo],
+                        confirmTitle: '确定',
+                        successCB: beforeClose,
+                    })
+
+
             },
 
             userName(user) {
@@ -362,9 +345,11 @@
             },
 
             broadcastMultiCallOngoing() {
-                let participants = this.participantUserInfos.map(pu => pu.uid).filter(uid => uid !== this.selfUserInfo.uid)
-                let ongoing = new MultiCallOngoingMessageContent(this.session.callId, this.session.initiatorId, this.session.audioOnly, participants);
-                this.wfc.sendConversationMessage(this.session.conversation, ongoing);
+                // let participants = this.participantUserInfos.map(pu => pu.uid).filter(uid => uid !== this.selfUserInfo.uid)
+                // let ongoing = new MultiCallOngoingMessageContent(this.session.callId, this.session.initiatorId, this.session.audioOnly, participants);
+                // this.wfc.sendConversationMessage(this.session.conversation, ongoing);
+
+                // TODO 不能引入 MultiCallOngoingMessageContent，在 js 层去做吧
             }
         },
 

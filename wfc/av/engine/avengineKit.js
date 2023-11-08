@@ -231,6 +231,10 @@ export class AVEngineKit {
         avengineKitPlugin.switchCamera();
     }
 
+    inviteParticipant(userIds){
+        avengineKitPlugin.inviteParticipant(userIds);
+    }
+
     setLocalVideoView(userId, ref) {
         avengineKitPlugin.setLocalVideoView(userId, ref);
     }

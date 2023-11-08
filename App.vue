@@ -10,6 +10,7 @@ export default {
         return {
             wfc: null,
             avengineKit: null,
+            store: null,
             conferenceManager: null,
         }
     },
@@ -17,6 +18,7 @@ export default {
         console.log("App Launch");
         this.wfc = wfc;
         this.avengineKit = avengineKit;
+        this.store = store;
         this.conferenceManager = conferenceManager;
         // #ifdef APP-PLUS
         plus.push.getClientInfoAsync((info) => {
