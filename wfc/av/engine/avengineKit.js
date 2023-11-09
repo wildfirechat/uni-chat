@@ -219,8 +219,23 @@ export class AVEngineKit {
         avengineKitPlugin.muteVideo(mute)
     }
 
+    /**
+     * 关闭麦克风
+     * @param {boolean} mute 是否关闭麦克风
+     * @return {boolean} 是否关闭成功
+     */
     muteAudio(mute) {
         avengineKitPlugin.muteAudio(mute);
+    }
+
+    /**
+     * 会议时有效
+     * 切换为观众
+     * @param {boolean} audience
+     * @return {boolean} 是否切换成功
+     */
+    switchAudience(audience) {
+        avengineKitPlugin.switchAudience(audience);
     }
 
     downgrade2Voice() {
@@ -231,7 +246,7 @@ export class AVEngineKit {
         avengineKitPlugin.switchCamera();
     }
 
-    inviteParticipant(userIds){
+    inviteParticipant(userIds) {
         avengineKitPlugin.inviteParticipant(userIds);
     }
 

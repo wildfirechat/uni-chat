@@ -48,31 +48,24 @@
         data() {
             return {
                 status: CallState.STATUS_CONNECTING,
-                //selfUserId: conferenceManager.selfUserId,
             }
         },
-        // created() {
-        //     console.log('------------- videoView created', this.participant.uid);
-        //     if (this.selfUserId !== this.participant.uid) {
-        //         if (!this.participant._isVideoMuted) {
-        //             this.session.setParticipantVideoType(this.participant.uid, this.participant._isScreenSharing, VideoType.BIG_STREAM);
-        //         }
-        //     }
-        // },
-        // destroyed() {
-        //     console.log('------------- videoView destroyed', this.$parent.currentLayout, this.layoutMode, this.participant.uid);
-        //     // fixme
-        //     // 切换布局时，不取消订阅视频流
-        //     // 已知问题，演讲者模式时，会订阅所有的视频流；从演讲者模式，切换到宫格布局时，会保持订阅所有的视频流，直到切换宫格布局的页面时，才会取消订阅一些看不见的流
-        //     if (this.$parent.currentLayout !== this.currentLayout) {
-        //         return;
-        //     }
-        //     if (this.selfUserId !== this.participant.uid) {
-        //         if (!this.participant._isVideoMuted) {
-        //             this.session.setParticipantVideoType(this.participant.uid, this.participant._isScreenSharing, VideoType.NONE);
-        //         }
-        //     }
-        // },
+        created() {
+            console.log('videoView created', this.participant.uid);
+            if (this.selfUserId !== this.participant.uid) {
+                if (!this.participant._isVideoMuted) {
+                    avengineKit.setParticipantVideoType(this.participant.uid, this.participant._isScreenSharing, VideoType.BIG_STREAM);
+                }
+            }
+        },
+        destroyed() {
+            console.log('videoView destroyed', this.participant.uid);
+            if (this.selfUserInfo.uid !== this.participant.uid) {
+                if (!this.participant._isVideoMuted) {
+                    avengineKit.setParticipantVideoType(this.participant.uid, this.participant._isScreenSharing, VideoType.NONE);
+                }
+            }
+        },
         mounted() {
             this.setupVideoView();
         },
@@ -106,40 +99,16 @@
                 if (!this.session) {
                     return
                 }
-                let subscriber = this.session.getSubscriber(userId, screenSharing);
-                if (subscriber) {
-                    let currentVideoType = subscriber.currentVideoType;
-                    let videoType = VideoType.NONE;
-                    if (currentVideoType === VideoType.NONE) {
-                        videoType = VideoType.BIG_STREAM;
-                    } else if (currentVideoType === VideoType.BIG_STREAM) {
-                        videoType = VideoType.SMALL_STREAM;
-                    } else if (videoType === VideoType.SMALL_STREAM) {
-                        videoType = VideoType.NONE;
-                    }
-                    this.session.setParticipantVideoType(userId, screenSharing, videoType);
+                let currentVideoType = VideoType.BIG_STREAM;
+                let videoType = VideoType.NONE;
+                if (currentVideoType === VideoType.NONE) {
+                    videoType = VideoType.BIG_STREAM;
+                } else if (currentVideoType === VideoType.BIG_STREAM) {
+                    videoType = VideoType.SMALL_STREAM;
+                } else if (currentVideoType === VideoType.SMALL_STREAM) {
+                    videoType = VideoType.NONE;
                 }
-            },
-
-            switchCamera() {
-                if (!this.session || this.session.isScreenSharing()) {
-                    return;
-                }
-                // The order is significant - the default capture devices will be listed first.
-                // navigator.mediaDevices.enumerateDevices()
-                navigator.mediaDevices.enumerateDevices().then(devices => {
-                    devices = devices.filter(d => d.kind === 'videoinput');
-                    if (devices.length < 2) {
-                        console.log('switchCamera error, no more video input device')
-                        return;
-                    }
-                    this.videoInputDeviceIndex++;
-                    if (this.videoInputDeviceIndex >= devices.length) {
-                        this.videoInputDeviceIndex = 0;
-                    }
-                    this.session.setVideoInputDeviceId(devices[this.videoInputDeviceIndex].deviceId)
-                    console.log('setVideoInputDeviceId', devices[this.videoInputDeviceIndex]);
-                })
+                avengineKit.setParticipantVideoType(userId, screenSharing, videoType);
             },
         },
         computed: {

@@ -234,12 +234,12 @@
 
                     let selfProfile = avengineKit.getMyProfile();
                     let selfUserInfo = this.profile2UserInfo(selfProfile)
-                    console.log('xxxx selfProfile', selfProfile);
+                    console.log('selfProfile', selfProfile);
                     this.selfUserInfo = selfUserInfo;
                     this.participantUserInfos.push(selfUserInfo);
 
                     let participantProfiles = avengineKit.getParticipantProfiles();
-                    console.log('xxx participantProfiles', participantProfiles)
+                    console.log('participantProfiles', participantProfiles)
                     for (const p of participantProfiles) {
                         let userInfo = this.profile2UserInfo(p);
                         this.participantUserInfos.push(userInfo);
@@ -302,7 +302,13 @@
 
                 sessionCallback.didReceiveRemoteVideoTrack = (userId, screenSharing) => {
                     console.log('didReceiveRemoteVideoTrack', userId, screenSharing);
-                    // TODO
+                    for (let i = 0; i < this.participantUserInfos.length; i++) {
+                        let p = this.participantUserInfos[i];
+                        if (p.uid === userId && p._isScreenSharing === screenSharing) {
+                            p._isVideoMuted = false;
+                            break;
+                        }
+                    }
                 };
 
                 sessionCallback.didRemoveRemoteVideoTrack = (userId) => {
@@ -348,6 +354,7 @@
 
                 sessionCallback.onRequestChangeMode = (userId, audience) => {
                     console.log('onRequestChangeMode', userId + ' ' + audience)
+                    // TODO
                     // if (audience) {
                     //     this.session.switchAudience(true)
                     //     return;
@@ -490,22 +497,29 @@
             },
 
             async _muteAudio(enable) {
-                let result = await this.session.setAudioEnabled(enable)
+                let result = await avengineKit.muteAudio(!enable)
                 if (!result) {
                     return;
                 }
                 this.selfUserInfo._isAudioMuted = !enable;
+                this.session.audioMuted = !enable;
 
                 console.log('muteAudio', this.selfUserInfo._isAudioMuted, this.session.audience)
                 if (enable) {
                     if (this.session.audience) {
-                        await this.session.switchAudience(false);
-                        this.selfUserInfo._isAudience = false;
+                        let result = avengineKit.switchAudience(false);
+                        if (result) {
+                            this.selfUserInfo._isAudience = false;
+                            this.session.audience = false;
+                        }
                     }
                 } else {
                     if (this.session.videoMuted && !this.session.audience) {
-                        await this.session.switchAudience(true);
-                        this.selfUserInfo._isAudience = true;
+                        let result = avengineKit.switchAudience(true);
+                        if (result) {
+                            this.selfUserInfo._isAudience = true;
+                            this.session.audience = true;
+                        }
                     }
                 }
             },
@@ -515,28 +529,42 @@
                     this.requestUnmute(false);
                     return;
                 }
+                console.log('muteVideo', enable)
                 this._muteVideo(enable);
             },
 
             async _muteVideo(enable) {
-                let result = await this.session.setVideoEnabled(enable)
+                let result = avengineKit.muteVideo(!enable)
                 if (!result) {
                     return;
                 }
                 this.selfUserInfo._isVideoMuted = !enable;
+                // for (const p of this.participantUserInfos) {
+                //     if (p.uid === this.selfUserInfo.uid) {
+                //         p._isVideoMuted = !enable;
+                //         break;
+                //     }
+                // }
 
                 console.log('muteVideo result', this.selfUserInfo._isVideoMuted, this.session.audience)
                 if (enable) {
                     if (this.session.audience) {
-                        await this.session.switchAudience(false);
-                        this.selfUserInfo._isAudience = false;
+                        let result = avengineKit.switchAudience(false);
+                        if (result) {
+                            this.selfUserInfo._isAudience = false;
+                            this.session.audience = false;
+                        }
                     }
                 } else {
-                    if (this.session.audioMuted && !this.session.audience) {
-                        await this.session.switchAudience(true);
-                        this.selfUserInfo._isAudience = true;
+                    if (this.session.videoMuted && !this.session.audience) {
+                        let result = avengineKit.switchAudience(true);
+                        if (result) {
+                            this.selfUserInfo._isAudience = true;
+                            this.session.audience = true;
+                        }
                     }
                 }
+                console.log('xxxxxxxx', this.selfUserInfo, this.participantUserInfos)
             },
 
             requestUnmute(audio) {
@@ -550,10 +578,6 @@
                         this.conferenceManager.applyUnmute(false);
                     }
                 })
-            },
-
-            down2voice() {
-                this.session.downgrade2Voice();
             },
 
             members() {
@@ -622,21 +646,21 @@
                 //     return;
                 // }
 
-                if (this.session.screenSharing) {
-                    this.session.stopScreenShare();
-                    console.log('stopScreenShare', this.session.videoMuted, this.session.audioMuted);
-                    if (this.session.videoMuted && this.session.audioMuted) {
-                        this.session.switchAudience(true);
-                    }
-                    // currentWindow.setIgnoreMouseEvents(false)
-                } else {
-                    if (this.session.audience) {
-                        await this.session.switchAudience(false);
-                    }
-                    this.session.startScreenShare({
-                        frameRate: 30
-                    });
-                }
+                // if (this.session.screenSharing) {
+                //     this.session.stopScreenShare();
+                //     console.log('stopScreenShare', this.session.videoMuted, this.session.audioMuted);
+                //     if (this.session.videoMuted && this.session.audioMuted) {
+                //         this.session.switchAudience(true);
+                //     }
+                //     // currentWindow.setIgnoreMouseEvents(false)
+                // } else {
+                //     if (this.session.audience) {
+                //         await this.session.switchAudience(false);
+                //     }
+                //     this.session.startScreenShare({
+                //         frameRate: 30
+                //     });
+                // }
             },
 
             // 设置音频输出设备
@@ -707,25 +731,6 @@
                         }
                     })
                 }
-            },
-
-            rejoinConference() {
-                avenginekit.joinConference({
-                    callId: this.session.callId,
-                    pin: this.session.pin,
-                    host: this.session.host,
-                    tile: this.session.title,
-                    desc: this.session.desc,
-                    audioOnly: this.session.audioOnly,
-                    audience: this.session.audience,
-                    advance: this.session.advance,
-                    muteVideo: this.session.videoMuted,
-                    muteAudio: this.session.audioMuted,
-                    extra: this.session.extra,
-                    callExtra: this.session.callExtra,
-                    selfUserInfo: this.selfUserInfo,
-                });
-                this.endReason = undefined;
             },
 
             prePage() {
@@ -943,7 +948,7 @@
                 deep: true,
                 handler(infos) {
                     let audioOnly = true;
-                    console.log('xxx watchParticipantUserInfos');
+                    console.log('watchParticipantUserInfos');
                     // console.log('participantUserInfos', this.session.screenSharing);
                     if (this.session.screenSharing) {
                         audioOnly = false;
@@ -951,14 +956,14 @@
                         for (let i = 0; i < this.participantUserInfos.length; i++) {
                             let u = this.participantUserInfos[i];
                             if (!u._isAudience && !u._isVideoMuted) {
-                                console.log('xxxxxx audioOnly false', u, u._isAudience, u._isVideoMuted)
+                                console.log('audioOnly false', u, u._isAudience, u._isVideoMuted)
                                 audioOnly = false;
                                 break;
                             }
                         }
                     }
                     this.audioOnly = audioOnly;
-                    console.log('xxxxxxx audioOly ', audioOnly)
+                    console.log('audioOly ', audioOnly)
 
                     if (this.audioOnly) {
                         return;
