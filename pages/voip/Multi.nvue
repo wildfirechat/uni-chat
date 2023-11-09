@@ -200,17 +200,20 @@
                 };
 
                 sessionCallback.didParticipantJoined = (userId, screenSharing) => {
+
                     let profile = avengineKit.getParticipantProfile(userId, screenSharing);
                     let userInfo = this.wfc.getUserInfo(userId)
                     userInfo._isVideoMuted = profile.videoMuted;
                     userInfo._isAudioMuted = profile.audioMuted;
                     userInfo._isAudience = profile.audience;
-                    console.log('didParticipantJoined', userInfo)
                     this.participantUserInfos.push(userInfo);
 
-                    if (this.callState === CallState.STATUS_CONNECTED) {
+                    console.log('didParticipantJoined', userInfo, this.callState)
+
+                    if (this.callState === CallState.STATUS_CONNECTED && !userInfo._isVideoMuted) {
                         this.$nextTick(() => {
-                            avengineKit.setRemoteVideoView(this.selfUserInfo.uid, this.$refs['remoteVideo-' + userId][0].ref, false)
+                            console.log('setRemoteVideoView', userId, this.$refs['removeVideo-' + userId][0].ref)
+                            avengineKit.setRemoteVideoView(userId, this.$refs['remoteVideo-' + userId][0].ref, false)
                         })
                     }
                 }
@@ -303,7 +306,7 @@
                 let beforeClose = (users) => {
                     let ids = users.map(u => u.uid);
                     console.log('picked users', ids)
-                    avengineKit.inviteNewParticipants(ids);
+                    avengineKit.inviteParticipant(ids);
                 };
                 let groupMemberUserInfos = getApp().store.getGroupMemberUserInfos(this.session.conversation.target, false);
                 getApp().$pickUsers(
