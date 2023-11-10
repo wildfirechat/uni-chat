@@ -120,7 +120,7 @@
     import avengineKit from "../../../wfc/av/engine/avengineKit";
 
     export default {
-        name: 'Conference',
+        name: 'ConferencePage',
         data() {
             return {
                 wfc: getApp().wfc,
@@ -373,9 +373,17 @@
                 sessionCallback.didChangeType = (userId, audience, screenSharing) => {
                     console.log('didChangeType', userId, audience, screenSharing);
                     let found = false;
+                    let profile = avengineKit.getParticipantProfile(userId, screenSharing);
+                    if (this.selfUserInfo.uid === userId){
+                        this.session.audience = audience;
+                        this.session.videoMuted = profile.videoMuted;
+                        this.session.audioMuted = profile.audioMuted;
+                    }
                     for (const u of this.participantUserInfos) {
                         if (u.uid === userId && u._isScreenSharing === screenSharing) {
                             u._isAudience = audience;
+                            u._isVideoMuted = profile.videoMuted;
+                            u._isAudioMuted = profile.audioMuted;
                             if (this.speakingVideoParticipant && this.speakingVideoParticipant.uid === u.uid) {
                                 this.speakingVideoParticipant = null;
                             }
@@ -384,7 +392,6 @@
                         }
                     }
                     if (!found) {
-                        let profile = avengineKit.getParticipantProfile(userId, screenSharing);
                         let userInfo = this.profile2UserInfo(profile);
                         this.participantUserInfos.push(userInfo);
                     }
@@ -425,12 +432,6 @@
                 sessionCallback.didMuteStateChanged = (participants) => {
                     console.log('conference', 'didMuteStateChanged', participants)
                     participants.forEach(p => {
-                        // 自己
-                        if (p === this.selfUserInfo.uid) {
-                            console.log('conference', 'didMuteStateChanged self', this.session.videoMuted);
-                            this.selfUserInfo._isVideoMuted = this.session.videoMuted;
-                            return;
-                        }
                         let profile = avengineKit.getParticipantProfile(p, false);
                         if (!profile) {
                             return;
@@ -444,9 +445,16 @@
                                     this.speakingVideoParticipant = null;
                                 }
                             }
-                        })
 
+                            if (u.uid === this.selfUserInfo.uid) {
+                                this.session.videoMuted = profile.videoMuted;
+                                this.session.audioMuted = profile.audioMuted;
+                            }
+                        })
                     })
+
+                    console.log('xxxxxxxx', this.session.audience, this.session.audioMuted, this.session.videoMuted)
+                    console.log('xxxxxx audioMute status', !this.session.audience && !this.session.audioMuted)
                 };
 
                 sessionCallback.didMediaLostPacket = (media, lostPacket, screenSharing) => {
@@ -497,29 +505,24 @@
             },
 
             async _muteAudio(enable) {
-                let result = await avengineKit.muteAudio(!enable)
-                if (!result) {
-                    return;
-                }
-                this.selfUserInfo._isAudioMuted = !enable;
-                this.session.audioMuted = !enable;
+                avengineKit.muteAudio(!enable)
 
                 console.log('muteAudio', this.selfUserInfo._isAudioMuted, this.session.audience)
                 if (enable) {
                     if (this.session.audience) {
                         let result = avengineKit.switchAudience(false);
-                        if (result) {
-                            this.selfUserInfo._isAudience = false;
-                            this.session.audience = false;
-                        }
+                        // if (result) {
+                        //     this.selfUserInfo._isAudience = false;
+                        //     this.session.audience = false;
+                        // }
                     }
                 } else {
                     if (this.session.videoMuted && !this.session.audience) {
                         let result = avengineKit.switchAudience(true);
-                        if (result) {
-                            this.selfUserInfo._isAudience = true;
-                            this.session.audience = true;
-                        }
+                        // if (result) {
+                        //     this.selfUserInfo._isAudience = true;
+                        //     this.session.audience = true;
+                        // }
                     }
                 }
             },
@@ -529,39 +532,30 @@
                     this.requestUnmute(false);
                     return;
                 }
-                console.log('muteVideo', enable)
                 this._muteVideo(enable);
             },
 
             async _muteVideo(enable) {
-                let result = avengineKit.muteVideo(!enable)
-                if (!result) {
-                    return;
-                }
-                this.selfUserInfo._isVideoMuted = !enable;
-                // for (const p of this.participantUserInfos) {
-                //     if (p.uid === this.selfUserInfo.uid) {
-                //         p._isVideoMuted = !enable;
-                //         break;
-                //     }
-                // }
+                console.log('muteVideo', !enable)
+                avengineKit.muteVideo(!enable)
 
-                console.log('muteVideo result', this.selfUserInfo._isVideoMuted, this.session.audience)
                 if (enable) {
                     if (this.session.audience) {
                         let result = avengineKit.switchAudience(false);
-                        if (result) {
-                            this.selfUserInfo._isAudience = false;
-                            this.session.audience = false;
-                        }
+                        console.log('switchAudience ', false, result)
+                        // if (result) {
+                        //     this.selfUserInfo._isAudience = false;
+                        //     this.session.audience = false;
+                        // }
                     }
                 } else {
                     if (this.session.videoMuted && !this.session.audience) {
                         let result = avengineKit.switchAudience(true);
-                        if (result) {
-                            this.selfUserInfo._isAudience = true;
-                            this.session.audience = true;
-                        }
+                        console.log('switchAudience ', true, result)
+                        // if (result) {
+                        //     this.selfUserInfo._isAudience = true;
+                        //     this.session.audience = true;
+                        // }
                     }
                 }
                 console.log('xxxxxxxx', this.selfUserInfo, this.participantUserInfos)

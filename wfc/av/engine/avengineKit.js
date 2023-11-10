@@ -235,7 +235,7 @@ export class AVEngineKit {
      * @return {boolean} 是否切换成功
      */
     switchAudience(audience) {
-        avengineKitPlugin.switchAudience(audience);
+        return avengineKitPlugin.switchAudience(audience);
     }
 
     downgrade2Voice() {
