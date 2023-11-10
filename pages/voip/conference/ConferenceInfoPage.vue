@@ -89,7 +89,10 @@ export default {
             console.log('options', options)
             let conferenceId = options.conferenceId;
             let password = options.password;
-            this.getConferenceInfo(conferenceId, password);
+            this.conferenceInfo = options.conferenceInfo;
+            if (!this.conferenceInfo) {
+                this.getConferenceInfo(conferenceId, password);
+            }
         })
     },
     mounted() {

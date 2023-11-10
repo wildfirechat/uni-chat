@@ -16,7 +16,7 @@
             <i class="icon-ion-ios-arrow-right"></i>
         </div>
         <div class="item" @click="showConferencePortal">
-            <image src="/static/image/icon/ic_dev_docs.png"/>
+            <image src="/static/image/icon/ic_conference.png"/>
             <text>会议</text>
             <i class="icon-ion-ios-arrow-right"></i>
         </div>

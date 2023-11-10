@@ -248,6 +248,12 @@
             }
         },
         {
+            "path": "pages/voip/conference/JoinConferencePage",
+            "style": {
+                "navigationBarTitleText": " 加入会议"
+            }
+        },
+        {
             "path": "pages/voip/conference/CreateConferencePage",
             "style": {
                 "navigationBarTitleText": "发起会议"

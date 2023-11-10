@@ -4,6 +4,7 @@ import ConferenceCommandMessageContent from "../../../wfc/av/messages/conference
 import Conversation from "../../../wfc/model/conversation";
 import ConversationType from "../../../wfc/model/conversationType";
 import wfc from "../../../wfc/client/wfc";
+import {getItem, setItem} from "../../util/storageHelper";
 
 class ConferenceManager {
 
@@ -30,7 +31,7 @@ class ConferenceManager {
         avenginekitproxy.listenVoipEvent('message', this.onReceiveMessage);
     }
 
-    setConferenceInfo(conferenceInfo){
+    setConferenceInfo(conferenceInfo) {
         this.conferenceInfo = conferenceInfo;
     }
 
@@ -323,27 +324,30 @@ class ConferenceManager {
 
     addHistory(conferenceInfo, durationMS) {
         console.log('addHistory', conferenceInfo, durationMS);
-        // TODO
-        // let tmp = localStorage.getItem('historyConfList');
-        // let historyList = JSON.parse(tmp);
-        // historyList = historyList ? historyList : [];
-        // conferenceInfo.endTime = Math.ceil(conferenceInfo.startTime + durationMS / 1000);
-        // let index = historyList.findIndex(info => info.conferenceId === conferenceInfo.conferenceId)
-        // if (index >= 0) {
-        //     historyList[index] = conferenceInfo;
-        // } else {
-        //     historyList.push(conferenceInfo);
-        //     if (historyList.length > 50) {
-        //         historyList = historyList.shift();
-        //     }
-        // }
-        // localStorage.setItem('historyConfList', JSON.stringify(historyList, null, ''));
+        let tmp = getItem('historyConfList');
+        let historyList = [];
+        if (tmp) {
+            historyList = JSON.parse(tmp);
+        }
+        conferenceInfo.endTime = Math.ceil(conferenceInfo.startTime + durationMS / 1000);
+        let index = historyList.findIndex(info => info.conferenceId === conferenceInfo.conferenceId)
+        if (index >= 0) {
+            historyList[index] = conferenceInfo;
+        } else {
+            historyList.push(conferenceInfo);
+            if (historyList.length > 10) {
+                historyList = historyList.shift();
+            }
+        }
+        setItem('historyConfList', JSON.stringify(historyList, null, ''));
     }
 
     getHistoryConference() {
-        let tmp = localStorage.getItem('historyConfList');
-        let historyList = JSON.parse(tmp);
-        historyList = historyList ? historyList : [];
+        let tmp = getItem('historyConfList');
+        let historyList = [];
+        if (tmp) {
+            historyList = JSON.parse(tmp);
+        }
         return historyList;
     }
 

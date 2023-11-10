@@ -86,6 +86,7 @@ export default {
                         title: '创建会议成功',
                         icon: 'none'
                     })
+                    uni.navigateBack();
                 })
                 .catch(err => {
                     uni.showToast({

@@ -1,7 +1,6 @@
 <template>
     <div class="conference-portal-container">
         <div class="left-slider">
-            <h2 class="title">视频会议</h2>
             <div class="action-container">
                 <div class="action" style="background: #e1e9ff" @click="joinConference">
                     <!--                    <img :src="require(`@/assets/images/av_join_conference.png`)" alt="">-->
@@ -71,11 +70,7 @@
 </template>
 
 <script>
-import CreateConferenceView from "./CreateConferencePage.vue";
-import JoinConferenceView from "./JoinConferenceView";
-import OrderConferenceView from "./OrderConferencePage.vue";
 import conferenceApi from "../../../api/conferenceApi";
-import ConferenceInfoPage from "./ConferenceInfoPage.vue";
 import conferenceManager from "./conferenceManager";
 import wfc from "../../../wfc/client/wfc";
 
@@ -102,101 +97,18 @@ export default {
                 });
         },
         joinConference() {
-            let beforeOpen = () => {
-                console.log('Opening...')
-            };
-            let beforeClose = (event) => {
-                console.log('Closing...', event, event.params)
-            };
-            let closed = (event) => {
-                console.log('Close...', event)
-            };
-            this.$modal.show(
-                JoinConferenceView,
-                {}, {
-                    name: 'join-conference-modal',
-                    width: 320,
-                    height: 300,
-                    clickToClose: true,
-                }, {
-                    'before-open': beforeOpen,
-                    'before-close': beforeClose,
-                    'closed': closed,
-                })
+            this.$navigateToPage('/pages/voip/conference/JoinConferencePage')
         },
         createConference() {
-            let beforeOpen = () => {
-                console.log('Opening...')
-            };
-            let beforeClose = (event) => {
-                console.log('Closing...', event, event.params)
-            };
-            let closed = (event) => {
-                console.log('Close...', event)
-                this.loadFavConferences();
-            };
-            this.$modal.show(
-                CreateConferenceView,
-                {}, {
-                    name: 'create-conference-modal',
-                    width: 320,
-                    height: 500,
-                    clickToClose: true,
-                }, {
-                    'before-open': beforeOpen,
-                    'before-close': beforeClose,
-                    'closed': closed,
-                })
+            this.$navigateToPage('/pages/voip/conference/CreateConferencePage')
         },
         orderConference() {
-            let beforeOpen = () => {
-                console.log('Opening...')
-            };
-            let beforeClose = (event) => {
-                console.log('Closing...', event, event.params)
-            };
-            let closed = (event) => {
-                console.log('Close...', event)
-                this.loadFavConferences();
-            };
-            this.$modal.show(
-                OrderConferenceView,
-                {}, {
-                    name: 'order-conference-modal',
-                    width: 320,
-                    height: 500,
-                    clickToClose: true,
-                }, {
-                    'before-open': beforeOpen,
-                    'before-close': beforeClose,
-                    'closed': closed,
-                })
-
+            this.$navigateToPage('/pages/voip/conference/OrderConferencePage')
         },
         showConferenceInfo(info) {
-            let beforeOpen = () => {
-                console.log('Opening...')
-            };
-            let beforeClose = (event) => {
-                console.log('Closing...', event, event.params)
-            };
-            let closed = (event) => {
-                console.log('Close...', event)
-            };
-            this.$modal.show(
-                ConferenceInfoPage,
-                {
-                    conferenceInfo: info,
-                }, {
-                    name: 'conference-info-modal',
-                    width: 320,
-                    height: 580,
-                    clickToClose: true,
-                }, {
-                    'before-open': beforeOpen,
-                    'before-close': beforeClose,
-                    'closed': closed,
-                })
+            this.$navigateToPage('/pages/voip/conference/ConferenceInfoPage', {
+                conferenceInfo: info,
+            });
         },
         favConferenceDesc(conferenceInfo) {
             let start = new Date(conferenceInfo.startTime * 1000).getTime();
@@ -240,12 +152,11 @@ export default {
     display: flex;
     flex: 1;
     height: 100%;
-    align-items: center;
+    flex-direction: column;
 }
 
 .left-slider {
-    height: 100%;
-    width: 30%;
+    width: 100%;
     background: white;
     padding: 20px;
 }
@@ -258,11 +169,10 @@ export default {
 .action-container {
     width: 100%;
     display: flex;
-    flex-direction: column;
 }
 
 .action {
-    width: 150px;
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
