@@ -317,8 +317,6 @@
                         confirmTitle: '确定',
                         successCB: beforeClose,
                     })
-
-
             },
 
             userName(user) {

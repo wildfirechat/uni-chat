@@ -4,6 +4,9 @@ import {getItem} from "./pages/util/storageHelper";
 import wfc from "./wfc/client/wfc";
 import avengineKit from "./wfc/av/engine/avengineKit";
 import conferenceManager from "./pages/voip/conference/conferenceManager";
+import ConferenceInviteMessageContent from "./wfc/av/messages/conferenceInviteMessageContent";
+import Message from "./wfc/messages/message";
+import ForwardType from "./pages/conversation/message/forward/ForwardType";
 
 export default {
     data() {
@@ -64,7 +67,17 @@ export default {
                     console.log('switch tab complete')
                 }
             });
-        }
+        },
+
+        forwardConferenceInviteMessage(callId, host, title, desc, startTime, audioOnly, defaultAudience, advance, pin) {
+            let inviteMessageContent = new ConferenceInviteMessageContent(callId, host, title, desc, startTime, audioOnly, defaultAudience, advance, pin);
+            console.log('invite', inviteMessageContent);
+            let message = new Message(null, inviteMessageContent);
+            this.$forward({
+                forwardType: ForwardType.NORMAL,
+                messages: [message]
+            });
+        },
     }
 }
 </script>

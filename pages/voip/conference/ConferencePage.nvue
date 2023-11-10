@@ -95,7 +95,6 @@
                     </div>
                     <div class="action">
                         <img @click.stop="members" class="action-img"
-                             v-bind:style="{filter: showConferenceManageView ? 'invert(100%)' : 'none'}"
                              src='@/assets/images/av_conference_members.png'/>
                         <p>管理</p>
                     </div>
@@ -128,6 +127,7 @@
                 password: '',
                 conferenceManager: getApp().conferenceManager,
                 session: {},
+                conferenceInfo: null,
                 audioOnly: true,
                 status: 1,
                 selfUserInfo: null,
@@ -137,7 +137,6 @@
                 currentTimestamp: 0,
 
                 showSlider: false,
-                showConferenceManageView: false,
                 showConversationView: false,
                 videoInputDeviceIndex: 0,
 
@@ -176,6 +175,7 @@
             eventChannel.on('options', (options) => {
                 console.log('options', options, getApp(), getApp().wfc)
                 let conferenceInfo = options.conferenceInfo;
+                this.conferenceInfo = conferenceInfo;
                 this.joinConference(conferenceInfo);
             })
         },
@@ -575,8 +575,10 @@
             },
 
             members() {
-                this.showConferenceManageView = !this.showConferenceManageView;
-                this.toggleSliderView();
+                let host = this.conferenceInfo.owner;
+                let defaultAudience = false;
+                let pin = this.conferenceInfo.pin;
+                getApp().forwardConferenceInviteMessage(this.session.callId, host, this.session.title, this.session.desc, this.session.startTime, this.session.audioOnly, defaultAudience, this.session.advance, pin);
             },
 
             chat() {
