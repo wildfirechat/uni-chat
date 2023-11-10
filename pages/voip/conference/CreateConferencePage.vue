@@ -1,6 +1,5 @@
 <template>
     <div class="create-conference-container">
-        <h2>发起会议</h2>
         <input v-model="title" class="text-input" type="text" placeholder="会议标题">
         <input v-if="false" v-model="desc" class="text-input" type="text" placeholder="会议描述">
         <label>
@@ -13,23 +12,23 @@
         </label>
         <label>
             参与者开启摄像头、麦克风入会
-            <input v-model="audience" type="checkbox">
+            <checkbox v-model="audience"/>
         </label>
         <label>
             允许参与者自主开启摄像头和麦克风
-            <input :disabled="audience" v-model="allowTurnOnMic" type="checkbox">
+            <checkbox :disabled="audience" v-model="allowTurnOnMic"/>
         </label>
         <div>
             <label>
                 启用密码
-                <input v-model="enablePassword" type="checkbox">
+                <checkbox v-model="enablePassword"/>
             </label>
             <input v-if="enablePassword" v-model="password" class="text-input" style="margin-top: 10px" type="tel" maxlength="4" placeholder="123456">
         </div>
         <div>
             <label>
                 大规模会议
-                <input v-model="advance" type="checkbox">
+                <checkbox v-model="advance"/>
             </label>
             <p class="advance_desc">参会人数大于50人</p>
         </div>
@@ -42,10 +41,9 @@
 </template>
 
 <script>
-import avenginekitproxy from "../../../wfc/av/engine/avenginekitproxy";
 import conferenceApi from "../../../api/conferenceApi";
 import ConferenceInfo from "../../../wfc/av/model/conferenceInfo";
-import conferenceManager from "./conferenceManager";
+import wfc from "../../../wfc/client/wfc";
 
 export default {
     name: "CreateConferenceView",
@@ -71,7 +69,7 @@ export default {
             }
             info.pin = '' + Math.ceil((1 + Math.random() * 100000) / 10);
 
-            info.owner = conferenceManager.selfUserId;
+            info.owner = wfc.getUserId();
             info.startTime = Math.ceil(new Date().getTime() / 1000);
             info.endTime = Math.ceil(new Date(this.endTime).getTime() / 1000);
             info.audience = this.audience;
@@ -83,35 +81,35 @@ export default {
         },
         createConference() {
             this._createConference()
-                .then(info => {
-                    this.$notify({
-                        text: '创建会议 成功',
-                        type: 'info'
-                    });
+                .then(infoo => {
+                    uni.showToast({
+                        title: '创建会议成功',
+                        icon: 'none'
+                    })
                 })
                 .catch(err => {
-                    this.$notify({
+                    uni.showToast({
                         title: '创建会议失败',
-                        text: err.message,
-                        type: 'error'
-                    });
+                        icon: 'none'
+                    })
                 })
-            this.$modal.hide('create-conference-modal')
         },
         createAndJoinConference() {
             this._createConference()
                 .then(info => {
-                    console.log('createAndJoin conference', info);
-                    avenginekitproxy.startConference(info.conferenceId, false, info.pin, info.owner, info.conferenceTitle, this.desc, info.audience, info.advance);
-                })
-                .catch(err => {
-                    this.$notify({
-                        title: '创建会议失败',
-                        text: err.message,
-                        type: 'error'
+                    console.log('joinConference', info);
+                    this.$navigateToPage('/pages/voip/conference/ConferencePage', {
+                        conferenceInfo: info,
+                        muteAudio: false,
+                        muteVideo: false,
                     });
                 })
-            this.$modal.hide('create-conference-modal')
+                .catch(err => {
+                    uni.showToast({
+                        title: '创建会议失败',
+                        icon: 'none'
+                    })
+                })
         }
     },
     computed: {
@@ -132,9 +130,9 @@ export default {
             if (this.endTime) {
                 if (new Date(this.endTime).getTime() < new Date().getTime()) {
                     this.endTime = '';
-                    this.$notify({
-                        text: '结束时间不能小于当前时间',
-                        type: 'warn'
+                    uni.showToast({
+                        title: '结束时间不能小于当前时间',
+                        icon: 'none'
                     })
                 }
             }

@@ -25,7 +25,7 @@ import conferenceApi from "../../../api/conferenceApi";
 import ConferenceInfoView from "./ConferenceInfoPage.vue";
 
 export default {
-    name: "CreateConferenceView",
+    name: "JoinConferenceView",
     data() {
         return {
             conferenceId: '',

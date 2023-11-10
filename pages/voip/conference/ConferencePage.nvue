@@ -586,11 +586,6 @@
                 this.toggleSliderView();
             },
 
-            hideParticipantList() {
-                this.showConferenceManageView && (this.showConferenceManageView = false);
-                this.toggleSliderView();
-            },
-
             toggleSliderView() {
                 // TODO
             },

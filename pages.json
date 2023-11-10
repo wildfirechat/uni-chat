@@ -242,6 +242,12 @@
             }
         },
         {
+            "path": "pages/voip/conference/CreateConferencePage",
+            "style": {
+                "navigationBarTitleText": "发起会议"
+            }
+        },
+        {
             "path": "pages/voip/conference/ConferenceInfoPage",
             "style": {
                 "navigationBarTitleText": "会议详情"

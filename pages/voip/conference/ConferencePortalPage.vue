@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import CreateConferenceView from "./CreateConferenceView";
+import CreateConferenceView from "./CreateConferencePage.vue";
 import JoinConferenceView from "./JoinConferenceView";
 import OrderConferenceView from "./OrderConferenceView";
 import conferenceApi from "../../../api/conferenceApi";
