@@ -306,7 +306,7 @@
                 let beforeClose = (users) => {
                     let ids = users.map(u => u.uid);
                     console.log('picked users', ids)
-                    avengineKit.inviteParticipant(ids);
+                    avengineKit.inviteNewParticipant(ids);
                 };
                 let groupMemberUserInfos = getApp().store.getGroupMemberUserInfos(this.session.conversation.target, false);
                 getApp().$pickUsers(
