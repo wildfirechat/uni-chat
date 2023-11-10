@@ -73,7 +73,7 @@
 <script>
 import CreateConferenceView from "./CreateConferencePage.vue";
 import JoinConferenceView from "./JoinConferenceView";
-import OrderConferenceView from "./OrderConferenceView";
+import OrderConferenceView from "./OrderConferencePage.vue";
 import conferenceApi from "../../../api/conferenceApi";
 import ConferenceInfoPage from "./ConferenceInfoPage.vue";
 import conferenceManager from "./conferenceManager";

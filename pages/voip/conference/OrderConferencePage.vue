@@ -1,5 +1,5 @@
 <template>
-    <div class="create-conference-container">
+    <div class="order-conference-container">
         <h2>预定会议</h2>
         <input v-model="title" class="text-input" type="text" placeholder="会议标题">
         <input v-if="false" v-model="desc" class="text-input" type="text" placeholder="会议描述">
@@ -13,29 +13,28 @@
         </label>
         <label>
             参与者开启摄像头、麦克风入会
-            <input v-model="audience" type="checkbox">
+            <checkbox v-model="audience"/>
         </label>
         <label>
             允许参与者自主开启摄像头和麦克风
-            <input :disabled="audience" v-model="allowTurnOnMic" type="checkbox">
+            <checkbox :disabled="audience" v-model="allowTurnOnMic"/>
         </label>
         <div>
             <label>
                 启用密码
-                <input v-model="enablePin" type="checkbox">
+                <checkbox v-model="enablePin"/>
             </label>
             <input v-if="enablePin" v-model="pin" class="text-input" style="margin-top: 10px" type="tel" maxlength="4" placeholder="123456">
         </div>
         <div>
             <label>
                 大规模会议
-                <input v-model="advance" type="checkbox">
+                <checkbox v-model="advance"/>
             </label>
             <p class="advance_desc">参会人数大于50人</p>
         </div>
 
-        <button :disabled="!actionEnable" @click="orderConference">预定会议
-        </button>
+        <button :disabled="!actionEnable" @click="orderConference">预定会议</button>
     </div>
 </template>
 
@@ -45,7 +44,7 @@ import conferenceApi from "../../../api/conferenceApi";
 import conferenceManager from "./conferenceManager";
 
 export default {
-    name: "CreateConferenceView",
+    name: "OrderConferenceView",
     data() {
         return {
             title: '',
@@ -149,13 +148,13 @@ export default {
 
 <style scoped lang="css">
 
-.create-conference-container {
+.order-conference-container {
     display: flex;
     flex-direction: column;
     padding: 0 20px;
 }
 
-.create-conference-container h2 {
+.order-conference-container h2 {
     justify-content: center;
     font-weight: normal;
     font-style: normal;
@@ -163,7 +162,7 @@ export default {
     text-align: center;
 }
 
-.create-conference-container label {
+.order-conference-container label {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -187,12 +186,12 @@ export default {
     border: 1px solid #4168e0;
 }
 
-.create-conference-container button {
+.order-conference-container button {
     height: 40px;
     border: none;
 }
 
-.create-conference-container button:active {
+.order-conference-container button:active {
     border: 1px solid #4168e0;
 }
 
@@ -201,7 +200,7 @@ export default {
     color: #F95569;
 }
 
-.create-conference-container > * {
+.order-conference-container > * {
     margin-top: 20px;
 }
 

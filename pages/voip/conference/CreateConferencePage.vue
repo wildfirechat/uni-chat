@@ -1,14 +1,14 @@
 <template>
-    <div class="create-conference-container">
-        <input v-model="title" class="text-input" type="text" placeholder="会议标题">
-        <input v-if="false" v-model="desc" class="text-input" type="text" placeholder="会议描述">
+    <div class="order-conference-container">
+        <input v-model="title" class="text-input" placeholder="会议标题">
+        <input v-if="false" v-model="desc" class="text-input" placeholder="会议描述">
         <label>
             开始时间
             <span>现在</span>
         </label>
         <label>
             结束时间
-            <input v-model="endTime" :min="new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('.')[0]" type="datetime-local">
+            <input v-model="endTime" :min="new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('.')[0]" >
         </label>
         <label>
             参与者开启摄像头、麦克风入会
@@ -23,7 +23,7 @@
                 启用密码
                 <checkbox v-model="enablePassword"/>
             </label>
-            <input v-if="enablePassword" v-model="password" class="text-input" style="margin-top: 10px" type="tel" maxlength="4" placeholder="123456">
+            <input v-if="enablePassword" v-model="password" class="text-input" style="margin-top: 10px" maxlength="4" placeholder="123456">
         </div>
         <div>
             <label>
@@ -143,13 +143,13 @@ export default {
 
 <style scoped lang="css">
 
-.create-conference-container {
+.order-conference-container {
     display: flex;
     flex-direction: column;
     padding: 0 20px;
 }
 
-.create-conference-container h2 {
+.order-conference-container h2 {
     justify-content: center;
     font-weight: normal;
     font-style: normal;
@@ -157,7 +157,7 @@ export default {
     text-align: center;
 }
 
-.create-conference-container label {
+.order-conference-container label {
     display: flex;
     justify-content: space-between;
     font-size: 13px;
@@ -180,13 +180,13 @@ export default {
     border: 1px solid #4168e0;
 }
 
-.create-conference-container button {
+.order-conference-container button {
     height: 30px;
     border: 1px solid #e5e5e5;
     border-radius: 3px;
 }
 
-.create-conference-container button:active {
+.order-conference-container button:active {
     border: 1px solid #4168e0;
 }
 
@@ -195,7 +195,7 @@ export default {
     color: #F95569;
 }
 
-.create-conference-container > * {
+.order-conference-container > * {
     margin-top: 20px;
 }
 
