@@ -106,6 +106,10 @@
                 </div>
             </div>
         </div>
+        <uni-popup ref="alertDialog" type="dialog">
+            <uni-popup-dialog :type="msgType" :cancelText="alertDialogOptions.cancelText" :confirmText="alertDialogOptions.confirmText" :title="alertDialogOptions.title" @confirm="alertDialogOptions.onConfirm"
+                              @close="alertDialogOptions.onClose"></uni-popup-dialog>
+        </uni-popup>
     </div>
 </template>
 
@@ -114,7 +118,6 @@
     import CallState from "../../../wfc/av/engine/callState";
     import CallEndReason from "../../../wfc/av/engine/callEndReason";
     import VideoType from "../../../wfc/av/engine/videoType";
-    // import conferenceManager from "./conferenceManager";
     import ConferenceParticipantVideoView from "./ConferenceParticipantVideoView.nvue";
     import avengineKit from "../../../wfc/av/engine/avengineKit";
 
@@ -158,6 +161,7 @@
 
                 showConferenceSimpleInfoView: false,
                 showChooseLayoutView: false,
+                alertDialogOptions: {},
             }
         },
         components: {
@@ -176,7 +180,7 @@
                 console.log('options', options, getApp(), getApp().wfc)
                 let conferenceInfo = options.conferenceInfo;
                 this.conferenceInfo = conferenceInfo;
-                this.joinConference(conferenceInfo);
+                this.joinConference(conferenceInfo, options.muteAudio, options.muteVideo);
             })
         },
 
@@ -185,6 +189,7 @@
             this.refreshUserInfoInternal = setInterval(() => {
                 // this.refreshUserInfos();
             }, 3 * 1000)
+            this.conferenceManager.setup(getApp(), this);
 
             // this.$eventBus.$on('muteVideo', (mute) => {
             //     if (this.session.videoMuted !== mute) {
@@ -216,11 +221,9 @@
                 return userInfo;
             },
 
-            joinConference(conferenceInfo) {
-                let audience = false;
+            joinConference(conferenceInfo, muteAudio, muteVideo) {
+                let audience = muteAudio && muteVideo;
                 let audioOnly = false;
-                let muteAudio = false;
-                let muteVideo = false;
                 let callExtra = '';
                 console.log('join conference', conferenceInfo.conferenceId, audioOnly, conferenceInfo.pin, conferenceInfo.owner, conferenceInfo.conferenceTitle, '', audience, conferenceInfo.advance, muteAudio, muteVideo, callExtra)
                 let session = avengineKit.currentCallSession();
@@ -352,29 +355,32 @@
                     this.session = null;
                 }
 
-                sessionCallback.onRequestChangeMode = (userId, audience) => {
-                    console.log('onRequestChangeMode', userId + ' ' + audience)
-                    // TODO
+                sessionCallback.onRequestChangeMode = (audience) => {
+                    // console.log('onRequestChangeMode', audience)
+                    //
                     // if (audience) {
                     //     this.session.switchAudience(true)
-                    //     return;
+                    //     uni.showToast({
+                    //         title: '主持人禁止你参与互动',
+                    //         icon: 'none',
+                    //     });
+                    // } else {
+                    //     this.showAlertDialog('拒绝', '同意', '主持人邀请你参与互动', () => {
+                    //         avengineKit.switchAudience(false)
+                    //     }, () => {
+                    //         uni.showToast({
+                    //             title: '你已拒绝参与互动',
+                    //             icon: 'none',
+                    //         });
+                    //     })
                     // }
-                    // this.$alert({
-                    //     content: '主持人邀请你参与互动',
-                    //     cancelCallback: () => {
-                    //         // do nothing
-                    //     },
-                    //     confirmCallback: () => {
-                    //         this.session.switchAudience(false)
-                    //     }
-                    // })
                 };
 
                 sessionCallback.didChangeType = (userId, audience, screenSharing) => {
                     console.log('didChangeType', userId, audience, screenSharing);
                     let found = false;
                     let profile = avengineKit.getParticipantProfile(userId, screenSharing);
-                    if (this.selfUserInfo.uid === userId){
+                    if (this.selfUserInfo.uid === userId) {
                         this.session.audience = audience;
                         this.session.videoMuted = profile.videoMuted;
                         this.session.audioMuted = profile.audioMuted;
@@ -483,6 +489,21 @@
                 getApp().avengineKit.sessionCallback = sessionCallback;
             },
 
+            showAlertDialog(cancelText, confirmText, title, onConfirm, onClose) {
+                this.alertDialogOptions = {
+                    cancelText: cancelText,
+                    confirmText: confirmText,
+                    title: title,
+                    onConfirm: () => {
+                        onConfirm && onConfirm();
+                    },
+                    onClose: () => {
+                        onClose && onClose();
+                        this.alertDialogOptions = {};
+                    }
+                }
+                this.$refs.alertDialog.open()
+            },
 
             hangup() {
                 avengineKit.leaveConference(this.session.callId, false);
@@ -558,7 +579,7 @@
                         // }
                     }
                 }
-                console.log('xxxxxxxx', this.selfUserInfo, this.participantUserInfos)
+                console.log('_muteVideo', this.selfUserInfo, this.participantUserInfos)
             },
 
             requestUnmute(audio) {
@@ -582,8 +603,9 @@
             },
 
             chat() {
-                this.showConversationView = !this.showConversationView;
-                this.toggleSliderView();
+                // this.showConversationView = !this.showConversationView;
+                // this.toggleSliderView();
+                this.showAlertDialog('xoxo', 'jojojo', 'jowowo')
             },
 
             toggleSliderView() {
@@ -667,7 +689,8 @@
             },
 
             handup() {
-                this.conferenceManager.handUp(!this.conferenceManager.isHandUp)
+                //this.conferenceManager.handUp(!this.conferenceManager.isHandUp)
+                this.$refs.alertDialog.open()
             },
 
             userName(user) {
@@ -778,6 +801,11 @@
                     return;
                 }
                 this.showChooseLayoutView = false;
+            },
+
+            alert(options) {
+                console.log('alert', options)
+                this.showAlertDialog(options.cancelText, options.confirmText, options.title, options.onConfirm, options.onClose)
             }
         },
 
@@ -1023,6 +1051,9 @@
         directives: {},
 
 
+        beforeDestroy() {
+            this.conferenceManager.destroy();
+        },
         destroyed() {
             // reset
             clearInterval(this.refreshUserInfoInternal);

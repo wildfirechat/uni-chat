@@ -5,6 +5,7 @@ import Conversation from "../../../wfc/model/conversation";
 import ConversationType from "../../../wfc/model/conversationType";
 import wfc from "../../../wfc/client/wfc";
 import {getItem, setItem} from "../../util/storageHelper";
+import EventType from "../../../wfc/client/wfcEvent";
 
 class ConferenceManager {
 
@@ -12,6 +13,7 @@ class ConferenceManager {
     }
 
     vueInstance;
+    conferencePage;
 
     conferenceInfo = {};
     applyingUnmuteMembers = [];
@@ -25,14 +27,30 @@ class ConferenceManager {
 
     selfUserId = null;
 
-    setVueInstance(eventBus) {
-        this.vueInstance = eventBus;
-        this.selfUserId = wfc.getUserId();
-        avenginekitproxy.listenVoipEvent('message', this.onReceiveMessage);
+    setup(app, conferencePage) {
+        this.vueInstance = app;
+        this.conferencePage = conferencePage;
+        this.selfUserId = app.wfc.getUserId();
+        this.vueInstance.wfc.eventEmitter.on(EventType.ReceiveMessage, this.onReceiveMessage);
+    }
+
+    destroy() {
+        this.vueInstance.wfc.eventEmitter.removeEventListener(EventType.ReceiveMessage, this.onReceiveMessage);
+        if (this.conferenceInfo) {
+            this.vueInstance.wfc.quitChatroom(this.conferenceInfo.conferenceId);
+        }
+        this.conferencePage = null;
+        this.vueInstance = null;
+        this.conferenceInfo = null;
     }
 
     setConferenceInfo(conferenceInfo) {
         this.conferenceInfo = conferenceInfo;
+        this.vueInstance.wfc.joinChatroom(this.conferenceInfo.conferenceId, () => {
+            console.log('join conference chatroom success')
+        }, err => {
+            console.log('join conference chatroom error', err)
+        });
     }
 
     getConferenceInfo(conferenceId) {
@@ -46,9 +64,13 @@ class ConferenceManager {
             })
     }
 
-    onReceiveMessage = async (event, msg) => {
-        msg = this._fixLongSerializedIssue(msg)
-        if (msg.messageContent.type === MessageContentType.CONFERENCE_CONTENT_TYPE_COMMAND) {
+    onReceiveMessage = (msg) => {
+        // msg = this._fixLongSerializedIssue(msg)
+        console.log('conferenceManager onReceiveMessage', msg);
+        if (!this.conferenceInfo) {
+            return;
+        }
+        if (msg.messageContent.type === MessageContentType.CONFERENCE_CONTENT_TYPE_COMMAND && this.conferenceInfo.conferenceId === msg.messageContent.callId) {
             let command = msg.messageContent;
             let senderName;
             switch (command.commandType) {
@@ -147,6 +169,11 @@ class ConferenceManager {
                     break;
                 default:
                     break;
+            }
+        } else if (msg.messageContent.type === MessageContentType.CONFERENCE_CONTENT_TYPE_CHANGE_MODE) {
+            let content = msg.messageContent;
+            if (this.conferenceInfo.conferenceId === content.callId) {
+                this.vueInstance.avengineKit.sessionCallback.onRequestChangeMode(content.audience);
             }
         }
     }
@@ -269,8 +296,10 @@ class ConferenceManager {
     }
 
     onMuteAll() {
-        this.vueInstance.$eventBus.$emit('muteVideo', true);
-        this.vueInstance.$eventBus.$emit('muteAudio', true);
+        // this.vueInstance.wfc.eventEmitter.emit('muteVideo', true);
+        // this.vueInstance.wfc.eventEmitter.emit('muteAudio', true);
+        this.conferencePage._muteAudio(false);
+        this.conferencePage._muteVideo(false);
         this.vueInstance.$notify({
             text: '管理员将全体成员静音了',
             type: 'info'
@@ -279,15 +308,16 @@ class ConferenceManager {
 
     onCancelMuteAll(requestUnmute) {
         if (requestUnmute && this.vueInstance.selfUserInfo._isAudience) {
-            this.vueInstance.$alert({
-                showIcon: false,
-                content: '主持人关闭了全员静音，是否要打开麦克风',
-                confirmText: '开启麦克风',
-                cancelCallback: () => {
+            this.conferencePage.alert({
+                title: '主持人关闭了全员静音，是否要打开麦克风',
+                cancelText: '取消',
+                confirmText: '打开',
+                onClose: () => {
                     // do nothing
                 },
-                confirmCallback: () => {
-                    this.vueInstance.$eventBus.$emit('muteAudio', false);
+                onConfirm: () => {
+                    // this.vueInstance.wfc.eventEmitter.emit('muteAudio', false);
+                    this.conferencePage._muteAudio(false);
                 }
             })
 
@@ -299,21 +329,25 @@ class ConferenceManager {
     }
 
     onRequestMute(mute) {
+        console.log('onRequestMute', mute)
         if (!mute) {
-            this.vueInstance.$alert({
-                showIcon: false,
-                content: '主持人邀请你发言',
+            this.conferencePage.alert({
+                cancelText: '拒绝',
+                title: '主持人邀请你发言',
                 confirmText: '接受',
-                cancelCallback: () => {
+                onClose: () => {
                     // do nothing
                 },
-                confirmCallback: () => {
-                    this.vueInstance.$eventBus.$emit('muteAudio', false);
+                onConfirm: () => {
+                    this.conferencePage._muteAudio(true);
+                    // this.vueInstance.wfc.eventEmitter.emit('muteAudio', false);
                 }
             })
         } else {
-            this.vueInstance.$eventBus.$emit('muteVideo', true);
-            this.vueInstance.$eventBus.$emit('muteAudio', true);
+            // this.vueInstance.wfc.eventEmitter.emit('muteVideo', true);
+            // this.vueInstance.wfc.eventEmitter.emit('muteAudio', true);
+            this.conferencePage._muteAudio(false);
+            this.conferencePage._muteVideo(false);
 
             this.vueInstance.$notify({
                 text: '管理员关闭了你的发言',

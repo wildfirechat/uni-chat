@@ -84,6 +84,13 @@ Vue.prototype.$scrollToBottom = () => {
     }, 100);
 }
 
+Vue.prototype.$notify = (options) => {
+    uni.showToast({
+        title: options.text,
+        icon: 'none',
+    });
+}
+
 Vue.prototype._i18n = i18n;
 const app = new Vue({
     i18n,
