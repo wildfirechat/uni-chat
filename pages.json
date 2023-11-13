@@ -200,6 +200,12 @@
             }
         },
         {
+            "path": "pages/workspace/WorkspacePage",
+            "style": {
+                "navigationBarTitleText": " 工作台"
+            }
+        },
+        {
             "path": "pages/discovery/DiscoveryPage",
             "style": {
                 "navigationBarTitleText": "发现"
@@ -253,8 +259,14 @@
                 "selectedIconPath": "static/image/tabbar/contact_press.png"
             },
             {
+                "pagePath": "pages/workspace/WorkspacePage",
+                "text": "工作台",
+                "iconPath": "static/image/tabbar/work_normal.png",
+                "selectedIconPath": "static/image/tabbar/work_press.png"
+            },
+            {
                 "pagePath": "pages/discovery/DiscoveryPage",
-                "text": " 发现",
+                "text": "发现",
                 "iconPath": "static/image/tabbar/discovery_normal.png",
                 "selectedIconPath": "static/image/tabbar/discovery_press.png"
             },
@@ -264,7 +276,8 @@
                 "iconPath": "static/image/tabbar/me_normal.png",
                 "selectedIconPath": "static/image/tabbar/me_press.png"
             }
-        ]
+        ],
+        "backgroundColor": "white"
     },
     "sitemapLocation": "sitemap.json",
     "globalStyle": {

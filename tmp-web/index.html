@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    ...test
+</head>
+<body>
+<noscript>
+    <strong>Please enable JavaScript to continue.</strong>
+</noscript>
+<div id="app"></div>
+<!-- built files will be auto injected -->
+</body>
+<!-- uni 的 SDK -->
+<!-- 需要把 uni.webview.1.5.4.js 下载到自己的服务器 -->
+<script type="text/javascript" src="https://static.wildfirechat.cn/uni.webview.1.5.4.js"></script>
+<script>
+    document.addEventListener('UniAppJSBridgeReady', function () {
+        uni.webView.getEnv(function (res) {
+            console.log('uniapp jsbridge ready：' + JSON.stringify(res));
+        });
+        // uni.webView.navigateTo(...)
+        setTimeout(() => {
+            console.log('uni.postMessage...')
+            uni.postMessage({a: 1, b: 2,c: !!window, window: window})
+            console.log('uni.postMessage end...')
+            console.log('xxx window', window);
+        }, 2000)
+    });
+</script>
+</html>

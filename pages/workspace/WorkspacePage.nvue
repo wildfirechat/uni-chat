@@ -1,0 +1,47 @@
+<template>
+    <div style="flex: 1; display: flex; flex-direction: column">
+        <web-view ref="webview" style="flex:1; width: 750rpx" :src="url" @onPostMessage="handlePostMessage"></web-view>
+    </div>
+</template>
+
+<script>
+import Config from "../../config";
+
+export default {
+    name: "WorkspacePage",
+    data() {
+        return {
+            //url: Config.WORKSPACE_URL,
+            //url: 'https://wildfirechat.cn'
+            url: 'http://192.168.2.180:8090/'
+        }
+    },
+
+    onLoad(option) {
+        console.log('onLoad option url oo', option.url);
+        // this.url = option.url;
+        // this.url = 'https://wildfirechat.cn'
+        setTimeout(() => {
+            // let currentWebview = this.$scope.$getAppWebview() //获取当前页面的webview对象
+            // let wv = currentWebview.children()[0]
+            // console.log('xxx wv',wv)
+            // //wv.setStyle({scalable: true})
+            // wv.evalJs("document.body.style.background ='#00FF00'");
+            this.$refs.webview.evalJs("document.body.style.background ='#00FF00'");
+        }, 10000)
+    },
+    methods: {
+        handlePostMessage(data) {
+            console.log('onWebViewMessage', data)
+        },
+        // 调用 webview 内部逻辑
+        evalJs: function () {
+            this.$refs.webview.evalJs("document.body.style.background ='#00FF00'");
+        }
+    }
+}
+</script>
+
+<style scoped>
+
+</style>
