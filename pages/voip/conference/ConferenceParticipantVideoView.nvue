@@ -11,12 +11,13 @@
             <img class="avatar" :src="participant.portrait" :alt="participant">
         </div>
         <div v-if="!participant._isVideoMuted" class="video-stream-tip-container">
+            <i class="icon-ion-pause"></i>
             <p>{{ '双击视频，将其设置为焦点' }}</p>
         </div>
         <div class="info-container">
-            <i v-if="participant._isHost" class="icon-ion-person"></i>
-            <i v-if="participant._isAudioMuted" class="icon-ion-ios-mic-off" style="color: white"></i>
-            <i v-else class="icon-ion-ios-mic"></i>
+            <view v-if="participant._isHost" class="icon-ion-person"></view>
+            <view v-if="participant._isAudioMuted" class="icon-ion-ios-mic-off" style="color: white"></view>
+            <view v-else class="icon-ion-ios-mic"></view>
             <div>{{ userName }}</div>
         </div>
     </div>
@@ -173,7 +174,7 @@
     }
 
     .participant-video-item .video-stream-tip-container {
-        display: none;
+        display: inline-block;
         position: absolute;
         top: 0;
         left: 0;
@@ -197,10 +198,6 @@
         border-radius: 50px;
     }
 
-    .participant-video-item:hover .video-stream-tip-container {
-        display: inline-block;
-    }
-
     .participant-video-item .info-container {
         position: absolute;
         left: 0;
@@ -214,9 +211,9 @@
         text-align: center;
     }
 
-    .info-container * {
-        margin: 0 5px;
-    }
+    //.info-container * {
+    //    margin: 0 5px;
+    //}
 
     .info-container .name {
         height: 20px;

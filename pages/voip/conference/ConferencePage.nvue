@@ -6,16 +6,16 @@
 <!--static STATUS_CONNECTED = 4;-->
 <!--}-->
 <template>
-    <div style="flex: 1; background: grey; display: flex; flex-direction: column" ref="rootContainer">
+    <div style="flex: 1; display: flex; flex-direction: column" ref="rootContainer">
         <div v-if="session" class="main-slider-container"
-             style="display: flex; flex: 1; background: red">
+             style="display: flex; flex: 1;">
             <!--main-->
             <!--video-->
-            <div v-if="!audioOnly" style="width: 750rpx; flex: 1; background: #d6d6d6">
-                <i v-if="computedCurrentLayout=== 0 && currentGridPageIndex > 0" style="position: absolute; top: 50%; left: 0; color: #c8cacc; z-index: 1000; font-size: 40px; padding: 0 10px" class="icon-ion-arrow-left-c"
-                   @click="prePage"></i>
-                <i v-if="computedCurrentLayout=== 0 && currentGridPageIndex < gridPageCount - 1" style="position: absolute; top: 50%; right: 0; color: #c8cacc; z-index: 1000; font-size: 40px; padding: 0 10px" class="icon-ion-arrow-right-c"
-                   @click="nextPage"></i>
+            <div v-if="!audioOnly" style="width: 750rpx; flex: 1;">
+                <text v-if="computedCurrentLayout=== 0 && currentGridPageIndex > 0" style="position: absolute; top: 50%; left: 0; color: #c8cacc; z-index: 1000; font-size: 40px; padding: 0 10px" class="iconfont icon-ion-arrow-left-c"
+                      @click="prePage">&#xf108;</text>
+                <text v-if="computedCurrentLayout=== 0 && currentGridPageIndex < gridPageCount - 1" style="position: absolute; top: 50%; right: 0; color: #c8cacc; z-index: 1000; font-size: 40px; padding: 0 10px" class="iconfont icon-ion-arrow-right-c"
+                      @click="nextPage">&#xf10b;</text>
                 <!--                    宫格布局-->
                 <section class="content-container grid video" style="background: #2d3033">
                     <!--participants include self-->
@@ -28,7 +28,7 @@
                 </section>
             </div>
             <!--audio-->
-            <div v-else style="width: 750rpx; flex: 1; background: #1FCA6A">
+            <div v-else style="width: 750rpx; flex: 1;">
                 <div
                         style="background: white; height: 50px; display: flex; justify-content: center; align-items: center">
                     <div
@@ -40,21 +40,22 @@
                     <!--participants-->
                     <div v-for="(participant) in participantUserInfos"
                          :key="participant.uid"
+                         style="position: relative;"
                          class="participant-audio-item">
                         <div style="position: relative">
                             <img class="avatar"
                                  v-bind:class="{highlight:participant._volume > 0}"
                                  :src="participant.portrait" :alt="participant">
-                            <i v-if="participant._isHost" class="indicator icon-ion-person" style="background: #FD802E"></i>
-                            <i v-if="participant._isAudience" class="indicator icon-ion-ios-mic-off" style="color: red"></i>
+                            <text v-if="participant._isHost" class="indicator iconfont icon-ion-person" style="background: #FD802E">&#xf213;</text>
+                            <text v-if="participant._isAudience" class="indicator iconfont icon-ion-ios-mic-off" style="color: red;">&#xf45f;</text>
                         </div>
-                        <p class="single-line">{{ userName(participant) }}</p>
+                        <p class="single-line desc">{{ userName(participant) }}</p>
                     </div>
                 </section>
             </div>
             <!--actions-->
             <div class="duration-action-container">
-                <p v-if="false">{{ duration }}</p>
+                <p v-if="false" class="desc">{{ duration }}</p>
                 <div class="action-container">
                     <div class="action">
                         <img v-if="!session.audience && !session.audioMuted" @click="muteAudio" class="action-img"
@@ -80,9 +81,9 @@
                         <p class="single-line">共享屏幕</p>
                     </div>
                     <div class="action" @click="chat">
-                        <i class="icon-ion-ios-chatboxes"
-                           style="width: 40px; height: 40px; font-size: 40px; color: black"
-                           v-bind:style="{color: showConversationView ? 'white' : 'black'}"/>
+                        <text class="iconfont icon-ion-ios-chatboxes"
+                              style="width: 40px; height: 40px; font-size: 40px; color: black"
+                              v-bind:style="{color: showConversationView ? 'white' : 'black'}">&#xf3fa;</text>
                         <p>聊天</p>
                     </div>
                     <div v-if="selfUserInfo && selfUserInfo.uid !== conferenceManager.conferenceInfo.owner" class="action">
@@ -185,24 +186,18 @@
         },
 
         created() {
+            let domModule = weex.requireModule("dom");
+            domModule.addRule('fontFace', {
+                fontFamily: 'icomoon',
+                //src: "url('file:/" + fontSrc + "')"
+                src: "url('/static/iconfonts/icomoon/fonts/icomoon.ttf')"
+            })
+
             // this.conferenceManager.setVueInstance(this);
             this.refreshUserInfoInternal = setInterval(() => {
                 // this.refreshUserInfos();
             }, 3 * 1000)
             this.conferenceManager.setup(getApp(), this);
-
-            // this.$eventBus.$on('muteVideo', (mute) => {
-            //     if (this.session.videoMuted !== mute) {
-            //         let enable = this.session.videoMuted ? true : false;
-            //         this._muteVideo(enable);
-            //     }
-            // })
-            // this.$eventBus.$on('muteAudio', (mute) => {
-            //     if (this.session.audioMuted !== mute) {
-            //         let enable = this.session.audioMuted ? true : false;
-            //         this._muteAudio(enable);
-            //     }
-            // })
         },
 
         mounted() {
@@ -459,8 +454,6 @@
                         })
                     })
 
-                    console.log('xxxxxxxx', this.session.audience, this.session.audioMuted, this.session.videoMuted)
-                    console.log('xxxxxx audioMute status', !this.session.audience && !this.session.audioMuted)
                 };
 
                 sessionCallback.didMediaLostPacket = (media, lostPacket, screenSharing) => {
@@ -1064,25 +1057,8 @@
 </script>
 
 <style lang="css" scoped>
-
-    .voip-container {
-        background: #00000000 !important;
-        position: relative;
-        --conference-container-margin-top: 30px;
-        --slider-width: 0px;
-        --main-width: 100%;
-    }
-
-    a {
-        color: gray;
-    }
-
-    i:hover {
-        color: #1f64e4;
-    }
-
-    i.active {
-        color: #3f64e4;
+    .iconfont {
+        font-family: icomoon;
     }
 
     .main-slider-container {
@@ -1113,24 +1089,6 @@
         flex-direction: column;
     }
 
-    .content-container.video {
-        background: black;
-        object-fit: contain;
-    }
-
-    .focus-mode-participant-list-container {
-        /*position: absolute;*/
-        /*top: 0;*/
-        /*right: 0;*/
-        width: 200px;
-        height: 100%;
-        overflow: auto;
-    }
-
-    .content-container.audio {
-    //background: white; //overflow: auto; //padding: 10px 0 50px 0;
-    }
-
     .participant-audio-item {
         display: flex;
         flex-direction: column;
@@ -1141,33 +1099,33 @@
 
     .participant-audio-item .indicator {
         width: 18px;
-        height: 18px;
+        height: 28px;
         position: absolute;
         left: 50%;
+        bottom: 0;
         color: white;
         text-align: center;
         vertical-align: center;
-        border-radius: 9px;
-        bottom: 0;
+        border-radius: 14px;
         background: #d6d6d6;
         transform: translateX(-50%) translateY(25%);
     }
 
-    .participant-audio-item p {
+    .participant-audio-item .desc {
         padding-top: 8px;
     }
 
     .duration-action-container {
         width: 750rpx;
         height: 140px;
-        background: #3f64e4;
+        background: #808080;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
     }
 
-    .duration-action-container p {
+    .duration-action-container .desc {
         color: white;
         padding: 0 5px 0 0;
     }
@@ -1197,34 +1155,12 @@
     }
 
     .avatar.highlight {
-        border: 2px solid #1FCA6A;
+    //border: 2px solid #1FCA6A;
     }
 
     .action-img {
         width: 40px;
         height: 40px;
-    }
-
-    .video.me {
-        -webkit-transform: scaleX(-1);
-        transform: scaleX(-1);
-    }
-
-    .rejoin-container {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background: #e0e0e0e0;
-        text-align: center;
-        justify-content: center;
-        color: red;
-    }
-
-    .icon-ion-grid:after {
-        padding-left: 5px;
-        content: "\f13f";
     }
 
 </style>

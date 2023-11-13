@@ -440,7 +440,7 @@
     }
 
     .participant-container .desc {
-        max-height: 20px;
+        //max-height: 20px;
         color: white;
     }
 

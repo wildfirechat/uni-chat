@@ -1,11 +1,4 @@
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-app-region: no-drag;
-}
-
 img.emoji {
     height: 1em !important;
     width: 1em !important;
