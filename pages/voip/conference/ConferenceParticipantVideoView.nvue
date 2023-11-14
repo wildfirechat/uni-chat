@@ -11,13 +11,12 @@
             <img class="avatar" :src="participant.portrait" :alt="participant">
         </div>
         <div v-if="!participant._isVideoMuted" class="video-stream-tip-container">
-            <i class="icon-ion-pause"></i>
             <p>{{ '双击视频，将其设置为焦点' }}</p>
         </div>
         <div class="info-container">
-            <view v-if="participant._isHost" class="icon-ion-person"></view>
-            <view v-if="participant._isAudioMuted" class="icon-ion-ios-mic-off" style="color: white"></view>
-            <view v-else class="icon-ion-ios-mic"></view>
+            <text v-if="participant._isHost" class="iconfont icon-ion-person">&#xf213;</text>
+            <text v-if="participant._isAudioMuted" class="iconfont icon-ion-ios-mic-off" style="color: white">&#xf45f;</text>
+            <text v-else class="iconfont icon-ion-ios-mic">&#xf461;</text>
             <div>{{ userName }}</div>
         </div>
     </div>
@@ -28,7 +27,6 @@
     import CallState from "../../../wfc/av/engine/callState";
     import VideoType from "../../../wfc/av/engine/videoType";
     import avengineKit from "../../../wfc/av/engine/avengineKit";
-    // import conferenceManager from "./conferenceManager";
 
     export default {
         name: "ConferenceParticipantVideoView",
@@ -150,6 +148,10 @@
 </script>
 
 <style scoped>
+
+    .iconfont {
+        font-family: icomoon;
+    }
     .participant-video-item {
         display: flex;
         position: relative;

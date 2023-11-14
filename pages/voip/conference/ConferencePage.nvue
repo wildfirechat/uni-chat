@@ -186,8 +186,8 @@
         },
 
         created() {
-            let domModule = weex.requireModule("dom");
-            domModule.addRule('fontFace', {
+            let dom = weex.requireModule("dom");
+            dom.addRule('fontFace', {
                 fontFamily: 'icomoon',
                 //src: "url('file:/" + fontSrc + "')"
                 src: "url('/static/iconfonts/icomoon/fonts/icomoon.ttf')"
