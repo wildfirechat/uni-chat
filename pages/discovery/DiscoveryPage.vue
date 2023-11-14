@@ -15,7 +15,7 @@
             <text>频道</text>
             <i class="icon-ion-ios-arrow-right"></i>
         </div>
-        <div class="item" @click="showConferencePortal">
+        <div v-if="supportConference" class="item" @click="showConferencePortal">
             <image src="/static/image/icon/ic_conference.png"/>
             <text>会议</text>
             <i class="icon-ion-ios-arrow-right"></i>

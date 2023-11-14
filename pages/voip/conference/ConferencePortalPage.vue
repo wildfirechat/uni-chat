@@ -182,7 +182,7 @@ export default {
     margin: 10px 10px 10px 0;
 }
 
-.action:hover {
+.action:active {
     filter: invert(25%);
 }
 

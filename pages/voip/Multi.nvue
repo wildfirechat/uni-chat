@@ -68,7 +68,7 @@
 
             <!--connected-->
             <div v-if="callState === 4" class="duration-action-container">
-                <text>{{ duration }}</text>
+                <text class="desc">{{ duration }}</text>
                 <div class="actions">
                     <div class="action">
                         <img @click="hangup" class="action-img" src='@/assets/images/av_hang_up.png'/>
@@ -415,6 +415,7 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        background: rgb(41, 41, 41)
     }
 
     .content-container {
@@ -440,14 +441,12 @@
     }
 
     .participant-container .desc {
-        //max-height: 20px;
-        color: white;
+    //max-height: 20px; color: white;
     }
 
     .duration-action-container {
-        background: lightgrey;
         width: 750rpx;
-        height: 180rpx;
+        height: 240rpx;
         position: absolute;
         left: 0;
         bottom: 0;
@@ -458,9 +457,10 @@
         padding-bottom: 20px;
     }
 
-    .duration-action-container .desc {
+    .desc {
         color: white;
-        padding: 10px 0;
+        font-size: 15px;
+        padding: 5px 0;
     }
 
     .duration-action-container .actions {
@@ -472,7 +472,7 @@
 
     .action-container {
         width: 750rpx;
-        height: 160rpx;
+        height: 200rpx;
         position: absolute;
         bottom: 0;
         left: 0;
