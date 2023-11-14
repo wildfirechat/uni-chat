@@ -11,11 +11,7 @@
              style="display: flex; flex: 1;">
             <!--main-->
             <!--video-->
-            <div v-if="!audioOnly" style="width: 750rpx; flex: 1;">
-                <text v-if="computedCurrentLayout=== 0 && currentGridPageIndex > 0" style="position: absolute; top: 50%; left: 0; color: #c8cacc; z-index: 1000; font-size: 40px; padding: 0 10px" class="iconfont icon-ion-arrow-left-c"
-                      @click="prePage">&#xf108;</text>
-                <text v-if="computedCurrentLayout=== 0 && currentGridPageIndex < gridPageCount - 1" style="position: absolute; top: 50%; right: 0; color: #c8cacc; z-index: 1000; font-size: 40px; padding: 0 10px" class="iconfont icon-ion-arrow-right-c"
-                      @click="nextPage">&#xf10b;</text>
+            <div v-if="!audioOnly" style="width: 750rpx; flex: 1; position: relative">
                 <!--                    宫格布局-->
                 <section class="content-container grid video" style="background: #2d3033">
                     <!--participants include self-->
@@ -26,6 +22,12 @@
                                                     :session="session">
                     </ConferenceParticipantVideoView>
                 </section>
+                <text v-if="computedCurrentLayout=== 0 && currentGridPageIndex > 0" style="position: absolute; top: 300px; left: 0; color: #c8cacc; z-index: 1000; font-size: 40px; padding: 0 10px" class="iconfont icon-ion-arrow-left-c"
+                      @click="prePage">&#xf108;
+                </text>
+                <text v-if="computedCurrentLayout=== 0 && currentGridPageIndex < gridPageCount" style="position: absolute; top: 300px; right: 0; color: #c8cacc; z-index: 1000; font-size: 40px; padding: 0 10px" class="iconfont icon-ion-arrow-right-c"
+                      @click="nextPage">&#xf10b;
+                </text>
             </div>
             <!--audio-->
             <div v-else style="width: 750rpx; flex: 1;">
@@ -83,7 +85,8 @@
                     <div class="action" @click="chat">
                         <text class="iconfont icon-ion-ios-chatboxes"
                               style="width: 40px; height: 40px; font-size: 40px; color: black"
-                              v-bind:style="{color: showConversationView ? 'white' : 'black'}">&#xf3fa;</text>
+                              v-bind:style="{color: showConversationView ? 'white' : 'black'}">&#xf3fa;
+                        </text>
                         <p>聊天</p>
                     </div>
                     <div v-if="selfUserInfo && selfUserInfo.uid !== conferenceManager.conferenceInfo.owner" class="action">
