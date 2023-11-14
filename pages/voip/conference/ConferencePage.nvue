@@ -72,7 +72,7 @@
                              src='@/assets/images/av_conference_video_mute.png'/>
                         <p>视频</p>
                     </div>
-                    <div class="action">
+                    <div v-if="false" class="action">
                         <img v-if="!session.screenSharing" @click="screenShare"
                              class="action-img"
                              src='@/assets/images/av_conference_screen_sharing.png'/>
@@ -121,6 +121,9 @@
     import VideoType from "../../../wfc/av/engine/videoType";
     import ConferenceParticipantVideoView from "./ConferenceParticipantVideoView.nvue";
     import avengineKit from "../../../wfc/av/engine/avengineKit";
+    import Conversation from "../../../wfc/model/conversation";
+    import ConversationType from "../../../wfc/model/conversationType";
+    import ChatRoomInfo from "../../../wfc/model/chatRoomInfo";
 
     export default {
         name: 'ConferencePage',
@@ -596,9 +599,25 @@
             },
 
             chat() {
-                // this.showConversationView = !this.showConversationView;
-                // this.toggleSliderView();
-                this.showAlertDialog('xoxo', 'jojojo', 'jowowo')
+                let conversation = new Conversation(ConversationType.ChatRoom, this.session.callId, 0);
+                getApp().store.setCurrentConversation(conversation);
+
+                let chatroomInfo = new ChatRoomInfo();
+                chatroomInfo.chatRoomId = this.session.callId;
+                chatroomInfo.title = this.conferenceInfo.conferenceTitle;
+                chatroomInfo._displayName = this.conferenceInfo.conferenceTitle;
+                getApp().store.state.conversation.currentConversationInfo.conversation._target = chatroomInfo;
+
+                uni.navigateTo({
+                    url: '/pages/conversation/ConversationPage',
+                    success: () => {
+                        console.log('nav to conversationPage success');
+
+                    },
+                    fail: (err) => {
+                        console.log('nav to conversationPage err', err);
+                    }
+                })
             },
 
             toggleSliderView() {
@@ -682,8 +701,7 @@
             },
 
             handup() {
-                //this.conferenceManager.handUp(!this.conferenceManager.isHandUp)
-                this.$refs.alertDialog.open()
+                this.conferenceManager.handUp(!this.conferenceManager.isHandUp)
             },
 
             userName(user) {
@@ -723,7 +741,7 @@
 
                 if (toRefreshUsers.length > 0) {
                     console.log('to refreshUsers', toRefreshUsers)
-                    let userInfos = wfc.getUserInfos(toRefreshUsers, '');
+                    let userInfos = this.wfc.getUserInfos(toRefreshUsers, '');
                     userInfos.forEach(u => {
                         let index = this.participantUserInfos.findIndex(p => p.uid === u.uid);
                         if (u.updateDt && index > -1) {
