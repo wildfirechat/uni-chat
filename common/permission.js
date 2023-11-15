@@ -142,44 +142,50 @@ function memo() {
 }
 
 
-function requestIOS(permissionID) {
-    return new Promise((resolve, reject) => {
-        switch (permissionID) {
-            case "push":
-                resolve(push());
-                break;
-            case "location":
-                resolve(location());
-                break;
-            case "record":
-                resolve(record());
-                break;
-            case "camera":
-                resolve(camera());
-                break;
-            case "album":
-                resolve(album());
-                break;
-            case "contact":
-                resolve(contact());
-                break;
-            case "calendar":
-                resolve(calendar());
-                break;
-            case "memo":
-                resolve(memo());
-                break;
-            default:
-                resolve(0);
-                break;
-        }
-    });
+function requestIOS(permissionIDs) {
+    let ps = [];
+    for (const permissionID of permissionIDs) {
+        let p = new Promise((resolve, reject) => {
+            switch (permissionID) {
+                case "push":
+                    resolve(push());
+                    break;
+                case "location":
+                    resolve(location());
+                    break;
+                case "record":
+                    resolve(record());
+                    break;
+                case "camera":
+                    resolve(camera());
+                    break;
+                case "album":
+                    resolve(album());
+                    break;
+                case "contact":
+                    resolve(contact());
+                    break;
+                case "calendar":
+                    resolve(calendar());
+                    break;
+                case "memo":
+                    resolve(memo());
+                    break;
+                default:
+                    resolve(0);
+                    break;
+            }
+        });
+        ps.push(p);
+    }
+
+    return Promise.all(ps)
 }
 
-function requestAndroid(permissionID) {
+function requestAndroid(permissionIDs) {
     return new Promise((resolve, reject) => {
         plus.android.requestPermissions(
-            [permissionID],
+            permissionIDs,
             function (resultObj) {
                 var result = 0;
                 for (var i = 0; i < resultObj.granted.length; i++) {

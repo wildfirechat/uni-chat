@@ -69,6 +69,8 @@ import PttAudioInputView from "./message/PttAudioInputView.vue";
 import Draft from "../util/draft";
 import pttClient from "../../wfc/ptt/pttClient";
 import avengineKit from "../../wfc/av/engine/avengineKit";
+import permision from "../../common/permission";
+import checkVoipPermissions from "../voip/voipUtil";
 
 export default {
     name: "MessageInputView",
@@ -355,7 +357,11 @@ export default {
             })
         },
 
-        voip(audioOnly) {
+        async voip(audioOnly) {
+            if (!await checkVoipPermissions(audioOnly)) {
+                return;
+            }
+
             if (this.conversationInfo.conversation.type === ConversationType.Single) {
                 let callSession = avengineKit.startSingleCall(this.conversationInfo.conversation.target, audioOnly)
                 if (callSession) {

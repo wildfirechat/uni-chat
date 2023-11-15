@@ -8,7 +8,7 @@
         </label>
         <label>
             结束时间
-            <input v-model="endTime" :min="new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('.')[0]" >
+            <input v-model="endTime" :min="new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('.')[0]">
         </label>
         <label>
             参与者开启摄像头、麦克风入会
@@ -44,6 +44,7 @@
 import conferenceApi from "../../../api/conferenceApi";
 import ConferenceInfo from "../../../wfc/av/model/conferenceInfo";
 import wfc from "../../../wfc/client/wfc";
+import checkVoipPermissions from "../voipUtil";
 
 export default {
     name: "CreateConferenceView",
@@ -95,7 +96,10 @@ export default {
                     })
                 })
         },
-        createAndJoinConference() {
+        async createAndJoinConference() {
+            if (!await checkVoipPermissions(false)) {
+                return;
+            }
             this._createConference()
                 .then(info => {
                     console.log('joinConference', info);

@@ -103,6 +103,7 @@
     // import MultiCallOngoingMessageContent from "../../wfc/av/messages/multiCallOngoingMessageContent";
     import VideoType from "../../wfc/av/engine/videoType";
     import Config from "../../config";
+    import checkVoipPermissions from "./voipUtil";
 
     export default {
         name: 'Multi',
@@ -266,7 +267,12 @@
                 getApp().avengineKit.sessionCallback = sessionCallback;
             },
 
-            answer() {
+            async answer() {
+                if (!await checkVoipPermissions(this.session.audioOnly)) {
+                    console.log('no permission, hangup')
+                    this.hangup();
+                    return;
+                }
                 avengineKit.answerCall(this.session.callId, false)
             },
 

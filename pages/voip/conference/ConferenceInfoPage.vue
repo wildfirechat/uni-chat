@@ -65,6 +65,7 @@
 import wfc from "../../../wfc/client/wfc";
 import conferenceApi from "../../../api/conferenceApi";
 import conferenceManager from "./conferenceManager";
+import checkVoipPermissions from "../voipUtil";
 
 export default {
     name: "ConferenceInfoPage",
@@ -129,7 +130,11 @@ export default {
                     console.error('favConference error', err);
                 })
         },
-        joinConference() {
+        async joinConference() {
+            if (!await checkVoipPermissions(false)) {
+                return;
+            }
+
             let info = this.conferenceInfo;
             console.log('joinConference', info, this.enableAudio, this.enableVideo);
             this.$navigateToPage('/pages/voip/conference/ConferencePage', {

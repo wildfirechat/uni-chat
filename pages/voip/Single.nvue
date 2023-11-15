@@ -98,6 +98,7 @@
     import VideoType from "../../wfc/av/engine/videoType";
     import CallSessionCallback from "../../wfc/av/engine/callSessionCallback";
     import avengineKit from "../../wfc/av/engine/avengineKit";
+    import checkVoipPermissions from "./voipUtil";
 
     export default {
         name: 'Single',
@@ -250,8 +251,12 @@
                 getApp().avengineKit.setSessionCallback(sessionCallback)
             },
 
-            answer() {
+            async answer() {
                 console.log('answer');
+                if (!await checkVoipPermissions(this.session.audioOnly)) {
+                    console.log('no permission, hangup')
+                    return;
+                }
                 avengineKit.answerCall(this.session.callId, false);
             },
 
