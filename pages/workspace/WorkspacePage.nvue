@@ -69,8 +69,8 @@ export default {
     methods: {
         handlePostMessage(event) {
             let data = event.detail.data[0];
-            console.log('onWebViewMessage data', data)
-            __messageFromWebView(data)
+            console.log('onWebViewMessage data', data.obj)
+            __messageFromWebView(data.obj)
         },
         // 调用 webview 内部逻辑
         evalJs: function () {

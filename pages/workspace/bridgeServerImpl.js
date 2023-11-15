@@ -30,12 +30,12 @@ export function init(wfc, webView) {
 
 export let __messageFromWebView = data => {
     let obj = data;
-    // try {
-    //     obj = JSON.parse(data);
-    // } catch (e) {
-    //     console.error('parse ws data error', e);
-    //     return;
-    // }
+    try {
+        obj = JSON.parse(data);
+    } catch (e) {
+        console.error('parse ws data error', e);
+        return;
+    }
     //let obj = {type: 'wf-op-request', requestId, handlerName, args};
     console.log('wf-op-request', obj)
     if (obj.type === 'wf-op-request') {
@@ -44,8 +44,6 @@ export let __messageFromWebView = data => {
         } else {
             console.log('wf-op-request, unknown handlerName', obj.handlerName);
         }
-    } else {
-       _notify('ack', 'test-url', 'wojowj')
     }
 }
 
@@ -62,7 +60,8 @@ let openUrl = (args) => { // addTab or open new window?
 }
 
 let getAuthCode = (args, appUrl, requestId) => {
-    let host = new URL(appUrl).host;
+    let host = appUrl.substring(appUrl.indexOf('//') + 2)
+    host = host.substring(0, host.indexOf('/'))
     if (host.indexOf(':') > 0) {
         host = host.substring(0, host.indexOf(':'))
     }
@@ -124,7 +123,7 @@ function _response(handlerName, appUrl, requestId, code, data) {
         },
     }
     console.log('send response', obj)
-    _webView.evalJs(`__messageFromUni(${JSON.stringify(obj)})`);
+    _webView.evalJs(`__messageFromUni('${JSON.stringify(obj)}')`);
 }
 
 function _notify(handlerName, appUrl, args) {
