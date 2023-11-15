@@ -110,7 +110,7 @@ export default {
                 },
                 {
                     title: '拍摄',
-                    tag: 'shoot',
+                    tag: 'shot',
                     icon: 'camera'
                 },
                 {
@@ -291,7 +291,7 @@ export default {
                 case 'image':
                     this.chooseImage();
                     break;
-                case 'shoot':
+                case 'shot':
                     this.chooseVideo();
                     break;
                 case 'file':
