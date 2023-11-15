@@ -29,19 +29,19 @@
             </div>
         </div>
         <div class="item-container">
-            <div class="item">
+            <checkbox-group class="item" @change="enableVideo = !enableVideo">
                 <label>
                     开启视频
                 </label>
-                <checkbox :disabled="audience" v-model="enableVideo"/>
-            </div>
+                <checkbox :disabled="audience" :checked="enableVideo"/>
+            </checkbox-group>
             <!--            不知道为啥，下面的 class 没生效-->
-            <div class="item" style="display: flex; flex-direction: row; justify-content: space-between; padding: 12px 20px; border-spacing: 20px;">
+            <checkbox-group class="item" @change="enableAudio= !enableAudio" style="display: flex; flex-direction: row; justify-content: space-between; padding: 12px 20px; border-spacing: 20px;">
                 <label>
                     开启音频
                 </label>
-                <checkbox :disabled="audience" v-model="enableAudio"/>
-            </div>
+                <checkbox :disabled="audience" :checked="enableAudio"/>
+            </checkbox-group>
         </div>
 
         <div class="action-container">
@@ -89,8 +89,9 @@ export default {
             console.log('options', options)
             let conferenceId = options.conferenceId;
             let password = options.password;
-            this.conferenceInfo = options.conferenceInfo;
-            if (!this.conferenceInfo) {
+            if (options.conferenceInfo) {
+                this.conferenceInfo = options.conferenceInfo;
+            } else {
                 this.getConferenceInfo(conferenceId, password);
             }
         })
@@ -130,7 +131,7 @@ export default {
         },
         joinConference() {
             let info = this.conferenceInfo;
-            console.log('joinConference', info);
+            console.log('joinConference', info, this.enableAudio, this.enableVideo);
             this.$navigateToPage('/pages/voip/conference/ConferencePage', {
                 conferenceInfo: this.conferenceInfo,
                 muteAudio: !this.enableAudio,
