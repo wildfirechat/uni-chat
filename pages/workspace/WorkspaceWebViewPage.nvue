@@ -1,5 +1,5 @@
 <template>
-    <web-view ref="webview" style="flex:1;" :src="url" @onPostMessage="handlePostMessage"></web-view>
+    <web-view ref="webview" style="flex:1;" :src="url" @onPostMessage="onPostMessage" @receivedtitle="onReceiveTitle"></web-view>
 </template>
 
 <script>
@@ -27,11 +27,17 @@ export default {
     },
 
     methods: {
-        handlePostMessage(event) {
+        onPostMessage(event) {
             let data = event.detail.data[0];
             console.log('onWebViewMessage data', data.obj)
             __messageFromWebView(data.obj)
         },
+        onReceiveTitle(event){
+            let title = event.detail.title;
+            uni.setNavigationBarTitle({
+                title: title
+            });
+        }
     }
 }
 </script>

@@ -12,7 +12,6 @@ let handlers;
 let _webView;
 let mApp;
 let mWfc;
-let mHostPage;
 
 export function init(app, webView) {
 
@@ -49,19 +48,15 @@ export let __messageFromWebView = data => {
     }
 }
 
-let openUrl = (args) => { // addTab or open new window?
+let openUrl = (args) => {
     console.log('openUrl', args)
-    // 直接从工作台打开的，addTab
-    // 从应用打开的，new window
-    //url: '/pages/misc/WebViewPage?url=https://wildfirechat.cn/',
-
-        mApp.$navigateToPage(`/pages/workspace/WorkspaceWebViewPage?url=${args.url}`);
-    // if (args.external) {
-    //     args.hostUrl = location.href;
-    //     mHostPage.openExternal(args);
-    //     return;
-    // }
-    // mHostPage.addTab(args.url)
+    let targetPageUrl
+    if (args.external) {
+        targetPageUrl = '/pages/misc/WebViewPage';
+    } else {
+        targetPageUrl = '/pages/workspace/WorkspaceWebViewPage';
+    }
+    mApp.$navigateToPage(`${targetPageUrl}?url=${args.url}`);
 }
 
 let getAuthCode = (args, appUrl, requestId) => {
