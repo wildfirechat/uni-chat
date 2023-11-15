@@ -206,6 +206,12 @@
             }
         },
         {
+            "path": "pages/workspace/WorkspaceWebViewPage",
+            "style": {
+                "navigationBarTitleText": "页面加载中..."
+            }
+        },
+        {
             "path": "pages/discovery/DiscoveryPage",
             "style": {
                 "navigationBarTitleText": "发现"

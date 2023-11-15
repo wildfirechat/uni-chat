@@ -9,17 +9,13 @@ export default {
     name: "WorkspacePage",
     data() {
         return {
-            //url: Config.WORKSPACE_URL,
-            //url: 'https://wildfirechat.cn'
-            url: 'http://192.168.2.180:8090/'
+            url: ''
         }
     },
 
     onLoad(option) {
         console.log('onLoad option url', option.url);
-        if (option.url){
-            this.url = option.url;
-        }
+        this.url = option.url;
     },
 
     created() {
