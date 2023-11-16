@@ -5,17 +5,11 @@
         <button @click="systemInfo">SystemInfo</button>
         <button @click="setHiddenGroupMemberName">setHiddenGroupMemberName</button>
         <button @click="pttRequestTalk">pttRequestTalk</button>
-        <button @click="singleVideoCall">singleVideoCall with uiuJuJcc</button>
-
-        <UIKit-Video-CallView :style="{width:200+'px',height:200+'px'}" ref="localVideoView"/>
-        <UIKit-Video-CallView :style="{width:200+'px',height:200+'px', marginTop: '50px'}" ref="remoteVideoView"/>
-
     </div>
 
 </template>
 
 <script>
-    import wfcUIKit from "../../wfc/uikit/wfcUIKit";
 
     export default {
         name: "ApiTestPage",
@@ -55,17 +49,6 @@
                 // let conv = new Conversation(ConversationType.Group, 0, "1f7qmws2k");
                 // pttClient.requestTalk(conv, 0, new TalkingCallback())
             },
-            singleVideoCall() {
-                // let conv = new Conversation(ConversationType.Group, 0, "1f7qmws2k");
-                // pttClient.requestTalk(conv, 0, new TalkingCallback())
-
-                wfcUIKit.startSingleCall("uiuJuJcc", false);
-                setTimeout(() => {
-                    console.log('to setVideo View')
-                    wfcUIKit.setVideoView('self', this.$refs.localVideoView.ref);
-                    wfcUIKit.setRemoteVideoView('uiuJuJcc', this.$refs.remoteVideoView.ref);
-                }, 5000)
-            }
         }
     }
 </script>
