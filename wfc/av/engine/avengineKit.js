@@ -1,6 +1,6 @@
 import avengineCallback from "./avengineCallback";
 
-const avengineKitPlugin = uni.requireNativePlugin("wf-uni-wfc-uikit");
+const avengineKitPlugin = uni.requireNativePlugin("wf-uni-wfc-avclient");
 
 import CallSession from './callSession';
 import ParticipantProfile from "./participantProfile";
