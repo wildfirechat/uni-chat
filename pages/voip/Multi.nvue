@@ -17,7 +17,7 @@
                                           ref="localVideo"
                     />
                     <div v-if="audioOnly || callState !== 4 || selfUserInfo._isVideoMuted"
-                         class="flex-column flex-justify-center flex-align-center">
+                         class="participant-item">
                         <img class="avatar" :src="selfUserInfo.portrait">
                         <text class="desc">我</text>
                     </div>
@@ -32,9 +32,9 @@
                                           @click="switchVideoType(participant.uid, participant._isScreenSharing)"
                     />
                     <div v-if="audioOnly || callState !== 4 || participant._isVideoMuted || !participant._receiveVideoTrack"
-                         class="flex-column flex-justify-center flex-align-center">
+                         class="participant-item">
                         <img class="avatar" :src="participant.portrait" :alt="participant">
-                        <text class="single-line desc">{{ userName(participant) }}</text>
+                        <text class="desc">{{ userName(participant) }}</text>
                     </div>
                 </div>
                 <!--add more-->
@@ -201,7 +201,6 @@
                 };
 
                 sessionCallback.didParticipantJoined = (userId, screenSharing) => {
-
                     let profile = avengineKit.getParticipantProfile(userId, screenSharing);
                     let userInfo = this.wfc.getUserInfo(userId)
                     userInfo._isVideoMuted = profile.videoMuted;
@@ -436,9 +435,8 @@
 
     .participant-container {
         display: flex;
-        width: 200px;
-        height: 220px;
-        /*background-color: rebeccapurple;*/
+        width: 250rpx;
+        height: 250rpx;
 
         position: relative;
         flex-direction: column;
@@ -446,8 +444,25 @@
         align-items: center;
     }
 
-    .participant-container .desc {
-    //max-height: 20px; color: white;
+    .participant-container .participant-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 250rpx;
+        height: 250rpx;
+        padding: 2rpx;
+    }
+
+    .avatar {
+        display: block;
+        width: 200rpx;
+        height: 200rpx;
+        border-radius: 2px;
+    }
+
+    .participant-item .desc{
+        height: 40rpx;
     }
 
     .duration-action-container {
@@ -497,11 +512,6 @@
         color: white;
     }
 
-    .avatar {
-        width: 200px;
-        height: 200px;
-    }
-
     .action-img {
         width: 60px;
         height: 60px;
@@ -511,8 +521,9 @@
         position: absolute;
         left: 0;
         top: 0;
-        width: 200px;
-        height: 200px;
+        width: 250rpx;
+        height: 250rpx;
+        padding: 1px;
     }
 
     .video.me {
