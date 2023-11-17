@@ -137,10 +137,13 @@ export default {
 
             let info = this.conferenceInfo;
             console.log('joinConference', info, this.enableAudio, this.enableVideo);
-            this.$navigateToPage('/pages/voip/conference/ConferencePage', {
-                conferenceInfo: this.conferenceInfo,
-                muteAudio: !this.enableAudio,
-                muteVideo: !this.enableVideo
+            uni.redirectTo({
+                url: `/pages/voip/conference/ConferencePage?conferenceInfo=${JSON.stringify(this.conferenceInfo)}&muteAudio=${!this.enableAudio}&muteVideo=${!this.enableVideo}`,
+                success: (res) => {
+                },
+                fail: (e) => {
+                    console.log('navigate to WebViewPage error', e)
+                }
             });
         },
     },

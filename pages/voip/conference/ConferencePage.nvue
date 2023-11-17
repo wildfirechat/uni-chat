@@ -175,19 +175,14 @@
             ConferenceParticipantVideoView
         },
         onLoad(option) {
-            console.log('voip/Conference onLoad')
-            // #ifdef APP-NVUE
-            const eventChannel = this.$scope.eventChannel; // 兼容APP-NVUE
-            // #endif
-            // #ifndef APP-NVUE
-            const eventChannel = this.getOpenerEventChannel();
-            // #endif
-            // 监听openerUsers事件，获取上一页面通过eventChannel传送到当前页面的数据
-            eventChannel.on('options', (options) => {
-                console.log('options', options, getApp(), getApp().wfc)
-                let conferenceInfo = options.conferenceInfo;
-                this.conferenceInfo = conferenceInfo;
-                this.joinConference(conferenceInfo, options.muteAudio, options.muteVideo);
+            console.log('voip/Conference onLoad', option)
+            // why? 不知道到为啥，要这么才生效
+            this.$nextTick(() => {
+                this.conferenceInfo = JSON.parse(option.conferenceInfo)
+                console.log('conferencePage parameters', this.conferenceInfo, option.muteAudio, option.muteVideo)
+                let muteAudio = option.muteAudio;
+                let muteVideo = option.muteVideo;
+                this.joinConference(this.conferenceInfo, muteAudio, muteVideo);
             })
         },
 
