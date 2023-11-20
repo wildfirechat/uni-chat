@@ -70,6 +70,7 @@
             </div>
 
             <!--connected-->
+            <text style="width: 750rpx; height: 50rpx; position: absolute; left: 0; bottom: 240rpx; text-align: center " class="desc" v-if="!audioOnly && callState === 4">{{ duration }}</text>
             <div v-if="callState === 4" class="action-container">
                 <div class="action">
                     <img @click="hangup" class="action-img" src='@/assets/images/av_hang_up.png'/>
@@ -86,7 +87,6 @@
                     <img @click="down2voice" class="action-img" src='@/assets/images/av_float_audio.png'/>
                     <text class="desc">切换到语音聊天</text>
                 </div>
-
             </div>
         </div>
     </div>
