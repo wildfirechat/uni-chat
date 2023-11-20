@@ -1,9 +1,10 @@
 <template>
-    <div class="participant-video-item"
+    <div class="participant-video-item" :style="computedParticipantSizeStyle"
          v-bind:class="{highlight: participant._volume > 0}">
         <UIKit-Video-CallView v-if="!participant._isAudience && !participant._isVideoMuted"
                               @dblclick="onDbClickVideo"
                               ref="remoteVideoView"
+                              :style="computedParticipantSizeStyle"
                               class="video"
         />
         <div v-else
@@ -31,6 +32,10 @@
     export default {
         name: "ConferenceParticipantVideoView",
         props: {
+            currentPageParticipants: {
+                type: Object,
+                required: true
+            },
             participant: {
                 type: Object,
                 required: true
@@ -128,6 +133,25 @@
             // FYI: https://stackoverflow.com/questions/62729380/vue-watch-outputs-same-oldvalue-and-newvalue
             isVideoMuted() {
                 return this.participant._isAudience || this.participant._isVideoMuted;
+            },
+
+            computedParticipantSizeStyle() {
+                let width;
+                let height;
+                if (this.currentPageParticipants.length === 1) {
+                    width = '750rpx';
+                    height = '400rpx'
+                } else if (this.currentPageParticipants.length <= 2) {
+                    width = '375rpx';
+                    height = '375rpx'
+                } else {
+                    width = '250rpx';
+                    height = '250rpx'
+                }
+                return {
+                    width: width,
+                    height: height,
+                }
             }
         },
         watch: {

@@ -13,11 +13,12 @@
             <!--video-->
             <div v-if="!audioOnly" style="width: 750rpx; flex: 1; position: relative">
                 <!--                    宫格布局-->
-                <section class="content-container grid video" style="background: #2d3033">
+                <section class="content-container grid" style="background: #2d3033">
                     <!--participants include self-->
                     <ConferenceParticipantVideoView v-for="(participant) in currentPageParticipants"
                                                     :key="participant.uid + '-' + participant._isScreenSharing"
                                                     :participant="participant"
+                                                    :currentPageParticipants="currentPageParticipants"
                                                     :self-user-info="selfUserInfo"
                                                     :session="session">
                     </ConferenceParticipantVideoView>
@@ -32,7 +33,7 @@
             <!--audio-->
             <div v-else style="width: 750rpx; flex: 1;">
                 <div
-                        style="background: white; height: 50px; display: flex; justify-content: center; align-items: center">
+                        style="background: white; height: 50px; width: 750rpx; position: absolute; left: 0; top: 0; display: flex; justify-content: center; align-items: center">
                     <div
                             style="background: #daeafe; width: 300px; height: 40px; padding: 0 5px; border-radius: 3px; display: flex; flex-direction: column; justify-content: center">
                         <p class="single-line"> {{ '正在讲话: ' + speakingUserName }}</p>
@@ -51,7 +52,7 @@
                             <text v-if="participant._isHost" class="indicator iconfont icon-ion-person" style="background: #FD802E">&#xf213;</text>
                             <text v-if="participant._isAudience" class="indicator iconfont icon-ion-ios-mic-off" style="color: red;">&#xf45f;</text>
                         </div>
-                        <p class="single-line desc">{{ userName(participant) }}</p>
+                        <text class="desc">{{ userName(participant) }}</text>
                     </div>
                 </section>
             </div>
@@ -890,7 +891,7 @@
                 let end = start + this.participantCountPerGridPage > sortedParticipantUserInfos.length ? sortedParticipantUserInfos.length : (start + this.participantCountPerGridPage);
                 // side effect
                 // TODO 优化
-                // 相邻页切换时，不能理解取消订阅，可能还切换回去，那样的话，就会有一小段时间，不显示视频流
+                // 相邻页切换时，不能立即取消订阅，可能还切换回去，那样的话，就会有一小段时间，不显示视频流
                 for (let i = 0; i < sortedParticipantUserInfos.length; i++) {
                     let u = sortedParticipantUserInfos[i];
                     if (u.uid === this.selfUserInfo.uid || u._isAudience || u._isVideoMuted) {
@@ -992,69 +993,8 @@
                     }
                     this.audioOnly = audioOnly;
                     console.log('audioOly ', audioOnly)
-
-                    if (this.audioOnly) {
-                        return;
-                    }
-                    // 宫格布局
-                    if (this.currentLayout === 0) {
-                        let start = this.currentGridPageIndex * this.participantCountPerGridPage;
-                        let end = start + this.participantCountPerGridPage > this.participantUserInfos.length ? this.participantUserInfos.length : (start + this.participantCountPerGridPage);
-                        let count = end - start;
-                        let width = '100%';
-                        let height = '100%';
-                        if (count <= 1) {
-                            width = '100%';
-                            height = '100%';
-                        } else if (count <= 4) {
-                            width = '50%';
-                            height = '45%';
-                        } else if (count <= 9) {
-                            width = '33%';
-                            height = '33%'
-                        } else {
-                            // max 16
-                            width = '25%';
-                            height = '25%'
-                        }
-                        if (this.$refs.rootContainer) {
-                            this.$refs.rootContainer.style.setProperty('--participant-video-item-width', width);
-                            this.$refs.rootContainer.style.setProperty('--participant-video-item-height', height);
-                        }
-                    }
                 }
             },
-            currentPageParticipants: {
-                deep: true,
-                handler(infos) {
-                    if (this.audioOnly) {
-                        return;
-                    }
-                    if (this.currentLayout === 0) {
-                        let count = this.currentPageParticipants.length;
-                        let width = '100%';
-                        let height = '100%';
-                        if (count <= 1) {
-                            width = '100%';
-                            height = '100%';
-                        } else if (count <= 4) {
-                            width = '50%';
-                            height = '45%';
-                        } else if (count <= 9) {
-                            width = '33%';
-                            height = '33%'
-                        } else {
-                            // max 16
-                            width = '25%';
-                            height = '25%'
-                        }
-                        if (this.$refs.rootContainer) {
-                            this.$refs.rootContainer.style.setProperty('--participant-video-item-width', width);
-                            this.$refs.rootContainer.style.setProperty('--participant-video-item-height', height);
-                        }
-                    }
-                }
-            }
         },
 
         directives: {},
@@ -1089,6 +1029,7 @@
         position: relative;
         display: flex;
         flex: 1;
+        flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
         align-items: center;
@@ -1108,7 +1049,8 @@
     .participant-audio-item {
         display: flex;
         flex-direction: column;
-        padding: 20px 40px;
+        width: 250rpx;
+        height: 250rpx;
         justify-content: center;
         align-items: center;
     }
@@ -1129,6 +1071,7 @@
 
     .participant-audio-item .desc {
         padding-top: 8px;
+        font-size: 15px;
     }
 
     .duration-action-container {

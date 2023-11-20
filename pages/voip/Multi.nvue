@@ -11,13 +11,14 @@
             <!--audio-->
             <div class="content-container">
                 <!--self-->
-                <div class="participant-container">
+                <div class="participant-container" :style="computedParticipantSizeStyle">
                     <UIKit-Video-CallView v-show
+                                          :style="computedParticipantSizeStyle"
                                           class="video me"
                                           ref="localVideo"
                     />
                     <div v-if="audioOnly || callState !== 4 || selfUserInfo._isVideoMuted"
-                         class="participant-item">
+                         class="participant-item" :style="computedParticipantSizeStyle">
                         <img class="avatar" :src="selfUserInfo.portrait">
                         <text class="desc">我</text>
                     </div>
@@ -25,13 +26,15 @@
 
                 <!--participants-->
                 <div v-for="(participant) in participantUserInfos" :key="participant.uid"
-                     class="participant-container">
+                     class="participant-container" :style="computedParticipantSizeStyle">
                     <UIKit-Video-CallView v-show
                                           class="video"
+                                          :style="computedParticipantSizeStyle"
                                           :ref="'remoteVideo-' + participant.uid"
                                           @click="switchVideoType(participant.uid, participant._isScreenSharing)"
                     />
                     <div v-if="audioOnly || callState !== 4 || participant._isVideoMuted || !participant._receiveVideoTrack"
+                         :style="computedParticipantSizeStyle"
                          class="participant-item">
                         <img class="avatar" :src="participant.portrait" :alt="participant">
                         <text class="desc">{{ userName(participant) }}</text>
@@ -41,7 +44,9 @@
                 <!--通话建立成功之后，才允许邀请新参与者-->
                 <div v-if="callState === 4/*connect*/ && participantUserInfos.length < 8"
                      class="participant-container">
-                    <img @click="invite" class="avatar" src="@/assets/images/add.png">
+                    <div style="background: #1D1D1D; border-radius: 30px">
+                        <img @click="invite" class="action-img" src="@/assets/images/add.png">
+                    </div>
                 </div>
             </div>
 
@@ -356,6 +361,24 @@
                 // this.wfc.sendConversationMessage(this.session.conversation, ongoing);
 
                 // TODO 不能引入 MultiCallOngoingMessageContent，在 js 层去做吧
+            },
+
+            updateParticipantSize() {
+                let width;
+                let height;
+                if (this.participantUserInfos.length < 2) {
+                    width = '375rpx';
+                    height = '375rpx';
+                } else {
+                    width = '250rpx';
+                    height = '250rpx';
+                }
+                if (this.$refs.participantContainer) {
+                    this.$refs.participantContainer.style.setProperty('width', width);
+                    this.$refs.participantContainer.style.setProperty('height', height);
+                    this.$refs.participantContainer.style.setProperty('background', 'red');
+                    console.log('------------ update participant-item-width', width)
+                }
             }
         },
 
@@ -408,6 +431,22 @@
                 let userInfo = this.wfc.getUserInfo(this.wfc.getUserId(), false)
                 return userInfo;
             },
+
+            computedParticipantSizeStyle() {
+                let width;
+                let height;
+                if (this.participantUserInfos.length < 2) {
+                    width = '375rpx';
+                    height = '375rpx';
+                } else {
+                    width = '250rpx';
+                    height = '250rpx';
+                }
+                return {
+                    width: width,
+                    height: height
+                }
+            }
         },
     }
 </script>
@@ -461,7 +500,7 @@
         border-radius: 2px;
     }
 
-    .participant-item .desc{
+    .participant-item .desc {
         height: 40rpx;
     }
 
