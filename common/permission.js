@@ -179,7 +179,20 @@ function requestIOS(permissionIDs) {
         ps.push(p);
     }
 
-    return Promise.all(ps)
+    return new Promise((resolve, reject) => {
+        Promise.all(ps).then(value => {
+            let result = 1;
+            for (const v of value) {
+                if (v !== 1) {
+                    result = v;
+                    break;
+                }
+            }
+            resolve(result);
+        }, reason => {
+            reject(reason);
+        })
+    })
 }
 
 function requestAndroid(permissionIDs) {
