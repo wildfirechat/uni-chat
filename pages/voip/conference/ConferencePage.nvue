@@ -23,10 +23,10 @@
                                                     :session="session">
                     </ConferenceParticipantVideoView>
                 </section>
-                <text v-if="computedCurrentLayout=== 0 && currentGridPageIndex > 0" style="position: absolute; top: 300px; left: 0; color: #c8cacc; z-index: 1000; font-size: 40px; padding: 0 10px" class="iconfont icon-ion-arrow-left-c"
+                <text v-if="computedCurrentLayout === 0 && currentGridPageIndex > 0" style="position: absolute; top: 300px; left: 0; color: #c8cacc; z-index: 1000; font-size: 40px; padding: 0 10px" class="iconfont icon-ion-arrow-left-c"
                       @click="prePage">&#xf108;
                 </text>
-                <text v-if="computedCurrentLayout=== 0 && currentGridPageIndex < gridPageCount" style="position: absolute; top: 300px; right: 0; color: #c8cacc; z-index: 1000; font-size: 40px; padding: 0 10px" class="iconfont icon-ion-arrow-right-c"
+                <text v-if="computedCurrentLayout === 0 && currentGridPageIndex < gridPageCount - 1" style="position: absolute; top: 300px; right: 0; color: #c8cacc; z-index: 1000; font-size: 40px; padding: 0 10px" class="iconfont icon-ion-arrow-right-c"
                       @click="nextPage">&#xf10b;
                 </text>
             </div>
@@ -156,8 +156,8 @@
                 endReason: undefined,
 
 
-                // -1，默认布局，也就是宫格布局；0, 宫格视图；1，演讲者视图
-                currentLayout: -1,
+                // 宫格布局；0, 宫格视图；1，演讲者视图
+                currentLayout: 0,
 
                 // 宫格视图
                 currentGridPageIndex: 0,
@@ -892,19 +892,19 @@
                 // side effect
                 // TODO 优化
                 // 相邻页切换时，不能立即取消订阅，可能还切换回去，那样的话，就会有一小段时间，不显示视频流
-                for (let i = 0; i < sortedParticipantUserInfos.length; i++) {
-                    let u = sortedParticipantUserInfos[i];
-                    if (u.uid === this.selfUserInfo.uid || u._isAudience || u._isVideoMuted) {
-                        continue;
-                    }
-                    if (i >= start && i < end) {
-                        console.log('set video type big', u.uid)
-                        avengineKit.setParticipantVideoType(u.uid, u._isScreenSharing, VideoType.BIG_STREAM);
-                    } else {
-                        console.log('set video type none', u.uid)
-                        avengineKit.setParticipantVideoType(u.uid, u._isScreenSharing, VideoType.NONE);
-                    }
-                }
+                // for (let i = 0; i < sortedParticipantUserInfos.length; i++) {
+                //     let u = sortedParticipantUserInfos[i];
+                //     if (u.uid === this.selfUserInfo.uid || u._isAudience || u._isVideoMuted) {
+                //         continue;
+                //     }
+                //     if (i >= start && i < end) {
+                //         console.log('set video type big', u.uid)
+                //         avengineKit.setParticipantVideoType(u.uid, u._isScreenSharing, VideoType.BIG_STREAM);
+                //     } else {
+                //         console.log('set video type none', u.uid)
+                //         avengineKit.setParticipantVideoType(u.uid, u._isScreenSharing, VideoType.NONE);
+                //     }
+                // }
                 // side effect
                 return sortedParticipantUserInfos.slice(start, end);
             },
@@ -956,6 +956,7 @@
                     }
                 }
 
+                console.log('computedFocusVideoParticipant', this.conferenceManager.currentFocusUser)
                 if (this.conferenceManager.currentFocusUser) {
                     avengineKit.setParticipantVideoType(this.conferenceManager.currentFocusUser.uid, this.conferenceManager.currentFocusUser._isScreenSharing, VideoType.SMALL_STREAM);
                 }
