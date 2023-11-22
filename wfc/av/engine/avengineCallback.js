@@ -44,9 +44,10 @@ export class AvengineCallback {
         let pages = getCurrentPages();
         let singleVoipRoute = 'pages/voip/Single'
         let multiVoipRoute = 'pages/voip/Multi'
+        let conferenceVoipRoute = 'pages/voip/conference/ConferencePage'
         let curRoute = pages[pages.length - 1].route;
 
-        if (curRoute === singleVoipRoute || curRoute === multiVoipRoute) {
+        if (curRoute === singleVoipRoute || curRoute === multiVoipRoute || curRoute === conferenceVoipRoute) {
             uni.navigateBack({
                 delta: 1,
                 fail: err => {
