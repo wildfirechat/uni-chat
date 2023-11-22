@@ -135,11 +135,13 @@
                 this.targetUserId = options.callSession.conversation.target;
                 this.callState = Number(this.session.state);
                 this.audioOnly = this.session.audioOnly;
+                if (this.session.connectedTime) {
+                    this.startTimestamp = this.session.connectedTime;
+                }
             })
         },
 
         onUnload() {
-            this.sharedPickState.users.length = 0
         },
 
         methods: {
@@ -169,17 +171,7 @@
 
                     this.callState = state;
                     if (state === CallState.STATUS_CONNECTED) {
-                        if (this.startTimestamp === 0) {
-                            this.startTimestamp = new Date().getTime();
-                            this.timer = setInterval(() => {
-                                this.currentTimestamp = new Date().getTime();
-                            }, 1000)
-                        }
-                        this.$nextTick(() => {
-                            avengineKit.setLocalVideoView(this.wfc.getUserId(), this.$refs.localVideo.ref)
-                            avengineKit.setRemoteVideoView(this.targetUserId, this.$refs.remoteVideo.ref)
-                            console.log('setRemoteVideoView', this.targetUserId, this.$refs.remoteVideo.ref)
-                        })
+                        this.onVoipConnected();
                     } else if (state === CallState.STATUS_IDLE) {
                         if (this.timer) {
                             clearInterval(this.timer);
@@ -283,7 +275,27 @@
             },
 
             screenShare() {
+                // TODO
             },
+
+            onVoipConnected() {
+                if (!this.timer) {
+                    if (!this.startTimestamp) {
+                        this.startTimestamp = new Date().getTime();
+                    }
+                    this.timer = setInterval(() => {
+                        this.currentTimestamp = new Date().getTime();
+                    }, 1000)
+                }
+                if (!this.audioOnly) {
+                    this.$nextTick(() => {
+                        avengineKit.setLocalVideoView(this.wfc.getUserId(), this.$refs.localVideo.ref)
+                        avengineKit.setRemoteVideoView(this.targetUserId, this.$refs.remoteVideo.ref)
+                        console.log('setRemoteVideoView', this.targetUserId, this.$refs.remoteVideo.ref)
+                    })
+                }
+            },
+
             timestampFormat(timestamp) {
                 timestamp = ~~(timestamp / 1000);
                 let str = ''
@@ -294,6 +306,18 @@
                 let sec = ~~((timestamp % 60));
                 str += (sec < 10 ? "0" : "") + sec
                 return str;
+            },
+
+            minimize() {
+                let granted = getApp().avengineKit.checkOverlayPermission();
+                if (granted) {
+                    getApp().avengineKit.minimize();
+                } else {
+                    uni.showToast({
+                        title: "需要悬浮窗权限",
+                        icon: 'none',
+                    });
+                }
             }
         },
 
@@ -316,9 +340,12 @@
             //     }
             // }
             this.setupSessionCallback();
+            if (this.callState === CallState.STATUS_CONNECTED) {
+                this.onVoipConnected();
+            }
         },
         beforeDestroy() {
-            getApp().avengineKit.endCall(this.session.callId);
+            // getApp().avengineKit.endCall(this.session.callId);
         },
 
         computed: {

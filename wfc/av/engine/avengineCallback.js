@@ -4,7 +4,9 @@ import CallSession from "./callSession";
 export class AvengineCallback {
     onReceiveCall(session) {
         console.log('onReceiveCall', session)
-        session = Object.assign(new CallSession(), JSON.parse(session));
+        if (typeof session === 'string'){
+            session = Object.assign(new CallSession(), JSON.parse(session));
+        }
         let url;
         if (session.conversation.type === ConversationType.Single) {
             url = '/pages/voip/Single'

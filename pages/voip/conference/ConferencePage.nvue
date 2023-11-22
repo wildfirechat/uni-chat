@@ -183,7 +183,16 @@
                 console.log('conferencePage parameters', this.conferenceInfo, option.muteAudio, option.muteVideo)
                 let muteAudio = option.muteAudio;
                 let muteVideo = option.muteVideo;
-                this.joinConference(this.conferenceInfo, muteAudio, muteVideo);
+                this.conferenceManager.setConferenceInfo(this.conferenceInfo);
+
+                if (option.callSession) {
+                    this.session = option.callSession;
+                    if (this.session.connectedTime) {
+                        this.startTimestamp = this.session.connectedTime;
+                    }
+                } else {
+                    this.joinConference(this.conferenceInfo, muteAudio, muteVideo);
+                }
             })
         },
 
@@ -203,7 +212,11 @@
         },
 
         mounted() {
-            // do nothing
+            if (this.session) {
+                this.setupParticipants();
+                this.setupSessionCallback();
+                this.onVoipConnected();
+            }
         },
 
         methods: {
@@ -230,21 +243,8 @@
                 session = avengineKit.joinConference(conferenceInfo.conferenceId, audioOnly, conferenceInfo.pin, conferenceInfo.owner, conferenceInfo.conferenceTitle, '', audience, conferenceInfo.advance, muteAudio, muteVideo, callExtra);
                 if (session) {
                     this.session = session;
-                    this.conferenceManager.setConferenceInfo(conferenceInfo);
 
-                    let selfProfile = avengineKit.getMyProfile();
-                    let selfUserInfo = this.profile2UserInfo(selfProfile)
-                    console.log('selfProfile', selfProfile);
-                    this.selfUserInfo = selfUserInfo;
-                    this.participantUserInfos.push(selfUserInfo);
-
-                    let participantProfiles = avengineKit.getParticipantProfiles();
-                    console.log('participantProfiles', participantProfiles)
-                    for (const p of participantProfiles) {
-                        let userInfo = this.profile2UserInfo(p);
-                        this.participantUserInfos.push(userInfo);
-                    }
-
+                    this.setupParticipants();
                     this.setupSessionCallback();
                 } else {
                     console.log('joinConference failed, session is null')
@@ -265,12 +265,7 @@
                     this.status = state;
                     if (state === CallState.STATUS_CONNECTED) {
                         // 比如没有摄像头，但发起视频通话时，会自动 muteVideo
-                        if (this.startTimestamp === 0) {
-                            this.startTimestamp = new Date().getTime();
-                            this.timer = setInterval(() => {
-                                this.currentTimestamp = new Date().getTime();
-                            }, 1000)
-                        }
+                        this.onVoipConnected();
                     } else if (state === CallState.STATUS_IDLE) {
                         if (this.timer) {
                             clearInterval(this.timer);
@@ -715,6 +710,33 @@
                     name = user.name;
                 }
                 return name;
+            },
+
+            setupParticipants() {
+                let selfProfile = avengineKit.getMyProfile();
+                let selfUserInfo = this.profile2UserInfo(selfProfile)
+                console.log('selfProfile', selfProfile);
+                this.selfUserInfo = selfUserInfo;
+                this.participantUserInfos.push(selfUserInfo);
+
+                let participantProfiles = avengineKit.getParticipantProfiles();
+                console.log('participantProfiles', participantProfiles)
+                for (const p of participantProfiles) {
+                    let userInfo = this.profile2UserInfo(p);
+                    this.participantUserInfos.push(userInfo);
+                }
+            },
+
+            onVoipConnected() {
+                if (!this.timer) {
+                    if (!this.startTimestamp) {
+                        this.startTimestamp = new Date().getTime();
+                    }
+
+                    this.timer = setInterval(() => {
+                        this.currentTimestamp = new Date().getTime();
+                    }, 1000)
+                }
             },
 
             timestampFormat(timestamp) {

@@ -40,7 +40,6 @@
                         <text class="desc">{{ userName(participant) }}</text>
                     </div>
                 </div>
-                <!--add more-->
                 <!--通话建立成功之后，才允许邀请新参与者-->
                 <div v-if="callState === 4/*connect*/ && participantUserInfos.length < 8"
                      class="participant-container">
@@ -146,6 +145,9 @@
                 this.session = options.callSession;
                 this.callState = this.session.state;
                 this.audioOnly = this.session.audioOnly;
+                if (this.session.connectedTime) {
+                    this.startTimestamp = this.session.connectedTime;
+                }
             })
         },
         methods: {
@@ -169,19 +171,7 @@
                     this.callState = state;
 
                     if (state === CallState.STATUS_CONNECTED) {
-                        if (this.startTimestamp === 0) {
-                            this.startTimestamp = new Date().getTime();
-                            this.timer = setInterval(() => {
-                                this.currentTimestamp = new Date().getTime();
-                            }, 1000)
-                        }
-
-                        this.$nextTick(() => {
-                            avengineKit.setLocalVideoView(this.selfUserInfo.uid, this.$refs.localVideo.ref)
-                            this.participantUserInfos.forEach(u => {
-                                avengineKit.setRemoteVideoView(u.uid, this.$refs['remoteVideo-' + u.uid][0].ref, false)
-                            });
-                        });
+                        this.onVoipConnected();
                     } else if (state === CallState.STATUS_IDLE) {
                         if (this.timer) {
                             clearInterval(this.timer);
@@ -343,6 +333,24 @@
                 return name;
             },
 
+            onVoipConnected() {
+                if (!this.timer) {
+                    if (!this.startTimestamp) {
+                        this.startTimestamp = new Date().getTime();
+                    }
+                    this.timer = setInterval(() => {
+                        this.currentTimestamp = new Date().getTime();
+                    }, 1000)
+                }
+
+                this.$nextTick(() => {
+                    avengineKit.setLocalVideoView(this.selfUserInfo.uid, this.$refs.localVideo.ref)
+                    this.participantUserInfos.forEach(u => {
+                        avengineKit.setRemoteVideoView(u.uid, this.$refs['remoteVideo-' + u.uid][0].ref, false)
+                    });
+                });
+            },
+
             timestampFormat(timestamp) {
                 timestamp = ~~(timestamp / 1000);
                 let str = ''
@@ -409,10 +417,15 @@
                 userInfo._isAudience = p.audience;
                 this.participantUserInfos.push(userInfo);
             }
+
+            if (this.callState === CallState.STATUS_CONNECTED) {
+                this.onVoipConnected();
+            }
         },
 
         beforeDestroy() {
-            getApp().avengineKit.endCall(this.session.callId);
+            //getApp().avengineKit.endCall(this.session.callId);
+            getApp().avengineKit.minimize();
 
             if (this.broadcastMultiCallOngoingTimer) {
                 clearInterval(this.broadcastMultiCallOngoingTimer);
