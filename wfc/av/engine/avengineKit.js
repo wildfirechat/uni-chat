@@ -47,6 +47,13 @@ export class AVEngineKit {
 
     _handleNativeCallSessionEvent(e) {
         let args = e.args;
+        if (args[0] === 'resumeVoipPage') {
+            let session = this.currentCallSession();
+            if (session) {
+                this.avengineCallback.onReceiveCall(session);
+            }
+            return;
+        }
         if (this.sessionCallback) {
             let func = this.sessionCallback[args[0]]
             if (func) {
@@ -285,6 +292,22 @@ export class AVEngineKit {
             return null;
         }
         return Object.assign(new ParticipantProfile(), JSON.parse(str))
+    }
+
+
+    /**
+     * 检查是否允许显示悬浮窗
+     * @return {boolean}
+     */
+    checkOverlayPermission() {
+        return avengineKitPlugin.checkOverlayPermission();
+    }
+
+    /**
+     * 最小化，显示悬浮窗
+     */
+    minimize() {
+        avengineKitPlugin.minimize();
     }
 }
 
