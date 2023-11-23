@@ -183,7 +183,7 @@ function requestIOS(permissionIDs) {
         Promise.all(ps).then(value => {
             let result = 1;
             for (const v of value) {
-                if (v !== 1) {
+                if (v !== 1 && v != null) {
                     result = v;
                     break;
                 }
