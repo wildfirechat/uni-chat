@@ -89,7 +89,7 @@
                 </div>
             </div>
 
-            <div v-if="callState === 4" style="position:absolute; right: 20rpx; top: 20rpx;">
+            <div v-if="callState === 4" style="position:absolute; right: 20rpx; top: 80rpx;">
                 <img @click="minimize" style="width: 30px; height: 30px" src='@/assets/images/av_minimize.png'/>
             </div>
         </div>
@@ -393,6 +393,7 @@
         width: 750rpx;
         flex: 1;
         display: flex;
+        padding-top: 60rpx;
         flex-direction: column;
         position: relative;
         background: rgb(41, 41, 41)

@@ -232,6 +232,7 @@
         {
             "path": "pages/voip/Single",
             "style": {
+                "titleNView": false,
                 "navigationBarTitleText": "单人音视频通话"
             }
         },
