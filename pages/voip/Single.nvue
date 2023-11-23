@@ -343,6 +343,16 @@
             // }
 
             this.setupSessionCallback();
+
+            // // 开发测试时使用，方便修改UI， 刷新页面之后，还能正常显示音视频通话页面，其他情况一定要将下面代码注释
+            // let session = avengineKit.currentCallSession();
+            // if (session) {
+            //     console.log('current session', session.state, session);
+            //     this.session = session;
+            //     this.callState = session.state;
+            // }
+            // // end
+
             if (this.callState === CallState.STATUS_CONNECTED) {
                 this.onVoipConnected();
             }
