@@ -8,37 +8,36 @@
 <template>
     <div style="flex: 1; display: flex; flex-direction: column; ">
         <div v-if="session" class="container">
-            <!--audio-->
             <div class="content-container">
                 <!--self-->
                 <div class="participant-container" :style="computedParticipantSizeStyle">
-                    <UIKit-Video-CallView v-show
-                                          :style="computedParticipantSizeStyle"
-                                          class="video me"
-                                          ref="localVideo"
-                    />
                     <div v-if="audioOnly || callState !== 4 || selfUserInfo._isVideoMuted"
                          class="participant-item" :style="computedParticipantSizeStyle">
                         <image class="avatar" :src="selfUserInfo.portrait"/>
                         <text class="desc">我</text>
                     </div>
+                    <UIKit-Video-CallView v-else
+                                          :style="computedParticipantSizeStyle"
+                                          class="video me"
+                                          ref="localVideo"
+                    />
                 </div>
 
                 <!--participants-->
                 <div v-for="(participant) in participantUserInfos" :key="participant.uid"
                      class="participant-container" :style="computedParticipantSizeStyle">
-                    <UIKit-Video-CallView v-show
-                                          class="video"
-                                          :style="computedParticipantSizeStyle"
-                                          :ref="'remoteVideo-' + participant.uid"
-                                          @click="switchVideoType(participant.uid, participant._isScreenSharing)"
-                    />
                     <div v-if="audioOnly || callState !== 4 || participant._isVideoMuted || participant._state !== 4"
                          :style="computedParticipantSizeStyle"
                          class="participant-item">
                         <image class="avatar" :src="participant.portrait" :alt="participant"/>
                         <text class="desc">{{ userName(participant) }}</text>
                     </div>
+                    <UIKit-Video-CallView v-else
+                                          class="video"
+                                          :style="computedParticipantSizeStyle"
+                                          :ref="'remoteVideo-' + participant.uid"
+                                          @click="switchVideoType(participant.uid, participant._isScreenSharing)"
+                    />
                 </div>
                 <!--通话建立成功之后，才允许邀请新参与者-->
                 <div v-if="callState === 4/*connect*/ && participantUserInfos.length < 8"
@@ -96,7 +95,7 @@
                 </div>
             </div>
 
-            <div v-if="callState === 4" style="position:absolute; left: 20rpx; top: 40rpx;">
+            <div v-if="callState === 4" style="position:absolute; right: 20rpx; top: 80rpx;">
                 <image @click="minimize" style="width: 30px; height: 30px" src='/static/image/av/av_minimize.png'/>
             </div>
         </div>
@@ -495,6 +494,7 @@
 
     .container {
         width: 750rpx;
+        //padding-top: 60rpx;
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -597,9 +597,6 @@
     }
 
     .video {
-        position: absolute;
-        left: 0;
-        top: 0;
         width: 250rpx;
         height: 250rpx;
         padding: 1px;

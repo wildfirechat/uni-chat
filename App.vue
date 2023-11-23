@@ -86,8 +86,11 @@ export default {
 /*每个页面公共css */
 @import './global.css';
 @import './wfc.css';
+/* #ifndef APP-NVUE */
 @import './static/iconfonts/customicons.css';
 @import './static/iconfonts/icomoon/style.css';
+/* #endif */
+
 
 :root {
     --uni-tabbar-height: 50px;

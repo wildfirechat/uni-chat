@@ -25,13 +25,13 @@
 
             <!--video-->
             <div v-else class="content-container">
-                <div class="local-media-container">
-                    <UIKit-Video-CallView v-if="callState === 4"
-                                          ref="localVideo"
-                                          class="localVideo me"
-                    />
-                    <image v-if="callState !== 4" class="avatar" :src="selfUserInfo.portrait"/>
-                </div>
+<!--                <div class="local-media-container">-->
+<!--                    <UIKit-Video-CallView v-if="callState === 4"-->
+<!--                                          ref="localVideo"-->
+<!--                                          class="localVideo me"-->
+<!--                    />-->
+<!--                    <image v-if="callState !== 4" class="avatar" :src="selfUserInfo.portrait"/>-->
+<!--                </div>-->
                 <div class="remote-media-container">
                     <UIKit-Video-CallView v-if="callState ===4"
                                           @click="switchVideoType()"
@@ -45,6 +45,13 @@
                         <text class="desc" v-else-if="callState === 2">邀请你视频聊天</text>
                         <text class="desc" v-else-if="callState === 3">接听中...</text>
                     </div>
+                </div>
+                <div class="local-media-container">
+                    <UIKit-Video-CallView v-if="callState === 4"
+                                          ref="localVideo"
+                                          class="localVideo"
+                    />
+                    <image v-if="callState !== 4" class="avatar" :src="selfUserInfo.portrait"/>
                 </div>
             </div>
 
@@ -287,6 +294,7 @@
                 }
                 if (!this.audioOnly) {
                     this.$nextTick(() => {
+                        console.log('setLocalVideoView', this.wfc.getUserId(), this.$refs.localVideo.ref)
                         avengineKit.setLocalVideoView(this.wfc.getUserId(), this.$refs.localVideo.ref)
                         avengineKit.setRemoteVideoView(this.targetUserId, this.$refs.remoteVideo.ref)
                         console.log('setRemoteVideoView', this.targetUserId, this.$refs.remoteVideo.ref)
@@ -396,7 +404,7 @@
         width: 750rpx;
         flex: 1;
         display: flex;
-        padding-top: 60rpx;
+        //padding-top: 60rpx;
         flex-direction: column;
         position: relative;
         background: rgb(41, 41, 41)
@@ -472,6 +480,7 @@
     .localVideo {
         width: 200px;
         height: 200px;
+        background: #1FCA6A;
     }
 
     .localVideo.me {
