@@ -88,6 +88,10 @@
                     <text class="desc">切换到语音聊天</text>
                 </div>
             </div>
+
+            <div v-if="callState === 4" style="position:absolute; right: 20rpx; top: 20rpx;">
+                <img @click="minimize" style="width: 30px; height: 30px" src='@/assets/images/av_minimize.png'/>
+            </div>
         </div>
     </div>
 </template>
@@ -246,6 +250,7 @@
                 console.log('hangup');
                 let callId = this.session.callId;
                 avengineKit.endCall(callId);
+                this.session = null;
             },
 
             switchCamera() {
@@ -336,13 +341,16 @@
             //         }
             //     }
             // }
+
             this.setupSessionCallback();
             if (this.callState === CallState.STATUS_CONNECTED) {
                 this.onVoipConnected();
             }
         },
         beforeDestroy() {
-            // getApp().avengineKit.endCall(this.session.callId);
+            if (this.session) {
+                this.minimize();
+            }
         },
 
         computed: {

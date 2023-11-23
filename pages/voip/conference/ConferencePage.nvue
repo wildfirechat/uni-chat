@@ -498,6 +498,7 @@
 
             hangup() {
                 avengineKit.leaveConference(this.session.callId, false);
+                this.session = null;
                 // this.conferenceManager.addHistory(this.conferenceManager.conferenceInfo, new Date().getTime() - this.conferenceManager.conferenceInfo.startTime * 1000)
                 uni.navigateBack({
                     delta: 1,
@@ -1016,7 +1017,11 @@
 
 
         beforeDestroy() {
-            this.conferenceManager.destroy();
+            if (this.session) {
+                this.minimize();
+            } else {
+                this.conferenceManager.destroy();
+            }
         },
         destroyed() {
             // reset

@@ -95,6 +95,10 @@
                     </div>
                 </div>
             </div>
+
+            <div v-if="callState === 4" style="position:absolute; left: 20rpx; top: 20rpx;">
+                <img @click="minimize" style="width: 30px; height: 30px" src='@/assets/images/av_minimize.png'/>
+            </div>
         </div>
     </div>
 </template>
@@ -263,6 +267,7 @@
 
             hangup() {
                 avengineKit.endCall(this.session.callId);
+                this.session = null;
             },
 
             switchCamera() {
@@ -422,6 +427,7 @@
             this.setupSessionCallback();
 
             let participantProfiles = avengineKit.getParticipantProfiles();
+            console.log('xxxxxxxxx', participantProfiles)
             for (const p of participantProfiles) {
                 let userInfo = this.wfc.getUserInfo(p.userId);
                 userInfo._isVideoMuted = p.videoMuted;
@@ -437,9 +443,9 @@
         },
 
         beforeDestroy() {
-            //getApp().avengineKit.endCall(this.session.callId);
-            getApp().avengineKit.minimize();
-
+            if (this.session) {
+                this.minimize();
+            }
             if (this.broadcastMultiCallOngoingTimer) {
                 clearInterval(this.broadcastMultiCallOngoingTimer);
             }
