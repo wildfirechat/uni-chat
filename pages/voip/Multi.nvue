@@ -33,7 +33,7 @@
                                           :ref="'remoteVideo-' + participant.uid"
                                           @click="switchVideoType(participant.uid, participant._isScreenSharing)"
                     />
-                    <div v-if="audioOnly || callState !== 4 || participant._isVideoMuted || !participant._receiveVideoTrack"
+                    <div v-if="audioOnly || callState !== 4 || participant._isVideoMuted || participant._state !== 4"
                          :style="computedParticipantSizeStyle"
                          class="participant-item">
                         <img class="avatar" :src="participant.portrait" :alt="participant">
@@ -132,23 +132,14 @@
             }
         },
         onLoad(option) {
-            console.log('voip/Multi onLoad')
-            // #ifdef APP-NVUE
-            const eventChannel = this.$scope.eventChannel; // 兼容APP-NVUE
-            // #endif
-            // #ifndef APP-NVUE
-            const eventChannel = this.getOpenerEventChannel();
-            // #endif
-            // 监听openerUsers事件，获取上一页面通过eventChannel传送到当前页面的数据
-            eventChannel.on('options', (options) => {
-                console.log('options', options, getApp(), getApp().wfc)
-                this.session = options.callSession;
-                this.callState = this.session.state;
-                this.audioOnly = this.session.audioOnly;
-                if (this.session.connectedTime) {
-                    this.startTimestamp = this.session.connectedTime;
-                }
-            })
+            console.log('voip/Multi onLoad', option)
+            this.session = JSON.parse(option.session);
+            this.callState = this.session.state;
+            this.audioOnly = this.session.audioOnly;
+            if (this.session.connectedTime) {
+                this.startTimestamp = this.session.connectedTime;
+            }
+
         },
         methods: {
             switchVideoType(userId, screenSharing) {
@@ -190,7 +181,7 @@
                     console.log('didReceiveRemoteVideoTrack', userId, screenSharing)
                     this.participantUserInfos.forEach(u => {
                         if (u.uid === userId) {
-                            u._receiveVideoTrack = true;
+                            u._state = CallState.STATUS_CONNECTED;
                         }
                     });
                 };
@@ -343,12 +334,14 @@
                     }, 1000)
                 }
 
-                this.$nextTick(() => {
-                    avengineKit.setLocalVideoView(this.selfUserInfo.uid, this.$refs.localVideo.ref)
-                    this.participantUserInfos.forEach(u => {
-                        avengineKit.setRemoteVideoView(u.uid, this.$refs['remoteVideo-' + u.uid][0].ref, false)
+                if (!this.audioOnly) {
+                    this.$nextTick(() => {
+                        avengineKit.setLocalVideoView(this.selfUserInfo.uid, this.$refs.localVideo.ref)
+                        this.participantUserInfos.forEach(u => {
+                            avengineKit.setRemoteVideoView(u.uid, this.$refs['remoteVideo-' + u.uid][0].ref, false)
+                        });
                     });
-                });
+                }
             },
 
             timestampFormat(timestamp) {
@@ -387,6 +380,25 @@
                     this.$refs.participantContainer.style.setProperty('background', 'red');
                     console.log('------------ update participant-item-width', width)
                 }
+            },
+
+            minimize() {
+                let granted = getApp().avengineKit.checkOverlayPermission();
+                console.log('overlayPermission granted', granted)
+                if (granted) {
+                    getApp().avengineKit.minimize();
+                    uni.navigateBack({
+                        delta: 1,
+                        fail: err => {
+                            console.log('nav back to err', err);
+                        }
+                    });
+                } else {
+                    uni.showToast({
+                        title: "需要悬浮窗权限",
+                        icon: 'none',
+                    });
+                }
             }
         },
 
@@ -415,6 +427,7 @@
                 userInfo._isVideoMuted = p.videoMuted;
                 userInfo._isAudioMuted = p.audioMuted;
                 userInfo._isAudience = p.audience;
+                userInfo._state = p.state;
                 this.participantUserInfos.push(userInfo);
             }
 

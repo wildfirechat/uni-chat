@@ -14,6 +14,7 @@ export class AvengineCallback {
             // TODO multi
             url = '/pages/voip/Multi'
         }
+        url += `?session=${JSON.stringify(session)}`
         if (url) {
             uni.navigateTo({
                 url: url,

@@ -32,7 +32,9 @@ Vue.prototype.$navigateToPage = (url, options) => {
     uni.navigateTo({
         url: url,
         success: (res) => {
-            res.eventChannel.emit('options', options);
+            if (options){
+                res.eventChannel.emit('options', options);
+            }
         },
         fail: (e) => {
             console.log('navigate to WebViewPage error', e)

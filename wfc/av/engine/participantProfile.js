@@ -4,7 +4,7 @@
 export default class ParticipantProfile {
     userId;
     callExtra;
-    status;
+    state;
     joinTime = 0;
     acceptTime = 0;
     audioMuted = false;

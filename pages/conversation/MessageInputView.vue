@@ -365,8 +365,8 @@ export default {
             if (this.conversationInfo.conversation.type === ConversationType.Single) {
                 let callSession = avengineKit.startSingleCall(this.conversationInfo.conversation.target, audioOnly)
                 if (callSession) {
-                    let url = '/pages/voip/Single'
-                    this.$navigateToPage(url, {callSession: callSession});
+                    let url = `/pages/voip/Single?session=${JSON.stringify(callSession)}`
+                    this.$navigateToPage(url);
                 }
             } else if (this.conversationInfo.conversation.type === ConversationType.Group) {
                 this.showPickGroupMemberToVoipModal(audioOnly)
@@ -380,8 +380,8 @@ export default {
                 // 不加延时的话，不能正常切换页面，会报莫名其妙的错误
                 setTimeout(() => {
                     if (callSession) {
-                        let url = '/pages/voip/Multi'
-                        this.$navigateToPage(url, {callSession: callSession});
+                        let url = `/pages/voip/Multi?session=${JSON.stringify(callSession)}`
+                        this.$navigateToPage(url);
                     }
                 }, 50)
             }

@@ -4,6 +4,7 @@ const avengineKitPlugin = uni.requireNativePlugin("wf-uni-wfc-avclient");
 
 import CallSession from './callSession';
 import ParticipantProfile from "./participantProfile";
+import ConversationType from "../../model/conversationType";
 
 export class AVEngineKit {
 
@@ -50,7 +51,7 @@ export class AVEngineKit {
         if (args[0] === 'resumeVoipPage') {
             let session = this.currentCallSession();
             if (session) {
-                this.avengineCallback.onReceiveCall(session);
+                this._resumeVoipPage(session);
             }
             return;
         }
@@ -66,6 +67,30 @@ export class AVEngineKit {
                     func(...args.slice(1));
                 }
             }
+        }
+    }
+
+    _resumeVoipPage(session) {
+        console.log('_resumeVoipPage', session)
+        let url;
+        if (session.conference) {
+            url = '/pages/voip/conference/ConferencePage'
+        } else if (session.conversation.type === ConversationType.Single) {
+            url = '/pages/voip/Single'
+        } else if (session.conversation.type === ConversationType.Group) {
+            url = '/pages/voip/Multi'
+        }
+        url += `?session=${JSON.stringify(session)}`
+        if (url) {
+            uni.navigateTo({
+                url: url,
+                success: (res) => {
+                    console.log(`navigate to ${url} success`)
+                },
+                fail: (e) => {
+                    console.log(`navigate to ${url} error`, e)
+                }
+            })
         }
     }
 

@@ -177,23 +177,24 @@
         },
         onLoad(option) {
             console.log('voip/Conference onLoad', option)
-            // why? 不知道到为啥，要这么才生效
-            this.$nextTick(() => {
-                this.conferenceInfo = JSON.parse(option.conferenceInfo)
-                console.log('conferencePage parameters', this.conferenceInfo, option.muteAudio, option.muteVideo)
-                let muteAudio = option.muteAudio;
-                let muteVideo = option.muteVideo;
-                this.conferenceManager.setConferenceInfo(this.conferenceInfo);
-
-                if (option.callSession) {
-                    this.session = option.callSession;
-                    if (this.session.connectedTime) {
-                        this.startTimestamp = this.session.connectedTime;
-                    }
-                } else {
-                    this.joinConference(this.conferenceInfo, muteAudio, muteVideo);
+            if (option.session) {
+                this.session = JSON.parse(option.session);
+                this.callState = Number(this.session.state);
+                if (this.session.connectedTime) {
+                    this.startTimestamp = this.session.connectedTime;
                 }
-            })
+            } else {
+                // why?
+                // setConferenceInfo 里面会用到 wfc，但需要等 mounted 之后，wfc 才生效
+                this.$nextTick(() => {
+                    this.conferenceInfo = JSON.parse(option.conferenceInfo)
+                    console.log('conferencePage parameters', this.conferenceInfo, option.muteAudio, option.muteVideo)
+                    let muteAudio = option.muteAudio;
+                    let muteVideo = option.muteVideo;
+                    this.conferenceManager.setConferenceInfo(this.conferenceInfo);
+                    this.joinConference(this.conferenceInfo, muteAudio, muteVideo);
+                })
+            }
         },
 
         created() {
@@ -212,7 +213,7 @@
         },
 
         mounted() {
-            if (this.session) {
+            if (this.callState === CallState.STATUS_CONNECTED) {
                 this.setupParticipants();
                 this.setupSessionCallback();
                 this.onVoipConnected();
@@ -538,12 +539,13 @@
                 }
             },
             muteVideo() {
-                let enable = this.session.videoMuted ? true : false;
-                if (enable && !this.conferenceManager.isOwner() && !this.conferenceManager.conferenceInfo.allowSwitchMode) {
-                    this.requestUnmute(false);
-                    return;
-                }
-                this._muteVideo(enable);
+                // let enable = this.session.videoMuted ? true : false;
+                // if (enable && !this.conferenceManager.isOwner() && !this.conferenceManager.conferenceInfo.allowSwitchMode) {
+                //     this.requestUnmute(false);
+                //     return;
+                // }
+                // this._muteVideo(enable);
+                this.minimize();
             },
 
             async _muteVideo(enable) {
@@ -750,32 +752,22 @@
                 str += (sec < 10 ? "0" : "") + sec
                 return str;
             },
-
-            // TODO 删除，可以直接监听用户信息变化了
-            refreshUserInfos() {
-                let toRefreshUsers = [];
-                this.participantUserInfos.forEach(pu => {
-                    if (!pu.updateDt) {
-                        toRefreshUsers.push(pu.uid);
-                    }
-                });
-
-                if (toRefreshUsers.length > 0) {
-                    console.log('to refreshUsers', toRefreshUsers)
-                    let userInfos = this.wfc.getUserInfos(toRefreshUsers, '');
-                    userInfos.forEach(u => {
-                        let index = this.participantUserInfos.findIndex(p => p.uid === u.uid);
-                        if (u.updateDt && index > -1) {
-                            let ou = this.participantUserInfos[index];
-                            u._isAudience = ou._isAudience;
-                            u._isHost = ou._isHost;
-                            u._isVideoMuted = ou._isVideoMuted;
-                            u._isAudioMuted = ou._isAudioMuted;
-                            u._volume = ou._volume;
-                            // FYI: https://v2.vuejs.org/v2/guide/reactivity#Change-Detection-Caveats
-                            this.participantUserInfos.splice(index, 1, u)
+            minimize() {
+                let granted = getApp().avengineKit.checkOverlayPermission();
+                console.log('overlayPermission granted', granted)
+                if (granted) {
+                    getApp().avengineKit.minimize();
+                    uni.navigateBack({
+                        delta: 1,
+                        fail: err => {
+                            console.log('nav back to err', err);
                         }
-                    })
+                    });
+                } else {
+                    uni.showToast({
+                        title: "需要悬浮窗权限",
+                        icon: 'none',
+                    });
                 }
             },
 

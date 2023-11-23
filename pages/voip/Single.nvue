@@ -121,24 +121,14 @@
         },
 
         onLoad(option) {
-            console.log('voip/Single onLoad')
-            // #ifdef APP-NVUE
-            const eventChannel = this.$scope.eventChannel; // 兼容APP-NVUE
-            // #endif
-            // #ifndef APP-NVUE
-            const eventChannel = this.getOpenerEventChannel();
-            // #endif
-            // 监听openerUsers事件，获取上一页面通过eventChannel传送到当前页面的数据
-            eventChannel.on('options', (options) => {
-                console.log('options', options, getApp(), getApp().wfc)
-                this.session = options.callSession;
-                this.targetUserId = options.callSession.conversation.target;
-                this.callState = Number(this.session.state);
-                this.audioOnly = this.session.audioOnly;
-                if (this.session.connectedTime) {
-                    this.startTimestamp = this.session.connectedTime;
-                }
-            })
+            console.log('voip/Single onLoad', option)
+            this.session = JSON.parse(option.session);
+            this.targetUserId = this.session.conversation.target;
+            this.callState = Number(this.session.state);
+            this.audioOnly = this.session.audioOnly;
+            if (this.session.connectedTime) {
+                this.startTimestamp = this.session.connectedTime;
+            }
         },
 
         onUnload() {
@@ -310,8 +300,15 @@
 
             minimize() {
                 let granted = getApp().avengineKit.checkOverlayPermission();
+                console.log('overlayPermission granted', granted)
                 if (granted) {
                     getApp().avengineKit.minimize();
+                    uni.navigateBack({
+                        delta: 1,
+                        fail: err => {
+                            console.log('nav back to err', err);
+                        }
+                    });
                 } else {
                     uni.showToast({
                         title: "需要悬浮窗权限",
@@ -322,7 +319,7 @@
         },
 
         mounted() {
-            console.log('voip/Single mounted')
+            console.log('voip/Single mounted', this.callState, this.session)
             // let supportConference = avenginekit.startConference !== undefined
             // if (!supportConference) {
             //     let host = window.location.host;
