@@ -46,9 +46,9 @@
                          style="position: relative;"
                          class="participant-audio-item">
                         <div style="position: relative">
-                            <img class="avatar"
+                            <image class="avatar"
                                  v-bind:class="{highlight:participant._volume > 0}"
-                                 :src="participant.portrait" :alt="participant">
+                                 :src="participant.portrait" :alt="participant"/>
                             <text v-if="participant._isHost" class="indicator iconfont icon-ion-person" style="background: #FD802E">&#xf213;</text>
                             <text v-if="participant._isAudience" class="indicator iconfont icon-ion-ios-mic-off" style="color: red;">&#xf45f;</text>
                         </div>
@@ -61,26 +61,26 @@
                 <p v-if="false" class="desc">{{ duration }}</p>
                 <div class="action-container">
                     <div class="action">
-                        <img v-if="!session.audience && !session.audioMuted" @click="muteAudio" class="action-img"
-                             src='@/assets/images/av_conference_audio.png'/>
-                        <img v-else @click="muteAudio" class="action-img"
-                             src='@/assets/images/av_conference_audio_mute.png'/>
+                        <image v-if="!session.audience && !session.audioMuted" @click="muteAudio" class="action-img"
+                             src='/static/image/av/av_conference_audio.png'/>
+                        <image v-else @click="muteAudio" class="action-img"
+                             src='/static/image/av/av_conference_audio_mute.png'/>
                         <p>静音</p>
                     </div>
                     <div class="action"
                          v-if="!session.screenSharing">
-                        <img v-if="!session.audience && !session.videoMuted" @click="muteVideo" class="action-img"
-                             src='@/assets/images/av_conference_video.png'/>
-                        <img v-else @click="muteVideo" class="action-img"
-                             src='@/assets/images/av_conference_video_mute.png'/>
+                        <image v-if="!session.audience && !session.videoMuted" @click="muteVideo" class="action-img"
+                             src='/static/image/av/av_conference_video.png'/>
+                        <image v-else @click="muteVideo" class="action-img"
+                             src='/static/image/av/av_conference_video_mute.png'/>
                         <p>视频</p>
                     </div>
                     <div v-if="false" class="action">
-                        <img v-if="!session.screenSharing" @click="screenShare"
+                        <image v-if="!session.screenSharing" @click="screenShare"
                              class="action-img"
-                             src='@/assets/images/av_conference_screen_sharing.png'/>
-                        <img v-else @click="screenShare" class="action-img"
-                             src='@/assets/images/av_conference_screen_sharing_hover.png'/>
+                             src='/static/image/av/av_conference_screen_sharing.png'/>
+                        <image v-else @click="screenShare" class="action-img"
+                             src='/static/image/av/av_conference_screen_sharing_hover.png'/>
                         <p class="single-line">共享屏幕</p>
                     </div>
                     <div class="action" @click="chat">
@@ -91,21 +91,21 @@
                         <p>聊天</p>
                     </div>
                     <div v-if="selfUserInfo && selfUserInfo.uid !== conferenceManager.conferenceInfo.owner" class="action">
-                        <img v-if="!conferenceManager.isHandUp" @click="handup"
+                        <image v-if="!conferenceManager.isHandUp" @click="handup"
                              class="action-img"
-                             src='@/assets/images/av_conference_handup.png'/>
-                        <img v-else @click="handup" class="action-img"
-                             src='@/assets/images/av_conference_handup_hover.png'/>
+                             src='/static/image/av/av_conference_handup.png'/>
+                        <image v-else @click="handup" class="action-img"
+                             src='/static/image/av/av_conference_handup_hover.png'/>
                         <p class="single-line">举手</p>
                     </div>
                     <div class="action">
-                        <img @click.stop="members" class="action-img"
-                             src='@/assets/images/av_conference_members.png'/>
+                        <image @click.stop="members" class="action-img"
+                             src='/static/image/av/av_conference_members.png'/>
                         <p>管理</p>
                     </div>
                     <div class="action">
-                        <img @click="hangup" class="action-img"
-                             src='@/assets/images/av_conference_end_call.png'/>
+                        <image @click="hangup" class="action-img"
+                             src='/static/image/av/av_conference_end_call.png'/>
                         <p>结束</p>
                     </div>
                 </div>

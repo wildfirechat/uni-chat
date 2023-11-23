@@ -9,7 +9,7 @@
         />
         <div v-else
              class="avatar-container">
-            <img class="avatar" :src="participant.portrait" :alt="participant">
+            <image class="avatar" :src="participant.portrait" :alt="participant"/>
         </div>
         <div v-if="false && !participant._isVideoMuted" class="video-stream-tip-container">
             <p>{{ '双击视频，将其设置为焦点' }}</p>

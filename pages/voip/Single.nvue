@@ -11,10 +11,10 @@
             <!--audio-->
             <div v-if="audioOnly" class="content-container">
                 <div class="local-media-container">
-                    <img class="avatar" :src="selfUserInfo.portrait">
+                    <image class="avatar" :src="selfUserInfo.portrait"/>
                 </div>
                 <div class="remote-media-container">
-                    <img class="avatar" :src="participantUserInfo.portrait">
+                    <image class="avatar" :src="participantUserInfo.portrait"/>
                     <text class="desc">{{ participantUserInfo.displayName }}</text>
                     <text class="desc" v-if="callState === 1">等待对方接听</text>
                     <text class="desc" v-else-if="callState === 2">邀请你语音聊天</text>
@@ -30,7 +30,7 @@
                                           ref="localVideo"
                                           class="localVideo me"
                     />
-                    <img v-if="callState !== 4" class="avatar" :src="selfUserInfo.portrait">
+                    <image v-if="callState !== 4" class="avatar" :src="selfUserInfo.portrait"/>
                 </div>
                 <div class="remote-media-container">
                     <UIKit-Video-CallView v-if="callState ===4"
@@ -39,7 +39,7 @@
                                           class="video"
                     />
                     <div v-if="callState !== 4" class="flex-column flex-justify-center flex-align-center">
-                        <img class="avatar" :src="participantUserInfo.portrait">
+                        <image class="avatar" :src="participantUserInfo.portrait"/>
                         <text class="desc">{{ participantUserInfo.displayName }}</text>
                         <text class="desc" v-if="callState === 1">等待对方接听</text>
                         <text class="desc" v-else-if="callState === 2">邀请你视频聊天</text>
@@ -52,20 +52,20 @@
             <!--incoming-->
             <div v-if="callState === 2" class="action-container">
                 <div class="action">
-                    <img @click="hangup" class="action-img" src='@/assets/images/av_hang_up.png'/>
+                    <image @click="hangup" class="action-img" src='/static/image/av/av_hang_up.png'/>
                 </div>
                 <div class="action">
-                    <img @click="answer" class="action-img" src='@/assets/images/av_video_answer.png'/>
+                    <image @click="answer" class="action-img" src='/static/image/av/av_video_answer.png'/>
                 </div>
                 <!--          <div v-if="!audioOnly" class="action">-->
-                <!--            <img @click="down2voice" class="action-img" src='@/assets/images/av_float_audio.png'/>-->
+                <!--            <image @click="down2voice" class="action-img" src='/static/image/av/av_float_audio.png'/>-->
                 <!--            <p>切换到语音聊天</p>-->
                 <!--          </div>-->
             </div>
             <!--outgoing-->
             <div v-if="callState === 1" class="action-container">
                 <div class="action">
-                    <img @click="hangup" class="action-img" src='@/assets/images/av_hang_up.png'/>
+                    <image @click="hangup" class="action-img" src='/static/image/av/av_hang_up.png'/>
                 </div>
             </div>
 
@@ -73,24 +73,24 @@
             <text style="width: 750rpx; height: 50rpx; position: absolute; left: 0; bottom: 240rpx; text-align: center " class="desc" v-if="!audioOnly && callState === 4">{{ duration }}</text>
             <div v-if="callState === 4" class="action-container">
                 <div class="action">
-                    <img @click="hangup" class="action-img" src='@/assets/images/av_hang_up.png'/>
+                    <image @click="hangup" class="action-img" src='/static/image/av/av_hang_up.png'/>
                 </div>
                 <div class="action">
-                    <img v-if="!audioMuted" @click="mute" class="action-img" src='@/assets/images/av_mute.png'/>
-                    <img v-else @click="mute" class="action-img" src='@/assets/images/av_mute_hover.png'/>
+                    <image v-if="!audioMuted" @click="mute" class="action-img" src='/static/image/av/av_mute.png'/>
+                    <image v-else @click="mute" class="action-img" src='/static/image/av/av_mute_hover.png'/>
                     <text class="desc">静音</text>
                 </div>
                 <div v-if="!audioOnly && false" class="action">
-                    <img @click="screenShare" class="action-img" src='@/assets/images/av_share.png'/>
+                    <image @click="screenShare" class="action-img" src='/static/image/av/av_share.png'/>
                 </div>
                 <div v-if="!audioOnly" class="action">
-                    <img @click="down2voice" class="action-img" src='@/assets/images/av_float_audio.png'/>
+                    <image @click="down2voice" class="action-img" src='/static/image/av/av_float_audio.png'/>
                     <text class="desc">切换到语音聊天</text>
                 </div>
             </div>
 
             <div v-if="callState === 4" style="position:absolute; right: 20rpx; top: 80rpx;">
-                <img @click="minimize" style="width: 30px; height: 30px" src='@/assets/images/av_minimize.png'/>
+                <image @click="minimize" style="width: 30px; height: 30px" src='/static/image/av/av_minimize.png'/>
             </div>
         </div>
     </div>
