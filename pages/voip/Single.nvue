@@ -191,6 +191,9 @@
                     if (this.$refs.remoteVideo) {
                         avengineKit.setRemoteVideoView(userId, this.$refs.remoteVideo.ref)
                     }
+                    if (avengineKit.isSupportConference()){
+                        avengineKit.setParticipantVideoType(userId, false, VideoType.BIG_STREAM);
+                    }
                 };
 
                 sessionCallback.didCallEndWithReason = (reason) => {
