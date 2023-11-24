@@ -188,7 +188,7 @@ class ConferenceManager {
             return;
         }
         this.applyingUnmuteMembers = this.applyingUnmuteMembers.filter(uid => uid !== userId);
-        this._sendCommandMessage(ConferenceCommandMessageContent.ConferenceCommandType.APPLY_UNMUTE, userId, isAllow);
+        this._sendCommandMessage(ConferenceCommandMessageContent.ConferenceCommandType.APPROVE_UNMUTE, userId, isAllow);
     }
 
     approveAllUnmute(isAllow) {

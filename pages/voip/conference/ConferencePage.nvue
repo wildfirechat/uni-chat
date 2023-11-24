@@ -520,7 +520,7 @@
 
             muteAudio() {
                 let enable = this.session.audioMuted ? true : false;
-                if (enable && !this.conferenceManager.isOwner() && !this.conferenceManager.conferenceInfo.allowSwitchMode) {
+                if (enable && this.session.audience && !this.conferenceManager.isOwner() && !this.conferenceManager.conferenceInfo.allowSwitchMode) {
                     this.requestUnmute(true);
                     return;
                 }
@@ -552,7 +552,7 @@
             muteVideo() {
                 let enable = this.session.videoMuted ? true : false;
                 console.log('muteVideo', this.session, this.session.videoMuted, this.session.audience);
-                if (enable && !this.conferenceManager.isOwner() && !this.conferenceManager.conferenceInfo.allowSwitchMode) {
+                if (enable && this.session.audience && !this.conferenceManager.isOwner() && !this.conferenceManager.conferenceInfo.allowSwitchMode) {
                     this.requestUnmute(false);
                     return;
                 }
