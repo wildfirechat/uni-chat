@@ -107,7 +107,7 @@ export default {
             conferenceApi.queryConferenceInfo(conferenceId, password)
                 .then(info => {
                     this.conferenceInfo = info;
-
+                    console.log('conferenceInfo', info)
                 })
                 .catch(reason => {
                     console.error('queryConferenceInfo error', reason);
@@ -161,10 +161,11 @@ export default {
             return date.toString();
         },
         audience() {
-            return !(this.conferenceInfo.owner === conferenceManager.selfUserId || !this.conferenceInfo.audience || this.conferenceInfo.allowSwitchMode)
+            return !(this.conferenceInfo.owner === wfc.getUserId() || !this.conferenceInfo.audience || this.conferenceInfo.allowSwitchMode)
         },
+
         enableDestroy() {
-            return this.conferenceInfo.owner === conferenceManager.selfUserId && new Date().getTime() < this.conferenceInfo.startTime * 1000;
+            return this.conferenceInfo.owner === wfc.getUserId() && new Date().getTime() < this.conferenceInfo.startTime * 1000;
         }
     }
 }

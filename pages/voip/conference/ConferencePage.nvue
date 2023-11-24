@@ -47,8 +47,8 @@
                          class="participant-audio-item">
                         <div style="position: relative">
                             <image class="avatar"
-                                 v-bind:class="{highlight:participant._volume > 0}"
-                                 :src="participant.portrait" :alt="participant"/>
+                                   v-bind:class="{highlight:participant._volume > 0}"
+                                   :src="participant.portrait" :alt="participant"/>
                             <text v-if="participant._isHost" class="indicator iconfont icon-ion-person" style="background: #FD802E">&#xf213;</text>
                             <text v-if="participant._isAudience" class="indicator iconfont icon-ion-ios-mic-off" style="color: red;">&#xf45f;</text>
                         </div>
@@ -62,25 +62,25 @@
                 <div class="action-container">
                     <div class="action">
                         <image v-if="!session.audience && !session.audioMuted" @click="muteAudio" class="action-img"
-                             src='/static/image/av/av_conference_audio.png'/>
+                               src='/static/image/av/av_conference_audio.png'/>
                         <image v-else @click="muteAudio" class="action-img"
-                             src='/static/image/av/av_conference_audio_mute.png'/>
+                               src='/static/image/av/av_conference_audio_mute.png'/>
                         <p>静音</p>
                     </div>
                     <div class="action"
                          v-if="!session.screenSharing">
                         <image v-if="!session.audience && !session.videoMuted" @click="muteVideo" class="action-img"
-                             src='/static/image/av/av_conference_video.png'/>
+                               src='/static/image/av/av_conference_video.png'/>
                         <image v-else @click="muteVideo" class="action-img"
-                             src='/static/image/av/av_conference_video_mute.png'/>
+                               src='/static/image/av/av_conference_video_mute.png'/>
                         <p>视频</p>
                     </div>
                     <div v-if="false" class="action">
                         <image v-if="!session.screenSharing" @click="screenShare"
-                             class="action-img"
-                             src='/static/image/av/av_conference_screen_sharing.png'/>
+                               class="action-img"
+                               src='/static/image/av/av_conference_screen_sharing.png'/>
                         <image v-else @click="screenShare" class="action-img"
-                             src='/static/image/av/av_conference_screen_sharing_hover.png'/>
+                               src='/static/image/av/av_conference_screen_sharing_hover.png'/>
                         <p class="single-line">共享屏幕</p>
                     </div>
                     <div class="action" @click="chat">
@@ -92,20 +92,20 @@
                     </div>
                     <div v-if="selfUserInfo && selfUserInfo.uid !== conferenceManager.conferenceInfo.owner" class="action">
                         <image v-if="!conferenceManager.isHandUp" @click="handup"
-                             class="action-img"
-                             src='/static/image/av/av_conference_handup.png'/>
+                               class="action-img"
+                               src='/static/image/av/av_conference_handup.png'/>
                         <image v-else @click="handup" class="action-img"
-                             src='/static/image/av/av_conference_handup_hover.png'/>
+                               src='/static/image/av/av_conference_handup_hover.png'/>
                         <p class="single-line">举手</p>
                     </div>
                     <div class="action">
                         <image @click.stop="members" class="action-img"
-                             src='/static/image/av/av_conference_members.png'/>
+                               src='/static/image/av/av_conference_members.png'/>
                         <p>管理</p>
                     </div>
                     <div class="action">
                         <image @click="hangup" class="action-img"
-                             src='/static/image/av/av_conference_end_call.png'/>
+                               src='/static/image/av/av_conference_end_call.png'/>
                         <p>结束</p>
                     </div>
                 </div>
@@ -550,13 +550,13 @@
                 }
             },
             muteVideo() {
-                // let enable = this.session.videoMuted ? true : false;
-                // if (enable && !this.conferenceManager.isOwner() && !this.conferenceManager.conferenceInfo.allowSwitchMode) {
-                //     this.requestUnmute(false);
-                //     return;
-                // }
-                // this._muteVideo(enable);
-                this.minimize();
+                let enable = this.session.videoMuted ? true : false;
+                console.log('muteVideo', this.session, this.session.videoMuted, this.session.audience);
+                if (enable && !this.conferenceManager.isOwner() && !this.conferenceManager.conferenceInfo.allowSwitchMode) {
+                    this.requestUnmute(false);
+                    return;
+                }
+                this._muteVideo(enable);
             },
 
             async _muteVideo(enable) {
@@ -586,13 +586,13 @@
             },
 
             requestUnmute(audio) {
-                this.$alert({
-                    content: '主持人不允许解除静音，您可以向主持人申请解除静音',
+                this.alert({
+                    title: '主持人不允许解除静音，您可以向主持人申请解除静音',
                     confirmText: '申请',
-                    cancelCallback: () => {
+                    onClose: () => {
                         // do nothing
                     },
-                    confirmCallback: () => {
+                    onConfirm: () => {
                         this.conferenceManager.applyUnmute(false);
                     }
                 })
@@ -1025,6 +1025,13 @@
 
         directives: {},
 
+        // onBackPress(){
+        //     if (this.session) {
+        //         this.minimize();
+        //     } else {
+        //         this.conferenceManager.destroy();
+        //     }
+        // },
 
         beforeDestroy() {
             if (this.session) {

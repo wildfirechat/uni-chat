@@ -66,11 +66,11 @@ class ConferenceManager {
 
     onReceiveMessage = (msg) => {
         // msg = this._fixLongSerializedIssue(msg)
-        console.log('conferenceManager onReceiveMessage', msg);
+        console.log('conferenceManager onReceiveMessage 000', msg, this.conferenceInfo);
         if (!this.conferenceInfo) {
             return;
         }
-        if (msg.messageContent.type === MessageContentType.CONFERENCE_CONTENT_TYPE_COMMAND && this.conferenceInfo.conferenceId === msg.messageContent.callId) {
+        if (msg.messageContent.type === MessageContentType.CONFERENCE_CONTENT_TYPE_COMMAND && this.conferenceInfo.conferenceId === msg.messageContent.conferenceId) {
             let command = msg.messageContent;
             let senderName;
             switch (command.commandType) {
@@ -113,7 +113,7 @@ class ConferenceManager {
                     if (this.isApplyingUnmute) {
                         this.isApplyingUnmute = false;
                         if (command.boolValue) {
-                            this.vueInstance.$eventBus.$emit('muteAudio', false);
+                            this.conferencePage._muteAudio(true);
                             this.vueInstance.$notify({
                                 text: '主持人已同意了你的发言请求',
                                 type: 'info'
