@@ -21,7 +21,7 @@ export default class CallSession {
     endReason;
 	//是否是会议
 	conference;
-	//是否是观众，仅当会议邮箱
+	//是否是观众，仅当会议有效
 	audience;
 	//是否是超级会议
 	advanced;

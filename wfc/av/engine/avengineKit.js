@@ -177,6 +177,7 @@ export class AVEngineKit {
      * @param {number} videoType 视频流类型，可选值参考{@link VideoType}
      */
     setParticipantVideoType(userId, screenSharing, videoType) {
+        console.log('setParticipantVideoType', userId, screenSharing, videoType)
         avengineKitPlugin.setParticipantVideoType(userId, screenSharing, videoType);
     }
 
