@@ -83,6 +83,8 @@ export default {
         }
     },
     mounted() {
+    },
+    onShow() {
         this.loadFavConferences();
         this.historyConferenceInfos = conferenceManager.getHistoryConference();
     },
@@ -124,7 +126,6 @@ export default {
         },
 
         historyConferenceDesc(conferenceInfo) {
-            console.log('xxxx', conferenceInfo)
             let duration = this.formatDuration(conferenceInfo.endTime - conferenceInfo.startTime);
             let ownerDisplayName = wfc.getUserDisplayName(conferenceInfo.owner);
             let date = new Date(conferenceInfo.startTime * 1000).toLocaleDateString();
