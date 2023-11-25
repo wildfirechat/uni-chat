@@ -247,11 +247,7 @@
                 let audioOnly = false;
                 let callExtra = '';
                 console.log('join conference', conferenceInfo.conferenceId, audioOnly, conferenceInfo.pin, conferenceInfo.owner, conferenceInfo.conferenceTitle, '', audience, conferenceInfo.advance, muteAudio, muteVideo, callExtra)
-                let session = avengineKit.currentCallSession();
-                if (session) {
-                    avengineKit.leaveConference(session.callId, false);
-                }
-                session = avengineKit.joinConference(conferenceInfo.conferenceId, audioOnly, conferenceInfo.pin, conferenceInfo.owner, conferenceInfo.conferenceTitle, '', audience, conferenceInfo.advance, muteAudio, muteVideo, callExtra);
+                let session = avengineKit.joinConference(conferenceInfo.conferenceId, audioOnly, conferenceInfo.pin, conferenceInfo.owner, conferenceInfo.conferenceTitle, '', audience, conferenceInfo.advance, muteAudio, muteVideo, callExtra);
                 if (session) {
                     this.session = session;
 
@@ -490,16 +486,17 @@
                 getApp().avengineKit.sessionCallback = sessionCallback;
             },
 
-            showAlertDialog(cancelText, confirmText, title, onConfirm, onClose) {
+            showAlertDialog(options) {
                 this.alertDialogOptions = {
-                    cancelText: cancelText,
-                    confirmText: confirmText,
-                    title: title,
+                    cancelText: options.cancelText,
+                    confirmText: options.confirmText,
+                    title: options.title,
+                    content: options.content,
                     onConfirm: () => {
-                        onConfirm && onConfirm();
+                        options.onConfirm && options.onConfirm();
                     },
                     onClose: () => {
-                        onClose && onClose();
+                        options.onClose && options.onClose();
                         this.alertDialogOptions = {};
                     }
                 }
@@ -587,7 +584,8 @@
 
             requestUnmute(audio) {
                 this.alert({
-                    title: '主持人不允许解除静音，您可以向主持人申请解除静音',
+                    title: '提示',
+                    content: '主持人不允许解除静音，您可以向主持人申请解除静音',
                     confirmText: '申请',
                     onClose: () => {
                         // do nothing
@@ -602,7 +600,7 @@
                 let host = this.conferenceInfo.owner;
                 let defaultAudience = false;
                 let pin = this.conferenceInfo.pin;
-                getApp().forwardConferenceInviteMessage(this.session.callId, host, this.session.title, this.session.desc, this.session.startTime, this.session.audioOnly, defaultAudience, this.session.advance, pin);
+                getApp().forwardConferenceInviteMessage(this.session.callId, host, this.conferenceInfo.title, this.session.desc, this.session.startTime, this.session.audioOnly, defaultAudience, this.session.advance, pin);
             },
 
             chat() {
@@ -840,7 +838,7 @@
 
             alert(options) {
                 console.log('alert', options)
-                this.showAlertDialog(options.cancelText, options.confirmText, options.title, options.onConfirm, options.onClose)
+                this.showAlertDialog(options)
             }
         },
 

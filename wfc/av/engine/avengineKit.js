@@ -330,9 +330,10 @@ export class AVEngineKit {
     }
 
     /**
+     * @param {string} focusVideoUser 视频通话/会议时有效，表示悬浮窗显示那个用户的视频流
      * 最小化，显示悬浮窗
      */
-    minimize() {
+    minimize(focusVideoUser = '') {
         avengineKitPlugin.minimize();
     }
 }

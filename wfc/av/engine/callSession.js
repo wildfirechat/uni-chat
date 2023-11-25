@@ -1,6 +1,8 @@
 export default class CallSession {
 	//通话ID
     callId;
+    title;
+    desc;
 	//通话的发起者，如果发起者离开，会重新选举出最早加入者为发起者
     initiator;
 	//邀请当前用户加入通话的用户

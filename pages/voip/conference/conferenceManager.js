@@ -35,7 +35,7 @@ class ConferenceManager {
     }
 
     destroy() {
-        this.vueInstance.wfc.eventEmitter.removeEventListener(EventType.ReceiveMessage, this.onReceiveMessage);
+        this.vueInstance.wfc.eventEmitter.removeListener(EventType.ReceiveMessage, this.onReceiveMessage);
         if (this.conferenceInfo) {
             this.vueInstance.wfc.quitChatroom(this.conferenceInfo.conferenceId);
         }
@@ -309,7 +309,8 @@ class ConferenceManager {
     onCancelMuteAll(requestUnmute) {
         if (requestUnmute && this.vueInstance.selfUserInfo._isAudience) {
             this.conferencePage.alert({
-                title: '主持人关闭了全员静音，是否要打开麦克风',
+                title: '提示',
+                content: '主持人关闭了全员静音，是否要打开麦克风',
                 cancelText: '取消',
                 confirmText: '打开',
                 onClose: () => {
@@ -333,7 +334,8 @@ class ConferenceManager {
         if (!mute) {
             this.conferencePage.alert({
                 cancelText: '拒绝',
-                title: '主持人邀请你发言',
+                title: '提示',
+                content: '主持人邀请你发言',
                 confirmText: '接受',
                 onClose: () => {
                     // do nothing
