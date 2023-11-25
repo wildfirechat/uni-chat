@@ -7,7 +7,7 @@
                 <checkbox id="checkbox" v-if="sharedConversationState.enableMessageMultiSelection" type="checkbox"
                           class="checkbox"
                           :checked="isMessageChecked"
-                          :value="message" placeholder="" v-model="sharedPickState.messages"/>
+                          :value="message" placeholder=""/>
 
                 <div class="message-avatar-content-container">
                     <!-- 文件的进度条有点特殊，有进度的消息的进度条有点特殊 -->

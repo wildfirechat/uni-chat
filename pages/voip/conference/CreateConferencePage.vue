@@ -10,26 +10,35 @@
             结束时间
             <input v-model="endTime" :min="new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('.')[0]">
         </label>
-        <label>
-            参与者开启摄像头、麦克风入会
-            <checkbox v-model="audience"/>
-        </label>
-        <label>
-            允许参与者自主开启摄像头和麦克风
-            <checkbox :disabled="audience" v-model="allowTurnOnMic"/>
-        </label>
-        <div>
+        <!--        uni-app 平台，checkbox 不支持 v-model，必须采用下面的方式实现-->
+        <checkbox-group @change="notAudience = !notAudience">
             <label>
-                启用密码
-                <checkbox v-model="enablePassword"/>
+                参与者开启摄像头、麦克风入会
+                <checkbox v-model="notAudience" :checked="notAudience"/>
             </label>
+        </checkbox-group>
+        <checkbox-group @change="allowTurnOnMic = !allowTurnOnMic">
+            <label>
+                允许参与者自主开启摄像头和麦克风
+                <checkbox :disabled="notAudience" v-model="allowTurnOnMic" :checked="allowTurnOnMic"/>
+            </label>
+        </checkbox-group>
+        <div>
+            <checkbox-group @change="enablePassword = !enablePassword">
+                <label>
+                    启用密码
+                    <checkbox :checked="enablePassword"/>
+                </label>
+            </checkbox-group>
             <input v-if="enablePassword" v-model="password" class="text-input" style="margin-top: 10px" maxlength="4" placeholder="123456">
         </div>
         <div>
-            <label>
-                大规模会议
-                <checkbox v-model="advance"/>
-            </label>
+            <checkbox-group @change="advance = !advance">
+                <label>
+                    大规模会议
+                    <checkbox v-model="advance"/>
+                </label>
+            </checkbox-group>
             <p class="advance_desc">参会人数大于50人</p>
         </div>
 
@@ -53,11 +62,12 @@ export default {
             title: '',
             desc: '',
             endTime: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000 + 1 * 60 * 60 * 1000).toISOString().split('.')[0],
-            audience: false,
+            notAudience: true,
             advance: false,
             allowTurnOnMic: true,
             enablePassword: false,
             password: '',
+            test: [],
         }
     },
 
@@ -73,7 +83,7 @@ export default {
             info.owner = wfc.getUserId();
             info.startTime = Math.ceil(new Date().getTime() / 1000);
             info.endTime = Math.ceil(new Date(this.endTime).getTime() / 1000);
-            info.audience = this.audience;
+            info.audience= !this.notAudience;
             info.allowSwitchMode = this.allowTurnOnMic;
             info.advance = this.advance;
 
@@ -128,7 +138,7 @@ export default {
             // 超级会议模式，一般参会人员会很多，但不需要所有人都能发言；互动模式，是允许每个人发言
             // 开启超级会之后，需要再次确认开启互动模式
             if (this.advance) {
-                this.audience = false;
+                this.notAudience = false;
             }
         },
         endTime() {

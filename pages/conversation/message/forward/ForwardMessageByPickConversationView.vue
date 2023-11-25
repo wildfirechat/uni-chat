@@ -17,7 +17,7 @@
                              @click.stop="onConversationItemClick(conversationInfo.conversation)">
                             <checkbox class="checkbox" v-bind:value="conversationInfo.conversation" type="checkbox"
                                       :checked="isConversationChecked(conversationInfo.conversation)"
-                                      v-model="sharedPickState.conversations" placeholder=""/>
+                                      placeholder=""/>
                             <div class="header">
                                 <img class="avatar" :src="conversationInfo.conversation._target.portrait" alt=""/>
                             </div>
