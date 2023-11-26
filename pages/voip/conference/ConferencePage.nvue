@@ -112,7 +112,7 @@
             </div>
         </div>
         <uni-popup ref="alertDialog" type="dialog">
-            <uni-popup-dialog :type="msgType" :cancelText="alertDialogOptions.cancelText" :confirmText="alertDialogOptions.confirmText" :title="alertDialogOptions.title" @confirm="alertDialogOptions.onConfirm"
+            <uni-popup-dialog :cancelText="alertDialogOptions.cancelText" :confirmText="alertDialogOptions.confirmText" :title="alertDialogOptions.title" @confirm="alertDialogOptions.onConfirm"
                               @close="alertDialogOptions.onClose"></uni-popup-dialog>
         </uni-popup>
     </div>
@@ -524,6 +524,8 @@
                 this._muteAudio(enable);
             },
 
+            // fixme
+            // 这个这个方法应当叫 setAudioEnable，参数也是enable audio 的意思
             async _muteAudio(enable) {
                 avengineKit.muteAudio(!enable)
 
@@ -597,10 +599,20 @@
             },
 
             members() {
-                let host = this.conferenceInfo.owner;
-                let defaultAudience = false;
-                let pin = this.conferenceInfo.pin;
-                getApp().forwardConferenceInviteMessage(this.session.callId, host, this.conferenceInfo.title, this.session.desc, this.session.startTime, this.session.audioOnly, defaultAudience, this.session.advance, pin);
+                // let host = this.conferenceInfo.owner;
+                // let defaultAudience = false;
+                // let pin = this.conferenceInfo.pin;
+                // getApp().forwardConferenceInviteMessage(this.session.callId, host, this.conferenceInfo.title, this.session.desc, this.session.startTime, this.session.audioOnly, defaultAudience, this.session.advance, pin);
+                uni.navigateTo({
+                    url: '/pages/voip/conference/ConferenceManagePage',
+                    success: () => {
+                        console.log('nav to ConferenceManagePage success');
+
+                    },
+                    fail: (err) => {
+                        console.log('nav to ConferenceManagePage err', err);
+                    }
+                })
             },
 
             chat() {

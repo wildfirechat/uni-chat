@@ -42,19 +42,10 @@ import conferenceManager from "./conferenceManager";
 import ConferenceParticipantListView from "./ConferenceParticipantListView";
 import ConferenceApplyUnmuteListView from "./ConferenceApplyUnmuteListView";
 import ConferenceHandUpListView from "./ConferenceHandUpListView";
+import avengineKit from "../../../wfc/av/engine/avengineKit";
 
 export default {
     name: "ConferenceManageView",
-    props: {
-        participants: {
-            type: Array,
-            required: true,
-        },
-        session: {
-            type: Object,
-            required: true,
-        }
-    },
     data() {
         return {
             conferenceManager: conferenceManager,
@@ -64,8 +55,7 @@ export default {
             showParticipantList: true,
             showApplyList: false,
             showHandUpList: false,
-            handUpTip: '',
-            applyUnmuteTip: '',
+            session: avengineKit.currentCallSession(),
         }
     },
     components: {
@@ -74,7 +64,23 @@ export default {
         ConferenceParticipantListView,
     },
     methods: {
-        updateHandUpTip() {
+        profile2UserInfo(profile) {
+            let userInfo = wfc.getUserInfo(profile.userId);
+            userInfo._isAudience = profile.audience;
+            userInfo._isHost = this.session.host === profile.userId;
+            userInfo._isVideoMuted = profile.videoMuted;
+            userInfo._isAudioMuted = profile.audioMuted;
+            userInfo._volume = 0;
+            userInfo._isScreenSharing = profile.screenSharing;
+            return userInfo;
+        },
+    },
+    computed: {
+        handUpMembers() {
+            return this.conferenceManager.handUpMembers;
+        },
+
+        handUpTip() {
             let ids = conferenceManager.handUpMembers;
             let userInfos = wfc.getUserInfos(ids, '');
             let desc = userInfos[0].displayName;
@@ -82,44 +88,46 @@ export default {
                 desc += ' 等'
             }
             desc += '正在举手'
-            this.handUpTip = desc;
+            return desc;
         },
-        updateapplyUnmuteTip() {
+
+        applyUnmuteTip() {
             let ids = conferenceManager.applyingUnmuteMembers;
-            let userInfos = wfc.getUserInfos(ids, '');
-            let desc = userInfos[0].displayName;
-            if (userInfos.length > 1) {
-                desc += ' 等'
+            if (ids.length > 0) {
+                let userInfos = wfc.getUserInfos(ids, '');
+                let desc = userInfos[0].displayName;
+                if (userInfos.length > 1) {
+                    desc += ' 等'
+                }
+                desc += '正在申请解除静音'
+                return desc;
+            } else {
+                return '';
             }
-            desc += '正在申请解除静音'
-            this.applyUnmuteTip = desc;
-        }
-
-    },
-    computed: {
-        handUpMembers() {
-            return this.conferenceManager.handUpMembers;
         },
-
-        applyingUnmuteMembers() {
-            return this.conferenceManager.applyingUnmuteMembers;
+        participants() {
+            let participantUserInfos = [];
+            let selfProfile = avengineKit.getMyProfile();
+            let selfUserInfo = this.profile2UserInfo(selfProfile)
+            console.log('selfProfile', selfProfile);
+            participantUserInfos.push(selfUserInfo);
+            let participantProfiles = avengineKit.getParticipantProfiles();
+            console.log('participantProfiles', participantProfiles)
+            for (const p of participantProfiles) {
+                let userInfo = this.profile2UserInfo(p);
+                participantUserInfos.push(userInfo);
+            }
+            console.log('participantUserInfos', participantUserInfos)
+            return participantUserInfos;
         }
     },
-    watch: {
-        handUpMembers() {
-            this.updateHandUpTip();
-        },
-        applyingUnmuteMembers() {
-            this.updateapplyUnmuteTip();
-        }
-    },
+    watch: {},
 
 }
 </script>
 
 <style scoped>
 .conference-manage-view-container {
-    display: none;
     height: 100%;
     overflow: auto;
     background-color: #ffffffe5;

@@ -113,11 +113,8 @@ export default {
             this._createConference()
                 .then(info => {
                     console.log('joinConference', info);
-                    this.$navigateToPage('/pages/voip/conference/ConferencePage', {
-                        conferenceInfo: info,
-                        muteAudio: false,
-                        muteVideo: false,
-                    });
+                    let url =  `/pages/voip/conference/ConferencePage?conferenceInfo=${JSON.stringify(info)}&muteAudio=false&muteVideo=false`;
+                    this.$navigateToPage(url);
                 })
                 .catch(err => {
                     uni.showToast({

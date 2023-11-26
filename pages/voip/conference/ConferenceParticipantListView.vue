@@ -12,26 +12,13 @@
         </div>
         <ul>
             <li v-for="participant in participants" :key="participant.uid + participant._isScreenSharing">
-                <tippy
-                    v-if="!participant._isScreenSharing"
-                    :to="'user-' + participant.uid"
-                    interactive
-                    theme="light"
-                    :animate-fill="false"
-                    placement="left"
-                    distant="7"
-                    animation="fade"
-                    trigger="manual"
-                >
-                    <UserCardView :user-info="participant"/>
-                </tippy>
                 <div class="participant-user"
                      @click.stop.prevent="showContextMenu($event, participant)"
                      :ref="'userCardTippy-'+participant.uid"
                      v-bind:class="{active: participant.uid === currentParticipant.uid && participant._isScreenSharing === currentParticipant._isScreenSharing}"
                      :name="'user-'+participant.uid">
                     <div class="avatar-container">
-                        <img class="avatar" :src="participant.portrait" alt="">
+                        <image class="avatar" :src="participant.portrait" alt=""/>
                         <div v-if=" selfUserId === session.host && !participant._isHost" @click.stop="kickoff(participant)"
                              class="icon">
                             -
@@ -50,25 +37,20 @@
                 </div>
             </li>
         </ul>
-
-        <vue-context ref="menu" v-slot="{data:participant}" :close-on-scroll="true">
-            <li v-for="(item,i) in buildParticipantContextMenu(participant)" :key="i">
-                <a @click.prevent="item.handler" v-bind:style="item.styleObject">{{ item.title }}</a>
-            </li>
-        </vue-context>
-
+        <chunLei-popups v-model="isContextMenuShow" :popData="contextMenuItems" @tapPopup="onContextMenuItemSelect" :x="contextMenuX" :y="contextMenuY" direction="column" theme="dark" :triangle="false" dynamic/>
+        <uni-popup ref="alertDialog" type="dialog">
+            <uni-popup-dialog :cancelText="alertDialogOptions.cancelText" :confirmText="alertDialogOptions.confirmText" :title="alertDialogOptions.title" @confirm="alertDialogOptions.onConfirm"
+                              @close="alertDialogOptions.onClose"></uni-popup-dialog>
+        </uni-popup>
     </div>
 </template>
 
 <script>
 import ConferenceInviteMessageContent from "../../../wfc/av/messages/conferenceInviteMessageContent";
 import Message from "../../../wfc/messages/message";
-import {isElectron} from "../../../platform";
-import ForwardType from "../../main/conversation/message/forward/ForwardType";
-import localStorageEmitter from "../../../ipc/localStorageEmitter";
-import UserCardView from "../../main/user/UserCardView";
+import ForwardType from "../../conversation/message/forward/ForwardType";
 import conferenceManager from "./conferenceManager";
-import LocalStorageIpcEventType from "../../../ipc/localStorageIpcEventType";
+import avengineKit from "../../../wfc/av/engine/avengineKit";
 
 export default {
     name: "ConferenceParticipantListView",
@@ -88,25 +70,27 @@ export default {
             selfUserId: conferenceManager.selfUserId,
             isContextMenuShow: false,
             currentParticipant: {},
+            contextMenuItems: [],
+            contextMenuX: 0,
+            contextMenuY: 0
+            alertDialogOptions: {},
         }
     },
-    components: {
-        UserCardView
+    mounted() {
     },
+    components: {},
     methods: {
         invite() {
+            let defaultAudience = false;
             let callSession = this.session;
-            let inviteMessageContent = new ConferenceInviteMessageContent(callSession.callId, conferenceManager.conferenceInfo.owner, callSession.title, callSession.desc, callSession.startTime, callSession.audioOnly, callSession.defaultAudience, callSession.advance, callSession.pin)
-            console.log('invite', inviteMessageContent);
-            if (isElectron()) {
-                let message = new Message(null, inviteMessageContent);
-                this.$forwardMessage({
-                    forwardType: ForwardType.NORMAL,
-                    messages: [message]
-                });
-            } else {
-                localStorageEmitter.send(LocalStorageIpcEventType.inviteConferenceParticipant, {messagePayload: inviteMessageContent.encode()})
-            }
+            let conferenceInfo = conferenceManager.conferenceInfo;
+            let inviteMessageContent = new ConferenceInviteMessageContent(callSession.callId, conferenceInfo.owner, conferenceInfo.conferenceTitle, callSession.desc, callSession.startTime, callSession.audioOnly, defaultAudience, callSession.advance, callSession.pin)
+            console.log('invite', inviteMessageContent, callSession, conferenceInfo);
+            let message = new Message(null, inviteMessageContent);
+            this.$forward({
+                forwardType: ForwardType.NORMAL,
+                messages: [message]
+            });
             this.showParticipantList = false;
         },
 
@@ -116,26 +100,26 @@ export default {
                 //this.session.switchAudience(!user._isAudience);
                 return;
             }
-            this.$alert({
+            this.showAlertDialog({
                 content: user._isAudience ? `邀请${this.participantName(user)}参与互动?` : `取消${this.participantName(user)}参与互动?`,
-                cancelCallback: () => {
+                onClose: () => {
                     // do nothing
                 },
-                confirmCallback: () => {
+                onConfirm: () => {
                     this.session.requestChangeMode(user.uid, !user._isAudience);
                 }
             })
         },
 
         kickoff(user) {
-            this.$alert({
+            this.showAlertDialog({
                 showIcon: true,
                 content: `确认将${this.participantName(user)}移除会议?`,
-                cancelCallback: () => {
+                onClose: () => {
                     // do nothing
                 },
-                confirmCallback: () => {
-                    this.session.kickoffParticipant(user.uid)
+                onConfirm: () => {
+                    avengineKit.kickoffParticipant(user.uid)
                 }
             })
         },
@@ -162,12 +146,14 @@ export default {
                 }
             } else if (user.uid === conferenceManager.conferenceInfo.owner) {
                 desc = "主持人"
-            }else if (user._isScreenSharing){
+            } else if (user._isScreenSharing) {
                 desc = '屏幕共享';
             }
             return desc;
         },
 
+        // fixme
+        // TODO 操作之后，需要更新participant
         buildParticipantContextMenu(participant) {
             let selfUid = conferenceManager.selfUserId;
             let items = [];
@@ -177,6 +163,7 @@ export default {
 
             items.push({
                 title: '查看用户信息',
+                tag: 'aa',
                 handler: () => {
                     this.showUserCard(participant);
                 }
@@ -199,7 +186,10 @@ export default {
                         items.push({
                             title: '开启音频',
                             handler: () => {
-                                this.$eventBus.$emit('muteAudio', false)
+                                avengineKit.switchAudience(false);
+                                avengineKit.muteAudio(false)
+
+                                // TODO 重新加载 profile
                             }
                         })
                     }
@@ -208,7 +198,8 @@ export default {
                         items.push({
                             title: '开启视频',
                             handler: () => {
-                                this.$eventBus.$emit('muteVideo', false)
+                                avengineKit.switchAudience(false);
+                                avengineKit.muteVideo(false)
                             }
                         })
                     }
@@ -218,7 +209,10 @@ export default {
                         items.push({
                             title: '关闭音频',
                             handler: () => {
-                                this.$eventBus.$emit('muteAudio', true)
+                                avengineKit.muteAudio(true)
+                                if (participant._isVideoMuted) {
+                                    avengineKit.switchAudience(true);
+                                }
                             },
                             styleObject: {
                                 color: 'red',
@@ -229,7 +223,10 @@ export default {
                         items.push({
                             title: '关闭视频',
                             handler: () => {
-                                this.$eventBus.$emit('muteVideo', true)
+                                avengineKit.muteVideo(true)
+                                if (participant._isAudioMuted) {
+                                    avengineKit.switchAudience(true);
+                                }
                             },
                             styleObject: {
                                 color: 'red',
@@ -240,8 +237,9 @@ export default {
                         items.push({
                             title: '关闭音视频',
                             handler: () => {
-                                this.$eventBus.$emit('muteAudio', true)
-                                this.$eventBus.$emit('muteVideo', true)
+                                avengineKit.muteAudio(true);
+                                avengineKit.muteVideo(true);
+                                avengineKit.switchAudience(true)
                             },
                             styleObject: {
                                 color: 'red',
@@ -292,7 +290,8 @@ export default {
                     })
                 }
             }
-            return items;
+            this.contextMenuItems.length = 0;
+            this.contextMenuItems.push(...items)
         },
 
         showContextMenu(event, participant) {
@@ -302,29 +301,41 @@ export default {
                 this.currentParticipant = {};
                 return;
             }
-            let ne = {
-                type: 'contextmenu'
-            }
 
-            ne.clientX = event.clientX - this.$refs.rootContainer.parentElement.offsetLeft;
-            // 160 menu width
-            // 360 slider width
-            if (ne.clientX + 160 > 350) {
-                ne.clientX = ne.clientX - 160;
-            }
-            ne.clientY = event.clientY - this.$refs.rootContainer.offsetTop;
-            this.$refs.menu.open(ne, participant);
-            this.$refs.menu.$once('close', () => {
-                this.isContextMenuShow = false;
-                this.currentParticipant = {};
-            })
+            this.buildParticipantContextMenu(participant)
+
+            this.contextMenuX = event.touches[0].clientX;
+            this.contextMenuY = event.touches[0].clientY;
+
             this.isContextMenuShow = true;
             this.currentParticipant = participant;
-        }
-        ,
+
+        },
         showUserCard(p) {
-            this.$refs['userCardTippy-' + p.uid][0]._tippy.show();
-        }
+            // TODO
+        },
+
+        onContextMenuItemSelect(item) {
+            console.log('onContextMenuItemSelect', item)
+            item.handler && item.handler();
+        },
+
+        showAlertDialog(options) {
+            this.alertDialogOptions = {
+                cancelText: options.cancelText,
+                confirmText: options.confirmText,
+                title: options.title,
+                content: options.content,
+                onConfirm: () => {
+                    options.onConfirm && options.onConfirm();
+                },
+                onClose: () => {
+                    options.onClose && options.onClose();
+                    this.alertDialogOptions = {};
+                }
+            }
+            this.$refs.alertDialog.open()
+        },
     }
 }
 </script>
@@ -333,7 +344,7 @@ export default {
 .participant-list-container {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 100vh;
     overflow: auto;
     background-color: #ffffffe5;
     backdrop-filter: blur(6px);

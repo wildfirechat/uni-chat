@@ -239,6 +239,7 @@
         {
             "path": "pages/voip/Multi",
             "style": {
+                "titleNView": false,
                 "navigationBarTitleText": "多人音视频通话"
             }
         },
@@ -276,6 +277,12 @@
             "path": "pages/voip/conference/ConferencePage",
             "style": {
                 "navigationBarTitleText": "音视频会议"
+            }
+        },
+        {
+            "path": "pages/voip/conference/ConferenceManagePage",
+            "style": {
+                "navigationBarTitleText": "会议管理"
             }
         },
         {

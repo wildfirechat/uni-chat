@@ -170,6 +170,25 @@ export class AVEngineKit {
     }
 
     /**
+     * 仅会议版有效
+     *
+     * 将参与者踢出会议
+     *
+     * @param {string} callId 会议 id 讨论： 仅starConference 、joinConference 需要 callId 参数，其他操作，都是这对当前 callSession
+     * @param userId
+     * @param successCB
+     * @param failCB
+     */
+    kickoffParticipant(callId, userId, successCB, failCB) {
+        avengineKitPlugin.kickoffParticipant(callId, userId, () => {
+            successCB && successCB()
+        }, err => {
+            failCB && failCB(err)
+        })
+
+    }
+
+    /**
      *  仅会议版有效
      * 设置参与者的 videoType
      * @param {string} userId 用户 id
@@ -214,13 +233,6 @@ export class AVEngineKit {
      */
     addICEServer(url, name, password) {
         avengineKitPlugin.addICEServer(url, name, password)
-    }
-
-    /**
-     * 配置允许 UIKit 层处理后台通知
-     */
-    enableNativeNotification(enable) {
-        avengineKitPlugin.enableNativeNotification(enable);
     }
 
     /**
