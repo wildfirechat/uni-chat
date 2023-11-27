@@ -527,12 +527,12 @@
             // fixme
             // 这个这个方法应当叫 setAudioEnable，参数也是enable audio 的意思
             async _muteAudio(enable) {
-                avengineKit.muteAudio(!enable)
+                avengineKit.muteAudio(this.session.callId, !enable)
 
                 console.log('muteAudio', this.selfUserInfo._isAudioMuted, this.session.audience)
                 if (enable) {
                     if (this.session.audience) {
-                        let result = avengineKit.switchAudience(false);
+                        let result = avengineKit.switchAudience(this.session.callId, false);
                         // if (result) {
                         //     this.selfUserInfo._isAudience = false;
                         //     this.session.audience = false;
@@ -540,7 +540,7 @@
                     }
                 } else {
                     if (this.session.videoMuted && !this.session.audience) {
-                        let result = avengineKit.switchAudience(true);
+                        let result = avengineKit.switchAudience(this.session.callId, true);
                         // if (result) {
                         //     this.selfUserInfo._isAudience = true;
                         //     this.session.audience = true;
@@ -560,11 +560,11 @@
 
             async _muteVideo(enable) {
                 console.log('muteVideo', !enable)
-                avengineKit.muteVideo(!enable)
+                avengineKit.muteVideo(this.session.callId, !enable)
 
                 if (enable) {
                     if (this.session.audience) {
-                        let result = avengineKit.switchAudience(false);
+                        let result = avengineKit.switchAudience(this.session.callId, false);
                         console.log('switchAudience ', false, result)
                         // if (result) {
                         //     this.selfUserInfo._isAudience = false;
@@ -573,7 +573,7 @@
                     }
                 } else {
                     if (this.session.videoMuted && !this.session.audience) {
-                        let result = avengineKit.switchAudience(true);
+                        let result = avengineKit.switchAudience(this.session.callId, true);
                         console.log('switchAudience ', true, result)
                         // if (result) {
                         //     this.selfUserInfo._isAudience = true;
@@ -736,13 +736,13 @@
             },
 
             setupParticipants() {
-                let selfProfile = avengineKit.getMyProfile();
+                let selfProfile = avengineKit.getMyProfile(this.session.callId);
                 let selfUserInfo = this.profile2UserInfo(selfProfile)
                 console.log('selfProfile', selfProfile);
                 this.selfUserInfo = selfUserInfo;
                 this.participantUserInfos.push(selfUserInfo);
 
-                let participantProfiles = avengineKit.getParticipantProfiles();
+                let participantProfiles = avengineKit.getParticipantProfiles(this.session.callId);
                 console.log('participantProfiles', participantProfiles)
                 for (const p of participantProfiles) {
                     let userInfo = this.profile2UserInfo(p);
@@ -777,7 +777,7 @@
                 let granted = getApp().avengineKit.checkOverlayPermission();
                 console.log('overlayPermission granted', granted)
                 if (granted) {
-                    getApp().avengineKit.minimize();
+                    getApp().avengineKit.minimize(this.session.callId);
                     uni.navigateBack({
                         delta: 1,
                         fail: err => {
@@ -819,7 +819,7 @@
                     // 演讲者布局，切换为小流，然后焦点用户切换为大流
                     this.participantUserInfos.forEach(u => {
                         if (u.uid !== this.selfUserInfo.uid && !u._isAudience && !u._isVideoMuted) {
-                            avengineKit.setParticipantVideoType(u.uid, u._isScreenSharing, VideoType.SMALL_STREAM);
+                            avengineKit.setParticipantVideoType(this.session.callId, u.uid, u._isScreenSharing, VideoType.SMALL_STREAM);
                         }
                     })
                 } else {
@@ -993,11 +993,11 @@
 
                 console.log('computedFocusVideoParticipant', this.conferenceManager.currentFocusUser)
                 if (this.conferenceManager.currentFocusUser) {
-                    avengineKit.setParticipantVideoType(this.conferenceManager.currentFocusUser.uid, this.conferenceManager.currentFocusUser._isScreenSharing, VideoType.SMALL_STREAM);
+                    avengineKit.setParticipantVideoType(this.session.callId, this.conferenceManager.currentFocusUser.uid, this.conferenceManager.currentFocusUser._isScreenSharing, VideoType.SMALL_STREAM);
                 }
                 if (sp) {
                     this.conferenceManager.currentFocusUser = sp;
-                    avengineKit.setParticipantVideoType(this.conferenceManager.currentFocusUser.uid, this.conferenceManager.currentFocusUser._isScreenSharing, VideoType.BIG_STREAM);
+                    avengineKit.setParticipantVideoType(this.session.callId, this.conferenceManager.currentFocusUser.uid, this.conferenceManager.currentFocusUser._isScreenSharing, VideoType.BIG_STREAM);
                 } else {
                     if (this.session.screenSharing) {
                         sp = this.selfUserInfo;

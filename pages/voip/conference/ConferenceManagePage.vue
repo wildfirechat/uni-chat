@@ -107,11 +107,11 @@ export default {
         },
         participants() {
             let participantUserInfos = [];
-            let selfProfile = avengineKit.getMyProfile();
+            let selfProfile = avengineKit.getMyProfile(this.session.callId);
             let selfUserInfo = this.profile2UserInfo(selfProfile)
             console.log('selfProfile', selfProfile);
             participantUserInfos.push(selfUserInfo);
-            let participantProfiles = avengineKit.getParticipantProfiles();
+            let participantProfiles = avengineKit.getParticipantProfiles(this.session.callId);
             console.log('participantProfiles', participantProfiles)
             for (const p of participantProfiles) {
                 let userInfo = this.profile2UserInfo(p);

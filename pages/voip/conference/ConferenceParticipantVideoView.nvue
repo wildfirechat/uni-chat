@@ -58,7 +58,7 @@
             console.log('videoView created', this.participant.uid);
             if (this.selfUserId !== this.participant.uid) {
                 if (!this.participant._isVideoMuted) {
-                    avengineKit.setParticipantVideoType(this.participant.uid, this.participant._isScreenSharing, VideoType.BIG_STREAM);
+                    avengineKit.setParticipantVideoType(this.session.callId, this.participant.uid, this.participant._isScreenSharing, VideoType.BIG_STREAM);
                 }
             }
         },
@@ -66,7 +66,7 @@
             console.log('videoView destroyed', this.participant.uid);
             if (this.selfUserInfo.uid !== this.participant.uid) {
                 if (!this.participant._isVideoMuted) {
-                    avengineKit.setParticipantVideoType(this.participant.uid, this.participant._isScreenSharing, VideoType.NONE);
+                    avengineKit.setParticipantVideoType(this.session.callId, this.participant.uid, this.participant._isScreenSharing, VideoType.NONE);
                 }
             }
         },
@@ -92,9 +92,9 @@
             setupVideoView() {
                 if (!this.participant._isVideoMuted) {
                     if (this.participant.uid === this.selfUserInfo.uid) {
-                        avengineKit.setLocalVideoView(this.participant.uid, this.$refs.remoteVideoView.ref)
+                        avengineKit.setLocalVideoView(this.session.callId, this.participant.uid, this.$refs.remoteVideoView.ref)
                     } else {
-                        avengineKit.setRemoteVideoView(this.participant.uid, this.$refs.remoteVideoView.ref, false)
+                        avengineKit.setRemoteVideoView(this.session.callId, this.participant.uid, this.$refs.remoteVideoView.ref, false)
                     }
                 }
             },
@@ -112,7 +112,7 @@
                 } else if (currentVideoType === VideoType.SMALL_STREAM) {
                     videoType = VideoType.NONE;
                 }
-                avengineKit.setParticipantVideoType(userId, screenSharing, videoType);
+                avengineKit.setParticipantVideoType(this.session.callId, userId, screenSharing, videoType);
             },
         },
         computed: {

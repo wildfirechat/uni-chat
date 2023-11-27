@@ -155,7 +155,7 @@
                 } else if (currentVideoType === VideoType.SMALL_STREAM) {
                     videoType = VideoType.NONE;
                 }
-                avengineKit.setParticipantVideoType(userId, screenSharing, videoType);
+                avengineKit.setParticipantVideoType(this.session.callId, userId, screenSharing, videoType);
             },
             setupSessionCallback() {
                 let sessionCallback = new CallSessionCallback();
@@ -273,25 +273,25 @@
                 if (!this.session) {
                     return;
                 }
-                avengineKit.switchCamera();
+                avengineKit.switchCamera(this.session.callId);
             },
 
             mute() {
                 let toMute = !this.session.audioMuted;
                 this.session.audioMuted = toMute;
                 this.selfUserInfo._isAudioMuted = toMute;
-                avengineKit.muteAudio(toMute)
+                avengineKit.muteAudio(this.session.callId, toMute)
             },
 
             muteVideo() {
                 let toMute = !this.session.videoMuted;
                 this.session.videoMuted = toMute;
                 this.selfUserInfo._isVideoMuted = toMute;
-                avengineKit.muteVideo(toMute)
+                avengineKit.muteVideo(this.session.callId, toMute)
             },
 
             down2voice() {
-                this.session.downgrade2Voice();
+                this.session.downgrade2Voice(this.session.callId);
             },
 
             screenShare() {
@@ -301,7 +301,7 @@
                 let beforeClose = (users) => {
                     let ids = users.map(u => u.uid);
                     console.log('picked users', ids)
-                    avengineKit.inviteNewParticipant(ids);
+                    avengineKit.inviteNewParticipant(this.session.callId, ids);
                 };
                 let groupMemberUserInfos = getApp().store.getGroupMemberUserInfos(this.session.conversation.target, false);
                 getApp().$pickUsers(
@@ -340,9 +340,9 @@
 
                 if (!this.audioOnly) {
                     this.$nextTick(() => {
-                        avengineKit.setLocalVideoView(this.selfUserInfo.uid, this.$refs.localVideo.ref)
+                        avengineKit.setLocalVideoView(this.session.callId, this.selfUserInfo.uid, this.$refs.localVideo.ref)
                         this.participantUserInfos.forEach(u => {
-                            avengineKit.setRemoteVideoView(u.uid, this.$refs['remoteVideo-' + u.uid][0].ref, false)
+                            avengineKit.setRemoteVideoView(this.session.callId, u.uid, this.$refs['remoteVideo-' + u.uid][0].ref, false)
                         });
                     });
                 }
@@ -390,7 +390,7 @@
                 let granted = getApp().avengineKit.checkOverlayPermission();
                 console.log('overlayPermission granted', granted)
                 if (granted) {
-                    getApp().avengineKit.minimize();
+                    getApp().avengineKit.minimize(this.session.callId);
                     uni.navigateBack({
                         delta: 1,
                         fail: err => {
@@ -434,7 +434,7 @@
             // }
             // // end
 
-            let participantProfiles = avengineKit.getParticipantProfiles();
+            let participantProfiles = avengineKit.getParticipantProfiles(this.session.callId);
             for (const p of participantProfiles) {
                 let userInfo = this.wfc.getUserInfo(p.userId);
                 userInfo._isVideoMuted = p.videoMuted;

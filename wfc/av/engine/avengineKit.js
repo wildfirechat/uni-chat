@@ -174,7 +174,7 @@ export class AVEngineKit {
      *
      * 将参与者踢出会议
      *
-     * @param {string} callId 会议 id 讨论： 仅starConference 、joinConference 需要 callId 参数，其他操作，都是这对当前 callSession
+     * @param {string} callId 会议 id
      * @param userId
      * @param successCB
      * @param failCB
@@ -191,13 +191,14 @@ export class AVEngineKit {
     /**
      *  仅会议版有效
      * 设置参与者的 videoType
+     * @param {string} callId 通话 id
      * @param {string} userId 用户 id
      * @param {boolean} screenSharing 是否是屏幕共享
      * @param {number} videoType 视频流类型，可选值参考{@link VideoType}
      */
-    setParticipantVideoType(userId, screenSharing, videoType) {
+    setParticipantVideoType(callId, userId, screenSharing, videoType) {
         console.log('setParticipantVideoType', userId, screenSharing, videoType)
-        avengineKitPlugin.setParticipantVideoType(userId, screenSharing, videoType);
+        avengineKitPlugin.setParticipantVideoType(callId, userId, screenSharing, videoType);
     }
 
     /**
@@ -218,11 +219,12 @@ export class AVEngineKit {
 
     /**
      * 设置视频通话时的视频属性
+     * @param {string} callId 通话 id
      * @param {number} profile 可选值参考{@link VideoProfile}
      * @param {boolean} swapWidthHeight 是否交换宽高，默认不不用设置
      */
-    setVideoProfile(profile, swapWidthHeight = false) {
-        avengineKitPlugin.setVideoProfile(profile, swapWidthHeight);
+    setVideoProfile(callId, profile, swapWidthHeight = false) {
+        avengineKitPlugin.setVideoProfile(callId, profile, swapWidthHeight);
     }
 
     /**
@@ -249,62 +251,106 @@ export class AVEngineKit {
         return Object.assign(new CallSession(), JSON.parse(result));
     }
 
+    /**
+     * 接听
+     * @param {string} callId
+     * @param {boolean} audioOnly 是否是以语音方式接听
+     */
     answerCall(callId, audioOnly) {
         avengineKitPlugin.answerCall(callId, audioOnly);
     }
 
     /**
+     * 挂断
      * @param {Object} callId 通话ID
      */
     endCall(callId) {
         avengineKitPlugin.endCall(callId);
     }
 
-    muteVideo(mute) {
-        avengineKitPlugin.muteVideo(mute)
+    /**
+     * 关闭/开启摄像头
+     * @param {string} callId 通话 id
+     * @param {boolean} mute 是否关闭摄像头
+     */
+    muteVideo(callId, mute) {
+        avengineKitPlugin.muteVideo(callId, mute)
     }
 
     /**
-     * 关闭麦克风
+     * 关闭/开启麦克风
+     * @param {string} callId 通话 id
      * @param {boolean} mute 是否关闭麦克风
      * @return {boolean} 是否关闭成功
      */
-    muteAudio(mute) {
-        avengineKitPlugin.muteAudio(mute);
+    muteAudio(callId, mute) {
+        avengineKitPlugin.muteAudio(callId, mute);
     }
 
     /**
      * 会议时有效
      * 切换为观众
-     * @param {boolean} audience
+     * @param {string} callId 通话 id
+     * @param {boolean} audience 是否切换成观众
      * @return {boolean} 是否切换成功
      */
-    switchAudience(audience) {
-        return avengineKitPlugin.switchAudience(audience);
+    switchAudience(callId, audience) {
+        return avengineKitPlugin.switchAudience(callId, audience);
     }
 
-    downgrade2Voice() {
-        avengineKitPlugin.downgrade2Voice();
+    /**
+     * 将视频通话，降级到语音通话
+     * @param {string} callId 通话 id
+     */
+    downgrade2Voice(callId) {
+        avengineKitPlugin.downgrade2Voice(callId);
     }
 
-    switchCamera() {
-        avengineKitPlugin.switchCamera();
+    /**
+     * 切换摄像头
+     * @param {string} callId 通话 id
+     */
+    switchCamera(callId) {
+        avengineKitPlugin.switchCamera(callId);
     }
 
-    inviteNewParticipant(userIds) {
-        avengineKitPlugin.inviteNewParticipant(userIds);
+    /**
+     * 邀请新的通话成员
+     * @param {string} callId 通话 id
+     * @param {[string]} userIds 新参与者 id 列表
+     */
+    inviteNewParticipant(callId, userIds) {
+        avengineKitPlugin.inviteNewParticipant(callId, userIds);
     }
 
-    setLocalVideoView(userId, ref) {
-        avengineKitPlugin.setLocalVideoView(userId, ref);
+    /**
+     * 设置本地视频流容器 view
+     * @param {string} callId 通话 id
+     * @param {string} userId 自己的用户 id
+     * @param {number} ref 容器 view 的 id
+     */
+    setLocalVideoView(callId, userId, ref) {
+        avengineKitPlugin.setLocalVideoView(callId, userId, ref);
     }
 
-    setRemoteVideoView(userId, ref, screenSharing = false) {
-        avengineKitPlugin.setRemoteVideoView(userId, screenSharing, ref);
+    /**
+     * 设置远程视频流容器 view
+     * @param {string} callId 通话 id
+     * @param {string} userId 用户 id
+     * @param {number} ref 容器 view 的 id
+     * @param {boolean} screenSharing 是否是屏幕共享
+     */
+    setRemoteVideoView(callId, userId, ref, screenSharing = false) {
+        avengineKitPlugin.setRemoteVideoView(callId, userId, screenSharing, ref);
     }
 
-    getParticipantProfiles() {
-        let str = avengineKitPlugin.getParticipantProfiles()
+    /**
+     * 获取除自己外，所有通话参与者的 {@link ParticipantProfile}
+     * @param {string} callId 通话 id
+     * @return {[ParticipantProfile]}
+     */
+    getParticipantProfiles(callId) {
+        let str = avengineKitPlugin.getParticipantProfiles(callId)
         if (!str) {
             return [];
         }
@@ -316,16 +362,28 @@ export class AVEngineKit {
         return profiles;
     }
 
-    getParticipantProfile(userId, screenSharing) {
-        let str = avengineKitPlugin.getParticipantProfile(userId, screenSharing);
+    /**
+     * 获取除自己外，某个通话参与者的{@link ParticipantProfile}
+     * @param {string} callId 通话 id
+     * @param {string} userId 用户 id
+     * @param {boolean} screenSharing 是否是屏幕共享
+     * @return {any| ParticipantProfile}
+     */
+    getParticipantProfile(callId, userId, screenSharing) {
+        let str = avengineKitPlugin.getParticipantProfile(callId, userId, screenSharing);
         if (!str) {
             return null;
         }
         return Object.assign(new ParticipantProfile(), JSON.parse(str))
     }
 
-    getMyProfile() {
-        let str = avengineKitPlugin.getMyProfile();
+    /**
+     * 获取自己的 {@link ParticipantProfile}
+     * @return {any|ParticipantProfile}
+     * @param {string} callId
+     */
+    getMyProfile(callId) {
+        let str = avengineKitPlugin.getMyProfile(callId);
         if (!str) {
             return null;
         }
@@ -342,11 +400,13 @@ export class AVEngineKit {
     }
 
     /**
+     * 最小化
+     * @param {string} callId
      * @param {string} focusVideoUser 视频通话/会议时有效，表示悬浮窗显示那个用户的视频流
      * 最小化，显示悬浮窗
      */
-    minimize(focusVideoUser = '') {
-        avengineKitPlugin.minimize();
+    minimize(callId, focusVideoUser = '') {
+        avengineKitPlugin.minimize(callId, focusVideoUser);
     }
 }
 

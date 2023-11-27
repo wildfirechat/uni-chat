@@ -28,6 +28,11 @@ const i18n = new VueI18n({
     }
 })
 
+/**
+ *
+ * @param url
+ * @param options 普通页面到 nvue 页面 或 nvue 页面到普通页面时，不生效
+ */
 Vue.prototype.$navigateToPage = (url, options) => {
     uni.navigateTo({
         url: url,

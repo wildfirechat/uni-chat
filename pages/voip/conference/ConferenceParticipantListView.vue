@@ -119,7 +119,7 @@ export default {
                     // do nothing
                 },
                 onConfirm: () => {
-                    avengineKit.kickoffParticipant(user.uid)
+                    avengineKit.kickoffParticipant(this.session.callId, user.uid)
                 }
             })
         },

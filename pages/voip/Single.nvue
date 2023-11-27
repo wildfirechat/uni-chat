@@ -154,7 +154,7 @@
                     videoType = VideoType.NONE;
                 }
                 console.log('setParticipantVideoType', userId, videoType);
-                avengineKit.setParticipantVideoType(userId, false, videoType);
+                avengineKit.setParticipantVideoType(this.session.callId, userId, false, videoType);
             },
             setupSessionCallback() {
                 let sessionCallback = new CallSessionCallback();
@@ -192,7 +192,7 @@
                         avengineKit.setRemoteVideoView(userId, this.$refs.remoteVideo.ref)
                     }
                     if (avengineKit.isSupportConference()){
-                        avengineKit.setParticipantVideoType(userId, false, VideoType.BIG_STREAM);
+                        avengineKit.setParticipantVideoType(this.session.callId, userId, false, VideoType.BIG_STREAM);
                     }
                 };
 
@@ -260,7 +260,7 @@
                 if (!this.session) {
                     return;
                 }
-                avengineKit.switchCamera();
+                avengineKit.switchCamera(this.session.callId);
             },
 
             mute() {
@@ -269,7 +269,7 @@
             },
 
             down2voice() {
-                avengineKit.downgrade2Voice();
+                avengineKit.downgrade2Voice(this.session.callId);
             },
 
             screenShare() {
@@ -289,8 +289,8 @@
                     // iOS 需要延时一下，localVideoView 才生效
                     setTimeout(() => {
                         console.log('setLocalVideoView', this.wfc.getUserId(), this.$refs.localVideo.ref)
-                        avengineKit.setLocalVideoView(this.wfc.getUserId(), this.$refs.localVideo.ref)
-                        avengineKit.setRemoteVideoView(this.targetUserId, this.$refs.remoteVideo.ref)
+                        avengineKit.setLocalVideoView(this.session.callId, this.wfc.getUserId(), this.$refs.localVideo.ref)
+                        avengineKit.setRemoteVideoView(this.session.callId, this.targetUserId, this.$refs.remoteVideo.ref)
                         console.log('setRemoteVideoView', this.targetUserId, this.$refs.remoteVideo.ref)
                     }, 100)
                 }
@@ -312,7 +312,7 @@
                 let granted = getApp().avengineKit.checkOverlayPermission();
                 console.log('overlayPermission granted', granted)
                 if (granted) {
-                    getApp().avengineKit.minimize();
+                    getApp().avengineKit.minimize(this.session.callId);
                     uni.navigateBack({
                         delta: 1,
                         fail: err => {
