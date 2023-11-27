@@ -363,7 +363,7 @@ export class AVEngineKit {
     }
 
     /**
-     * 获取除自己外，某个通话参与者的{@link ParticipantProfile}
+     * 获取某个通话参与者（可以是自己）的{@link ParticipantProfile}
      * @param {string} callId 通话 id
      * @param {string} userId 用户 id
      * @param {boolean} screenSharing 是否是屏幕共享
@@ -407,6 +407,7 @@ export class AVEngineKit {
      */
     minimize(callId, focusVideoUser = '') {
         avengineKitPlugin.minimize(callId, focusVideoUser);
+        this.sessionCallback = null;
     }
 }
 

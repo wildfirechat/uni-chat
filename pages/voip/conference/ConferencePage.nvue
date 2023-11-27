@@ -142,6 +142,7 @@
                 audioOnly: true,
                 status: 1,
                 selfUserInfo: null,
+                // 包含自己
                 participantUserInfos: [],
 
                 startTimestamp: 0,
@@ -319,7 +320,7 @@
 
                 sessionCallback.didParticipantJoined = (userId, screenSharing) => {
                     console.log('didParticipantJoined', userId, screenSharing)
-                    let profile = avengineKit.getParticipantProfile(userId, screenSharing);
+                    let profile = avengineKit.getParticipantProfile(this.session.callId, userId, screenSharing);
                     console.log('didParticipantJoined profile', profile)
                     let userInfo = this.profile2UserInfo(profile);
                     this.participantUserInfos.push(userInfo);
@@ -378,7 +379,7 @@
                 sessionCallback.didChangeType = (userId, audience, screenSharing) => {
                     console.log('didChangeType', userId, audience, screenSharing);
                     let found = false;
-                    let profile = avengineKit.getParticipantProfile(userId, screenSharing);
+                    let profile = avengineKit.getParticipantProfile(this.session.callId, userId, screenSharing);
                     if (this.selfUserInfo.uid === userId) {
                         this.session.audience = audience;
                         this.session.videoMuted = profile.videoMuted;
@@ -437,7 +438,7 @@
                 sessionCallback.didMuteStateChanged = (participants) => {
                     console.log('conference', 'didMuteStateChanged', participants)
                     participants.forEach(p => {
-                        let profile = avengineKit.getParticipantProfile(p, false);
+                        let profile = avengineKit.getParticipantProfile(this.session.callId, p, false);
                         if (!profile) {
                             return;
                         }
@@ -451,7 +452,7 @@
                                 }
                             }
 
-                            if (u.uid === this.selfUserInfo.uid) {
+                            if (profile.userId === this.selfUserInfo.uid) {
                                 this.session.videoMuted = profile.videoMuted;
                                 this.session.audioMuted = profile.audioMuted;
                             }

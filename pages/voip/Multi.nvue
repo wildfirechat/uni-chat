@@ -78,15 +78,15 @@
                     </div>
                     <div class="action">
                         <image v-if="!session.audioMuted" @click="mute" class="action-img"
-                             src='/static/image/av/av_mute.png'/>
+                               src='/static/image/av/av_mute.png'/>
                         <image v-else @click="mute" class="action-img" src='/static/image/av/av_mute_hover.png'/>
                         <text class="desc">静音</text>
                     </div>
                     <div v-if="!session.audioOnly" class="action">
                         <image v-if="!session.videoMuted" @click="muteVideo" class="action-img"
-                             src='/static/image/av/av_conference_video.png'/>
+                               src='/static/image/av/av_conference_video.png'/>
                         <image v-else @click="muteVideo" class="action-img"
-                             src='/static/image/av/av_conference_video_mute.png'/>
+                               src='/static/image/av/av_conference_video_mute.png'/>
                         <text class="desc">关闭摄像头</text>
                     </div>
                     <div v-if="!audioOnly && false" class="action">
@@ -218,12 +218,17 @@
                 }
 
                 sessionCallback.didVideoMuted = (userId, muted) => {
-                    this.participantUserInfos.forEach(u => {
-                        if (u.uid === userId) {
-                            u._isVideoMuted = muted;
-                        }
-                    })
-                };
+                    if (userId === this.wfc.getUserId()) {
+                        this.selfUserInfo._isVideoMuted = muted;
+                    } else {
+                        this.participantUserInfos.forEach(u => {
+                            if (u.uid === userId) {
+                                u._isVideoMuted = muted;
+                            }
+                        })
+                    }
+                    this.setupVideoViews();
+                }
 
                 sessionCallback.didMediaLostPacket = (media, lostPacket) => {
                     if (lostPacket > 6) {
@@ -328,6 +333,19 @@
                 return name;
             },
 
+            setupVideoViews() {
+                if (!this.audioOnly) {
+                    this.$nextTick(() => {
+                        avengineKit.setLocalVideoView(this.session.callId, this.selfUserInfo.uid, this.$refs.localVideo.ref)
+                        this.participantUserInfos.forEach(u => {
+                            if (!u._isVideoMuted) {
+                                avengineKit.setRemoteVideoView(this.session.callId, u.uid, this.$refs['remoteVideo-' + u.uid][0].ref, false)
+                            }
+                        });
+                    });
+                }
+            },
+
             onVoipConnected() {
                 if (!this.timer) {
                     if (!this.startTimestamp) {
@@ -338,14 +356,7 @@
                     }, 1000)
                 }
 
-                if (!this.audioOnly) {
-                    this.$nextTick(() => {
-                        avengineKit.setLocalVideoView(this.session.callId, this.selfUserInfo.uid, this.$refs.localVideo.ref)
-                        this.participantUserInfos.forEach(u => {
-                            avengineKit.setRemoteVideoView(this.session.callId, u.uid, this.$refs['remoteVideo-' + u.uid][0].ref, false)
-                        });
-                    });
-                }
+                this.setupVideoViews();
             },
 
             timestampFormat(timestamp) {
@@ -494,7 +505,6 @@
 
     .container {
         width: 750rpx;
-        //padding-top: 60rpx;
         flex: 1;
         display: flex;
         flex-direction: column;

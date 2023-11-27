@@ -40,11 +40,11 @@
                     </div>
                 </div>
                 <div class="local-media-container">
-                    <UIKit-Video-CallView v-if="callState === 4"
+                    <UIKit-Video-CallView v-if="callState === 4 && !videoMuted"
                                           ref="localVideo"
                                           class="localVideo"
                     />
-                    <image v-if="callState !== 4" class="avatar" :src="selfUserInfo.portrait"/>
+                    <image v-if="callState !== 4 || videoMuted" class="avatar" :src="selfUserInfo.portrait"/>
                 </div>
             </div>
 
@@ -83,7 +83,12 @@
                 <div v-if="!audioOnly && false" class="action">
                     <image @click="screenShare" class="action-img" src='/static/image/av/av_share.png'/>
                 </div>
-                <div v-if="!audioOnly" class="action">
+                <div v-if="!audioOnly && true" class="action">
+                    <image v-if="!videoMuted" @click="muteVideo" class="action-img" src='/static/image/av/av_conference_video.png'/>
+                    <image v-else @click="muteVideo" class="action-img" src='/static/image/av/av_conference_video_mute.png'/>
+                    <text class="desc"> 关闭摄像头</text>
+                </div>
+                <div v-if="!audioOnly && false" class="action">
                     <image @click="down2voice" class="action-img" src='/static/image/av/av_float_audio.png'/>
                     <text class="desc">切换到语音聊天</text>
                 </div>
@@ -191,7 +196,7 @@
                     if (this.$refs.remoteVideo) {
                         avengineKit.setRemoteVideoView(userId, this.$refs.remoteVideo.ref)
                     }
-                    if (avengineKit.isSupportConference()){
+                    if (avengineKit.isSupportConference()) {
                         avengineKit.setParticipantVideoType(this.session.callId, userId, false, VideoType.BIG_STREAM);
                     }
                 };
@@ -200,9 +205,21 @@
                     console.log('callEndWithReason', reason)
                     this.session = null;
                 }
+
                 sessionCallback.didVideoMuted = (userId, muted) => {
                     console.log('didVideoMuted', userId, muted);
-                    this.videoMuted = muted;
+                    if (userId === this.wfc.getUserId()) {
+                        this.videoMuted = muted;
+                        this.$nextTick(() => {
+                            avengineKit.setLocalVideoView(this.session.callId, userId, this.$refs.localVideo.ref)
+                        })
+                    } else {
+                        if (!muted) {
+                            this.$nextTick(() => {
+                                avengineKit.setRemoteVideoView(this.session.callId, this.targetUserId, this.$refs.remoteVideo.ref)
+                            })
+                        }
+                    }
                 };
 
                 sessionCallback.didMediaLostPacket = (media, lostPacket) => {
@@ -265,7 +282,11 @@
 
             mute() {
                 this.audioMuted = !this.audioMuted;
-                avengineKit.muteAudio(this.audioMuted)
+                avengineKit.muteAudio(this.session.callId, this.audioMuted)
+            },
+
+            muteVideo() {
+                avengineKit.muteVideo(this.session.callId, this.videoMuted)
             },
 
             down2voice() {
@@ -398,7 +419,6 @@
         width: 750rpx;
         flex: 1;
         display: flex;
-        //padding-top: 60rpx;
         flex-direction: column;
         position: relative;
         background: rgb(41, 41, 41)
@@ -464,6 +484,9 @@
         height: 200px;
         top: 0;
         left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .local-media-container .avatar {

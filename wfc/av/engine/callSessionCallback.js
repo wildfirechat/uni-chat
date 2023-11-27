@@ -110,7 +110,7 @@ export default class CallSessionCallback {
     }
 
     /**
-     * 多人版生效，高级版调用的是 {@link didMuteStateChanged}
+     * 单人、多人音视频通话时生效，会议时调用的是 {@link didMuteStateChanged}
      * @param {string} userId
      * @param {boolean} muted
      */
