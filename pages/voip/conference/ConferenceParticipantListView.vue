@@ -72,7 +72,7 @@ export default {
             currentParticipant: {},
             contextMenuItems: [],
             contextMenuX: 0,
-            contextMenuY: 0
+            contextMenuY: 0,
             alertDialogOptions: {},
         }
     },
