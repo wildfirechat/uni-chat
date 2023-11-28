@@ -13,7 +13,7 @@
                 <div class="participant-container" :style="computedParticipantSizeStyle">
                     <div v-if="audioOnly || callState !== 4 || selfUserInfo._isVideoMuted"
                          class="participant-item" :style="computedParticipantSizeStyle">
-                        <image class="avatar" :src="selfUserInfo.portrait"/>
+                        <image class="avatar" :style="computedParticipantSizeStyle" :src="selfUserInfo.portrait"/>
                         <text class="desc">我</text>
                     </div>
                     <UIKit-Video-CallView v-else
@@ -29,7 +29,7 @@
                     <div v-if="audioOnly || callState !== 4 || participant._isVideoMuted || participant._state !== 4"
                          :style="computedParticipantSizeStyle"
                          class="participant-item">
-                        <image class="avatar" :src="participant.portrait" :alt="participant"/>
+                        <image class="avatar" :style="computedParticipantSizeStyle" :src="participant.portrait" :alt="participant"/>
                         <text class="desc">{{ userName(participant) }}</text>
                     </div>
                     <UIKit-Video-CallView v-else
@@ -38,13 +38,6 @@
                                           :ref="'remoteVideo-' + participant.uid"
                                           @click="switchVideoType(participant.uid, participant._isScreenSharing)"
                     />
-                </div>
-                <!--通话建立成功之后，才允许邀请新参与者-->
-                <div v-if="callState === 4/*connect*/ && participantUserInfos.length < 8"
-                     class="participant-container">
-                    <div style="background: #1D1D1D; border-radius: 30px">
-                        <image @click="invite" class="action-img" src="/static/image/av/add.png"/>
-                    </div>
                 </div>
             </div>
 
@@ -95,8 +88,13 @@
                 </div>
             </div>
 
-            <div v-if="callState === 4" style="position:absolute; right: 20rpx; top: 80rpx;">
+            <div class="voip-title-container">
                 <image @click="minimize" style="width: 30px; height: 30px" src='/static/image/av/av_minimize.png'/>
+                <div class="title">
+                    <text class="desc" v-if="callState === 4">{{ duration }}</text>
+                </div>
+                <!--通话建立成功之后，才允许邀请新参与者-->
+                <image v-if="callState === 4" @click="invite" style="width: 30px; height: 30px" src="/static/image/av/add.png"/>
             </div>
         </div>
     </div>
@@ -180,6 +178,9 @@
                 sessionCallback.didCreateLocalVideoTrack = (stream) => {
                 };
 
+                sessionCallback.didParticipantConnected = (userId, screenSharing) => {
+                }
+
                 sessionCallback.didReceiveRemoteVideoTrack = (userId, screenSharing) => {
                     console.log('didReceiveRemoteVideoTrack', userId, screenSharing)
                     this.participantUserInfos.forEach(u => {
@@ -187,10 +188,20 @@
                             u._state = CallState.STATUS_CONNECTED;
                         }
                     });
+
+                    if (this.callState === CallState.STATUS_CONNECTED) {
+                        // 不知道为啥，nextTick 的时候，ref 还是没有
+                        setTimeout(() => {
+                            this.$nextTick(() => {
+                                console.log('setRemoteVideoView', userId, this.$refs['remoteVideo-' + userId][0].ref)
+                                avengineKit.setRemoteVideoView(this.session.callId, userId, this.$refs['remoteVideo-' + userId][0].ref, false)
+                            })
+                        }, 1000)
+                    }
                 };
 
                 sessionCallback.didParticipantJoined = (userId, screenSharing) => {
-                    let profile = avengineKit.getParticipantProfile(userId, screenSharing);
+                    let profile = avengineKit.getParticipantProfile(this.session.callId, userId, screenSharing);
                     let userInfo = this.wfc.getUserInfo(userId)
                     userInfo._isVideoMuted = profile.videoMuted;
                     userInfo._isAudioMuted = profile.audioMuted;
@@ -198,13 +209,6 @@
                     this.participantUserInfos.push(userInfo);
 
                     console.log('didParticipantJoined', userInfo, this.callState)
-
-                    if (this.callState === CallState.STATUS_CONNECTED && !userInfo._isVideoMuted) {
-                        this.$nextTick(() => {
-                            console.log('setRemoteVideoView', userId, this.$refs['removeVideo-' + userId][0].ref)
-                            avengineKit.setRemoteVideoView(this.session.callId, userId, this.$refs['remoteVideo-' + userId][0].ref, false)
-                        })
-                    }
                 }
 
                 sessionCallback.didParticipantLeft = (userId) => {
@@ -379,24 +383,6 @@
                 // TODO 不能引入 MultiCallOngoingMessageContent，在 js 层去做吧
             },
 
-            updateParticipantSize() {
-                let width;
-                let height;
-                if (this.participantUserInfos.length < 2) {
-                    width = '375rpx';
-                    height = '375rpx';
-                } else {
-                    width = '250rpx';
-                    height = '250rpx';
-                }
-                if (this.$refs.participantContainer) {
-                    this.$refs.participantContainer.style.setProperty('width', width);
-                    this.$refs.participantContainer.style.setProperty('height', height);
-                    this.$refs.participantContainer.style.setProperty('background', 'red');
-                    console.log('------------ update participant-item-width', width)
-                }
-            },
-
             minimize() {
                 let granted = getApp().avengineKit.checkOverlayPermission();
                 console.log('overlayPermission granted', granted)
@@ -507,6 +493,7 @@
         width: 750rpx;
         flex: 1;
         display: flex;
+        padding-top: 132rpx;
         flex-direction: column;
         justify-content: space-between;
         background: rgb(41, 41, 41)
@@ -544,14 +531,18 @@
     }
 
     .avatar {
-        display: block;
-        width: 200rpx;
-        height: 200rpx;
-        border-radius: 2px;
+        width: 250rpx;
+        height: 250rpx;
+    //border-radius: 1px;
     }
 
     .participant-item .desc {
+        position: absolute;
+        left: 0;
+        background: lightgrey;
+        bottom: 0;
         height: 40rpx;
+        padding: 5px;
     }
 
     .duration-action-container {
@@ -609,11 +600,36 @@
     .video {
         width: 250rpx;
         height: 250rpx;
-        padding: 1px;
+    //padding: 1px;
     }
 
     .video.me {
         transform: scaleX(-1);
+    }
+
+    .voip-title-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 750rpx;
+        display: flex;
+        margin-top: 44rpx;
+        padding: 0 40rpx;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        height: 88rpx;
+    }
+
+    .voip-title-container .title {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 750rpx;
+        height: 88rpx;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .webrtc-tip {

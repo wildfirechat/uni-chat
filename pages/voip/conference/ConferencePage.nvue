@@ -110,6 +110,14 @@
                     </div>
                 </div>
             </div>
+            <div class="voip-title-container">
+                <image @click="minimize" style="width: 30px; height: 30px" src='/static/image/av/av_minimize.png'/>
+                <div class="title">
+                    <text class="desc" v-if="callState === 4">{{ duration }}</text>
+                </div>
+                <!--通话建立成功之后，才允许邀请新参与者-->
+                <image v-if="callState === 4 && false" @click="invite" style="width: 30px; height: 30px" src="/static/image/av/add.png"/>
+            </div>
         </div>
         <uni-popup ref="alertDialog" type="dialog">
             <uni-popup-dialog :cancelText="alertDialogOptions.cancelText" :confirmText="alertDialogOptions.confirmText" :title="alertDialogOptions.title" @confirm="alertDialogOptions.onConfirm"
@@ -1168,6 +1176,37 @@
     .action-img {
         width: 40px;
         height: 40px;
+    }
+
+    .voip-title-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 750rpx;
+        display: flex;
+        margin-top: 44rpx;
+        padding: 0 40rpx;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        height: 88rpx;
+    }
+
+    .voip-title-container .title {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 750rpx;
+        height: 88rpx;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .desc {
+        color: white;
+        font-size: 15px;
+        padding: 5px 0;
     }
 
 </style>

@@ -19,7 +19,6 @@
                     <text class="desc" v-if="callState === 1">等待对方接听</text>
                     <text class="desc" v-else-if="callState === 2">邀请你语音聊天</text>
                     <text class="desc" v-else-if="callState === 3">接听中...</text>
-                    <text class="desc" v-else-if="callState === 4">{{ duration }}</text>
                 </div>
             </div>
 
@@ -93,9 +92,11 @@
                     <text class="desc">切换到语音聊天</text>
                 </div>
             </div>
-
-            <div v-if="callState === 4" style="position:absolute; right: 20rpx; top: 80rpx;">
+            <div class="voip-title-container">
                 <image @click="minimize" style="width: 30px; height: 30px" src='/static/image/av/av_minimize.png'/>
+                <div class="title">
+                    <text class="desc" v-if="callState === 4">{{ duration }}</text>
+                </div>
             </div>
         </div>
     </div>
@@ -286,6 +287,7 @@
             },
 
             muteVideo() {
+                this.videoMuted = !this.videoMuted;
                 avengineKit.muteVideo(this.session.callId, this.videoMuted)
             },
 
@@ -506,6 +508,30 @@
     .video {
         width: 750rpx;
         flex: 1;
+    }
+
+    .voip-title-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 750rpx;
+        display: flex;
+        margin-top: 44rpx;
+        padding: 0 40rpx;
+        flex-direction: row;
+        align-items: center;
+        height: 88rpx;
+    }
+
+    .voip-title-container .title{
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 750rpx;
+        height: 88rpx;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .webrtc-tip {
