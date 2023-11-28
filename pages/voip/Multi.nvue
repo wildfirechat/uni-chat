@@ -202,7 +202,7 @@
                     if (this.callState === CallState.STATUS_CONNECTED && !userInfo._isVideoMuted) {
                         this.$nextTick(() => {
                             console.log('setRemoteVideoView', userId, this.$refs['removeVideo-' + userId][0].ref)
-                            avengineKit.setRemoteVideoView(userId, this.$refs['remoteVideo-' + userId][0].ref, false)
+                            avengineKit.setRemoteVideoView(this.session.callId, userId, this.$refs['remoteVideo-' + userId][0].ref, false)
                         })
                     }
                 }
@@ -336,7 +336,7 @@
             setupVideoViews() {
                 if (!this.audioOnly) {
                     this.$nextTick(() => {
-                        avengineKit.setLocalVideoView(this.session.callId, this.selfUserInfo.uid, this.$refs.localVideo.ref)
+                        avengineKit.setLocalVideoView(this.session.callId, this.$refs.localVideo.ref)
                         this.participantUserInfos.forEach(u => {
                             if (!u._isVideoMuted) {
                                 avengineKit.setRemoteVideoView(this.session.callId, u.uid, this.$refs['remoteVideo-' + u.uid][0].ref, false)

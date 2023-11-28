@@ -194,7 +194,7 @@
                 sessionCallback.didReceiveRemoteVideoTrack = (userId) => {
                     console.log('didReceiveRemoteVideoTrack', userId)
                     if (this.$refs.remoteVideo) {
-                        avengineKit.setRemoteVideoView(userId, this.$refs.remoteVideo.ref)
+                        avengineKit.setRemoteVideoView(this.session.callId, userId, this.$refs.remoteVideo.ref)
                     }
                     if (avengineKit.isSupportConference()) {
                         avengineKit.setParticipantVideoType(this.session.callId, userId, false, VideoType.BIG_STREAM);
@@ -211,7 +211,7 @@
                     if (userId === this.wfc.getUserId()) {
                         this.videoMuted = muted;
                         this.$nextTick(() => {
-                            avengineKit.setLocalVideoView(this.session.callId, userId, this.$refs.localVideo.ref)
+                            avengineKit.setLocalVideoView(this.session.callId, this.$refs.localVideo.ref)
                         })
                     } else {
                         if (!muted) {
@@ -310,7 +310,7 @@
                     // iOS 需要延时一下，localVideoView 才生效
                     setTimeout(() => {
                         console.log('setLocalVideoView', this.wfc.getUserId(), this.$refs.localVideo.ref)
-                        avengineKit.setLocalVideoView(this.session.callId, this.wfc.getUserId(), this.$refs.localVideo.ref)
+                        avengineKit.setLocalVideoView(this.session.callId, this.$refs.localVideo.ref)
                         avengineKit.setRemoteVideoView(this.session.callId, this.targetUserId, this.$refs.remoteVideo.ref)
                         console.log('setRemoteVideoView', this.targetUserId, this.$refs.remoteVideo.ref)
                     }, 100)

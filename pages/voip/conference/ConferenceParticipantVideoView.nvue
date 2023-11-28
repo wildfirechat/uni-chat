@@ -92,7 +92,7 @@
             setupVideoView() {
                 if (!this.participant._isVideoMuted) {
                     if (this.participant.uid === this.selfUserInfo.uid) {
-                        avengineKit.setLocalVideoView(this.session.callId, this.participant.uid, this.$refs.remoteVideoView.ref)
+                        avengineKit.setLocalVideoView(this.session.callId, this.$refs.remoteVideoView.ref)
                     } else {
                         avengineKit.setRemoteVideoView(this.session.callId, this.participant.uid, this.$refs.remoteVideoView.ref, false)
                     }

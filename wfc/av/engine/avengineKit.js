@@ -219,12 +219,11 @@ export class AVEngineKit {
 
     /**
      * 设置视频通话时的视频属性
-     * @param {string} callId 通话 id
      * @param {number} profile 可选值参考{@link VideoProfile}
      * @param {boolean} swapWidthHeight 是否交换宽高，默认不不用设置
      */
-    setVideoProfile(callId, profile, swapWidthHeight = false) {
-        avengineKitPlugin.setVideoProfile(callId, profile, swapWidthHeight);
+    setVideoProfile(profile, swapWidthHeight = false) {
+        avengineKitPlugin.setVideoProfile(profile, swapWidthHeight);
     }
 
     /**
@@ -326,11 +325,10 @@ export class AVEngineKit {
     /**
      * 设置本地视频流容器 view
      * @param {string} callId 通话 id
-     * @param {string} userId 自己的用户 id
      * @param {number} ref 容器 view 的 id
      */
-    setLocalVideoView(callId, userId, ref) {
-        avengineKitPlugin.setLocalVideoView(callId, userId, ref);
+    setLocalVideoView(callId, ref) {
+        avengineKitPlugin.setLocalVideoView(callId, ref);
     }
 
     /**
