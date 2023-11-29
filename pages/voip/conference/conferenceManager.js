@@ -113,7 +113,7 @@ class ConferenceManager {
                     if (this.isApplyingUnmute) {
                         this.isApplyingUnmute = false;
                         if (command.boolValue) {
-                            this.conferencePage._muteAudio(true);
+                            this.conferencePage.enableAudio(true);
                             this.vueInstance.$notify({
                                 text: '主持人已同意了你的发言请求',
                                 type: 'info'
@@ -296,10 +296,8 @@ class ConferenceManager {
     }
 
     onMuteAll() {
-        // this.vueInstance.wfc.eventEmitter.emit('muteVideo', true);
-        // this.vueInstance.wfc.eventEmitter.emit('muteAudio', true);
-        this.conferencePage._muteAudio(false);
-        this.conferencePage._muteVideo(false);
+        this.conferencePage.enableAudio(false);
+        this.conferencePage.enableVideo(false);
         this.vueInstance.$notify({
             text: '管理员将全体成员静音了',
             type: 'info'
@@ -318,7 +316,7 @@ class ConferenceManager {
                 },
                 onConfirm: () => {
                     // this.vueInstance.wfc.eventEmitter.emit('muteAudio', false);
-                    this.conferencePage._muteAudio(false);
+                    this.conferencePage.enableAudio(false);
                 }
             })
 
@@ -341,15 +339,15 @@ class ConferenceManager {
                     // do nothing
                 },
                 onConfirm: () => {
-                    this.conferencePage._muteAudio(true);
+                    this.conferencePage.enableAudio(true);
                     // this.vueInstance.wfc.eventEmitter.emit('muteAudio', false);
                 }
             })
         } else {
             // this.vueInstance.wfc.eventEmitter.emit('muteVideo', true);
             // this.vueInstance.wfc.eventEmitter.emit('muteAudio', true);
-            this.conferencePage._muteAudio(false);
-            this.conferencePage._muteVideo(false);
+            this.conferencePage.enableAudio(false);
+            this.conferencePage.enableVideo(false);
 
             this.vueInstance.$notify({
                 text: '管理员关闭了你的发言',

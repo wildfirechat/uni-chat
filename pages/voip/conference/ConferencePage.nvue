@@ -530,15 +530,15 @@
                     this.requestUnmute(true);
                     return;
                 }
-                this._muteAudio(enable);
+                this.enableAudio(enable);
             },
 
             // fixme
             // 这个这个方法应当叫 setAudioEnable，参数也是enable audio 的意思
-            async _muteAudio(enable) {
+            async enableAudio(enable) {
                 avengineKit.muteAudio(this.session.callId, !enable)
 
-                console.log('muteAudio', this.selfUserInfo._isAudioMuted, this.session.audience)
+                console.log('enableAudio', this.selfUserInfo._isAudioMuted, this.session.audience, enable)
                 if (enable) {
                     if (this.session.audience) {
                         let result = avengineKit.switchAudience(this.session.callId, false);
@@ -564,11 +564,11 @@
                     this.requestUnmute(false);
                     return;
                 }
-                this._muteVideo(enable);
+                this.enableVideo(enable);
             },
 
-            async _muteVideo(enable) {
-                console.log('muteVideo', !enable)
+            async enableVideo(enable) {
+                console.log('enableVideo', !enable)
                 avengineKit.muteVideo(this.session.callId, !enable)
 
                 if (enable) {
