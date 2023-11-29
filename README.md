@@ -1,11 +1,21 @@
 # 野火UniApp平台Demo
 支持Android和iOS端，使用了***野火UniApp原生插件***(在UniApp的插件市场搜索“野火IM原生插件”)。
 
+## 关于音视频通话功能的重要说明
+野火在uni-chat项目上的音视频的实现有2个方案：
+1. 方案1： 对应的插件是[野火实时音视频RTC插件(原生UI)](https://ext.dcloud.net.cn/plugin?id=9364), 使用原生UI，就是把Android平台和iOS平台的音视频SDK和UI代码全都集成到uni-chat项目中。这种方案的问题是引入的无关代码太多，且原生UI无法修改，跟uniapp互通也很不方便，不利于二次开发。
+2. 方案2：对应的插件是[野火实时音视频RTC插件](https://ext.dcloud.net.cn/plugin?id=15619), 是使用原生的音视频SDK，但UI层使用nvue编写，UI和SDK使用uniapp插件的方式沟通。这种方案引入的SDK比较小，且修改方便，有利于大家做自定义相关 UI。
+
+
+
+** 自 2023-11-29 起，uni-chat 将切换到方案 2，方案1 相关的代码，将保留到native-rtc-ui分支 **
+
+
 ## 部署服务端
 本应用默认连接野火官方服务，也可以自己部署服务。如果想要私有部署服务，请按照 [服务器快速部署](https://docs.wildfirechat.cn/quick_start/server.html) 来部署服务到您自己的服务器。
 
 ## 配置
-1. 插件市场搜索[野火即时通讯IM原生插件](https://ext.dcloud.net.cn/plugin?id=7895) 和 [野火实时音视频RTC原生插件](https://ext.dcloud.net.cn/plugin?id=9364) ，并购买(插件是免费的!)
+1. 插件市场搜索[野火即时通讯IM插件](https://ext.dcloud.net.cn/plugin?id=7895) 和 [野火实时音视频RTC插件](https://ext.dcloud.net.cn/plugin?id=15619) ，并购买(插件是免费的!)
 2. HBuilderX 原生插件配置，选择云端插件，并选中购买的野火插件
 3. 如果使用野火官方服务，直接编译运行即可。如果使用自己私有部署IM服务，需要在[config.js](./config.js)配置应用服务地址和IM服务地址。修改如下配置：
     ```
