@@ -10,7 +10,7 @@
         <div class="container" v-if="session">
             <!--audio-->
             <div v-if="audioOnly" class="content-container">
-                <div class="local-media-container">
+                <div class="local-media-container" :style="computedLocalMediaContainerStyle">
                     <image class="avatar" :src="selfUserInfo.portrait"/>
                 </div>
                 <div class="remote-media-container">
@@ -38,12 +38,12 @@
                         <text class="desc" v-else-if="callState === 3">接听中...</text>
                     </div>
                 </div>
-                <div class="local-media-container">
+                <div class="local-media-container" :style="computedLocalMediaContainerStyle">
                     <UIKit-Video-CallView v-if="callState === 4 && !videoMuted"
                                           ref="localVideo"
                                           class="localVideo"
                     />
-                    <image v-if="callState !== 4 || videoMuted" class="avatar" :src="selfUserInfo.portrait"/>
+                    <image v-if="callState !== 4 || videoMuted" :style="computedLocalAvatarStyle" :src="selfUserInfo.portrait"/>
                 </div>
             </div>
 
@@ -409,6 +409,39 @@
                 }
                 let escapeMillis = this.currentTimestamp - this.startTimestamp;
                 return this.timestampFormat(escapeMillis)
+            },
+
+            computedLocalMediaContainerStyle() {
+                if (!this.audioOnly && this.callState === CallState.STATUS_CONNECTED) {
+                    return {
+                        top: 0,
+                        right: 0,
+                        paddingTop: '88rpx',
+                    }
+                }
+                return {
+                    top: 0,
+                    left: 0,
+                    marginLeft: '20px',
+                    paddingTop: '80rpx',
+                }
+            },
+
+            computedLocalAvatarStyle() {
+                if (this.callState === CallState.STATUS_CONNECTED && this.videoMuted) {
+                    return {
+                        width: '150px',
+                        height: '200px',
+                        borderRadius: '5px',
+                        marginRight: '5px'
+                    }
+                }
+
+                return {
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '3px'
+                }
             }
         },
 
@@ -474,6 +507,12 @@
         flex: 1;
     }
 
+    .remote-media-container .avatar{
+        width: 200px;
+        height: 200px;
+        border-radius: 5px;
+    }
+
     .desc {
         color: white;
         font-size: 15px;
@@ -484,17 +523,9 @@
     .local-media-container {
         position: absolute;
         height: 200px;
-        top: 0;
-        right: 0;
-        padding-top: 88rpx;
         display: flex;
         justify-content: center;
         align-items: center;
-    }
-
-    .local-media-container .avatar {
-        margin-left: 20px;
-        margin-top: 20px;
     }
 
     .localVideo {
@@ -524,7 +555,7 @@
         height: 88rpx;
     }
 
-    .voip-title-container .title{
+    .voip-title-container .title {
         position: absolute;
         left: 0;
         top: 0;
