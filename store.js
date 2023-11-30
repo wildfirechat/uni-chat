@@ -282,7 +282,7 @@ let store = {
 
 
         wfc.eventEmitter.on(EventType.ReceiveMessage, (msg, hasMore) => {
-            console.log('receiveMessage', hasMore);
+            //console.log('receiveMessage', msg, hasMore);
             if (miscState.connectionStatus === ConnectionStatus.ConnectionStatusReceiveing) {
                 return;
             }
