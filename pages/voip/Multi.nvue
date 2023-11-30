@@ -471,7 +471,7 @@
             computedParticipantSizeStyle() {
                 let width;
                 let height;
-                if (this.participantUserInfos.length < 2) {
+                if (this.participantUserInfos.length < 4) {
                     width = '375rpx';
                     height = '375rpx';
                 } else {
@@ -501,12 +501,13 @@
 
     .content-container {
         width: 750rpx;
+        flex: 1;
         position: relative;
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start;
     }
 
     .participant-container {
