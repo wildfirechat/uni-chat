@@ -37,7 +37,7 @@ Vue.prototype.$navigateToPage = (url, options) => {
     uni.navigateTo({
         url: url,
         success: (res) => {
-            if (options){
+            if (options) {
                 res.eventChannel.emit('options', options);
             }
         },
@@ -106,11 +106,13 @@ const app = new Vue({
 
 app.store = store;
 wfc.init();
-if (avengineKit.isAVEngineKitEnable() && Config.ICE_SERVERS) {
+if (avengineKit.isAVEngineKitEnable()) {
     avengineKit.init();
-    Config.ICE_SERVERS.forEach(iceServer => {
-        avengineKit.addICEServer(iceServer.uri, iceServer.userName, iceServer.password);
-    })
+    if (Config.ICE_SERVERS) {
+        Config.ICE_SERVERS.forEach(iceServer => {
+            avengineKit.addICEServer(iceServer.uri, iceServer.userName, iceServer.password);
+        })
+    }
 }
 if (pttClient.isPttClientEnable()) {
     pttClient.init();
