@@ -3,19 +3,12 @@
         <div class="user-info" @click="showUserInfo">
             <image class="portrait" :src="user.portrait"></image>
             <text class="name">{{ user.displayName }}</text>
-            <i></i>
         </div>
         <div class="about" @click="showAbout">
             <text>关于</text>
-            <i></i>
         </div>
         <div class="about" @click="showApiTest">
             <text>API测试</text>
-            <i></i>
-        </div>
-        <div class="about" @click="showConferencePortal">
-            <text>打开会议入口</text>
-            <i></i>
         </div>
         <button class="logout-button" @click="logout">退出登录</button>
     </div>
@@ -24,7 +17,6 @@
 
 <script>
 import wfc from "../../wfc/client/wfc";
-import wfcUIKit from "../../wfc/uikit/wfcUIKit";
 import {clear} from "../util/storageHelper";
 import store from "../../store";
 
@@ -76,16 +68,6 @@ export default {
             });
 
         },
-        showConferencePortal(){
-            if (wfcUIKit.isSupportConference()){
-                wfcUIKit.showConferencePortal();
-            } else {
-                uni.showToast({
-                    title: '当前插件，只支持音视频通话，不支持会议功能，请联系开发者',
-                    icon: 'none',
-                });
-            }
-        }
     }
 }
 </script>

@@ -7,8 +7,7 @@
                 <div class="avatar-container">
                     <checkbox id="checkbox" v-if="sharedConversationState.enableMessageMultiSelection" type="checkbox"
                               :value="message"
-                              :checked="isMessageChecked"
-                              v-model="sharedPickState.messages"/>
+                              :checked="isMessageChecked"/>
                     <img
                         @click="onClickUserPortrait(message.from)"
                         class="avatar"

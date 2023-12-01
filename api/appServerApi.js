@@ -4,7 +4,6 @@ import {stringValue} from "../wfc/util/longUtil";
 import AppServerError from "./appServerError";
 import wfc from "../wfc/client/wfc";
 import {getItem, setItem} from "../pages/util/storageHelper";
-import wfcUIKit from "../wfc/uikit/wfcUIKit";
 
 export class AppServerApi {
     constructor() {
@@ -105,7 +104,6 @@ export class AppServerApi {
 
                     if (appAuthToken) {
                         setItem('authToken-app', appAuthToken);
-                        wfcUIKit.setupAppServer(Config.APP_SERVER, appAuthToken);
                     }
                     resolve(response.data.result);
                 } else {
@@ -203,7 +201,7 @@ export class AppServerApi {
                         }
 
                         console.log('setupAppserver', Config.APP_SERVER, authToken);
-                        wfcUIKit.setupAppServer(Config.APP_SERVER, authToken);
+                        // wfcUIKit.setupAppServer(Config.APP_SERVER, authToken);
 
 
                         this.go2ConversationList();

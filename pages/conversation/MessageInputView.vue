@@ -60,7 +60,6 @@ import ConversationInfo from "../../wfc/model/conversationInfo";
 import wfc from "../../wfc/client/wfc";
 import store from "../../store";
 import ConversationType from "../../wfc/model/conversationType";
-import wfcUIKit from "../../wfc/uikit/wfcUIKit";
 import emojiStickerConfig from "./emojiStickerConfig";
 import StickerMessageContent from "../../wfc/messages/stickerMessageContent";
 import Config from "../../config";
@@ -69,6 +68,9 @@ import AudioInputView from "./message/AudioInputView.vue";
 import PttAudioInputView from "./message/PttAudioInputView.vue";
 import Draft from "../util/draft";
 import pttClient from "../../wfc/ptt/pttClient";
+import avengineKit from "../../wfc/av/engine/avengineKit";
+import permision from "../../common/permission";
+import checkVoipPermissions from "../voip/voipUtil";
 
 export default {
     name: "MessageInputView",
@@ -110,7 +112,7 @@ export default {
                 },
                 {
                     title: '拍摄',
-                    tag: 'shoot',
+                    tag: 'shot',
                     icon: 'camera'
                 },
                 {
@@ -291,7 +293,7 @@ export default {
                 case 'image':
                     this.chooseImage();
                     break;
-                case 'shoot':
+                case 'shot':
                     this.chooseVideo();
                     break;
                 case 'file':
@@ -355,9 +357,17 @@ export default {
             })
         },
 
-        voip(audioOnly) {
+        async voip(audioOnly) {
+            if (!await checkVoipPermissions(audioOnly)) {
+                return;
+            }
+
             if (this.conversationInfo.conversation.type === ConversationType.Single) {
-                wfcUIKit.startSingleCall(this.conversationInfo.conversation.target, audioOnly)
+                let callSession = avengineKit.startSingleCall(this.conversationInfo.conversation.target, audioOnly)
+                if (callSession) {
+                    let url = `/pages/voip/Single?session=${JSON.stringify(callSession)}`
+                    this.$navigateToPage(url);
+                }
             } else if (this.conversationInfo.conversation.type === ConversationType.Group) {
                 this.showPickGroupMemberToVoipModal(audioOnly)
             }
@@ -366,7 +376,14 @@ export default {
         showPickGroupMemberToVoipModal(audioOnly) {
             let beforeClose = (users) => {
                 let ids = users.map(u => u.uid);
-                wfcUIKit.startMultiCall(this.conversationInfo.conversation.target, ids, audioOnly);
+                let callSession = avengineKit.startMultiCall(this.conversationInfo.conversation.target, ids, audioOnly);
+                // 不加延时的话，不能正常切换页面，会报莫名其妙的错误
+                setTimeout(() => {
+                    if (callSession) {
+                        let url = `/pages/voip/Multi?session=${JSON.stringify(callSession)}`
+                        this.$navigateToPage(url);
+                    }
+                }, 50)
             }
             this.$pickUsers(
                 {

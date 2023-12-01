@@ -1,6 +1,8 @@
 export default class CallSession {
 	//通话ID
     callId;
+    title;
+    desc;
 	//通话的发起者，如果发起者离开，会重新选举出最早加入者为发起者
     initiator;
 	//邀请当前用户加入通话的用户
@@ -21,7 +23,7 @@ export default class CallSession {
     endReason;
 	//是否是会议
 	conference;
-	//是否是观众，仅当会议邮箱
+	//是否是观众，仅当会议有效
 	audience;
 	//是否是超级会议
 	advanced;

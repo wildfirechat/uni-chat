@@ -34,6 +34,7 @@ import LeaveChannelChatMessageContent from "./wfc/messages/leaveChannelChatMessa
 import ArticlesMessageContent from "./wfc/messages/articlesMessageContent";
 import EnterChannelChatMessageContent from "./wfc/messages/enterChannelChatMessageContent";
 import NullChannelInfo from "./wfc/model/NullChannelInfo";
+import CallStartMessageContent from "./wfc/av/messages/callStartMessageContent";
 
 /**
  * 一些说明
@@ -74,6 +75,8 @@ let store = {
 
             currentVoiceMessage: null,
 
+            currentCallStartMessage: null,
+
             _reset() {
                 this.currentConversationInfo = null;
                 this.conversationInfoList = []
@@ -91,6 +94,7 @@ let store = {
                 this.quotedMessage = null;
                 this.downloadingMessages = [];
                 this.currentVoiceMessage = null;
+                this.currentCallStartMessage = null;
             }
         },
 
@@ -278,7 +282,7 @@ let store = {
 
 
         wfc.eventEmitter.on(EventType.ReceiveMessage, (msg, hasMore) => {
-            console.log('receiveMessage', hasMore);
+            //console.log('receiveMessage', msg, hasMore);
             if (miscState.connectionStatus === ConnectionStatus.ConnectionStatusReceiveing) {
                 return;
             }

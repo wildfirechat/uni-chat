@@ -1,0 +1,577 @@
+<!--export default class CallState {-->
+<!--static STATUS_IDLE = 0;-->
+<!--static STATUS_OUTGOING = 1;-->
+<!--static STATUS_INCOMING = 2;-->
+<!--static STATUS_CONNECTING = 3;-->
+<!--static STATUS_CONNECTED = 4;-->
+<!--}-->
+<template>
+    <div style="flex: 1; display: flex;">
+        <div class="container" v-if="session">
+            <!--audio-->
+            <div v-if="audioOnly" class="content-container">
+                <div class="local-media-container" :style="computedLocalMediaContainerStyle">
+                    <image class="avatar" :src="selfUserInfo.portrait"/>
+                </div>
+                <div class="remote-media-container">
+                    <image class="avatar" :src="participantUserInfo.portrait"/>
+                    <text class="desc">{{ participantUserInfo.displayName }}</text>
+                    <text class="desc" v-if="callState === 1">等待对方接听</text>
+                    <text class="desc" v-else-if="callState === 2">邀请你语音聊天</text>
+                    <text class="desc" v-else-if="callState === 3">接听中...</text>
+                </div>
+            </div>
+
+            <!--video-->
+            <div v-else class="content-container">
+                <div class="remote-media-container">
+                    <UIKit-Video-CallView v-if="callState ===4"
+                                          @click="switchVideoType()"
+                                          ref="remoteVideo"
+                                          class="video"
+                    />
+                    <div v-if="callState !== 4" class="flex-column flex-justify-center flex-align-center">
+                        <image class="avatar" :src="participantUserInfo.portrait"/>
+                        <text class="desc">{{ participantUserInfo.displayName }}</text>
+                        <text class="desc" v-if="callState === 1">等待对方接听</text>
+                        <text class="desc" v-else-if="callState === 2">邀请你视频聊天</text>
+                        <text class="desc" v-else-if="callState === 3">接听中...</text>
+                    </div>
+                </div>
+                <div class="local-media-container" :style="computedLocalMediaContainerStyle">
+                    <UIKit-Video-CallView v-if="callState === 4 && !videoMuted"
+                                          ref="localVideo"
+                                          class="localVideo"
+                    />
+                    <image v-if="callState !== 4 || videoMuted" :style="computedLocalAvatarStyle" :src="selfUserInfo.portrait"/>
+                </div>
+            </div>
+
+            <!--actions-->
+            <!--incoming-->
+            <div v-if="callState === 2" class="action-container">
+                <div class="action">
+                    <image @click="hangup" class="action-img" src='/static/image/av/av_hang_up.png'/>
+                </div>
+                <div class="action">
+                    <image @click="answer" class="action-img" src='/static/image/av/av_video_answer.png'/>
+                </div>
+                <!--          <div v-if="!audioOnly" class="action">-->
+                <!--            <image @click="down2voice" class="action-img" src='/static/image/av/av_float_audio.png'/>-->
+                <!--            <p>切换到语音聊天</p>-->
+                <!--          </div>-->
+            </div>
+            <!--outgoing-->
+            <div v-if="callState === 1" class="action-container">
+                <div class="action">
+                    <image @click="hangup" class="action-img" src='/static/image/av/av_hang_up.png'/>
+                </div>
+            </div>
+
+            <!--connected-->
+            <text style="width: 750rpx; height: 50rpx; position: absolute; left: 0; bottom: 240rpx; text-align: center " class="desc" v-if="!audioOnly && callState === 4">{{ duration }}</text>
+            <div v-if="callState === 4" class="action-container">
+                <div class="action">
+                    <image @click="hangup" class="action-img" src='/static/image/av/av_hang_up.png'/>
+                </div>
+                <div class="action">
+                    <image v-if="!audioMuted" @click="mute" class="action-img" src='/static/image/av/av_mute.png'/>
+                    <image v-else @click="mute" class="action-img" src='/static/image/av/av_mute_hover.png'/>
+                    <text class="desc">静音</text>
+                </div>
+                <div v-if="!audioOnly && false" class="action">
+                    <image @click="screenShare" class="action-img" src='/static/image/av/av_share.png'/>
+                </div>
+                <div v-if="!audioOnly && true" class="action">
+                    <image v-if="!videoMuted" @click="muteVideo" class="action-img" src='/static/image/av/av_conference_video.png'/>
+                    <image v-else @click="muteVideo" class="action-img" src='/static/image/av/av_conference_video_mute.png'/>
+                    <text class="desc"> 关闭摄像头</text>
+                </div>
+                <div v-if="!audioOnly && false" class="action">
+                    <image @click="down2voice" class="action-img" src='/static/image/av/av_float_audio.png'/>
+                    <text class="desc">切换到语音聊天</text>
+                </div>
+            </div>
+            <div class="voip-title-container">
+                <image @click="minimize" style="width: 30px; height: 30px" src='/static/image/av/av_minimize.png'/>
+                <div class="title">
+                    <text class="desc" v-if="callState === 4">{{ duration }}</text>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    // import CallSessionCallback from "../../wfc/av/engine/callSessionCallback";
+    import CallState from "../../wfc/av/engine/callState";
+    import VideoType from "../../wfc/av/engine/videoType";
+    import CallSessionCallback from "../../wfc/av/engine/callSessionCallback";
+    import avengineKit from "../../wfc/av/engine/avengineKit";
+    import checkVoipPermissions from "./voipUtil";
+
+    export default {
+        name: 'Single',
+        data() {
+            return {
+                // why? 直接引入 wfc 会报 require not defined 错误
+                wfc: getApp().wfc,
+                session: null,
+                audioOnly: false,
+                audioMuted: false,
+                videoMuted: false,
+                callState: 0,
+                startTimestamp: 0,
+                currentTimestamp: 0,
+                showWebrtcTip: false,
+
+                ringAudio: null,
+                targetUserId: null,
+            }
+        },
+
+        onLoad(option) {
+            console.log('voip/Single onLoad', option)
+            this.session = JSON.parse(option.session);
+            this.targetUserId = this.session.conversation.target;
+            this.callState = Number(this.session.state);
+            this.audioOnly = this.session.audioOnly;
+            if (this.session.connectedTime) {
+                this.startTimestamp = this.session.connectedTime;
+            }
+        },
+
+        onUnload() {
+        },
+
+        methods: {
+            switchVideoType() {
+                if (!this.session) {
+                    return
+                }
+                let userId = this.participantUserInfo.uid;
+                let currentVideoType = VideoType.BIG_STREAM;
+                let videoType = VideoType.NONE;
+                if (currentVideoType === VideoType.NONE) {
+                    videoType = VideoType.BIG_STREAM;
+                } else if (currentVideoType === VideoType.BIG_STREAM) {
+                    videoType = VideoType.SMALL_STREAM;
+                } else if (currentVideoType === VideoType.SMALL_STREAM) {
+                    videoType = VideoType.NONE;
+                }
+                console.log('setParticipantVideoType', userId, videoType);
+                avengineKit.setParticipantVideoType(this.session.callId, userId, false, videoType);
+            },
+            setupSessionCallback() {
+                let sessionCallback = new CallSessionCallback();
+
+                // 可能回调多次
+                sessionCallback.didChangeState = (state) => {
+                    console.log('didChangeState', typeof state, state, this.callState)
+
+                    this.callState = state;
+                    if (state === CallState.STATUS_CONNECTED) {
+                        this.onVoipConnected();
+                    } else if (state === CallState.STATUS_IDLE) {
+                        if (this.timer) {
+                            clearInterval(this.timer);
+                        }
+                    }
+
+                    console.log('callState change', state, this.callState)
+                };
+
+                sessionCallback.didChangeMode = (audioOnly) => {
+                    this.audioOnly = audioOnly;
+                };
+
+                sessionCallback.didCreateLocalVideoTrack = () => {
+                    console.log('didCreateLocalVideoTrack')
+                    // setTimeout(() => {
+                    //     avengineKit.setVideoView(this.wfc.getUserId(), this.$refs.localVideo.ref)
+                    // }, 500)
+                };
+
+                sessionCallback.didReceiveRemoteVideoTrack = (userId) => {
+                    console.log('didReceiveRemoteVideoTrack', userId)
+                    if (this.$refs.remoteVideo) {
+                        avengineKit.setRemoteVideoView(this.session.callId, userId, this.$refs.remoteVideo.ref)
+                    }
+                    if (avengineKit.isSupportConference()) {
+                        avengineKit.setParticipantVideoType(this.session.callId, userId, false, VideoType.BIG_STREAM);
+                    }
+                };
+
+                sessionCallback.didCallEndWithReason = (reason) => {
+                    console.log('callEndWithReason', reason)
+                    this.session = null;
+                }
+
+                sessionCallback.didVideoMuted = (userId, muted) => {
+                    console.log('didVideoMuted', userId, muted);
+                    if (userId === this.wfc.getUserId()) {
+                        this.videoMuted = muted;
+                        this.$nextTick(() => {
+                            avengineKit.setLocalVideoView(this.session.callId, this.$refs.localVideo.ref)
+                        })
+                    } else {
+                        if (!muted) {
+                            this.$nextTick(() => {
+                                avengineKit.setRemoteVideoView(this.session.callId, this.targetUserId, this.$refs.remoteVideo.ref)
+                            })
+                        }
+                    }
+                };
+
+                sessionCallback.didMediaLostPacket = (media, lostPacket) => {
+                    if (lostPacket > 6) {
+                        console.log('您的网络不好');
+                    }
+                };
+
+                sessionCallback.didUserMediaLostPacket = (userId, media, lostPacket, uplink) => {
+                    //如果uplink ture对方网络不好，false您的网络不好
+                    //接收方丢包超过10为网络不好
+                    if (lostPacket > 10) {
+                        if (uplink) {
+                            console.log('对方网络不好');
+                        } else {
+                            console.log('您的网络不好');
+                        }
+                    }
+                };
+
+                sessionCallback.didParticipantConnected = (userId) => {
+                    console.log('didParticipantConnected', userId)
+                }
+
+                sessionCallback.didReportAudioVolume = (userId, volume) => {
+                    // console.log('didReportAudioVolume', userId, volume)
+                }
+
+                console.log('single setSessionCallback')
+                // why?
+                // 下面是个人理解，没有找到相关的文档说明，可能理解有所偏差，甚至完全不对
+                // .nvue 和 .vue 是由不同的渲染引擎渲染的，avengineKit 会在两个渲染引擎中都存在一个实例
+                // main.js 由 .vue 渲染引擎引入，并注册了相关事件，从插件来的通知，也只会发送到该渲染引擎，故此处需要用 .vue 渲染引擎里面的 avengineKit 实例
+                // beforeDestroy 方法也在 .vue 渲染引起之前，故 beforeDestroy 也需要使用 getApp().avengineKit
+                getApp().avengineKit.setSessionCallback(sessionCallback)
+            },
+
+            async answer() {
+                console.log('answer');
+                if (!await checkVoipPermissions(this.session.audioOnly)) {
+                    console.log('no permission, hangup')
+                    return;
+                }
+                avengineKit.answerCall(this.session.callId, false);
+            },
+
+            hangup() {
+                console.log('hangup');
+                let callId = this.session.callId;
+                avengineKit.endCall(callId);
+                this.session = null;
+            },
+
+            switchCamera() {
+                if (!this.session) {
+                    return;
+                }
+                avengineKit.switchCamera(this.session.callId);
+            },
+
+            mute() {
+                this.audioMuted = !this.audioMuted;
+                avengineKit.muteAudio(this.session.callId, this.audioMuted)
+            },
+
+            muteVideo() {
+                this.videoMuted = !this.videoMuted;
+                avengineKit.muteVideo(this.session.callId, this.videoMuted)
+            },
+
+            down2voice() {
+                avengineKit.downgrade2Voice(this.session.callId);
+            },
+
+            screenShare() {
+                // TODO
+            },
+
+            onVoipConnected() {
+                if (!this.timer) {
+                    if (!this.startTimestamp) {
+                        this.startTimestamp = new Date().getTime();
+                    }
+                    this.timer = setInterval(() => {
+                        this.currentTimestamp = new Date().getTime();
+                    }, 1000)
+                }
+                if (!this.audioOnly) {
+                    // iOS 需要延时一下，localVideoView 才生效
+                    setTimeout(() => {
+                        console.log('setLocalVideoView', this.wfc.getUserId(), this.$refs.localVideo.ref)
+                        avengineKit.setLocalVideoView(this.session.callId, this.$refs.localVideo.ref)
+                        avengineKit.setRemoteVideoView(this.session.callId, this.targetUserId, this.$refs.remoteVideo.ref)
+                        console.log('setRemoteVideoView', this.targetUserId, this.$refs.remoteVideo.ref)
+                    }, 100)
+                }
+            },
+
+            timestampFormat(timestamp) {
+                timestamp = ~~(timestamp / 1000);
+                let str = ''
+                let hour = ~~(timestamp / 3600);
+                str = hour > 0 ? ((hour < 10 ? "0" : "") + hour + ':') : '';
+                let min = ~~((timestamp % 3600) / 60);
+                str += (min < 10 ? "0" : "") + min + ':'
+                let sec = ~~((timestamp % 60));
+                str += (sec < 10 ? "0" : "") + sec
+                return str;
+            },
+
+            minimize() {
+                let granted = getApp().avengineKit.checkOverlayPermission();
+                console.log('overlayPermission granted', granted)
+                if (granted) {
+                    getApp().avengineKit.minimize(this.session.callId);
+                    uni.navigateBack({
+                        delta: 1,
+                        fail: err => {
+                            console.log('nav back to err', err);
+                        }
+                    });
+                } else {
+                    uni.showToast({
+                        title: "需要悬浮窗权限",
+                        icon: 'none',
+                    });
+                }
+            }
+        },
+
+        mounted() {
+            console.log('voip/Single mounted', this.callState, this.session)
+            // let supportConference = avenginekit.startConference !== undefined
+            // if (!supportConference) {
+            //     let host = window.location.host;
+            //     if (host.indexOf('wildfirechat.cn') === -1 && host.indexOf('localhost') === -1) {
+            //         for (const ice of Config.ICE_SERVERS) {
+            //             if (ice[0].indexOf('turn.wildfirechat.net') >= 0) {
+            //                 // 显示自行部署 turn 提示
+            //                 this.showWebrtcTip = true;
+            //                 setTimeout(() => {
+            //                     this.showWebrtcTip = false;
+            //                 }, 10 * 1000)
+            //                 break
+            //             }
+            //         }
+            //     }
+            // }
+
+            this.setupSessionCallback();
+
+            // // 开发测试时使用，方便修改UI， 刷新页面之后，还能正常显示音视频通话页面，其他情况一定要将下面代码注释
+            // let session = avengineKit.currentCallSession();
+            // if (session) {
+            //     console.log('current session', session.state, session);
+            //     this.session = session;
+            //     this.callState = session.state;
+            // }
+            // // end
+
+            if (this.callState === CallState.STATUS_CONNECTED) {
+                this.onVoipConnected();
+            }
+        },
+        beforeDestroy() {
+            if (this.session) {
+                this.minimize();
+            }
+        },
+
+        computed: {
+            participantUserInfo() {
+                // //             targetId = session.getParticipantIds().get(0);
+                let conversaiton = this.session.conversation;
+                let userInfo = this.wfc.getUserInfo(conversaiton.target, false);
+                return userInfo;
+            },
+            selfUserInfo() {
+                let userInfo = this.wfc.getUserInfo(this.wfc.getUserId(), false)
+                return userInfo;
+            },
+
+            duration() {
+                if (this.currentTimestamp <= 0) {
+                    return '00:00'
+                }
+                let escapeMillis = this.currentTimestamp - this.startTimestamp;
+                return this.timestampFormat(escapeMillis)
+            },
+
+            computedLocalMediaContainerStyle() {
+                if (!this.audioOnly && this.callState === CallState.STATUS_CONNECTED) {
+                    return {
+                        top: 0,
+                        right: 0,
+                        paddingTop: '88rpx',
+                    }
+                }
+                return {
+                    top: 0,
+                    left: 0,
+                    marginLeft: '20px',
+                    paddingTop: '80rpx',
+                }
+            },
+
+            computedLocalAvatarStyle() {
+                if (this.callState === CallState.STATUS_CONNECTED && this.videoMuted) {
+                    return {
+                        width: '150px',
+                        height: '200px',
+                        borderRadius: '5px',
+                        marginRight: '5px'
+                    }
+                }
+
+                return {
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '3px'
+                }
+            }
+        },
+
+    }
+</script>
+
+<style lang="css" scoped>
+
+    .container {
+        width: 750rpx;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        background: rgb(41, 41, 41)
+    }
+
+    .content-container {
+        width: 750rpx;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .action-container {
+        width: 750rpx;
+        height: 200rpx;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        padding-bottom: 20px;
+    }
+
+    .action-container .action {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 12px;
+    }
+
+    .avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 3px;
+    }
+
+    .action-img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .remote-media-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 750rpx;
+        flex: 1;
+    }
+
+    .remote-media-container .avatar{
+        width: 200px;
+        height: 200px;
+        border-radius: 5px;
+    }
+
+    .desc {
+        color: white;
+        font-size: 15px;
+        padding: 5px 0;
+    }
+
+
+    .local-media-container {
+        position: absolute;
+        height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .localVideo {
+        width: 150px;
+        height: 200px;
+    }
+
+    .localVideo.me {
+        transform: scaleX(-1);
+    }
+
+    .video {
+        width: 750rpx;
+        flex: 1;
+    }
+
+    .voip-title-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 750rpx;
+        display: flex;
+        margin-top: 44rpx;
+        padding: 0 40rpx;
+        flex-direction: row;
+        align-items: center;
+        height: 88rpx;
+    }
+
+    .voip-title-container .title {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 750rpx;
+        height: 88rpx;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .webrtc-tip {
+        position: absolute;
+        color: red;
+        left: 0;
+        top: 0;
+        z-index: 999;
+    }
+
+</style>

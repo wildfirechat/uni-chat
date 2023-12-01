@@ -15,6 +15,11 @@
             <text>频道</text>
             <i class="icon-ion-ios-arrow-right"></i>
         </div>
+        <div v-if="supportConference" class="item" @click="showConferencePortal">
+            <image src="/static/image/icon/ic_conference.png"/>
+            <text>会议</text>
+            <i class="icon-ion-ios-arrow-right"></i>
+        </div>
         <div class="item" @click="showDevGuide">
             <image src="/static/image/icon/ic_dev_docs.png"/>
             <text>开发手册</text>
@@ -28,12 +33,14 @@
 import store from "../../store";
 import Conversation from "../../wfc/model/conversation";
 import ConversationType from "../../wfc/model/conversationType";
+import avengineKit from "../../wfc/av/engine/avengineKit";
 
 export default {
     name: "DiscoveryPage",
     data() {
         return {
             user: store.state.contact.selfUserInfo,
+            supportConference: avengineKit.isSupportConference(),
         }
     },
     methods: {
@@ -59,6 +66,14 @@ export default {
         showChannelList() {
             uni.navigateTo({
                 url: '/pages/contact/ChannelListPage',
+                fail: (e) => {
+                    console.log(e)
+                }
+            });
+        },
+        showConferencePortal(){
+            uni.navigateTo({
+                url: '/pages/voip/conference/ConferencePortalPage',
                 fail: (e) => {
                     console.log(e)
                 }

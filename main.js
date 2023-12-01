@@ -5,10 +5,10 @@ import VueI18n from 'vue-i18n'
 import {getItem} from "./pages/util/storageHelper";
 import picker from "./common/picker";
 import wfc from "./wfc/client/wfc";
-import wfcUIKit from "./wfc/uikit/wfcUIKit";
 import Config from "./config";
 import forward from "./common/forward";
 import pttClient from "./wfc/ptt/pttClient";
+import avengineKit from "./wfc/av/engine/avengineKit";
 
 Vue.config.productionTip = false
 
@@ -28,11 +28,18 @@ const i18n = new VueI18n({
     }
 })
 
+/**
+ *
+ * @param url
+ * @param options 普通页面到 nvue 页面 或 nvue 页面到普通页面时，不生效
+ */
 Vue.prototype.$navigateToPage = (url, options) => {
     uni.navigateTo({
         url: url,
         success: (res) => {
-            res.eventChannel.emit('options', options);
+            if (options) {
+                res.eventChannel.emit('options', options);
+            }
         },
         fail: (e) => {
             console.log('navigate to WebViewPage error', e)
@@ -84,6 +91,13 @@ Vue.prototype.$scrollToBottom = () => {
     }, 100);
 }
 
+Vue.prototype.$notify = (options) => {
+    uni.showToast({
+        title: options.text,
+        icon: 'none',
+    });
+}
+
 Vue.prototype._i18n = i18n;
 const app = new Vue({
     i18n,
@@ -92,10 +106,13 @@ const app = new Vue({
 
 app.store = store;
 wfc.init();
-if (wfcUIKit.isUIKitEnable() && Config.ICE_SERVERS) {
-    Config.ICE_SERVERS.forEach(iceServer => {
-        wfcUIKit.addICEServer(iceServer.uri, iceServer.userName, iceServer.password);
-    })
+if (avengineKit.isAVEngineKitEnable()) {
+    avengineKit.init();
+    if (Config.ICE_SERVERS) {
+        Config.ICE_SERVERS.forEach(iceServer => {
+            avengineKit.addICEServer(iceServer.uri, iceServer.userName, iceServer.password);
+        })
+    }
 }
 if (pttClient.isPttClientEnable()) {
     pttClient.init();

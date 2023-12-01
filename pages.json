@@ -242,6 +242,66 @@
             }
         },
         {
+            "path": "pages/voip/Single",
+            "style": {
+                "titleNView": false,
+                "navigationBarTitleText": "单人音视频通话",
+                "navigationBarTextStyle": "white"
+            }
+        },
+        {
+            "path": "pages/voip/Multi",
+            "style": {
+                "titleNView": false,
+                "navigationBarTitleText": "多人音视频通话",
+                "navigationBarTextStyle": "white"
+            }
+        },
+        {
+            "path": "pages/voip/conference/ConferencePortalPage",
+            "style": {
+                "navigationBarTitleText": "会议"
+            }
+        },
+        {
+            "path": "pages/voip/conference/JoinConferencePage",
+            "style": {
+                "navigationBarTitleText": " 加入会议"
+            }
+        },
+        {
+            "path": "pages/voip/conference/CreateConferencePage",
+            "style": {
+                "navigationBarTitleText": "发起会议"
+            }
+        },
+        {
+            "path": "pages/voip/conference/OrderConferencePage",
+            "style": {
+                "navigationBarTitleText": "预定会议"
+            }
+        },
+        {
+            "path": "pages/voip/conference/ConferenceInfoPage",
+            "style": {
+                "navigationBarTitleText": "会议详情"
+            }
+        },
+        {
+            "path": "pages/voip/conference/ConferencePage",
+            "style": {
+                "titleNView": false,
+                "navigationBarTitleText": "音视频会议",
+                "navigationBarTextStyle": "white"
+            }
+        },
+        {
+            "path": "pages/voip/conference/ConferenceManagePage",
+            "style": {
+                "navigationBarTitleText": "会议管理"
+            }
+        },
+        {
             "path": "pages/misc/ApiTestPage",
             "style": {
                 "navigationBarTitleText": "API测试"

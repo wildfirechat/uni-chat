@@ -1,0 +1,1212 @@
+<!--export default class CallState {-->
+<!--static STATUS_IDLE = 0;-->
+<!--static STATUS_OUTGOING = 1;-->
+<!--static STATUS_INCOMING = 2;-->
+<!--static STATUS_CONNECTING = 3;-->
+<!--static STATUS_CONNECTED = 4;-->
+<!--}-->
+<template>
+    <div style="flex: 1; display: flex; flex-direction: column" ref="rootContainer">
+        <div v-if="session" class="main-slider-container"
+             style="display: flex; flex: 1;">
+            <!--main-->
+            <!--video-->
+            <div v-if="!audioOnly" style="width: 750rpx; flex: 1; position: relative">
+                <!--                    宫格布局-->
+                <section class="content-container grid" style="background: #2d3033">
+                    <!--participants include self-->
+                    <ConferenceParticipantVideoView v-for="(participant) in currentPageParticipants"
+                                                    :key="participant.uid + '-' + participant._isScreenSharing"
+                                                    :participant="participant"
+                                                    :currentPageParticipants="currentPageParticipants"
+                                                    :self-user-info="selfUserInfo"
+                                                    :session="session">
+                    </ConferenceParticipantVideoView>
+                </section>
+                <text v-if="computedCurrentLayout === 0 && currentGridPageIndex > 0" style="position: absolute; top: 300px; left: 0; color: #c8cacc; z-index: 1000; font-size: 40px; padding: 0 10px" class="iconfont icon-ion-arrow-left-c"
+                      @click="prePage">&#xf108;
+                </text>
+                <text v-if="computedCurrentLayout === 0 && currentGridPageIndex < gridPageCount - 1" style="position: absolute; top: 300px; right: 0; color: #c8cacc; z-index: 1000; font-size: 40px; padding: 0 10px" class="iconfont icon-ion-arrow-right-c"
+                      @click="nextPage">&#xf10b;
+                </text>
+            </div>
+            <!--audio-->
+            <div v-else style="width: 750rpx; flex: 1;">
+                <div
+                        style="background: white; height: 50px; width: 750rpx; position: absolute; left: 0; top: 0; display: flex; justify-content: center; align-items: center">
+                    <div
+                            style="background: #daeafe; width: 300px; height: 40px; padding: 0 5px; border-radius: 3px; display: flex; flex-direction: column; justify-content: center">
+                        <p class="single-line"> {{ '正在讲话: ' + speakingUserName }}</p>
+                    </div>
+                </div>
+                <section class="content-container audio">
+                    <!--participants-->
+                    <div v-for="(participant) in participantUserInfos"
+                         :key="participant.uid"
+                         style="position: relative;"
+                         class="participant-audio-item">
+                        <div style="position: relative">
+                            <image class="avatar"
+                                   v-bind:class="{highlight:participant._volume > 0}"
+                                   :src="participant.portrait" :alt="participant"/>
+                            <text v-if="participant._isHost" class="indicator iconfont icon-ion-person" style="background: #FD802E">&#xf213;</text>
+                            <text v-if="participant._isAudience" class="indicator iconfont icon-ion-ios-mic-off" style="color: red;">&#xf45f;</text>
+                        </div>
+                        <text class="desc">{{ userName(participant) }}</text>
+                    </div>
+                </section>
+            </div>
+            <!--actions-->
+            <div class="duration-action-container">
+                <p v-if="false" class="desc">{{ duration }}</p>
+                <div class="action-container">
+                    <div class="action">
+                        <image v-if="!session.audience && !session.audioMuted" @click="muteAudio" class="action-img"
+                               src='/static/image/av/av_conference_audio.png'/>
+                        <image v-else @click="muteAudio" class="action-img"
+                               src='/static/image/av/av_conference_audio_mute.png'/>
+                        <p>静音</p>
+                    </div>
+                    <div class="action"
+                         v-if="!session.screenSharing">
+                        <image v-if="!session.audience && !session.videoMuted" @click="muteVideo" class="action-img"
+                               src='/static/image/av/av_conference_video.png'/>
+                        <image v-else @click="muteVideo" class="action-img"
+                               src='/static/image/av/av_conference_video_mute.png'/>
+                        <p>视频</p>
+                    </div>
+                    <div v-if="false" class="action">
+                        <image v-if="!session.screenSharing" @click="screenShare"
+                               class="action-img"
+                               src='/static/image/av/av_conference_screen_sharing.png'/>
+                        <image v-else @click="screenShare" class="action-img"
+                               src='/static/image/av/av_conference_screen_sharing_hover.png'/>
+                        <p class="single-line">共享屏幕</p>
+                    </div>
+                    <div class="action" @click="chat">
+                        <text class="iconfont icon-ion-ios-chatboxes"
+                              style="width: 40px; height: 40px; font-size: 40px; color: black"
+                              v-bind:style="{color: showConversationView ? 'white' : 'black'}">&#xf3fa;
+                        </text>
+                        <p>聊天</p>
+                    </div>
+                    <div v-if="selfUserInfo && selfUserInfo.uid !== conferenceManager.conferenceInfo.owner" class="action">
+                        <image v-if="!conferenceManager.isHandUp" @click="handup"
+                               class="action-img"
+                               src='/static/image/av/av_conference_handup.png'/>
+                        <image v-else @click="handup" class="action-img"
+                               src='/static/image/av/av_conference_handup_hover.png'/>
+                        <p class="single-line">举手</p>
+                    </div>
+                    <div class="action">
+                        <image @click.stop="members" class="action-img"
+                               src='/static/image/av/av_conference_members.png'/>
+                        <p>管理</p>
+                    </div>
+                    <div class="action">
+                        <image @click="hangup" class="action-img"
+                               src='/static/image/av/av_conference_end_call.png'/>
+                        <p>结束</p>
+                    </div>
+                </div>
+            </div>
+            <div class="voip-title-container">
+                <image @click="minimize" style="width: 30px; height: 30px" src='/static/image/av/av_minimize.png'/>
+                <div class="title">
+                    <text class="desc" v-if="callState === 4">{{ duration }}</text>
+                </div>
+                <!--通话建立成功之后，才允许邀请新参与者-->
+                <image v-if="callState === 4 && false" @click="invite" style="width: 30px; height: 30px" src="/static/image/av/add.png"/>
+            </div>
+        </div>
+        <uni-popup ref="alertDialog" type="dialog">
+            <uni-popup-dialog :cancelText="alertDialogOptions.cancelText" :confirmText="alertDialogOptions.confirmText" :title="alertDialogOptions.title" @confirm="alertDialogOptions.onConfirm"
+                              @close="alertDialogOptions.onClose"></uni-popup-dialog>
+        </uni-popup>
+    </div>
+</template>
+
+<script>
+    import CallSessionCallback from "../../../wfc/av/engine/callSessionCallback";
+    import CallState from "../../../wfc/av/engine/callState";
+    import CallEndReason from "../../../wfc/av/engine/callEndReason";
+    import VideoType from "../../../wfc/av/engine/videoType";
+    import ConferenceParticipantVideoView from "./ConferenceParticipantVideoView.nvue";
+    import avengineKit from "../../../wfc/av/engine/avengineKit";
+    import Conversation from "../../../wfc/model/conversation";
+    import ConversationType from "../../../wfc/model/conversationType";
+    import ChatRoomInfo from "../../../wfc/model/chatRoomInfo";
+
+    export default {
+        name: 'ConferencePage',
+        data() {
+            return {
+                wfc: getApp().wfc,
+                conferenceId: null,
+                password: '',
+                conferenceManager: getApp().conferenceManager,
+                session: {},
+                conferenceInfo: null,
+                audioOnly: true,
+                status: 1,
+                selfUserInfo: null,
+                // 包含自己
+                participantUserInfos: [],
+
+                startTimestamp: 0,
+                currentTimestamp: 0,
+
+                showSlider: false,
+                showConversationView: false,
+                videoInputDeviceIndex: 0,
+
+                refreshUserInfoInternal: 0,
+
+                endReason: undefined,
+
+
+                // 宫格布局；0, 宫格视图；1，演讲者视图
+                currentLayout: 0,
+
+                // 宫格视图
+                currentGridPageIndex: 0,
+                participantCountPerGridPage: 9,
+
+                // 演讲者视图
+                speakingVideoParticipant: null,
+                hideFocusLayoutParticipantListVideoView: false,
+
+                showConferenceSimpleInfoView: false,
+                showChooseLayoutView: false,
+                alertDialogOptions: {},
+            }
+        },
+        components: {
+            ConferenceParticipantVideoView
+        },
+        onLoad(option) {
+            console.log('voip/Conference onLoad', option)
+            if (option.session) {
+                this.session = JSON.parse(option.session);
+                this.callState = Number(this.session.state);
+                if (this.session.connectedTime) {
+                    this.startTimestamp = this.session.connectedTime;
+                }
+            } else {
+                // why?
+                // setConferenceInfo 里面会用到 wfc，但需要等 mounted 之后，wfc 才生效
+                this.$nextTick(() => {
+                    this.conferenceInfo = JSON.parse(option.conferenceInfo)
+                    console.log('conferencePage parameters', this.conferenceInfo, option.muteAudio, option.muteVideo)
+                    let muteAudio = option.muteAudio;
+                    let muteVideo = option.muteVideo;
+                    this.conferenceManager.setConferenceInfo(this.conferenceInfo);
+                    this.joinConference(this.conferenceInfo, muteAudio, muteVideo);
+                })
+            }
+        },
+
+        created() {
+            let dom = weex.requireModule("dom");
+            dom.addRule('fontFace', {
+                fontFamily: 'icomoon',
+                //src: "url('file:/" + fontSrc + "')"
+                src: "url('/static/iconfonts/icomoon/fonts/icomoon.ttf')"
+            })
+
+            // this.conferenceManager.setVueInstance(this);
+            this.refreshUserInfoInternal = setInterval(() => {
+                // this.refreshUserInfos();
+            }, 3 * 1000)
+            this.conferenceManager.setup(getApp(), this);
+        },
+
+        mounted() {
+
+            // // 开发测试时使用，方便修改UI， 刷新页面之后，还能正常显示音视频通话页面，其他情况一定要将下面代码注释
+            // let session = avengineKit.currentCallSession();
+            // if (session) {
+            //     console.log('current session', session.state, session);
+            //     this.session = session;
+            //     this.callState = session.state;
+            // }
+            // // end
+
+            if (this.callState === CallState.STATUS_CONNECTED) {
+                this.setupParticipants();
+                this.setupSessionCallback();
+                this.onVoipConnected();
+            }
+        },
+
+        methods: {
+            profile2UserInfo(profile) {
+                let userInfo = this.wfc.getUserInfo(profile.userId);
+                userInfo._isAudience = profile.audience;
+                userInfo._isHost = this.session.host === profile.userId;
+                userInfo._isVideoMuted = profile.videoMuted;
+                userInfo._isAudioMuted = profile.audioMuted;
+                userInfo._volume = 0;
+                userInfo._isScreenSharing = profile.screenSharing;
+                return userInfo;
+            },
+
+            joinConference(conferenceInfo, muteAudio, muteVideo) {
+                let audience = muteAudio && muteVideo;
+                let audioOnly = false;
+                let callExtra = '';
+                console.log('join conference', conferenceInfo.conferenceId, audioOnly, conferenceInfo.pin, conferenceInfo.owner, conferenceInfo.conferenceTitle, '', audience, conferenceInfo.advance, muteAudio, muteVideo, callExtra)
+                let session = avengineKit.joinConference(conferenceInfo.conferenceId, audioOnly, conferenceInfo.pin, conferenceInfo.owner, conferenceInfo.conferenceTitle, '', audience, conferenceInfo.advance, muteAudio, muteVideo, callExtra);
+                if (session) {
+                    this.session = session;
+
+                    this.setupParticipants();
+                    this.setupSessionCallback();
+                } else {
+                    console.log('joinConference failed, session is null')
+                    uni.navigateBack({
+                        delta: 1,
+                        fail: err => {
+                            console.log('nav back from ConferencePage err', err);
+                        }
+                    });
+                }
+            },
+
+            setupSessionCallback() {
+                let sessionCallback = new CallSessionCallback();
+
+                sessionCallback.didChangeState = (state) => {
+                    console.log('didChangeState', state)
+                    this.status = state;
+                    if (state === CallState.STATUS_CONNECTED) {
+                        // 比如没有摄像头，但发起视频通话时，会自动 muteVideo
+                        this.onVoipConnected();
+                    } else if (state === CallState.STATUS_IDLE) {
+                        if (this.timer) {
+                            clearInterval(this.timer);
+                        }
+                    }
+                };
+
+                sessionCallback.didCreateLocalVideoTrack = (screenShare) => {
+                    console.log('didCreateLocalVideoTrack 00', screenShare)
+                    // this.selfUserInfo._isVideoMuted = false;
+                    // this.selfUserInfo._isScreenSharing = screenShare;
+                };
+
+                sessionCallback.didRotateLocalVideoTrack = (stream) => {
+                    console.log('didRotateLocalVideoTrack', stream.getAudioTracks())
+                };
+
+                sessionCallback.didScreenShareEnded = () => {
+                    console.log('didScreenShareEnded', this.session.videoMuted, this.session.audioMuted);
+                    // this.selfUserInfo._isScreenSharing = false;
+                    // this.selfUserInfo._isVideoMuted = this.session.videoMuted;
+                }
+
+                sessionCallback.didCreateLocalVideoTrackError = () => {
+                    // TODO
+                    // 没有摄像头或者麦克风，加入会议时，会回调到此处，自己断会显示自己的头像，其他端会显示黑屏
+                    // 可以进行相关提示
+                };
+
+                sessionCallback.didReceiveRemoteVideoTrack = (userId, screenSharing) => {
+                    console.log('didReceiveRemoteVideoTrack', userId, screenSharing);
+                    for (let i = 0; i < this.participantUserInfos.length; i++) {
+                        let p = this.participantUserInfos[i];
+                        if (p.uid === userId && p._isScreenSharing === screenSharing) {
+                            p._isVideoMuted = false;
+                            break;
+                        }
+                    }
+                };
+
+                sessionCallback.didRemoveRemoteVideoTrack = (userId) => {
+                    console.log('didRemoveRemoteVideoTrack', userId)
+                };
+
+                sessionCallback.didParticipantJoined = (userId, screenSharing) => {
+                    console.log('didParticipantJoined', userId, screenSharing)
+                    let profile = avengineKit.getParticipantProfile(this.session.callId, userId, screenSharing);
+                    console.log('didParticipantJoined profile', profile)
+                    let userInfo = this.profile2UserInfo(profile);
+                    this.participantUserInfos.push(userInfo);
+                    console.log('joined', userInfo, profile.audience, this.participantUserInfos.length);
+                }
+
+                sessionCallback.didParticipantLeft = (userId, endReason, screenSharing) => {
+                    console.log('didParticipantLeft', userId, endReason, screenSharing, JSON.stringify(this.participantUserInfos), this.participantUserInfos.length)
+                    //this.participantUserInfos = this.participantUserInfos.filter(p => p.uid !== userId && p._isScreenSharing !== screenSharing);
+                    this.participantUserInfos = this.participantUserInfos.filter(p => {
+                        return !(p.uid === userId && p._isScreenSharing === screenSharing);
+                    });
+                    //fixme 上面可能会没有触发重新计算 focusVideoParticipant
+                    console.log('didParticipantLeft d', userId, endReason, screenSharing, this.participantUserInfos.length)
+                }
+
+                sessionCallback.didCallEndWithReason = (reason) => {
+                    console.log('callEndWithReason', reason)
+                    this.conferenceManager.addHistory(this.conferenceManager.conferenceInfo, new Date().getTime() - this.conferenceManager.conferenceInfo.startTime * 1000)
+                    // 可以根据reason，进行一些提示
+                    // alert('会议已结束');
+
+                    this.endReason = reason;
+                    if (reason === CallEndReason.REASON_MediaError) {
+                        return;
+                    }
+                    if (reason === CallEndReason.RoomNotExist) {
+                        console.log('join conference failed', reason, this.session)
+                        let obj = {reason: reason, session: this.session};
+                        // localStorageEmitter.send(LocalStorageIpcEventType.joinConferenceFailed, obj);
+                    }
+                    this.session = null;
+                }
+
+                sessionCallback.onRequestChangeMode = (audience) => {
+                    // console.log('onRequestChangeMode', audience)
+                    //
+                    // if (audience) {
+                    //     this.session.switchAudience(true)
+                    //     uni.showToast({
+                    //         title: '主持人禁止你参与互动',
+                    //         icon: 'none',
+                    //     });
+                    // } else {
+                    //     this.showAlertDialog('拒绝', '同意', '主持人邀请你参与互动', () => {
+                    //         avengineKit.switchAudience(false)
+                    //     }, () => {
+                    //         uni.showToast({
+                    //             title: '你已拒绝参与互动',
+                    //             icon: 'none',
+                    //         });
+                    //     })
+                    // }
+                };
+
+                sessionCallback.didChangeType = (userId, audience, screenSharing) => {
+                    console.log('didChangeType', userId, audience, screenSharing);
+                    let found = false;
+                    let profile = avengineKit.getParticipantProfile(this.session.callId, userId, screenSharing);
+                    if (this.selfUserInfo.uid === userId) {
+                        this.session.audience = audience;
+                        this.session.videoMuted = profile.videoMuted;
+                        this.session.audioMuted = profile.audioMuted;
+                    }
+                    for (const u of this.participantUserInfos) {
+                        if (u.uid === userId && u._isScreenSharing === screenSharing) {
+                            u._isAudience = audience;
+                            u._isVideoMuted = profile.videoMuted;
+                            u._isAudioMuted = profile.audioMuted;
+                            if (this.speakingVideoParticipant && this.speakingVideoParticipant.uid === u.uid) {
+                                this.speakingVideoParticipant = null;
+                            }
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        let userInfo = this.profile2UserInfo(profile);
+                        this.participantUserInfos.push(userInfo);
+                    }
+                };
+
+                sessionCallback.didReportAudioVolume = (userId, volume) => {
+                    let userInfo;
+                    if (userId === this.selfUserInfo.uid) {
+                        this.selfUserInfo._volume = volume;
+                        userInfo = this.selfUserInfo;
+                    } else {
+                        this.participantUserInfos.forEach(u => {
+                            if (u.uid === userId && u._isScreenSharing === false) {
+                                u._volume = volume;
+                                userInfo = u;
+                            }
+                        })
+                    }
+                    if (this.currentLayout === 0) {
+                        return;
+                    }
+
+                    if (userInfo._isVideoMuted) {
+                        return;
+                    }
+
+                    if (this.conferenceFocusUser) {
+                        return this.conferenceFocusUser;
+                    }
+
+                    if (!this.speakingVideoParticipant) {
+                        this.speakingVideoParticipant = userInfo;
+                    } else if (userInfo._volume > this.speakingVideoParticipant._volume) {
+                        this.speakingVideoParticipant = userInfo;
+                    }
+                };
+
+                sessionCallback.didMuteStateChanged = (participants) => {
+                    console.log('conference', 'didMuteStateChanged', participants)
+                    participants.forEach(p => {
+                        let profile = avengineKit.getParticipantProfile(this.session.callId, p, false);
+                        if (!profile) {
+                            return;
+                        }
+                        console.log('conference', 'didMuteStateChanged', p, profile, profile.videoMuted, profile.audioMuted);
+                        this.participantUserInfos.forEach(u => {
+                            if (u.uid === p && u._isScreenSharing === false) {
+                                u._isVideoMuted = profile.videoMuted;
+                                u._isAudioMuted = profile.audioMuted;
+                                if (this.speakingVideoParticipant && this.speakingVideoParticipant.uid === u.uid) {
+                                    this.speakingVideoParticipant = null;
+                                }
+                            }
+
+                            if (profile.userId === this.selfUserInfo.uid) {
+                                this.session.videoMuted = profile.videoMuted;
+                                this.session.audioMuted = profile.audioMuted;
+                            }
+                        })
+                    })
+
+                };
+
+                sessionCallback.didMediaLostPacket = (media, lostPacket, screenSharing) => {
+                    console.log('didMediaLostPacket', media, lostPacket, screenSharing);
+                    if (lostPacket > 6) {
+                        console.log('您的网络不好');
+                    }
+                };
+
+                sessionCallback.didUserMediaLostPacket = (userId, media, lostPacket, uplink, screenSharing) => {
+                    console.log('didUserMediaLostPacket', userId, media, lostPacket, uplink, screenSharing);
+                    //如果uplink ture对方网络不好，false您的网络不好
+                    //接收方丢包超过10为网络不好
+                    if (lostPacket > 10) {
+                        if (uplink) {
+                            let userInfos = this.participantUserInfos.filter(u => u.uid === userId && u._isScreenSharing === screenSharing);
+                            if (userInfos && userInfos.length > 0) {
+                                console.log(userInfos[0].displayName, "网络不好");
+                            }
+                        } else {
+                            console.log('您的网络不好');
+                        }
+                    }
+                };
+
+                getApp().avengineKit.sessionCallback = sessionCallback;
+            },
+
+            showAlertDialog(options) {
+                this.alertDialogOptions = {
+                    cancelText: options.cancelText,
+                    confirmText: options.confirmText,
+                    title: options.title,
+                    content: options.content,
+                    onConfirm: () => {
+                        options.onConfirm && options.onConfirm();
+                    },
+                    onClose: () => {
+                        options.onClose && options.onClose();
+                        this.alertDialogOptions = {};
+                    }
+                }
+                this.$refs.alertDialog.open()
+            },
+
+            hangup() {
+                avengineKit.leaveConference(this.session.callId, false);
+                this.session = null;
+                // this.conferenceManager.addHistory(this.conferenceManager.conferenceInfo, new Date().getTime() - this.conferenceManager.conferenceInfo.startTime * 1000)
+                uni.navigateBack({
+                    delta: 1,
+                    fail: err => {
+                        console.log('nav back from ConferencePage err', err);
+                    }
+                });
+            },
+
+            muteAudio() {
+                let enable = this.session.audioMuted ? true : false;
+                if (enable && this.session.audience && !this.conferenceManager.isOwner() && !this.conferenceManager.conferenceInfo.allowSwitchMode) {
+                    this.requestUnmute(true);
+                    return;
+                }
+                this.enableAudio(enable);
+            },
+
+            // fixme
+            // 这个这个方法应当叫 setAudioEnable，参数也是enable audio 的意思
+            async enableAudio(enable) {
+                avengineKit.muteAudio(this.session.callId, !enable)
+
+                console.log('enableAudio', this.selfUserInfo._isAudioMuted, this.session.audience, enable)
+                if (enable) {
+                    if (this.session.audience) {
+                        let result = avengineKit.switchAudience(this.session.callId, false);
+                        // if (result) {
+                        //     this.selfUserInfo._isAudience = false;
+                        //     this.session.audience = false;
+                        // }
+                    }
+                } else {
+                    if (this.session.videoMuted && !this.session.audience) {
+                        let result = avengineKit.switchAudience(this.session.callId, true);
+                        // if (result) {
+                        //     this.selfUserInfo._isAudience = true;
+                        //     this.session.audience = true;
+                        // }
+                    }
+                }
+            },
+            muteVideo() {
+                let enable = this.session.videoMuted ? true : false;
+                console.log('muteVideo', this.session, this.session.videoMuted, this.session.audience);
+                if (enable && this.session.audience && !this.conferenceManager.isOwner() && !this.conferenceManager.conferenceInfo.allowSwitchMode) {
+                    this.requestUnmute(false);
+                    return;
+                }
+                this.enableVideo(enable);
+            },
+
+            async enableVideo(enable) {
+                console.log('enableVideo', !enable)
+                avengineKit.muteVideo(this.session.callId, !enable)
+
+                if (enable) {
+                    if (this.session.audience) {
+                        let result = avengineKit.switchAudience(this.session.callId, false);
+                        console.log('switchAudience ', false, result)
+                        // if (result) {
+                        //     this.selfUserInfo._isAudience = false;
+                        //     this.session.audience = false;
+                        // }
+                    }
+                } else {
+                    if (this.session.videoMuted && !this.session.audience) {
+                        let result = avengineKit.switchAudience(this.session.callId, true);
+                        console.log('switchAudience ', true, result)
+                        // if (result) {
+                        //     this.selfUserInfo._isAudience = true;
+                        //     this.session.audience = true;
+                        // }
+                    }
+                }
+                console.log('_muteVideo', this.selfUserInfo, this.participantUserInfos)
+            },
+
+            requestUnmute(audio) {
+                this.alert({
+                    title: '提示',
+                    content: '主持人不允许解除静音，您可以向主持人申请解除静音',
+                    confirmText: '申请',
+                    onClose: () => {
+                        // do nothing
+                    },
+                    onConfirm: () => {
+                        this.conferenceManager.applyUnmute(false);
+                    }
+                })
+            },
+
+            members() {
+                // let host = this.conferenceInfo.owner;
+                // let defaultAudience = false;
+                // let pin = this.conferenceInfo.pin;
+                // getApp().forwardConferenceInviteMessage(this.session.callId, host, this.conferenceInfo.title, this.session.desc, this.session.startTime, this.session.audioOnly, defaultAudience, this.session.advance, pin);
+                uni.navigateTo({
+                    url: '/pages/voip/conference/ConferenceManagePage',
+                    success: () => {
+                        console.log('nav to ConferenceManagePage success');
+
+                    },
+                    fail: (err) => {
+                        console.log('nav to ConferenceManagePage err', err);
+                    }
+                })
+            },
+
+            chat() {
+                let conversation = new Conversation(ConversationType.ChatRoom, this.session.callId, 0);
+                getApp().store.setCurrentConversation(conversation);
+
+                let chatroomInfo = new ChatRoomInfo();
+                chatroomInfo.chatRoomId = this.session.callId;
+                chatroomInfo.title = this.conferenceInfo.conferenceTitle;
+                chatroomInfo._displayName = this.conferenceInfo.conferenceTitle;
+                getApp().store.state.conversation.currentConversationInfo.conversation._target = chatroomInfo;
+
+                uni.navigateTo({
+                    url: '/pages/conversation/ConversationPage',
+                    success: () => {
+                        console.log('nav to conversationPage success');
+
+                    },
+                    fail: (err) => {
+                        console.log('nav to conversationPage err', err);
+                    }
+                })
+            },
+
+            toggleSliderView() {
+                // TODO
+            },
+
+
+            async screenShare() {
+
+                // if (true) {
+                //     navigator.mediaDevices.enumerateDevices().then(deviceInfos => {
+                //         // test input
+                //         for (const deviceInfo of deviceInfos) {
+                //             if (this.testCount % 2 === 0) {
+                //                    //仅仅是为测试了，生成不能这么写死
+                //                 if (deviceInfo.label === "外置麦克风 (Built-in)") {
+                //                     console.log('audioInput 外置');
+                //                     this.session.setAudioInputDeviceId(deviceInfo.deviceId);
+                //                     break;
+                //                 }
+                //             } else {
+                //                 if (deviceInfo.label === "MacBook Pro麦克风 (Built-in)") {
+                //                     console.log('audioInput 内置');
+                //                     this.session.setAudioInputDeviceId(deviceInfo.deviceId);
+                //                     break;
+                //                 }
+                //             }
+                //         }
+                //
+                //         // test output
+                //         // for (const deviceInfo of deviceInfos) {
+                //         //     if (this.testCount % 2 === 0) {
+                //         //         if (deviceInfo.label === "外置耳机 (Built-in)") {
+                //         //             console.log('audioOut 外置');
+                //         //             this.setAudioOutputDeviceId(deviceInfo.deviceId)
+                //         //             break;
+                //         //         }
+                //         //     } else {
+                //         //         if (deviceInfo.label === "MacBook Pro扬声器 (Built-in)") {
+                //         //             console.log('audioOutput 内置');
+                //         //             this.setAudioOutputDeviceId(deviceInfo.deviceId)
+                //         //             break;
+                //         //         }
+                //         //     }
+                //         // }
+                //
+                //     }).catch(err => {
+                //         console.log()
+                //     })
+                //     this.testCount++;
+                //     return;
+                // }
+
+                // if (this.session.screenSharing) {
+                //     this.session.stopScreenShare();
+                //     console.log('stopScreenShare', this.session.videoMuted, this.session.audioMuted);
+                //     if (this.session.videoMuted && this.session.audioMuted) {
+                //         this.session.switchAudience(true);
+                //     }
+                //     // currentWindow.setIgnoreMouseEvents(false)
+                // } else {
+                //     if (this.session.audience) {
+                //         await this.session.switchAudience(false);
+                //     }
+                //     this.session.startScreenShare({
+                //         frameRate: 30
+                //     });
+                // }
+            },
+
+            // 设置音频输出设备
+            setAudioOutputDeviceId(deviceId) {
+                let audioEls = this.$el.getElementsByTagName('audio');
+                for (const audioEl of audioEls) {
+                    audioEl.setSinkId(deviceId);
+                }
+                let videoEls = this.$el.getElementsByTagName('video');
+                for (const videoEl of videoEls) {
+                    videoEl.setSinkId(deviceId);
+                }
+            },
+
+            handup() {
+                this.conferenceManager.handUp(!this.conferenceManager.isHandUp)
+            },
+
+            userName(user) {
+                let name = '';
+                if (user.groupAlias) {
+                    name = user.groupAlias;
+                } else if (user.friendAlias) {
+                    name = user.friendAlias;
+                } else if (user.displayName) {
+                    name = user.displayName;
+                } else {
+                    name = user.name;
+                }
+                return name;
+            },
+
+            setupParticipants() {
+                let selfProfile = avengineKit.getMyProfile(this.session.callId);
+                let selfUserInfo = this.profile2UserInfo(selfProfile)
+                console.log('selfProfile', selfProfile);
+                this.selfUserInfo = selfUserInfo;
+                this.participantUserInfos.push(selfUserInfo);
+
+                let participantProfiles = avengineKit.getParticipantProfiles(this.session.callId);
+                console.log('participantProfiles', participantProfiles)
+                for (const p of participantProfiles) {
+                    let userInfo = this.profile2UserInfo(p);
+                    this.participantUserInfos.push(userInfo);
+                }
+            },
+
+            onVoipConnected() {
+                if (!this.timer) {
+                    if (!this.startTimestamp) {
+                        this.startTimestamp = new Date().getTime();
+                    }
+
+                    this.timer = setInterval(() => {
+                        this.currentTimestamp = new Date().getTime();
+                    }, 1000)
+                }
+            },
+
+            timestampFormat(timestamp) {
+                timestamp = ~~(timestamp / 1000);
+                let str = ''
+                let hour = ~~(timestamp / 3600);
+                str = hour > 0 ? ((hour < 10 ? "0" : "") + hour + ':') : '';
+                let min = ~~((timestamp % 3600) / 60);
+                str += (min < 10 ? "0" : "") + min + ':'
+                let sec = ~~((timestamp % 60));
+                str += (sec < 10 ? "0" : "") + sec
+                return str;
+            },
+            minimize() {
+                let granted = getApp().avengineKit.checkOverlayPermission();
+                console.log('overlayPermission granted', granted)
+                if (granted) {
+                    getApp().avengineKit.minimize(this.session.callId);
+                    uni.navigateBack({
+                        delta: 1,
+                        fail: err => {
+                            console.log('nav back to err', err);
+                        }
+                    });
+                } else {
+                    uni.showToast({
+                        title: "需要悬浮窗权限",
+                        icon: 'none',
+                    });
+                }
+            },
+
+            prePage() {
+                this.currentGridPageIndex--;
+                if (this.currentGridPageIndex < 0) {
+                    this.currentGridPageIndex = Math.ceil(this.participantUserInfos.length / this.participantCountPerGridPage) - 1
+                }
+            },
+            nextPage() {
+                if (this.participantUserInfos.length / this.participantCountPerGridPage > (this.currentGridPageIndex + 1)) {
+                    this.currentGridPageIndex++;
+                } else {
+                    this.currentGridPageIndex = 0;
+                }
+            },
+
+            updateCountPerPage(count) {
+                this.participantCountPerGridPage = count;
+            },
+
+            setCurrentLayout(layout) {
+                if (this.currentLayout === layout) {
+                    return;
+                }
+                // 演讲者布局
+                if (layout === 1) {
+                    // 演讲者布局，切换为小流，然后焦点用户切换为大流
+                    this.participantUserInfos.forEach(u => {
+                        if (u.uid !== this.selfUserInfo.uid && !u._isAudience && !u._isVideoMuted) {
+                            avengineKit.setParticipantVideoType(this.session.callId, u.uid, u._isScreenSharing, VideoType.SMALL_STREAM);
+                        }
+                    })
+                } else {
+                    //宫格布局， 当前页切换为大流，未显示的，取消订阅，由 currentPageParticipants 副作用触发
+                    this.currentGridPageIndex = 0;
+                    this.conferenceManager.currentFocusUser = null;
+                }
+                this.currentLayout = layout;
+                this.showChooseLayoutView = false;
+            },
+            toggleParticipantListVideoView() {
+                this.hideFocusLayoutParticipantListVideoView = !this.hideFocusLayoutParticipantListVideoView;
+            },
+
+            hideConferenceSimpleInfoView(event) {
+                if (event.target.id === 'info-icon') {
+                    return;
+                }
+                this.showConferenceSimpleInfoView = false;
+            },
+
+            hideChooseLayoutView(event) {
+                if (event.target.id === 'grid-icon') {
+                    return;
+                }
+                this.showChooseLayoutView = false;
+            },
+
+            alert(options) {
+                console.log('alert', options)
+                this.showAlertDialog(options)
+            }
+        },
+
+        computed: {
+            duration() {
+                if (this.currentTimestamp <= 0) {
+                    return '00:00'
+                }
+                let escapeMillis = this.currentTimestamp - this.startTimestamp;
+                return this.timestampFormat(escapeMillis)
+            },
+
+            speakingUserName() {
+                if (!this.selfUserInfo) {
+                    return ''
+                }
+                let maxVolume = this.selfUserInfo._volume;
+                let speakingUserInfo = this.selfUserInfo;
+                this.participantUserInfos.forEach(u => {
+                    if (u._volume > maxVolume) {
+                        speakingUserInfo = u;
+                        maxVolume = u._volume;
+                    }
+                })
+                if (!maxVolume) {
+                    return '';
+                }
+
+                return this.userName(speakingUserInfo);
+            },
+
+            currentPageParticipants() {
+                if (this.currentLayout === 1) {
+                    return [];
+                }
+
+                let focusUser = this.conferenceFocusUser;
+                // sort not in place，避免副作用
+                let sortedParticipantUserInfos = [...this.participantUserInfos].sort((o1, o2) => {
+                    if (focusUser) {
+                        if (o1.uid === focusUser.uid && o1._isScreenSharing === focusUser._isScreenSharing) {
+                            return -1;
+                        }
+                        if (o2.uid === focusUser.uid && o2._isScreenSharing === focusUser._isScreenSharing) {
+                            return 1;
+                        }
+                    }
+
+                    if (o1._isAudience && !o2._isAudience) {
+                        return 1;
+                    } else if (!o1._isAudience && o2._isAudience) {
+                        return -1;
+                    } else if (o1._isAudience && o2._isAudience) {
+                        return o1.uid.localeCompare(o2.uid);
+                    } else {
+                        if (o1._isScreenSharing && !o2._isScreenSharing) {
+                            return -1;
+                        }
+                        if (!o1._isScreenSharing && o2._isScreenSharing) {
+                            return 1;
+                        }
+                        if (!o1._isVideoMuted && o2._isVideoMuted) {
+                            return -1;
+                        }
+                        if (o1._isVideoMuted && !o2._isVideoMuted) {
+                            return 1;
+                        }
+                        return o1.uid.localeCompare(o2.uid);
+                    }
+                })
+
+                let start = this.currentGridPageIndex * this.participantCountPerGridPage;
+                let end = start + this.participantCountPerGridPage > sortedParticipantUserInfos.length ? sortedParticipantUserInfos.length : (start + this.participantCountPerGridPage);
+                // side effect
+                // TODO 优化
+                // 相邻页切换时，不能立即取消订阅，可能还切换回去，那样的话，就会有一小段时间，不显示视频流
+                // for (let i = 0; i < sortedParticipantUserInfos.length; i++) {
+                //     let u = sortedParticipantUserInfos[i];
+                //     if (u.uid === this.selfUserInfo.uid || u._isAudience || u._isVideoMuted) {
+                //         continue;
+                //     }
+                //     if (i >= start && i < end) {
+                //         console.log('set video type big', u.uid)
+                //         avengineKit.setParticipantVideoType(u.uid, u._isScreenSharing, VideoType.BIG_STREAM);
+                //     } else {
+                //         console.log('set video type none', u.uid)
+                //         avengineKit.setParticipantVideoType(u.uid, u._isScreenSharing, VideoType.NONE);
+                //     }
+                // }
+                // side effect
+                return sortedParticipantUserInfos.slice(start, end);
+            },
+
+            gridPageCount() {
+                return Math.ceil(this.participantUserInfos.length / this.participantCountPerGridPage);
+            },
+
+            conferenceFocusUser() {
+                let focus = this.conferenceManager.conferenceInfo.focus;
+                if (!focus) {
+                    return null;
+                }
+                let focusUser = this.participantUserInfos.find(u => u.uid === focus && u._isScreenSharing === true);
+                if (!focusUser) {
+                    focusUser = this.participantUserInfos.find(u => u.uid === focus);
+                }
+                return focusUser;
+            },
+            conferenceLocalFocusUser() {
+                return this.conferenceManager.localFocusUser;
+            },
+
+            // 以用户手动选择的为准
+            computedCurrentLayout() {
+                if (this.currentLayout === -1 && this.conferenceFocusUser) {
+                    return 0;
+                }
+                return this.currentLayout;
+            },
+
+            // TODO 可以缓存到 conferenceManager 里面
+            computedFocusVideoParticipant() {
+                if (this.currentLayout === 0) {
+                    console.log('computedSpeakingParticipant null')
+                    return null;
+                }
+                let sp;
+                if (this.conferenceFocusUser && !this.conferenceFocusUser._isVideoMuted) {
+                    sp = this.conferenceFocusUser;
+                } else if (this.conferenceLocalFocusUser && !this.conferenceLocalFocusUser._isVideoMuted) {
+                    sp = this.conferenceLocalFocusUser;
+                } else if (this.speakingVideoParticipant) {
+                    sp = this.speakingVideoParticipant;
+                } else {
+                    sp = this.participantUserInfos.find(u => !u._isAudience && !u._isVideoMuted && u._isScreenSharing === true);
+                    if (!sp) {
+                        sp = this.participantUserInfos.find(u => !u._isAudience && !u._isVideoMuted);
+                    }
+                }
+
+                console.log('computedFocusVideoParticipant', this.conferenceManager.currentFocusUser)
+                if (this.conferenceManager.currentFocusUser) {
+                    avengineKit.setParticipantVideoType(this.session.callId, this.conferenceManager.currentFocusUser.uid, this.conferenceManager.currentFocusUser._isScreenSharing, VideoType.SMALL_STREAM);
+                }
+                if (sp) {
+                    this.conferenceManager.currentFocusUser = sp;
+                    avengineKit.setParticipantVideoType(this.session.callId, this.conferenceManager.currentFocusUser.uid, this.conferenceManager.currentFocusUser._isScreenSharing, VideoType.BIG_STREAM);
+                } else {
+                    if (this.session.screenSharing) {
+                        sp = this.selfUserInfo;
+                    }
+                }
+                console.log('computedSpeakingParticipant', sp)
+                return sp;
+            }
+        },
+
+        watch: {
+            participantUserInfos: {
+                deep: true,
+                handler(infos) {
+                    let audioOnly = true;
+                    console.log('watchParticipantUserInfos');
+                    // console.log('participantUserInfos', this.session.screenSharing);
+                    if (this.session.screenSharing) {
+                        audioOnly = false;
+                    } else {
+                        for (let i = 0; i < this.participantUserInfos.length; i++) {
+                            let u = this.participantUserInfos[i];
+                            if (!u._isAudience && !u._isVideoMuted) {
+                                console.log('audioOnly false', u, u._isAudience, u._isVideoMuted)
+                                audioOnly = false;
+                                break;
+                            }
+                        }
+                    }
+                    this.audioOnly = audioOnly;
+                    console.log('audioOly ', audioOnly)
+                }
+            },
+        },
+
+        directives: {},
+
+        // onBackPress(){
+        //     if (this.session) {
+        //         this.minimize();
+        //     } else {
+        //         this.conferenceManager.destroy();
+        //     }
+        // },
+
+        beforeDestroy() {
+            if (this.session) {
+                this.minimize();
+            } else {
+                this.conferenceManager.destroy();
+            }
+        },
+        destroyed() {
+            // reset
+            clearInterval(this.refreshUserInfoInternal);
+            // this.$eventBus.$off('muteVideo');
+            // this.$eventBus.$off('muteAudio');
+        }
+    }
+</script>
+
+<style lang="css" scoped>
+    .iconfont {
+        font-family: icomoon;
+    }
+
+    .main-slider-container {
+        width: 750rpx;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content-container {
+        width: 750rpx;
+        position: relative;
+        display: flex;
+        flex: 1;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+    }
+
+    .main-slider-container .grid {
+        flex-direction: row;
+    }
+
+    .main-slider-container .focus {
+        --participant-video-item-width: 200px;
+        --participant-video-item-height: 100px;
+        flex-direction: column;
+    }
+
+    .participant-audio-item {
+        display: flex;
+        flex-direction: column;
+        width: 250rpx;
+        height: 250rpx;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .participant-audio-item .indicator {
+        width: 18px;
+        height: 28px;
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        color: white;
+        text-align: center;
+        vertical-align: center;
+        border-radius: 14px;
+        background: #d6d6d6;
+        transform: translateX(-50%) translateY(25%);
+    }
+
+    .participant-audio-item .desc {
+        padding-top: 8px;
+        font-size: 15px;
+    }
+
+    .duration-action-container {
+        width: 750rpx;
+        height: 140px;
+        background: #808080;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .duration-action-container .desc {
+        color: white;
+        padding: 0 5px 0 0;
+    }
+
+    .action-container {
+        /*width: 100%;*/
+        width: 750rpx;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .action-container .action {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 12px;
+        color: white;
+        padding: 0 25px 0 25px;
+    }
+
+    .avatar {
+        width: 90px;
+        height: 90px;
+        border-radius: 45px;
+    }
+
+    .avatar.highlight {
+    //border: 2px solid #1FCA6A;
+    }
+
+    .action-img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .voip-title-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 750rpx;
+        display: flex;
+        margin-top: 44rpx;
+        padding: 0 40rpx;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        height: 88rpx;
+    }
+
+    .voip-title-container .title {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 750rpx;
+        height: 88rpx;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .desc {
+        color: white;
+        font-size: 15px;
+        padding: 5px 0;
+    }
+
+</style>

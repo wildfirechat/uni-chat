@@ -43,8 +43,8 @@ export default {
     methods: {
         // #ifdef APP-PLUS
         async checkPermission() {
-            let status = permision.isIOS ? await permision.requestIOS('record') :
-                await permision.requestAndroid('android.permission.RECORD_AUDIO');
+            let status = permision.isIOS ? await permision.requestIOS(['record']) :
+                await permision.requestAndroid(['android.permission.RECORD_AUDIO']);
             if (status === null || status === 1) {
                 status = 1;
             } else if (status === 2) {
