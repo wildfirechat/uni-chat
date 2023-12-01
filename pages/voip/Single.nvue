@@ -69,11 +69,7 @@
             </div>
 
             <!--connected-->
-            <text style="width: 750rpx; height: 50rpx; position: absolute; left: 0; bottom: 240rpx; text-align: center " class="desc" v-if="!audioOnly && callState === 4">{{ duration }}</text>
             <div v-if="callState === 4" class="action-container">
-                <div class="action">
-                    <image @click="hangup" class="action-img" src='/static/image/av/av_hang_up.png'/>
-                </div>
                 <div class="action">
                     <image v-if="!audioMuted" @click="mute" class="action-img" src='/static/image/av/av_mute.png'/>
                     <image v-else @click="mute" class="action-img" src='/static/image/av/av_mute_hover.png'/>
@@ -82,14 +78,22 @@
                 <div v-if="!audioOnly && false" class="action">
                     <image @click="screenShare" class="action-img" src='/static/image/av/av_share.png'/>
                 </div>
-                <div v-if="!audioOnly && true" class="action">
+                <div v-if="!audioOnly && false" class="action">
                     <image v-if="!videoMuted" @click="muteVideo" class="action-img" src='/static/image/av/av_conference_video.png'/>
                     <image v-else @click="muteVideo" class="action-img" src='/static/image/av/av_conference_video_mute.png'/>
-                    <text class="desc"> 关闭摄像头</text>
+                    <text class="desc">关闭摄像头</text>
+                </div>
+                <div v-if="!audioOnly && true" class="action">
+                    <image @click="switchCamera" class="action-img" src='//static/image/av/av_camera.png'/>
+                    <text class="desc">切换摄像头</text>
                 </div>
                 <div v-if="!audioOnly && false" class="action">
                     <image @click="down2voice" class="action-img" src='/static/image/av/av_float_audio.png'/>
                     <text class="desc">切换到语音聊天</text>
+                </div>
+                <div class="action">
+                    <image @click="hangup" class="action-img" src='/static/image/av/av_hang_up.png'/>
+                    <text class="desc">挂断</text>
                 </div>
             </div>
             <div class="voip-title-container">

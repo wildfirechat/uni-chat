@@ -45,20 +45,23 @@
             <!--incoming-->
             <div v-if="callState === 2" class="action-container">
                 <div class="action">
-                    <image @click="hangup" class="action-img" src='/static/image/av/av_hang_up.png'/>
-                </div>
-                <div class="action">
                     <image @click="answer" class="action-img" src='/static/image/av/av_video_answer.png'/>
+                    <text class="desc">接听</text>
                 </div>
                 <div v-if="!audioOnly" class="action">
                     <image @click="down2voice" class="action-img" src='/static/image/av/av_float_audio.png'/>
                     <text class="desc">切换到语音聊天</text>
+                </div>
+                <div class="action">
+                    <image @click="hangup" class="action-img" src='/static/image/av/av_hang_up.png'/>
+                    <text class="desc">挂断</text>
                 </div>
             </div>
             <!--outgoing-->
             <div v-if="callState === 1 || callState === 3" class="action-container">
                 <div class="action">
                     <image @click="hangup" class="action-img" src='/static/image/av/av_hang_up.png'/>
+                    <text class="desc">挂断</text>
                 </div>
             </div>
 
@@ -67,13 +70,14 @@
                 <text class="desc">{{ duration }}</text>
                 <div class="actions">
                     <div class="action">
-                        <image @click="hangup" class="action-img" src='/static/image/av/av_hang_up.png'/>
-                    </div>
-                    <div class="action">
                         <image v-if="!session.audioMuted" @click="mute" class="action-img"
                                src='/static/image/av/av_mute.png'/>
                         <image v-else @click="mute" class="action-img" src='/static/image/av/av_mute_hover.png'/>
                         <text class="desc">静音</text>
+                    </div>
+                    <div v-if="!audioOnly && true" class="action">
+                        <image @click="switchCamera" class="action-img" src='//static/image/av/av_camera.png'/>
+                        <text class="desc">切换摄像头</text>
                     </div>
                     <div v-if="!session.audioOnly" class="action">
                         <image v-if="!session.videoMuted" @click="muteVideo" class="action-img"
@@ -84,6 +88,10 @@
                     </div>
                     <div v-if="!audioOnly && false" class="action">
                         <image @click="screenShare" class="action-img" src='/static/image/av/av_share.png'/>
+                    </div>
+                    <div class="action">
+                        <image @click="hangup" class="action-img" src='/static/image/av/av_hang_up.png'/>
+                        <text class="desc">挂断</text>
                     </div>
                 </div>
             </div>
@@ -548,7 +556,7 @@
 
     .duration-action-container {
         width: 750rpx;
-        height: 240rpx;
+        height: 400rpx;
         position: absolute;
         left: 0;
         bottom: 0;
@@ -569,6 +577,7 @@
         width: 750rpx;
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
         justify-content: space-around;
     }
 
@@ -585,12 +594,13 @@
     }
 
     .action {
-        flex: 1;
+        width: 250rpx;
         display: flex;
         flex-direction: column;
         align-items: center;
         font-size: 12px;
         color: white;
+        padding: 10px 0;
     }
 
     .action-img {

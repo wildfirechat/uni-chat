@@ -407,6 +407,14 @@ export class AVEngineKit {
         avengineKitPlugin.minimize(callId, focusVideoUser);
         this.sessionCallback = null;
     }
+
+    /**
+     * 切换摄像头
+     * @param {string} callId
+     */
+    switchCamera(callId){
+        avengineKitPlugin.switchCamera(callId);
+    }
 }
 
 const self = new AVEngineKit();
