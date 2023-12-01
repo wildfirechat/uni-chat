@@ -48,15 +48,11 @@ export let __messageFromWebView = data => {
     }
 }
 
-let openUrl = (args) => {
-    console.log('openUrl', args)
+let openUrl = (url) => {
+    console.log('openUrl', url)
     let targetPageUrl
-    if (args.external) {
-        targetPageUrl = '/pages/misc/WebViewPage';
-    } else {
-        targetPageUrl = '/pages/workspace/WorkspaceWebViewPage';
-    }
-    mApp.$navigateToPage(`${targetPageUrl}?url=${args.url}`);
+    targetPageUrl = '/pages/workspace/WorkspaceWebViewPage';
+    mApp.$navigateToPage(`${targetPageUrl}?url=${url}`);
 }
 
 let getAuthCode = (args, appUrl, requestId) => {
@@ -87,22 +83,28 @@ let config = (args, appUrl) => {
 }
 
 let chooseContacts = (args, appUrl, requestId) => {
-    mHostPage.chooseContacts(args, (users) => {
-        _response('chooseContacts', appUrl, requestId, 0, users);
-    }, (err) => {
-        _response('chooseContacts', appUrl, requestId, err, 'user canceled');
-    })
+    // TODO
+
+    console.log('xxxx ooo', mApp.store.state.contact)
+    mApp.$pickUsers(
+        {
+            users: mApp.store.state.contact.friendList,
+            confirmTitle: '确定',
+            successCB: users => {
+                console.log('picked user', users)
+                _response('chooseContacts', appUrl, requestId, 0, users);
+            },
+        })
 }
 
 let close = (args, appUrl) => {
     // 关闭当前 tab
-    console.log('close---', location.href)
-    let tabs = mHostPage.tabGroup.getTabs();
-    for (let tab of tabs) {
-        if (tab.webviewAttributes.src === appUrl) {
-            tab.close(true);
+    uni.navigateBack({
+        delta: 1,
+        fail: err => {
+            console.log('nav back err', err);
         }
-    }
+    });
 }
 
 let toast = (text) => {

@@ -4,14 +4,13 @@
 
 <script>
 import {init as initBridge, __messageFromWebView} from './bridgeServerImpl'
+import Config from "../../config";
 
 export default {
     name: "WorkspacePage",
     data() {
         return {
-            //url: Config.WORKSPACE_URL,
-            //url: 'https://wildfirechat.cn'
-            url: 'http://192.168.2.180:8090/'
+            url: Config.WORKSPACE_URL,
         }
     },
 
