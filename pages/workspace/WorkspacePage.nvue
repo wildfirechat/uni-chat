@@ -1,0 +1,44 @@
+<template>
+    <web-view ref="webview" style="flex:1;" :src="url" @onPostMessage="handlePostMessage"></web-view>
+</template>
+
+<script>
+import {init as initBridge, __messageFromWebView} from './bridgeServerImpl'
+import Config from "../../config";
+
+export default {
+    name: "WorkspacePage",
+    data() {
+        return {
+            url: Config.WORKSPACE_URL,
+        }
+    },
+
+    onLoad(option) {
+        console.log('onLoad option url', option.url);
+        if (option.url){
+            this.url = option.url;
+        }
+    },
+
+    created() {
+    },
+
+    mounted() {
+        console.log('init ', getApp().wfc, this.$refs.webview);
+        initBridge(getApp(), this.$refs.webview);
+    },
+
+    methods: {
+        handlePostMessage(event) {
+            let data = event.detail.data[0];
+            console.log('onWebViewMessage data', data.obj)
+            __messageFromWebView(data.obj)
+        },
+    }
+}
+</script>
+
+<style scoped>
+
+</style>

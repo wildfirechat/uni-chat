@@ -1,4 +1,3 @@
-
 export default class Config {
     // 调试用
     static ENABLE_AUTO_LOGIN = true;
@@ -25,10 +24,14 @@ export default class Config {
     // 组织结构项目：https://github.com/wildfirechat/organization-platform 或 https://gitee.com/wfchat/organization-platform
     static ORGANIZATION_SERVER = 'https://org.wildfirechat.cn';
 
+    // 工作台地址
+    static WORKSPACE_URL = "https://open.wildfirechat.cn/work.html";
+
+
     // 请仔细看注释
     // 仅仅是 HOST，没有 http 前缀，后面也没有端口
     // IM SERVER 的 host 地址，一定要和 APP_SERVER 对应起来，即 APP_SERVER 上配置的 im-server 和下面所配置的im-server 是同一个
-	static IM_SERVER_HOST = 'wildfirechat.net'/** 请仔细看上面的注释，仅仅是 HOST，没有 http 前缀，后面也没有端口 **/;
+    static IM_SERVER_HOST = 'wildfirechat.net'/** 请仔细看上面的注释，仅仅是 HOST，没有 http 前缀，后面也没有端口 **/;
 
     static QR_CODE_PREFIX_PC_SESSION = "wildfirechat://pcsession/";
     // turn server 配置，可以添加多个
@@ -56,17 +59,18 @@ export default class Config {
     static RECALL_REEDIT_TIME_LIMIT = 60;
 
     static platform = -1;
+
     static getWFCPlatform() {
-        if (Config.platform > 0){
-           return Config.platform;
+        if (Config.platform > 0) {
+            return Config.platform;
         }
         let info = uni.getSystemInfoSync();
         console.log('systemInfo', info);
-        if (info.osName === 'ios' || info.platform === 'ios'){
+        if (info.osName === 'ios' || info.platform === 'ios') {
             Config.platform = info.deviceType !== 'phone' ? 8 : 1;
-        }else if (info.osName === 'android' || info.platform === 'android'){
+        } else if (info.osName === 'android' || info.platform === 'android') {
             Config.platform = info.deviceType !== 'phone' ? 9 : 2;
-        }else {
+        } else {
             Config.platform = 0;
         }
         return Config.platform;
@@ -87,8 +91,8 @@ export default class Config {
      * @param {string} url
      * @return {string} newUrl
      */
-    static urlRedirect(url){
-        if (!url){
+    static urlRedirect(url) {
+        if (!url) {
             return url;
         }
         // 示例代码

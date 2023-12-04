@@ -2036,6 +2036,10 @@ export class WfcManager {
         impl.getAuthCode(appId, appType, host, successCB, failCB);
     }
 
+    configApplication(appId, appType, timestamp, nonceStr, signature, successCB, failCB) {
+        impl.configApplication(appId, appType, timestamp, nonceStr, signature, successCB, failCB)
+    }
+
     notify(title, content) {
         impl.notify(title, content)
     }

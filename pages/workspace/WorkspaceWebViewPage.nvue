@@ -1,0 +1,47 @@
+<template>
+    <web-view ref="webview" style="flex:1;" :src="url" @onPostMessage="onPostMessage" @receivedtitle="onReceiveTitle"></web-view>
+</template>
+
+<script>
+import {init as initBridge, __messageFromWebView} from './bridgeServerImpl'
+
+export default {
+    name: "WorkspacePage",
+    data() {
+        return {
+            url: ''
+        }
+    },
+
+    onLoad(option) {
+        console.log('onLoad option url', option.url);
+        this.url = decodeURIComponent(option.url);
+    },
+
+    created() {
+    },
+
+    mounted() {
+        console.log('init ', getApp().wfc, this.$refs.webview);
+        initBridge(getApp(), this.$refs.webview);
+    },
+
+    methods: {
+        onPostMessage(event) {
+            let data = event.detail.data[0];
+            console.log('onWebViewMessage data', data.obj)
+            __messageFromWebView(data.obj)
+        },
+        onReceiveTitle(event){
+            let title = event.detail.title;
+            uni.setNavigationBarTitle({
+                title: title
+            });
+        }
+    }
+}
+</script>
+
+<style scoped>
+
+</style>
