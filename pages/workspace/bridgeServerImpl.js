@@ -52,7 +52,7 @@ let openUrl = (url) => {
     console.log('openUrl', url)
     let targetPageUrl
     targetPageUrl = '/pages/workspace/WorkspaceWebViewPage';
-    mApp.$navigateToPage(`${targetPageUrl}?url=${url}`);
+    mApp.$navigateToPage(`${targetPageUrl}?url=${encodeURIComponent(url)}`);
 }
 
 let getAuthCode = (args, appUrl, requestId) => {
