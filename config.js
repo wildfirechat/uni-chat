@@ -24,7 +24,7 @@ export default class Config {
     // 组织结构项目：https://github.com/wildfirechat/organization-platform 或 https://gitee.com/wfchat/organization-platform
     static ORGANIZATION_SERVER = 'https://org.wildfirechat.cn';
 
-    // 工作台地址
+    // 工作台地址，如果不需要工作台，请删除 pages.json 里面，WorkspacePage 相关配置
     static WORKSPACE_URL = "https://open.wildfirechat.cn/work.html";
 
 
