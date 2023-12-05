@@ -19,6 +19,11 @@
 
                         <NotificationMessageContentView :message="message" v-if="isNotificationMessage(message)"/>
                         <RecallNotificationMessageContentView :message="message" v-else-if="isRecallNotificationMessage(message)"/>
+                        <ContextableNotificationMessageContentContainerView
+                            v-else-if="isContextableNotificationMessage(message)"
+                            @click.native.capture="sharedConversationState.enableMessageMultiSelection? clickMessageItem($event, message) : null"
+                            :message="message"
+                        />
                         <NormalOutMessageContentView
                             @click.native.capture.stop="sharedConversationState.enableMessageMultiSelection? clickMessageItem($event, message) : null"
                             :message="message"
@@ -85,11 +90,15 @@ import CompositeMessageContent from "@/wfc/messages/compositeMessageContent";
 import ConnectionStatus from "../../wfc/client/connectionStatus";
 import {getItem, setItem} from "../util/storageHelper";
 import Config from "../../config";
+import RichNotificationMessageContent from "../../wfc/messages/notification/richNotificationMessageContent";
+import ArticlesMessageContent from "../../wfc/messages/articlesMessageContent";
+import ContextableNotificationMessageContentContainerView from "./message/ContextableNotificationMessageContentContainerView.vue";
 
 var innerAudioContext;
 export default {
     name: 'ConversationPage',
     components: {
+        ContextableNotificationMessageContentContainerView,
         MultiSelectActionView,
         NotificationMessageContentView,
         RecallNotificationMessageContentView,
@@ -209,8 +218,15 @@ export default {
         },
 
         isNotificationMessage(message) {
-            return message && message.messageContent instanceof NotificationMessageContent && message.messageContent.type !== MessageContentType.RecallMessage_Notification;
+            return message && message.messageContent instanceof NotificationMessageContent
+                && message.messageContent.type !== MessageContentType.RecallMessage_Notification
+                && message.messageContent.type !== MessageContentType.Rich_Notification;
         },
+
+        isContextableNotificationMessage(message) {
+            return message && (message.messageContent instanceof RichNotificationMessageContent || message.messageContent instanceof ArticlesMessageContent);
+        },
+
 
         isRecallNotificationMessage(message) {
             return message && message.messageContent.type === MessageContentType.RecallMessage_Notification;
