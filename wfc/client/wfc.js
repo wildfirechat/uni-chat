@@ -111,8 +111,13 @@ export class WfcManager {
     }
 
 
-    disconnect() {
-        impl.disconnect();
+    /**
+     * 端来连接
+     * @param {boolean} disablePush 是否禁用推送，在cleanSession为true时无意义
+     * @param {boolean} clearSession 是否清除会话 session，清除之后，所有之前的会话信息会被删除
+     */
+    disconnect(disablePush = false, clearSession = false) {
+        impl.disconnect(disablePush, clearSession);
     }
 
     setPackageName(packageName) {

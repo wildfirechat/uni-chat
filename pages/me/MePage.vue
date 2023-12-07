@@ -43,7 +43,7 @@ export default {
 
         },
         logout() {
-            wfc.disconnect();
+            wfc.disconnect(true, false);
             clear();
             uni.reLaunch(
                 {
