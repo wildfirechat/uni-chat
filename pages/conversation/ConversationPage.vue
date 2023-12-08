@@ -150,7 +150,7 @@ export default {
                 return;
             }
             uni.navigateTo({
-                url: `/pages/misc/WebViewPage?url=${e.url}`,
+                url: `/pages/misc/WebViewPage?url=${encodeURIComponent(e.url)}`,
                 fail: (e) => {
                     console.log('navigate to WebViewPage error', e)
                 }

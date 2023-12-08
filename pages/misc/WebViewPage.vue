@@ -12,8 +12,8 @@ export default {
     },
 
     onLoad(option) {
-        console.log('onLoad option url', option.url);
-        this.url = option.url;
+        console.log('onLoad option url', decodeURIComponent(option.url));
+        this.url = decodeURIComponent(option.url);
     }
 }
 </script>
