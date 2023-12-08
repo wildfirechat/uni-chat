@@ -4,9 +4,9 @@ import Conversation from "../model/conversation";
 import wfc from "../client/wfc";
 import PersistFlag from "../messages/persistFlag";
 import PttSoundMessageContent from "./messages/pttSoundMessageContent";
-import MessageConfig from "../client/messageConfig";
+import Config from "../../config";
 
-const uniWfcPttClient = uni.requireNativePlugin("wf-uni-wfc-pttclient");
+const uniWfcPttClient = Config.ENABLE_PTT ? uni.requireNativePlugin("wf-uni-wfc-pttclient") : null;
 
 export class PttClient {
 

@@ -38,6 +38,13 @@ export default class Config {
     static ICE_SERVERS = [{uri: 'turn:turn.wildfirechat.net:3478', userName: 'wfchat', password: 'wfchat1'}];
     static LANGUAGE = 'zh_CN';
 
+    // 是否启用语音对讲功能，语音对讲是和对讲机类似的功能，不是和微信类似的，发送语音消息功能
+    // 启用后，请联系官方获取对讲插件
+    static ENABLE_PTT = false;
+
+    // 是否启用音视频通话功能
+    static ENABLE_VOIP = true;
+
     static SDK_PLATFORM_WINDOWS = 3;
     static SDK_PLATFORM_OSX = 4;
     static SDK_PLATFORM_WEB = 5;
