@@ -306,14 +306,6 @@ export class AVEngineKit {
     }
 
     /**
-     * 切换摄像头
-     * @param {string} callId 通话 id
-     */
-    switchCamera(callId) {
-        avengineKitPlugin.switchCamera(callId);
-    }
-
-    /**
      * 邀请新的通话成员
      * @param {string} callId 通话 id
      * @param {[string]} userIds 新参与者 id 列表
@@ -406,6 +398,15 @@ export class AVEngineKit {
     minimize(callId, focusVideoUser = '') {
         avengineKitPlugin.minimize(callId, focusVideoUser);
         this.sessionCallback = null;
+    }
+
+    /**
+     * 打开或关闭扬声器
+     * @param {string} callId 通话 id
+     * @param {boolean} speakerOn 是否打开扬声器
+     */
+    setSpeakerOn(callId, speakerOn){
+        avengineKitPlugin.setSpeakerOn(callId, speakerOn);
     }
 
     /**
