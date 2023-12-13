@@ -7,16 +7,16 @@
                         <img class="avatar" :src="participant.portrait" alt="">
                         <p class="single-line name"> {{ participant._displayName }}</p>
                         <div class="action-container">
-                            <button @click="conferenceManager.approveUnmute(participant.uid, true)">同意</button>
-                            <button @click="conferenceManager.approveUnmute(participant.uid, false)">拒绝</button>
+                            <button size="mini" @click="conferenceManager.approveUnmute(participant.uid, true,  true)">同意</button>
+                            <button size="mini" @click="conferenceManager.approveUnmute(participant.uid, true, false)">拒绝</button>
                         </div>
                     </div>
                 </li>
             </ul>
         </div>
         <div class="action-all-container">
-            <button @click="conferenceManager.approveAllUnmute(true)">全部同意</button>
-            <button @click="conferenceManager.approveAllUnmute(false)">全部拒绝</button>
+            <button size="mini" @click="conferenceManager.approveAllUnmute(true, true)">全部同意</button>
+            <button size="mini" @click="conferenceManager.approveAllUnmute(true, false)">全部拒绝</button>
         </div>
     </div>
 
@@ -27,7 +27,7 @@ import conferenceManager from "./conferenceManager";
 import store from "../../../store";
 
 export default {
-    name: "ConferenceApplyUnmuteListView",
+    name: "ConferenceApplyUnmuteAudioListView",
     data() {
         return {
             conferenceManager: conferenceManager,
@@ -36,7 +36,7 @@ export default {
 
     computed: {
         applyUnmuteParticipantList() {
-            let applyList = this.conferenceManager.applyingUnmuteMembers;
+            let applyList = this.conferenceManager.applyingUnmuteAudioMembers;
             let users = store.getUserInfos(applyList)
             console.log('applyList', applyList, users);
             return users;
@@ -57,14 +57,12 @@ export default {
 
 .apply-participant-list-container {
     position: relative;
-    display: flex;
     flex-direction: column;
     flex: 1 1 auto;
 }
 
 .apply-participant-list-container ul {
-    flex: 1 1 auto;
-    height: 0;
+    height: 100%;
     overflow: auto;
 }
 
@@ -87,6 +85,10 @@ export default {
     flex: 1;
 }
 
+.participant-user .action-container {
+    width: 150px;
+    display: flex;
+}
 
 .participant-user .action-container button {
     padding: 5px 10px;
@@ -95,16 +97,11 @@ export default {
 
 .action-all-container {
     width: 100%;
+    height: 50px;
     display: flex;
     padding: 5px 10px;
     background: white;
     justify-content: center;
-}
-
-.action-all-container button {
-    margin-right: 10px;
-    width: 45%;
-    padding: 5px 0;
 }
 
 </style>
