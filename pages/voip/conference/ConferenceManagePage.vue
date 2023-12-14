@@ -74,6 +74,7 @@ export default {
             showVideoApplyList: false,
             showHandUpList: false,
             session: avengineKit.currentCallSession(),
+            conferenceParticipantUpdateTime: new Date().getTime(),
         }
     },
     components: {
@@ -82,7 +83,17 @@ export default {
         ConferenceApplyUnmuteVideoListView,
         ConferenceParticipantListView,
     },
+    mounted() {
+        wfc.eventEmitter.on('conferenceParticipantUpdated', this.onConferenceParticipantUpdated)
+    },
+    beforeDestroy() {
+        wfc.eventEmitter.removeListener('conferenceParticipantUpdated', this.onConferenceParticipantUpdated);
+    },
     methods: {
+        onConferenceParticipantUpdated() {
+            // trigger participants re-computed
+            this.conferenceParticipantUpdateTime = new Date().getTime();
+        },
         profile2UserInfo(profile) {
             let userInfo = wfc.getUserInfo(profile.userId);
             userInfo._isAudience = profile.audience;
@@ -110,10 +121,10 @@ export default {
             return desc;
         },
         participants() {
-            // TODO 需要监听 mute 状态变化等
             let participantUserInfos = [];
             let selfProfile = avengineKit.getMyProfile(this.session.callId);
             let selfUserInfo = this.profile2UserInfo(selfProfile)
+            selfUserInfo.__conferenceParticipantUpdateTime = this.conferenceParticipantUpdateTime;
             console.log('selfProfile', selfProfile);
             participantUserInfos.push(selfUserInfo);
             let participantProfiles = avengineKit.getParticipantProfiles(this.session.callId);

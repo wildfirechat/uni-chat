@@ -1036,6 +1036,8 @@ export default {
                 }
                 this.audioOnly = audioOnly;
                 console.log('audioOly ', audioOnly)
+
+                this.wfc.eventEmitter.emit('conferenceParticipantUpdated', '')
             }
         },
     },
