@@ -437,6 +437,7 @@ class ConferenceManager {
         if (requestUnmute && this.vueInstance.selfUserInfo._isAudience) {
             this.conferencePage.alert({
                 showIcon: false,
+                title: audio ? '主持人关闭了全员静音，是否要打开麦克风' : '管理员取消了全体成员关闭摄像头，是否打开摄像头',
                 content: audio ? '主持人关闭了全员静音，是否要打开麦克风' : '管理员取消了全体成员关闭摄像头，是否打开摄像头',
                 confirmText: '打开',
                 onClose: () => {
@@ -466,8 +467,9 @@ class ConferenceManager {
      */
     onRequestMute(audio, mute) {
         if (!mute) {
-            this.vueInstance.alert({
+            this.conferencePage.alert({
                 showIcon: false,
+                title: audio ? '主持人邀请你发言' : '主持人邀请你打开摄像头',
                 content: audio ? '主持人邀请你发言' : '主持人邀请你打开摄像头',
                 confirmText: '接受',
                 onClose: () => {
