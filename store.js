@@ -321,10 +321,14 @@ let store = {
                     return;
                 }
                 let msgIndex = conversationState.currentConversationMessageList.findIndex(m => {
-                    return m.messageId === msg.messageId || eq(m.messageUid, msg.messageUid);
+                    if (!eq(0, msg.messageUid)) {
+                        return eq(m.messageUid, msg.messageUid);
+                    } else {
+                        return m.messageId === msg.messageId;
+                    }
                 });
                 if (msgIndex > -1) {
-                    console.log('msg duplicate')
+                    console.log('msg duplicate', msg.messageId, msg.messageUid)
                     return;
                 }
 
