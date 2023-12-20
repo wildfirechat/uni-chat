@@ -138,6 +138,7 @@
                 showWebrtcTip: false,
 
                 ringAudio: null,
+                setupVideoViewsTimer: 0,
             }
         },
         onLoad(option) {
@@ -230,6 +231,7 @@
                 }
 
                 sessionCallback.didVideoMuted = (userId, muted) => {
+                    console.log('didVideoMuted', userId, muted)
                     if (userId === this.wfc.getUserId()) {
                         this.selfUserInfo._isVideoMuted = muted;
                     } else {
@@ -346,14 +348,37 @@
             },
 
             setupVideoViews() {
+                console.log('setupVideoViews')
                 if (!this.audioOnly) {
                     this.$nextTick(() => {
-                        avengineKit.setLocalVideoView(this.session.callId, this.$refs.localVideo.ref)
-                        this.participantUserInfos.forEach(u => {
-                            if (!u._isVideoMuted) {
-                                avengineKit.setRemoteVideoView(this.session.callId, u.uid, this.$refs['remoteVideo-' + u.uid][0].ref, false)
+                        let videoViewsReady = true;
+                        if (!this.selfUserInfo._isVideoMuted && !this.$refs.localVideo){
+                            videoViewsReady = false;
+                        }
+                        for (const u of this.participantUserInfos) {
+                            if (!u._isVideoMuted && !this.$refs['remoteVideo-' + u.uid][0]) {
+                                videoViewsReady = false;
+                                break;
                             }
-                        });
+                        }
+
+                        if (videoViewsReady) {
+                            console.log('videoViews are ready, setup')
+                            if (this.setupVideoViewsTimer){
+                                clearInterval(this.setupVideoViewsTimer);
+                                this.setupVideoViewsTimer = 0;
+                            }
+                            avengineKit.setLocalVideoView(this.session.callId, this.$refs.localVideo.ref)
+                            this.participantUserInfos.forEach(u => {
+                                if (!u._isVideoMuted) {
+                                    avengineKit.setRemoteVideoView(this.session.callId, u.uid, this.$refs['remoteVideo-' + u.uid][0].ref, false)
+                                }
+                            });
+                        } else {
+                            console.log('videoViews are not ready, setTimeout')
+                            clearTimeout(this.setupVideoViewsTimer);
+                            this.setupVideoViewsTimer = setTimeout(this.setupVideoViews, 100);
+                        }
                     });
                 }
             },
@@ -488,7 +513,9 @@
                 }
                 return {
                     width: width,
-                    height: height
+                    maxWidth: width,
+                    height: height,
+                    maxHeight: height
                 }
             }
         },

@@ -52,6 +52,7 @@
         data() {
             return {
                 status: CallState.STATUS_CONNECTING,
+                setupVideoViewTimer: 0,
             }
         },
         created() {
@@ -90,12 +91,27 @@
             // },
 
             setupVideoView() {
-                if (!this.participant._isVideoMuted) {
-                    if (this.participant.uid === this.selfUserInfo.uid) {
-                        avengineKit.setLocalVideoView(this.session.callId, this.$refs.remoteVideoView.ref)
-                    } else {
-                        avengineKit.setRemoteVideoView(this.session.callId, this.participant.uid, this.$refs.remoteVideoView.ref, false)
+                let videoViewReady = false;
+                if (!this.participant._isVideoMuted && this.$refs.remoteVideoView) {
+                    videoViewReady = true;
+                }
+                if (videoViewReady) {
+                    console.log('videoViews are ready, setup')
+                    if (this.setupVideoViewTimer) {
+                        clearTimeout(this.setupVideoViewTimer);
+                        this.setupVideoViewTimer = 0;
                     }
+                    if (!this.participant._isVideoMuted) {
+                        if (this.participant.uid === this.selfUserInfo.uid) {
+                            avengineKit.setLocalVideoView(this.session.callId, this.$refs.remoteVideoView.ref)
+                        } else {
+                            avengineKit.setRemoteVideoView(this.session.callId, this.participant.uid, this.$refs.remoteVideoView.ref, false)
+                        }
+                    }
+                }else {
+                    console.log('videoViews are not ready, setTimeout')
+                    clearTimeout(this.setupVideoViewTimer);
+                    this.setupVideoViewTimer = setTimeout(this.setupVideoView, 100);
                 }
             },
 
