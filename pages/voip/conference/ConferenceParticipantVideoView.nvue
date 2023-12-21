@@ -74,6 +74,13 @@
         mounted() {
             this.setupVideoView();
         },
+        updated() {
+            // re-render
+            console.log('view updated, re-setupVideoView')
+            this.$nextTick(() => {
+                this.setupVideoView();
+            })
+        },
         methods: {
             // onDbClickVideo() {
             //     if (conferenceManager.isOwner()) {
@@ -161,7 +168,7 @@
                 if (this.currentPageParticipants.length === 1) {
                     width = '750rpx';
                     height = '400rpx'
-                } else if (this.currentPageParticipants.length <= 2) {
+                } else if (this.currentPageParticipants.length <= 4) {
                     width = '375rpx';
                     height = '375rpx'
                 } else {

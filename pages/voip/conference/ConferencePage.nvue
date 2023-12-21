@@ -452,7 +452,7 @@ export default {
                     }
                     console.log('conference', 'didMuteStateChanged', p, profile, profile.videoMuted, profile.audioMuted);
                     this.participantUserInfos.forEach(u => {
-                        if (u.uid === p && u._isScreenSharing === false) {
+                        if (u.uid === p && !u._isScreenSharing) {
                             u._isVideoMuted = profile.videoMuted;
                             u._isAudioMuted = profile.audioMuted;
                             if (this.speakingVideoParticipant && this.speakingVideoParticipant.uid === u.uid) {
