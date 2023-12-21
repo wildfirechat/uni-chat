@@ -245,7 +245,7 @@ export default {
             userInfo._isVideoMuted = profile.videoMuted;
             userInfo._isAudioMuted = profile.audioMuted;
             userInfo._volume = 0;
-            userInfo._isScreenSharing = profile.screenSharing;
+            userInfo._isScreenSharing = !!profile.screenSharing;
             return userInfo;
         },
 
