@@ -258,7 +258,6 @@ export default {
             if (session) {
                 this.session = session;
 
-                this.setupParticipants();
                 this.setupSessionCallback();
             } else {
                 console.log('joinConference failed, session is null')
@@ -276,6 +275,9 @@ export default {
 
             sessionCallback.didChangeState = (state) => {
                 console.log('didChangeState', state)
+                if (this.status === state){
+                    return;
+                }
                 this.status = state;
                 if (state === CallState.STATUS_CONNECTED) {
                     // 比如没有摄像头，但发起视频通话时，会自动 muteVideo
@@ -743,6 +745,7 @@ export default {
         },
 
         setupParticipants() {
+            this.participantUserInfos.length = 0;
             let selfProfile = avengineKit.getMyProfile(this.session.callId);
             let selfUserInfo = this.profile2UserInfo(selfProfile)
             console.log('selfProfile', selfProfile);
@@ -758,6 +761,7 @@ export default {
         },
 
         onVoipConnected() {
+            this.setupParticipants();
             if (!this.timer) {
                 if (!this.startTimestamp) {
                     this.startTimestamp = new Date().getTime();

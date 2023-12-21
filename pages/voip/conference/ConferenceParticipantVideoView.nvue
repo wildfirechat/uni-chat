@@ -56,7 +56,7 @@
             }
         },
         created() {
-            console.log('videoView created', this.participant.uid);
+            console.log('videoView created', this.participant);
             if (this.selfUserId !== this.participant.uid) {
                 if (!this.participant._isVideoMuted) {
                     avengineKit.setParticipantVideoType(this.session.callId, this.participant.uid, this.participant._isScreenSharing, VideoType.BIG_STREAM);
@@ -91,8 +91,12 @@
             // },
 
             setupVideoView() {
+                if (this.participant._isAudience || this.participant._isVideoMuted){
+                    return;
+                }
+
                 let videoViewReady = false;
-                if (!this.participant._isVideoMuted && this.$refs.remoteVideoView) {
+                if (this.$refs.remoteVideoView) {
                     videoViewReady = true;
                 }
                 if (videoViewReady) {
