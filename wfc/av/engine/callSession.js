@@ -29,6 +29,10 @@ export default class CallSession {
 	advanced;
 	//是否是多人通话
 	multiCall;
+    // 是否关闭摄像头
+    videoMuted;
+    // 是否关闭麦克风
+    audioMuted;
 
 	//call状态
 	static kWFAVEngineStateIdle = 0;
