@@ -97,10 +97,10 @@
             </div>
 
             <div class="voip-title-container">
-                <image @click="minimize" style="width: 30px; height: 30px" src='/static/image/av/av_minimize.png'/>
                 <div class="title">
                     <text class="desc" v-if="callState === 4">{{ duration }}</text>
                 </div>
+                <image @click="minimize" style="width: 30px; height: 30px" src='/static/image/av/av_minimize.png'/>
                 <!--通话建立成功之后，才允许邀请新参与者-->
                 <image v-if="callState === 4" @click="invite" style="width: 30px; height: 30px" src="/static/image/av/add.png"/>
             </div>
@@ -481,7 +481,10 @@
 
         beforeDestroy() {
             if (this.session) {
-                this.minimize();
+                let granted = getApp().avengineKit.checkOverlayPermission();
+                if (granted){
+                    this.minimize();
+                }
             }
             if (this.broadcastMultiCallOngoingTimer) {
                 clearInterval(this.broadcastMultiCallOngoingTimer);

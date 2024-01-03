@@ -109,12 +109,10 @@
                 </div>
             </div>
             <div class="voip-title-container">
-                <image @click="minimize" style="width: 30px; height: 30px" src='/static/image/av/av_minimize.png'/>
                 <div class="title">
-                    <text class="desc" v-if="callState === 4">{{ duration }}</text>
+                    <text class="desc" v-if="true || callState === 4">{{ duration }}</text>
                 </div>
-                <!--通话建立成功之后，才允许邀请新参与者-->
-                <image v-if="callState === 4 && false" @click="invite" style="width: 30px; height: 30px" src="/static/image/av/add.png"/>
+                <image @click="minimize" style="width: 30px; height: 30px" src='/static/image/av/av_minimize.png'/>
             </div>
         </div>
         <uni-popup ref="alertDialog" type="dialog">
@@ -275,10 +273,10 @@ export default {
 
             sessionCallback.didChangeState = (state) => {
                 console.log('didChangeState', state)
-                if (this.status === state){
+                if (this.callState === state){
                     return;
                 }
-                this.status = state;
+                this.callState = state;
                 if (state === CallState.STATUS_CONNECTED) {
                     // 比如没有摄像头，但发起视频通话时，会自动 muteVideo
                     this.onVoipConnected();
@@ -1058,7 +1056,10 @@ export default {
 
     beforeDestroy() {
         if (this.session) {
+            let granted = getApp().avengineKit.checkOverlayPermission();
+            if (granted){
             this.minimize();
+            }
         } else {
             this.conferenceManager.destroy();
         }

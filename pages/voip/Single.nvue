@@ -97,10 +97,10 @@
                 </div>
             </div>
             <div class="voip-title-container">
-                <image @click="minimize" style="width: 30px; height: 30px" src='/static/image/av/av_minimize.png'/>
                 <div class="title">
                     <text class="desc" v-if="callState === 4">{{ duration }}</text>
                 </div>
+                <image @click="minimize" style="width: 30px; height: 30px" src='/static/image/av/av_minimize.png'/>
             </div>
         </div>
     </div>
@@ -391,7 +391,10 @@
         },
         beforeDestroy() {
             if (this.session) {
-                this.minimize();
+                let granted = getApp().avengineKit.checkOverlayPermission();
+                if (granted){
+                    this.minimize();
+                }
             }
         },
 
