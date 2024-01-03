@@ -39,6 +39,10 @@ class ConferenceManager {
     }
 
     destroy() {
+        if (!this.vueInstance){
+            return
+        }
+        console.log('conferenceManager destroy')
         this.vueInstance.wfc.eventEmitter.removeListener(EventType.ReceiveMessage, this.onReceiveMessage);
         if (this.conferenceInfo) {
             this.vueInstance.wfc.quitChatroom(this.conferenceInfo.conferenceId);

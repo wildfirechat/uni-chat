@@ -389,13 +389,18 @@
                 this.onVoipConnected();
             }
         },
-        beforeDestroy() {
-            if (this.session) {
-                let granted = getApp().avengineKit.checkOverlayPermission();
-                if (granted){
-                    this.minimize();
-                }
+
+        onBackPress(event) {
+            console.log('conferencePage, onBackPress', event)
+            if (event.from === 'navigateBack') {
+                // minimize 触发的返回，不阻止
+                return false;
             }
+            // 阻止返回
+            return true;
+        },
+
+        beforeDestroy() {
         },
 
         computed: {

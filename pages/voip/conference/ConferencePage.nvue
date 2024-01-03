@@ -273,7 +273,7 @@ export default {
 
             sessionCallback.didChangeState = (state) => {
                 console.log('didChangeState', state)
-                if (this.callState === state){
+                if (this.callState === state) {
                     return;
                 }
                 this.callState = state;
@@ -358,6 +358,7 @@ export default {
                     let obj = {reason: reason, session: this.session};
                     // localStorageEmitter.send(LocalStorageIpcEventType.joinConferenceFailed, obj);
                 }
+                this.conferenceManager.destroy();
                 this.session = null;
             }
 
@@ -514,6 +515,7 @@ export default {
             avengineKit.leaveConference(this.session.callId, false);
             this.session = null;
             // this.conferenceManager.addHistory(this.conferenceManager.conferenceInfo, new Date().getTime() - this.conferenceManager.conferenceInfo.startTime * 1000)
+            this.conferenceManager.destroy()
             uni.navigateBack({
                 delta: 1,
                 fail: err => {
@@ -1046,24 +1048,24 @@ export default {
 
     directives: {},
 
-    // onBackPress(){
-    //     if (this.session) {
-    //         this.minimize();
-    //     } else {
-    //         this.conferenceManager.destroy();
-    //     }
-    // },
+    onBackPress(event) {
+        console.log('conferencePage, onBackPress', event)
+        if (event.from === 'navigateBack') {
+            // minimize 触发的返回，不阻止
+            return false;
+        }
+        // 阻止返回
+        return true;
+    },
 
     beforeDestroy() {
-        if (this.session) {
-            let granted = getApp().avengineKit.checkOverlayPermission();
-            if (granted){
-            this.minimize();
-            }
-        } else {
-            this.conferenceManager.destroy();
-        }
+        console.log('conferencePage, beforeDestroy')
     },
+
+    onShow() {
+        console.log('conferencePage, onShow')
+    },
+
     destroyed() {
         // reset
         clearInterval(this.refreshUserInfoInternal);
