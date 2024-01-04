@@ -188,6 +188,7 @@ export default {
             if (this.session.connectedTime) {
                 this.startTimestamp = this.session.connectedTime;
             }
+            this.conferenceInfo = this.conferenceManager.conferenceInfo;
         } else {
             // why?
             // setConferenceInfo 里面会用到 wfc，但需要等 mounted 之后，wfc 才生效
