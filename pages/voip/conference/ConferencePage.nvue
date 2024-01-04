@@ -412,6 +412,10 @@ export default {
             };
 
             sessionCallback.didReportAudioVolume = (userId, volume) => {
+                if (volume < 100) {
+                    return;
+                }
+                console.log('didReportAudioVolume', userId, volume)
                 let userInfo;
                 if (userId === this.selfUserInfo.uid) {
                     this.selfUserInfo._volume = volume;

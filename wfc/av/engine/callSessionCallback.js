@@ -161,6 +161,15 @@ export default class CallSessionCallback {
     }
 
     /**
+     * 音量回调
+     * @param {string} userId 用户 id
+     * @param {number} volume 音量
+     */
+    didReportAudioVolume(userId, volume) {
+
+    }
+
+    /**
      * 会议时有效
      * 听众和互动者角色切换回调
      * @param {boolean} audience 是否是切换为听众
