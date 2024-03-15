@@ -51,7 +51,7 @@ export default class Config {
     static SDK_PLATFORM_WX = 6;
 
     // uni-app 默认录音格式为mp3
-    // 如果只有 uni-app 端，没有Android、iOS 或者 PC 端时，录音可以直接播放，可将下面的AMR_TO_MP3_SERVER_ADDRESS置为""
+    // 如果只有 uni-app 端，没有Android、iOS、Web、小程序 或者 PC 端时，录音可以直接播放，可将下面的AMR_TO_MP3_SERVER_ADDRESS置为""
 
     // html5 audio 标签不能播放amr格式的音频，需要将amr格式转换为mp3格式
     // 本服务传入amr音频文件的地址，将音频文件转换为mp3格式，并以application/octet-stream的格式返回
