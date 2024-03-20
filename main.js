@@ -1,13 +1,17 @@
 import {createSSRApp} from 'vue'
 import App from './App'
 import store from "./store";
-// import VueI18n from 'vue-i18n'
+import {createI18n} from 'vue-i18n'
 import picker from "./common/picker";
 import wfc from "./wfc/client/wfc";
 import Config from "./config";
 import forward from "./common/forward";
 import pttClient from "./wfc/ptt/pttClient";
 import avengineKit from "./wfc/av/engine/avengineKit";
+import {getItem} from "./pages/util/storageHelper";
+import zhCNLang from  './assets/lang/zh-CN.json'
+import zhTWLang from  './assets/lang/zh-TW.json'
+import enLang from  './assets/lang/en.json'
 
 const app = createSSRApp(App)
 
@@ -15,6 +19,18 @@ const app = createSSRApp(App)
 app.use(picker)
 app.use(forward)
 
+
+const i18n = createI18n({
+    // 使用localStorage存储语言状态是为了保证页面刷新之后还是保持原来选择的语言状态
+    locale: getItem('lang') ? getItem('lang') : 'zh-CN', // 定义默认语言为中文
+    allowComposition: true,
+    messages: {
+        'zh-CN': zhCNLang,
+        'zh-TW': zhTWLang,
+        'en': enLang
+    }
+})
+app.use(i18n)
 
 /**
  *

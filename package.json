@@ -16,7 +16,7 @@
     "twemoji": "^14.0.2",
     "universal-emoji-parser": "^0.5.28",
     "vue": "^3.2.8",
-    "vue-i18n": "^9.1.9"
+    "vue-i18n": "^9.9.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.6.0",
