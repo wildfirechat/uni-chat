@@ -36,7 +36,7 @@ export default {
       }
     }
     document.addEventListener('keyup', listener)
-    this.$once('hook:beforeDestroy', () => {
+    this.$once('hook:beforeUnmount', () => {
       document.removeEventListener('keyup', listener)
     })
   },

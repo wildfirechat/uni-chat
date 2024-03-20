@@ -63,8 +63,8 @@
                 }
             }
         },
-        destroyed() {
-            console.log('videoView destroyed', this.participant.uid);
+        unmounted() {
+            console.log('videoView unmounted', this.participant.uid);
             if (this.selfUserInfo.uid !== this.participant.uid) {
                 if (!this.participant._isVideoMuted) {
                     avengineKit.setParticipantVideoType(this.session.callId, this.participant.uid, this.participant._isScreenSharing, VideoType.NONE);
@@ -261,10 +261,6 @@
         align-items: center;
         text-align: center;
     }
-
-    //.info-container * {
-    //    margin: 0 5px;
-    //}
 
     .info-container .name {
         height: 20px;

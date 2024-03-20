@@ -6,7 +6,7 @@
                  v-bind:class="{checked:sharedPickState.messages.indexOf(message) >= 0}">
                 <checkbox id="checkbox" v-if="sharedConversationState.enableMessageMultiSelection" type="checkbox"
                        class="checkbox"
-                       :value="message" placeholder="" v-model="sharedPickState.messages"/>
+                       :value="message" placeholder="" value="sharedPickState.messages"/>
                 <RichNotificationMessageContentView :message="message"
                                                     v-if="message.messageContent.type === 12"
                                                     @contextmenu.prevent.native="openMessageContextMenu($event, message)"
@@ -54,7 +54,7 @@ export default {
     mounted() {
         this.$parent.$on('contextMenuClosed', this.onContextMenuClosed);
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.$parent.$off('contextMenuClosed', this.onContextMenuClosed);
     },
 }

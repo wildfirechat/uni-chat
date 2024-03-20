@@ -69,10 +69,6 @@ export default {
     background-color: #fafafa;
 }
 
-//.organization-item.active {
-//    background-color: #d6d6d6;
-//}
-
 .organization-item span {
     margin-left: 10px;
 }

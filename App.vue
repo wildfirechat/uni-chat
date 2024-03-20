@@ -82,7 +82,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="css">
 /*每个页面公共css */
 @import './global.css';
 @import './wfc.css';
@@ -95,7 +95,7 @@ export default {
 :root {
     --uni-tabbar-height: 50px;
 
-//app-plus header 和 tabbar 是原生的
+    /*app-plus header 和 tabbar 是原生的*/
 
     /* #ifdef APP-PLUS */
     --uni-page-header-height: 0;

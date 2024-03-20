@@ -92,7 +92,7 @@ export default {
         wfc.eventEmitter.on(EventType.FriendRequestUpdate, this.onFriendRequestUpdate);
     },
 
-    beforeDestroy() {
+    beforeUnmount() {
         this.isActive = false;
         wfc.eventEmitter.removeListener(EventType.FriendRequestUpdate, this.onFriendRequestUpdate);
     }
@@ -127,11 +127,6 @@ export default {
     bottom: 0;
     border-bottom: 1px solid #f3f3f3; /* 定义边框样式 */
 }
-
-//
-//.new-friend-item-container:hover {
-//    background-color: #d6d6d6;
-//}
 
 .new-friend-item:active {
     background-color: #d6d6d6;

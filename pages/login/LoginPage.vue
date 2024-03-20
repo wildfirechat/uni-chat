@@ -5,7 +5,7 @@
             <view>请输入手机号</view>
             <view>
                 <view class="mobile-input-container">
-                    <input class="input" @input="bindPhoneInput" type="number" placeholder="手机号"></input>
+                    <input class="input" @input="bindPhoneInput" type="number" placeholder="手机号"/>
                 </view>
             </view>
         </view>
@@ -13,7 +13,7 @@
         <view class="auth-code-container">
             <view>请输入验证码</view>
             <view class="auth-code-input-container">
-                <input @input="bindCodeInput" type="number" placeholder="验证码"></input>
+                <input @input="bindCodeInput" type="number" placeholder="验证码"/>
                 <button size="mini" :disabled="phone.length !== 11" @tap="bindAuthCodeTap">获取验证码</button>
             </view>
         </view>

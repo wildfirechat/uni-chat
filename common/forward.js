@@ -1,8 +1,8 @@
 import store from "../store";
 
 export default {
-    install(Vue) {
-        Vue.prototype.$forward = function (options) {
+    install(app, options) {
+        app.config.globalProperties.$forward = function (options) {
             uni.navigateTo({
                 url: '/pages/conversation/message/forward/ForwardMessagePage',
                 events: {

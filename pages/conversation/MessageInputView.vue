@@ -159,7 +159,7 @@ export default {
         this.restoreDraft();
     },
 
-    beforeDestroy() {
+    beforeUnmount() {
         this.storeDraft(this.conversationInfo)
     },
 

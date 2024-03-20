@@ -1,8 +1,8 @@
 import store from "../store";
 
 export default {
-    install(Vue) {
-        Vue.prototype.$pickUsers = function (options) {
+    install(app, options) {
+        app.config.globalProperties.$pickUsers = function (options) {
             uni.navigateTo({
                 url: '/pages/pick/PickUserPage',
                 events: {
@@ -23,7 +23,7 @@ export default {
             })
         };
 
-        Vue.prototype.$pickUser = function (options) {
+        app.config.globalProperties.$pickUser = function (options) {
             uni.navigateTo({
                 url: '/pages/pick/PickSingleUserPage',
                 events: {

@@ -489,7 +489,7 @@
             return true;
         },
 
-        beforeDestroy() {
+        beforeUnmount() {
             if (this.broadcastMultiCallOngoingTimer) {
                 clearInterval(this.broadcastMultiCallOngoingTimer);
             }

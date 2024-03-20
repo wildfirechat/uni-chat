@@ -14,13 +14,13 @@
         <checkbox-group @change="notAudience = !notAudience">
             <label>
                 参与者开启摄像头、麦克风入会
-                <checkbox v-model="notAudience" :checked="notAudience"/>
+                <checkbox value="notAudience" :checked="notAudience"/>
             </label>
         </checkbox-group>
         <checkbox-group @change="allowTurnOnMic = !allowTurnOnMic">
             <label>
                 允许参与者自主开启摄像头和麦克风
-                <checkbox :disabled="notAudience" v-model="allowTurnOnMic" :checked="allowTurnOnMic"/>
+                <checkbox :disabled="notAudience" value="allowTurnOnMic" :checked="allowTurnOnMic"/>
             </label>
         </checkbox-group>
         <div>
@@ -36,7 +36,7 @@
             <checkbox-group @change="advance = !advance">
                 <label>
                     大规模会议
-                    <checkbox v-model="advance"/>
+                    <checkbox value="advance"/>
                 </label>
             </checkbox-group>
             <p class="advance_desc">参会人数大于50人</p>

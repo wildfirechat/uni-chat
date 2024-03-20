@@ -204,7 +204,7 @@
 			fixSize()
 			// #ifdef H5
 			// window.addEventListener('resize', fixSize)
-			// this.$once('hook:beforeDestroy', () => {
+			// this.$once('hook:beforeUnmount', () => {
 			// 	window.removeEventListener('resize', fixSize)
 			// })
 			// #endif

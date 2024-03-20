@@ -86,7 +86,7 @@ export default {
     mounted() {
         wfc.eventEmitter.on('conferenceParticipantUpdated', this.onConferenceParticipantUpdated)
     },
-    beforeDestroy() {
+    beforeUnmount() {
         wfc.eventEmitter.removeListener('conferenceParticipantUpdated', this.onConferenceParticipantUpdated);
     },
     methods: {

@@ -52,7 +52,8 @@
                     "NSCameraUsageDescription" : "视频通话",
                     "NSMicrophoneUsageDescription" : "音频通话及语音消息",
                     "NSPhotoLibraryUsageDescription" : "发送图片消息"
-                }
+                },
+                "dSYMs" : false
             },
             /* SDK配置 */
             "sdkConfigs" : {
@@ -70,11 +71,11 @@
         "nativePlugins" : {
             "wf-uni-wfc-client" : {
                 "__plugin_info__" : {
-                    "name" : "【官方】野火即时通讯IM原生插件",
+                    "name" : "【官方】野火即时通讯IM插件",
                     "description" : "野火官方发布移动端即时通讯插件，包括Android和iOS平台，拥有完善的Demo，支持单人、群组和聊天室会话，支持文字、语音、图片等常见消息，服务器和移动端免费使用，让您一步拥有完美的即时通讯软件。",
                     "platforms" : "Android,iOS",
                     "url" : "https://ext.dcloud.net.cn/plugin?id=7895",
-                    "android_package_name" : "",
+                    "android_package_name" : "cn.wildfirechat.chat.uni",
                     "ios_bundle_id" : "",
                     "isCloud" : true,
                     "bought" : 1,
@@ -119,5 +120,6 @@
     },
     "uniStatistics" : {
         "enable" : false
-    }
+    },
+    "vueVersion" : "3"
 }

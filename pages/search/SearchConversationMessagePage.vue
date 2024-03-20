@@ -33,7 +33,7 @@ export default {
         this.search();
     },
 
-    beforeDestroy() {
+    beforeUnmount() {
         store.state.search.conversation = null;
     },
 

@@ -1,11 +1,10 @@
 import ConnectionStatus from "./wfc/client/connectionStatus";
-import Vue from 'vue'
 import wfc from "./wfc/client/wfc";
 import EventType from "./wfc/client/wfcEvent";
 import ConversationType from "./wfc/model/conversationType";
 import {eq, gt, numberValue, stringValue} from "./wfc/util/longUtil";
 import helper from "./pages/util/helper";
-import convert from './vendor/pinyin'
+import pinyin from 'pinyin/esm/pinyin'
 import GroupType from "./wfc/model/groupType";
 // import {imageThumbnail, videoDuration, videoThumbnail} from "./ui/util/imageUtil";
 import MessageContentMediaType from "./wfc/messages/messageContentMediaType";
@@ -15,7 +14,7 @@ import Message from "./wfc/messages/message";
 import ImageMessageContent from "./wfc/messages/imageMessageContent";
 import VideoMessageContent from "./wfc/messages/videoMessageContent";
 import FileMessageContent from "./wfc/messages/fileMessageContent";
-import ForwardType from "@/pages/conversation/message/forward/ForwardType";
+import ForwardType from "./pages/conversation/message/forward/ForwardType";
 import TextMessageContent from "./wfc/messages/textMessageContent";
 import SearchType from "./wfc/model/searchType";
 import Config from "./config";
@@ -43,6 +42,7 @@ import CallStartMessageContent from "./wfc/av/messages/callStartMessageContent";
  * _开头的函数，是内部函数
  * 外部不直接更新字段，而是通过提供各种action方法更新
  */
+
 let store = {
     debug: true,
     state: {
@@ -1352,10 +1352,7 @@ let store = {
     _patchCurrentConversationOnlineStatus() {
         let convInfo = conversationState.currentConversationInfo;
         if (convInfo && convInfo.conversation.type === ConversationType.Single) {
-            // 在 将 object 和 ui 绑定之前， 向 object 中新增的属性是 reactive 的，但绑定之后，才新增的属性，不是 reactive 的，
-            // 故需要通过下面这种方法，让其成为 reactive 的属性
-            // conversationState.currentConversationInfo.conversation._targetOnlineStateDesc = userOnlineStatus.desc();
-            Vue.set(conversationState.currentConversationInfo.conversation, '_targetOnlineStateDesc', this.getUserOnlineState(convInfo.conversation.target))
+            conversationState.currentConversationInfo.conversation._targetOnlineStateDesc =  this.getUserOnlineState(convInfo.conversation.target);
         } else {
             //TODO
         }
@@ -1386,14 +1383,14 @@ let store = {
             } else {
                 u._displayName = wfc.getUserDisplayNameEx(u);
             }
-            u._pinyin = convert(u._displayName, {style: 0}).join('').trim().toLowerCase();
+            u._pinyin = pinyin(u._displayName, {style: 0}).join('').trim().toLowerCase();
             let firstLetter = u._pinyin[0];
             if (firstLetter >= 'a' && firstLetter <= 'z') {
                 u.__sortPinyin = 'a' + u._pinyin;
             } else {
                 u.__sortPinyin = 'z' + u._pinyin;
             }
-            u._firstLetters = convert(u._displayName, {style: 4}).join('').trim().toLowerCase();
+            u._firstLetters = pinyin(u._displayName, {style: 4}).join('').trim().toLowerCase();
             return u;
         });
         if (compareFn) {
@@ -1557,7 +1554,7 @@ let store = {
         if (!users || !filter || !filter.trim()) {
             return users;
         }
-        let queryPinyin = convert(filter, {style: 0}).join('').trim().toLowerCase();
+        let queryPinyin = pinyin(filter, {style: 0}).join('').trim().toLowerCase();
         let result = users.filter(u => {
             return u._displayName.indexOf(filter) > -1 || u._displayName.indexOf(queryPinyin) > -1
                 || u._pinyin.indexOf(filter) > -1 || u._pinyin.indexOf(queryPinyin) > -1
@@ -1570,9 +1567,9 @@ let store = {
     // 目前只搜索群名称
     filterFavGroup(query) {
         console.log('to search group', contactState.favGroupList)
-        let queryPinyin = convert(query, {style: 0}).join('').trim().toLowerCase();
+        let queryPinyin = pinyin(query, {style: 0}).join('').trim().toLowerCase();
         let result = contactState.favGroupList.filter(g => {
-            let groupNamePinyin = convert(g.name, {style: 0}).join('').trim().toLowerCase();
+            let groupNamePinyin = pinyin(g.name, {style: 0}).join('').trim().toLowerCase();
             return g.name.indexOf(query) > -1 || g.name.indexOf(queryPinyin) > -1
                 || groupNamePinyin.indexOf(query) > -1 || groupNamePinyin.indexOf(queryPinyin) > -1
         });
@@ -1584,8 +1581,8 @@ let store = {
     // TODO
     filterConversation(query) {
         return conversationState.conversationInfoList.filter(info => {
-            let displayNamePinyin = convert(info.conversation._target._displayName, {style: 0}).join('').trim().toLowerCase();
-            let firstLetters = convert(info.conversation._target._displayName, {style: 4}).join('').trim().toLowerCase();
+            let displayNamePinyin = pinyin(info.conversation._target._displayName, {style: 0}).join('').trim().toLowerCase();
+            let firstLetters = pinyin(info.conversation._target._displayName, {style: 4}).join('').trim().toLowerCase();
             return info.conversation._target._displayName.indexOf(query) > -1 || displayNamePinyin.indexOf(query.toLowerCase()) > -1 || firstLetters.indexOf(query) > -1
         })
     },
@@ -1594,8 +1591,8 @@ let store = {
         // query = query.toLowerCase();
         // let groups = conversationState.conversationInfoList.filter(info => info.conversation.type === ConversationType.Group).map(info => info.conversation._target);
         // return groups.filter(groupInfo => {
-        //     let namePinyin = convert(groupInfo.name, {style: 0}).join('').trim().toLowerCase();
-        //     let firstLetters = convert(groupInfo.name, {style: 4}).join('').trim().toLowerCase();
+        //     let namePinyin = pinyin(groupInfo.name, {style: 0}).join('').trim().toLowerCase();
+        //     let firstLetters = pinyin(groupInfo.name, {style: 4}).join('').trim().toLowerCase();
         //     return groupInfo.name.indexOf(query) > -1 || namePinyin.indexOf(query) > -1 || firstLetters.indexOf(query) > -1
         // })
         let gsr = wfc.searchGroups(query)

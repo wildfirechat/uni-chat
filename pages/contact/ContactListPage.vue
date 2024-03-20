@@ -144,9 +144,6 @@ export default {
     padding-left: 10px;
     color: #262626;
     font-size: 14px;
-    /* #ifndef APP-PLUS-NVUE */
-    position: -webkit-sticky;
-    /* #endif */
     position: sticky;
     background-color: #fafafa;
 }

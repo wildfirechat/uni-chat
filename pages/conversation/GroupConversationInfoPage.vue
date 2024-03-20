@@ -110,7 +110,7 @@ export default {
         wfc.eventEmitter.on(EventType.GroupMembersUpdate, this.onConversationMembersUpdate)
     },
 
-    beforeDestroy() {
+    beforeUnmount() {
         wfc.eventEmitter.removeListener(EventType.UserInfosUpdate, this.onConversationMembersUpdate)
         wfc.eventEmitter.removeListener(EventType.GroupMembersUpdate, this.onConversationMembersUpdate)
     },

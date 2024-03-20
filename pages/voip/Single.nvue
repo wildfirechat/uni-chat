@@ -258,7 +258,7 @@
                 // 下面是个人理解，没有找到相关的文档说明，可能理解有所偏差，甚至完全不对
                 // .nvue 和 .vue 是由不同的渲染引擎渲染的，avengineKit 会在两个渲染引擎中都存在一个实例
                 // main.js 由 .vue 渲染引擎引入，并注册了相关事件，从插件来的通知，也只会发送到该渲染引擎，故此处需要用 .vue 渲染引擎里面的 avengineKit 实例
-                // beforeDestroy 方法也在 .vue 渲染引起之前，故 beforeDestroy 也需要使用 getApp().avengineKit
+                // beforeUnmount 方法也在 .vue 渲染引起之前，故 beforeUnmount 也需要使用 getApp().avengineKit
                 getApp().avengineKit.setSessionCallback(sessionCallback)
             },
 
@@ -400,7 +400,7 @@
             return true;
         },
 
-        beforeDestroy() {
+        beforeUnmount() {
         },
 
         computed: {

@@ -1063,15 +1063,15 @@ export default {
         return true;
     },
 
-    beforeDestroy() {
-        console.log('conferencePage, beforeDestroy')
+    beforeUnmount() {
+        console.log('conferencePage, beforeUnmount')
     },
 
     onShow() {
         console.log('conferencePage, onShow')
     },
 
-    destroyed() {
+    unmounted() {
         // reset
         clearInterval(this.refreshUserInfoInternal);
         // this.$eventBus.$off('muteVideo');
@@ -1102,7 +1102,8 @@ export default {
     justify-content: center;
     align-items: center;
     background: #2d3033;
-    align-content: center; // 其实 nvue 不支持此属性，所以 三个人以上时，不能居中 https://uniapp.dcloud.net.cn/tutorial/nvue-css.html#flex-%E5%AE%B9%E5%99%A8
+    align-content: center;
+     /* 其实 nvue 不支持此属性，所以 三个人以上时，不能居中 https://uniapp.dcloud.net.cn/tutorial/nvue-css.html#flex-%E5%AE%B9%E5%99%A8 ! */
 }
 
 .main-slider-container .grid {

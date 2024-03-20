@@ -2,8 +2,6 @@
  * Copyright (c) 2020 WildFireChat. All rights reserved.
  */
 
-import {lo} from "../../../vendor/pinyin/data/dict-zi-web";
-
 export default class CallSessionCallback {
 
     /**

@@ -6,11 +6,21 @@
   "license": "MIT",
   "dependencies": {
     "anchorme": "^2.1.2",
+    "base64-arraybuffer": "^1.0.2",
     "emojilib": "^3.0.6",
+    "events": "^3.3.0",
     "long": "^5.2.0",
+    "pinyin": "^4.0.0-alpha.0",
     "resize-image": "^0.1.0",
+    "segmentit": "^2.0.3",
     "twemoji": "^14.0.2",
     "universal-emoji-parser": "^0.5.28",
+    "vue": "^3.2.8",
     "vue-i18n": "^9.1.9"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.6.0",
+    "@vue/compiler-sfc": "^3.2.6",
+    "vite": "^2.5.2"
   }
 }

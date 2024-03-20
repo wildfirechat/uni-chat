@@ -2,7 +2,7 @@
     <div class="file-message-container"
          @click="clickFile"
          v-bind:class="{out:message.direction === 0}">
-        <image :src="fileIcon" alt="">
+        <image :src="fileIcon" alt=""/>
         <div class="flex-column flex-align-start" draggable="true" @dragstart="dragFile($event)">
             <p class="file-name">{{ this.message.messageContent.name }}</p>
             <p class="file-size single-line">{{ size }}</p>

@@ -110,7 +110,7 @@ export default {
         this.scrollActiveElementCenter();
     },
 
-    destroyed() {
+    unmounted() {
     },
 
     computed: {

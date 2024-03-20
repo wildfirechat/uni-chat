@@ -1,8 +1,7 @@
-import Vue from 'vue'
+import {createSSRApp} from 'vue'
 import App from './App'
 import store from "./store";
-import VueI18n from 'vue-i18n'
-import {getItem} from "./pages/util/storageHelper";
+// import VueI18n from 'vue-i18n'
 import picker from "./common/picker";
 import wfc from "./wfc/client/wfc";
 import Config from "./config";
@@ -10,30 +9,19 @@ import forward from "./common/forward";
 import pttClient from "./wfc/ptt/pttClient";
 import avengineKit from "./wfc/av/engine/avengineKit";
 
-Vue.config.productionTip = false
+const app = createSSRApp(App)
 
-App.mpType = 'app'
+// Vue.use(VueI18n)
+app.use(picker)
+app.use(forward)
 
-Vue.use(VueI18n)
-Vue.use(picker)
-Vue.use(forward)
-
-const i18n = new VueI18n({
-    // 使用localStorage存储语言状态是为了保证页面刷新之后还是保持原来选择的语言状态
-    locale: getItem('lang') ? getItem('lang') : 'zh-CN', // 定义默认语言为中文
-    messages: {
-        'zh-CN': require('@/assets/lang/zh-CN.json'),
-        'zh-TW': require('@/assets/lang/zh-TW.json'),
-        'en': require('@/assets/lang/en.json')
-    }
-})
 
 /**
  *
  * @param url
  * @param options 普通页面到 nvue 页面 或 nvue 页面到普通页面时，不生效
  */
-Vue.prototype.$navigateToPage = (url, options) => {
+app.config.globalProperties.$navigateToPage = (url, options) => {
     uni.navigateTo({
         url: url,
         success: (res) => {
@@ -48,7 +36,7 @@ Vue.prototype.$navigateToPage = (url, options) => {
 }
 
 // 如果不存在会话页面，则入栈，如果已经存在会话页面，则返回到该页面
-Vue.prototype.$go2ConversationPage = () => {
+app.config.globalProperties.$go2ConversationPage = () => {
     let pages = getCurrentPages();
     let cvRoute = 'pages/conversation/ConversationPage'
     let delta = 0;
@@ -81,7 +69,7 @@ Vue.prototype.$go2ConversationPage = () => {
         })
     }
 }
-Vue.prototype.$scrollToBottom = () => {
+app.config.globalProperties.$scrollToBottom = () => {
     setTimeout(() => {
         uni.pageScrollTo({
             scrollTop: 999999,
@@ -91,20 +79,14 @@ Vue.prototype.$scrollToBottom = () => {
     }, 100);
 }
 
-Vue.prototype.$notify = (options) => {
+app.config.globalProperties.$notify = (options) => {
     uni.showToast({
         title: options.text,
         icon: 'none',
     });
 }
 
-Vue.prototype._i18n = i18n;
-const app = new Vue({
-    i18n,
-    ...App
-})
 
-app.store = store;
 wfc.init();
 if (avengineKit.isAVEngineKitEnable()) {
     avengineKit.init();
@@ -120,4 +102,10 @@ if (pttClient.isPttClientEnable()) {
 
 store.init();
 
-app.$mount()
+// app.store = store;
+// app.use(store)
+export function createApp() {
+    return {
+        app
+    }
+}
