@@ -73,7 +73,7 @@ export default {
             })
         },
         openMessageContextMenu(event, message) {
-            this.$parent.$emit('openMessageContextMenu', event, message)
+            this.$eventBus.$emit('openMessageContextMenu', [event, message])
             this.highLight = true;
         },
     },

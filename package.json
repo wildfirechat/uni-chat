@@ -10,6 +10,7 @@
     "emojilib": "^3.0.6",
     "events": "^3.3.0",
     "long": "^5.2.0",
+    "mitt": "^3.0.1",
     "pinia": "^2.0.33",
     "pinyin": "^4.0.0-alpha.0",
     "resize-image": "^0.1.0",

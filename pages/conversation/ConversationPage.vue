@@ -631,7 +631,7 @@ export default {
                     })
                     break;
             }
-            this.$emit('contextMenuClosed')
+            this.$eventBus.$emit('contextMenuClosed')
         },
 
         updateConversationTitle() {
@@ -697,7 +697,7 @@ export default {
             console.log('------------- keyboardHeight', this.keyboardHeight, this.currentKeyboardHeight);
         });
         // #endif
-        this.$on('openMessageContextMenu', (event, message) => {
+        this.$eventBus.$on('openMessageContextMenu', ([event, message]) => {
             this.showMessageContextMenu(event, message)
         });
     },

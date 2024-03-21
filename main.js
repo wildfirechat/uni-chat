@@ -13,6 +13,7 @@ import {getItem} from "./pages/util/storageHelper";
 import zhCNLang from  './assets/lang/zh-CN.json'
 import zhTWLang from  './assets/lang/zh-TW.json'
 import enLang from  './assets/lang/en.json'
+import mitt from "mitt";
 
 const app = createSSRApp(App)
 
@@ -105,6 +106,13 @@ app.config.globalProperties.$notify = (options) => {
     });
 }
 
+const eventBus = mitt()
+eventBus.$on = eventBus.on
+eventBus.$off = eventBus.off
+eventBus.$emit = eventBus.emit
+app.config.globalProperties.$eventBus = eventBus
+
+app.config.globalProperties.$set = (obj, key, value) => obj[key] = value
 
 wfc.init();
 if (avengineKit.isAVEngineKitEnable()) {
