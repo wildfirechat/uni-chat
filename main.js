@@ -1,5 +1,6 @@
 import {createSSRApp} from 'vue'
 import App from './App'
+import {createPinia} from 'pinia'
 import store from "./store";
 import {createI18n} from 'vue-i18n'
 import picker from "./common/picker";
@@ -15,7 +16,9 @@ import enLang from  './assets/lang/en.json'
 
 const app = createSSRApp(App)
 
-// Vue.use(VueI18n)
+const pinia = createPinia()
+app.use(pinia)
+
 app.use(picker)
 app.use(forward)
 

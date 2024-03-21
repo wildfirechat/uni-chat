@@ -34,6 +34,8 @@ import ArticlesMessageContent from "./wfc/messages/articlesMessageContent";
 import EnterChannelChatMessageContent from "./wfc/messages/enterChannelChatMessageContent";
 import NullChannelInfo from "./wfc/model/NullChannelInfo";
 import CallStartMessageContent from "./wfc/av/messages/callStartMessageContent";
+import {storeToRefs} from "pinia";
+import {pstore} from "./pstore";
 
 /**
  * 一些说明
@@ -43,162 +45,38 @@ import CallStartMessageContent from "./wfc/av/messages/callStartMessageContent";
  * 外部不直接更新字段，而是通过提供各种action方法更新
  */
 
+let conversationState;
+let contactState;
+let searchState;
+let pickState;
+let miscState;
+
 let store = {
     debug: true,
     state: {
-        conversation: {
-            _wfc: wfc,
-            currentConversationInfo: null,
-            conversationInfoList: [],
-            currentConversationMessageList: [],
-            currentConversationOldestMessageId: 0,
-            currentConversationOldestMessageUid: 0,
-
-            currentConversationRead: null,
-
-            // TODO 调用setUserEnableReceipt时，需要更新
-            isMessageReceiptEnable: false,
-
-            inputtingUser: null,
-            inputClearHandler: null,
-
-            shouldAutoScrollToBottom: true,
-
-            previewMediaItems: [],
-            previewMediaIndex: null,
-
-            enableMessageMultiSelection: false,
-            quotedMessage: null,
-
-            downloadingMessages: [],
-            sendingMessages: [],
-
-            currentVoiceMessage: null,
-
-            currentCallStartMessage: null,
-
-            _reset() {
-                this.currentConversationInfo = null;
-                this.conversationInfoList = []
-                this.currentConversationMessageList = [];
-                this.currentConversationOldestMessageId = 0;
-                this.currentConversationOldestMessageUid = 0;
-                this.currentConversationRead = null;
-                this.isMessageReceiptEnable = false;
-                this.inputtingUser = null;
-                this.inputClearHandler = null;
-                this.shouldAutoScrollToBottom = true;
-                this.previewMediaItems = [];
-                this.previewMediaIndex = null;
-                this.enableMessageMultiSelection = false;
-                this.quotedMessage = null;
-                this.downloadingMessages = [];
-                this.currentVoiceMessage = null;
-                this.currentCallStartMessage = null;
-            }
-        },
-
-        contact: {
-            currentFriendRequest: null,
-            currentGroup: null,
-            currentFriend: null,
-            currentOrganization: null,
-
-            expandFriendRequestList: false,
-            expandFriendList: true,
-            expandGroup: false,
-
-            unreadFriendRequestCount: 0,
-            friendList: [],
-            friendRequestList: [],
-            favGroupList: [],
-            channelList: [],
-            favContactList: [],
-
-            selfUserInfo: null,
-            _reset() {
-                this.currentFriendRequest = null;
-                this.currentGroup = null;
-                this.currentFriend = null;
-                this.currentOrganization = null;
-
-                this.expandFriendRequestList = false;
-                this.expandFriendList = true;
-                this.expandGroup = false;
-
-                this.unreadFriendRequestCount = 0;
-                this.friendList = [];
-                this.friendRequestList = [];
-                this.favGroupList = [];
-                this.favContactList = [];
-
-                this.selfUserInfo = null;
-            }
-        },
-
-        search: {
-            query: null,
-            conversation: null,
-            userSearchResult: [],
-            contactSearchResult: [],
-            groupSearchResult: [],
-            conversationSearchResult: [],
-            messageSearchResult: [],
-
-            _reset() {
-                this.query = null;
-                this.conversation = null;
-                this.userSearchResult = [];
-                this.contactSearchResult = [];
-                this.groupSearchResult = [];
-                this.conversationSearchResult = [];
-                this.messageSearchResult = [];
-
-            }
-        },
-
-        pick: {
-            users: [],
-            organizations: [],
-            conversations: [],
-            messages: [],
-
-            _reset() {
-                this.users = [];
-                this.organizations = [];
-                this.conversations = [];
-                this.messages = [];
-
-            }
-        },
-
-        misc: {
-            connectionStatus: ConnectionStatus.ConnectionStatusUnconnected,
-            isAppHidden: false,
-            enableNotification: true,
-            enableNotificationMessageDetail: true,
-            uploadBigFiles: [],
-            wfc: wfc,
-            config: Config,
-            isRecording: false,
-            userOnlineStateMap: new Map(),
-
-            _reset() {
-                this.connectionStatus = ConnectionStatus.ConnectionStatusUnconnected;
-                this.enableNotification = true;
-                this.enableNotificationMessageDetail = true;
-                this.uploadBigFiles = [];
-                this.wfc = wfc;
-                this.config = Config;
-                this.isRecording = false;
-                this.userOnlineStateMap = new Map();
-            }
-        },
+        conversation: null,
+        contact: null,
+        search: null,
+        pick: null,
+        misc: null,
     },
 
     init() {
         console.log('init store')
-        // 目前，通知只可能在主窗口触发
+
+        const {conversationStore, contactStore, pickStore, searchStore, miscStore} = storeToRefs(pstore())
+        conversationState = conversationStore.value;
+        contactState = contactStore.value;
+        searchState = searchStore.value;
+        pickState = pickStore.value;
+        miscState = miscStore.value;
+
+        store.state.conversation = conversationState;
+        store.state.contact = contactState;
+        store.state.search = searchState;
+        store.state.pick = pickState;
+        store.state.misc = miscState;
+
         wfc.eventEmitter.on(EventType.ConnectionStatusChanged, (status) => {
             miscState.connectionStatus = status;
             console.log('connection status changed', status);
@@ -1851,12 +1729,6 @@ let store = {
     },
 
 }
-
-let conversationState = store.state.conversation;
-let contactState = store.state.contact;
-let searchState = store.state.search;
-let pickState = store.state.pick;
-let miscState = store.state.misc;
 
 function _reset() {
     conversationState._reset();
