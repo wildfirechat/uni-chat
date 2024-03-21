@@ -16,19 +16,13 @@
 
 <script>
 import UserListView from "@/pages/user/UserListView";
-import ConversationInfo from "@/wfc/model/conversationInfo";
 import store from "@/store";
 
 export default {
     name: "SingleConversationInfoPage",
-    props: {
-        conversationInfo: {
-            type: ConversationInfo,
-            required: false,
-        }
-    },
     data() {
         return {
+            conversationInfo: null,
             users: null,
             sharedContactState: store.state.contact,
         }

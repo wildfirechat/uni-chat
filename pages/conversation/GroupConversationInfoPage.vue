@@ -56,10 +56,8 @@
 
 <script>
 import UserListView from "@/pages/user/UserListView";
-import ConversationInfo from "@/wfc/model/conversationInfo";
 import store from "@/store";
 import wfc from "@/wfc/client/wfc";
-// import axios from "axios";
 import GroupMemberType from "@/wfc/model/groupMemberType";
 import GroupType from "@/wfc/model/groupType";
 import ModifyGroupInfoType from "@/wfc/model/modifyGroupInfoType";
@@ -69,14 +67,9 @@ import appServerApi from "../../api/appServerApi";
 
 export default {
     name: "GroupConversationInfoPage",
-    props: {
-        conversationInfo: {
-            type: ConversationInfo,
-            required: false,
-        }
-    },
     data() {
         return {
+            conversationInfo: null,
             groupMemberUserInfos: null,
             filterQuery: '',
             sharedContactState: store.state.contact,
