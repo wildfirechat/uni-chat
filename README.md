@@ -1,6 +1,10 @@
 # 野火UniApp平台Demo
 支持Android和iOS端，使用了***野火UniApp原生插件***(在UniApp的插件市场搜索“野火IM原生插件”)。
 
+## 关于分支的重要说明
+1. `master`：基于`Vue 3`开发，是未来的开发重心
+2. `vue2`：基于`Vue 2`开发，进入维护模式，不再开发新功能，鉴于`Vue 2`已经终止支持且不再维护，建议客户升级到`Vue 3`版本
+
 ## 关于音视频通话功能的重要说明
 野火在uni-chat项目上的音视频实现有2个方案：
 1. 方案1： 对应的插件是[野火实时音视频RTC插件(原生UI)](https://ext.dcloud.net.cn/plugin?id=9364), 使用原生UI，就是把Android平台和iOS平台的音视频SDK和UI代码全都集成到uni-chat项目中。这种方案的问题是引入的无关代码太多，且原生UI无法修改，跟uniapp互通也很不方便，不利于二次开发。
@@ -50,7 +54,7 @@
 2. 如何集成推送功能
    1. `HBuilder X`里面选中`manifest.json`，然后选中`Push`-> `uniPush 1.0`
    2. 参考[uni-push v1](https://uniapp.dcloud.net.cn/unipush-v1.html)，并进行相关配置
-   3. 编译、配置、部署 [push server getui 分支](https://github.com/wildfirechat/push_server/tree/getui)
+   3. 编译、配置、部署 [push server](https://github.com/wildfirechat/push_server)
    4. `App.vue` 里面会调用`plus.push.getClientInfoAsync`获取推送相关的`clientId`，可以使用该`clientId`在`uni-push`后台测试推送功能。
    5. 当设备不在线时，`im-server`会调用`push-server`，然后`push-server`调用`个推`进行推送
 
