@@ -4,7 +4,7 @@
 			:style="{top: popupsTop ,left: popupsLeft,flexDirection:direction}">
 			<text :class="dynPlace" :style="{width:'0px',height:'0px'}" v-if="triangle"></text>
 			<view v-for="(item,index) in popData" :key="index" @tap.stop="tapItem(item)" 
-				class="itemChild view" :class="[direction=='row'?'solid-right':'solid-bottom',item.disabled?'disabledColor':'']">
+				class="itemChild view" :class="[direction==='row'?'solid-right':'solid-bottom',item.disabled?'disabledColor':'']">
 				<image class="image" :src="item.icon" v-if="item.icon"></image>{{item.title}}
 			</view>
 			<slot></slot>
@@ -35,7 +35,7 @@
 				type:Number,
 				default:0
 			},
-			value:{
+            modelValue:{
 				type:Boolean,
 				default:false
 			},
@@ -73,13 +73,12 @@
 		},
 		methods:{
 			tapMask(){
-				
-				this.$emit('input',!this.value)
-			},
+                this.$emit('update:modelValue', false) // previously was `this.$emit('input', title)`
+            },
 			tapItem(item){
 				if(item.disabled) return
 				this.$emit('tapPopup',item)
-				this.$emit('input',!this.value)
+                this.$emit('update:modelValue', false) // previously was `this.$emit('input', title)`
 			},
 			getStatusBar(){
 				let promise = new Promise((resolve,reject)=>{
@@ -181,7 +180,7 @@
 			}
 		},
 		watch:{
-			value:{
+            modelValue:{
 				immediate:true,
 				handler:async function (newVal,oldVal){
 					if(newVal) await this.popupsPosition()
