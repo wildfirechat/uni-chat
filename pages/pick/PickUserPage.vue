@@ -45,43 +45,18 @@ import CheckableUserListView from "@/pages/user/CheckableUserListView";
 
 export default {
     name: "PickUserPage",
-    props: {
-        users: {
-            type: Array,
-            required: false,
-        },
-        initialCheckedUsers: {
-            type: Array,
-            required: false,
-            default: null,
-        },
-        uncheckableUsers: {
-            type: Array,
-            required: false,
-            default: null,
-        },
-        title: {
-            type: String,
-            required: false,
-            default: '',
-        },
-        confirmTitle: {
-            type: String,
-            required: false,
-            default: 'confirm',
-        },
-        showCategoryLabel: {
-            type: Boolean,
-            required: false,
-            default: true,
-        }
-
-    },
+    props: {},
     data() {
         return {
+            users: null,
+            initialCheckedUsers: null,
+            uncheckableUsers: null,
+            title: null,
+            confirmTitle: null,
+            showCategoryLabel: null,
             sharedPickState: store.state.pick,
             filterQuery: '',
-            scrollLeft:0,
+            scrollLeft: 0,
         }
     },
 
@@ -164,8 +139,8 @@ export default {
         }
     },
 
-    watch:{
-        checkedUsers(){
+    watch: {
+        checkedUsers() {
             // uniapp 里面无效，不知道为啥
             this.$nextTick(() => {
                 this.$refs.pickedUserContainer.scrollLeft = this.$refs.pickedUserContainer.scrollWidth;
@@ -277,7 +252,7 @@ export default {
     overflow: scroll;
 }
 
-.checked-contact-list-container .content .picked-user{
+.checked-contact-list-container .content .picked-user {
     display: flex;
     flex-direction: column;
     column-count: 1;
@@ -290,7 +265,7 @@ export default {
     font-size: 12px;
 }
 
-.checked-contact-list-container .content .picked-user .avatar-container{
+.checked-contact-list-container .content .picked-user .avatar-container {
     position: relative;
     height: 65px;
     width: 65px;

@@ -16,7 +16,7 @@
                                  v-bind:class="{disabled: isUserUncheckable(user)}"
                                  @click.stop="clickUserItem(user)">
                                 <checkbox class="checkbox"
-                                       v-bind:value="user"
+                                       v-bind:value="user.uid"
                                        :disabled="isUserUncheckable(user)"
                                        type="checkbox"
                                        :checked="isUserChecked(user)"/>
