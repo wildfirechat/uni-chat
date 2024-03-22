@@ -25,6 +25,8 @@ export default class CallStartMessageContent extends MessageContent {
     status = 0;
     audioOnly;
     pin;
+    //  0，未知；1，多人版音视频；2，高级版音视频
+    sdkType = 0;
 
     constructor(mentionedType = 0, mentionedTargets = []) {
         super(MessageContentType.VOIP_CONTENT_TYPE_START, mentionedType, mentionedTargets);
@@ -50,15 +52,18 @@ export default class CallStartMessageContent extends MessageContent {
             a: this.audioOnly ? 1 : 0,
             ts: this.targetIds,
             t: this.targetIds[0],
-            p: this.pin
+            p: this.pin,
+            ty: this.sdkType
         };
         payload.binaryContent = wfc.utf8_to_b64(JSON.stringify(obj));
+
         let pushData = {
             callId: this.callId,
-            audioOnly:this.audioOnly,
-            participants:this.targetIds,
+            audioOnly: this.audioOnly,
+            participants: this.targetIds,
         }
         payload.pushData = JSON.stringify(pushData);
+
         return payload;
     }
 
@@ -77,5 +82,6 @@ export default class CallStartMessageContent extends MessageContent {
             this.targetIds = [obj.t];
         }
         this.pin = obj.p;
+        this.sdkType = obj.ty
     }
 }
