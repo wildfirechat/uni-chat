@@ -1,6 +1,7 @@
 {
     "pages": [
         {
+            // 位置放第一个就是首页
             "path": "pages/SplashPage",
             "style": {
                 "navigationBarTitleText": "",
