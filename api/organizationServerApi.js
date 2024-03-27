@@ -27,9 +27,10 @@ export class OrganizationServerApi {
                 }, true)
                     .then(response => {
                         if (response.data.code === 0) {
-                            let appAuthToken = response.headers['authtoken'];
+                            // uni.request 的 response 是 header， 不是 headers
+                            let appAuthToken = response.header['authtoken'];
                             if (!appAuthToken) {
-                                appAuthToken = response.headers['authToken'];
+                                appAuthToken = response.header['authToken'];
                             }
 
                             if (appAuthToken) {

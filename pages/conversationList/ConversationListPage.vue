@@ -195,18 +195,30 @@ export default {
                 let unreadCount = info.unreadCount;
                 count += unreadCount.unread;
             });
-            // side
-            if (count > 0) {
+            return count;
+        }
+    },
+
+    watch: {
+        unread(newValue, oldValue) {
+            if (!window.__this){
+                window.__this = this;
+            }else {
+                window.__this2 = this
+            }
+            if (this.isPageHidden){
+                return
+            }
+            if (newValue > 0) {
                 uni.setTabBarBadge({
                     index: 0,
-                    text: '' + count
+                    text: '' + newValue
                 })
             } else {
                 uni.removeTabBarBadge({
                     index: 0
                 })
             }
-            return count;
         }
     },
 
