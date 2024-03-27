@@ -586,7 +586,7 @@ export default {
                     // }
                 }
             } else {
-                if (this.session.videoMuted && !this.session.audience) {
+                if (this.session.audioMuted && !this.session.audience) {
                     let result = avengineKit.switchAudience(this.session.callId, true);
                     console.log('switchAudience ', true, result)
                     // if (result) {
