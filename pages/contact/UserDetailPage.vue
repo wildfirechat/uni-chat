@@ -1,5 +1,5 @@
 <template>
-    <div class="user-detail-container">
+    <div class="user-detail-container" v-if="sharedStateContact.currentFriend">
         <div class="header">
             <div>
                 <h2>{{ name }}</h2>
@@ -108,15 +108,14 @@ export default {
         name: function () {
             let name;
             let friend = this.sharedStateContact.currentFriend;
+            if (!friend){
+                return null;
+            }
             if (friend.displayName) {
                 name = friend.displayName;
             } else {
                 name = friend.name;
             }
-            // side
-            (async () => {
-                wfc.getUserInfo(friend.uid, true)
-            })();
             return name;
         },
         isFriend() {

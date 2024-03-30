@@ -9,7 +9,7 @@
                 :key="conversationInfoKey(conversationInfo)"
                 v-bind:class="{top:conversationInfo.top }"
             >
-                <ConversationItemView :conversation-info="conversationInfo" @longpress.native="showConversationContextMenu($event, conversationInfo)"/>
+                <ConversationItemView :conversation-info="conversationInfo" @contextmenu.native.prevent="showConversationContextMenu($event, conversationInfo)"/>
             </view>
         </uni-list>
 
@@ -38,10 +38,12 @@ export default {
             contextMenuX: 0,
             contextMenuY: 0,
             contextMenuItems: [],
+            isPageHidden: false,
         };
     },
 
     onShow() {
+        this.isPageHidden = false;
         console.log('conversationList onShow', this.sharedConversationState.conversationInfoList.length)
         let userId = getItem('userId');
         if (!userId) {
@@ -58,6 +60,7 @@ export default {
 
     onHide() {
         console.log('conversationList onHide');
+        this.isPageHidden = true;
         this.$refs.mainActionMenu.hide();
     },
 
@@ -177,7 +180,7 @@ export default {
                     desc = '正在同步...';
                     break;
                 case ConnectionStatus.ConnectionStatusConnected:
-                    organizationServerApi.login().then(r => console.log('xxx org login result', r)).catch(reason => console.log('xxxx logini fail ', reason));
+                    organizationServerApi.login().then(r => console.log('org login result', r)).catch(reason => console.log('org login fail ', reason));
                     desc = '';
                     break;
                 case ConnectionStatus.ConnectionStatusUnconnected:
@@ -201,11 +204,6 @@ export default {
 
     watch: {
         unread(newValue, oldValue) {
-            if (!window.__this){
-                window.__this = this;
-            }else {
-                window.__this2 = this
-            }
             if (this.isPageHidden){
                 return
             }

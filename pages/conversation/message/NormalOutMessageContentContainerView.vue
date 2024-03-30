@@ -17,7 +17,7 @@
                     <div class="flex-column flex-align-end">
                         <MessageContentContainerView :message="message"
                                                      class="message-content-container-view"
-                                                     @longpress.native="openMessageContextMenu($event, message)"/>
+                                                     @contextmenu.native.prevent="openMessageContextMenu($event, message)"/>
                         <QuoteMessageView v-if="quotedMessage"
                                           style="padding: 5px 0; max-width: 80%"
                                           :message="message"

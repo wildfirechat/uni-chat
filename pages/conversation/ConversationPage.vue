@@ -511,8 +511,8 @@ export default {
             if (this.isScroll) {
                 return;
             }
-            this.contextMenuX = e.touches[0].clientX;
-            this.contextMenuY = e.touches[0].clientY;
+            this.contextMenuX = e.clientX ? e.clientX : e.touches[0].clientX;
+            this.contextMenuY = e.clientY ? e.clientY : e.touches[0].clientY;
 
             this.contextMenuItems = [];
             if (this.isCopyable(message)) {
@@ -702,6 +702,12 @@ export default {
         });
     },
 
+    unmounted() {
+        this.$eventBus.$off('openMessageContextMenu')
+    },
+
+    beforeUpdate() {
+    },
     updated() {
         if (!this.sharedConversationState.currentConversationInfo) {
             return;
