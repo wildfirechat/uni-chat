@@ -731,6 +731,20 @@ export class WfcManager {
     }
 
     /**
+     * 退出群组
+     * @param groupId 群id
+	 * @param keepMessage 是否保留消息
+     * @param {[]} lines 默认传[0]即可
+     * @param {KickoffGroupMemberNotification} notifyMessageContent 默认传null即可
+     * @param successCB
+     * @param failCB
+     * @returns {Promise<void>}
+     */
+    async quitGroupEx(groupId, keepMessage, lines, notifyMessageContent, successCB, failCB) {
+        impl.quitGroupEx(groupId, keepMessage, lines, notifyMessageContent, successCB, failCB);
+    }
+	
+    /**
      * 解散群组
      * @param {string} groupId 群组id
      * @param {[]} lines 默认传[0]即可

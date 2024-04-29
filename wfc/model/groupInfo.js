@@ -25,7 +25,8 @@ export default class GroupInfo {
     extra = '';
     remark = '';
     updateDt = 0;
-    memberUpdateDt = 0;
+	deleted = 0;
+    memberDt = 0;
 
     //0 正常；1 全局禁言
     mute = 0;
