@@ -26,6 +26,7 @@ import wfc from "../../wfc/client/wfc";
 import ConnectionStatus from "../../wfc/client/connectionStatus";
 import {getItem} from "../util/storageHelper";
 import organizationServerApi from "../../api/organizationServerApi";
+import permision from "../../common/permission";
 
 export default {
     name: 'ConversationListPage',
@@ -55,6 +56,10 @@ export default {
                     url: '/pages/login/LoginPage'
                 }
             );
+        }else {
+            if (!permision.isIOS){
+                permision.requestAndroid(['android.permission.RECORD_AUDIO']);
+            }
         }
     },
 
