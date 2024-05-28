@@ -110,4 +110,34 @@ export default class Config {
         // url = url.replace('oss.xxxx.com', '192.168.2.19');
         return url;
     }
+
+    /**
+     * 表情 base 路径
+     * @return {string}
+     */
+    static emojiBaseUrl() {
+        // 表情的 baseUrl，一定要求以 / 结尾
+        let emojiBaseUrl = 'https://static.wildfirechat.net/twemoji/assets/';
+        // 实例代码
+        // 双网环境时，将表情地址切换到备选网络
+        // if (!wfc.connectedToMainNetwork()) {
+        //     emojiBaseUrl = 'https://192.168.2.169/twemoji/assets/';
+        // }
+        return emojiBaseUrl;
+    }
+
+    /**
+     * 动态表情 base 路径
+     * @return {string}
+     */
+    static stickerBaseUrl() {
+        // 动态表情的 baseUrl，一定要求以 / 结尾
+        let stickerBaseUrl = 'https://static.wildfirechat.net/sticker/';
+        // 实例代码
+        // 双网环境时，将动态表情地址切换到备选网络
+        // if (!wfc.connectedToMainNetwork()) {
+        //     stickerBaseUrl = 'https://192.168.2.169/sticker/';
+        // }
+        return stickerBaseUrl;
+    }
 }
