@@ -117,6 +117,8 @@
     import VideoType from "../../wfc/av/engine/videoType";
     import Config from "../../config";
     import checkVoipPermissions from "./voipUtil";
+    import MultiCallOngoingMessageContent from "../../wfc/av/messages/multiCallOngoingMessageContent";
+    import wfc from "../../wfc/client/wfc";
 
     export default {
         name: 'Multi',
@@ -173,6 +175,10 @@
 
                     if (state === CallState.STATUS_CONNECTED) {
                         this.onVoipConnected();
+
+                        if (Config.ENABLE_MULTI_CALL_AUTO_JOIN && this.selfUserInfo.uid === this.session.initiator) {
+                            this.broadcastMultiCallOngoingTimer = setInterval(this.broadcastMultiCallOngoing, 1000)
+                        }
                     } else if (state === CallState.STATUS_IDLE) {
                         if (this.timer) {
                             clearInterval(this.timer);
@@ -266,8 +272,10 @@
                 };
                 sessionCallback.didChangeInitiator = (initiator) => {
                     this.initiatorUserInfo = this.wfc.getUserInfo(initiator);
-                    if (!this.broadcastMultiCallOngoingTimer) {
-                        this.broadcastMultiCallOngoingTimer = setInterval(this.broadcastMultiCallOngoing, 200)
+                    if (this.selfUserInfo.uid === initiator) {
+                        if (!this.broadcastMultiCallOngoingTimer) {
+                            this.broadcastMultiCallOngoingTimer = setInterval(this.broadcastMultiCallOngoing, 200)
+                        }
                     }
                 }
 
@@ -409,11 +417,11 @@
             },
 
             broadcastMultiCallOngoing() {
-                // let participants = this.participantUserInfos.map(pu => pu.uid).filter(uid => uid !== this.selfUserInfo.uid)
-                // let ongoing = new MultiCallOngoingMessageContent(this.session.callId, this.session.initiatorId, this.session.audioOnly, participants);
-                // this.wfc.sendConversationMessage(this.session.conversation, ongoing);
-
-                // TODO 不能引入 MultiCallOngoingMessageContent，在 js 层去做吧
+                if (this.callState === CallState.STATUS_CONNECTED){
+                    let participants = this.participantUserInfos.map(pu => pu.uid).filter(uid => uid !== this.selfUserInfo.uid)
+                    let ongoing = new MultiCallOngoingMessageContent(this.session.callId, this.session.initiator, this.session.audioOnly, participants);
+                    wfc.sendConversationMessage(this.session.conversation, ongoing);
+                }
             },
 
             minimize() {
@@ -455,14 +463,12 @@
             }
             this.setupSessionCallback();
 
-            // // 开发测试时使用，方便修改UI， 刷新页面之后，还能正常显示音视频通话页面，其他情况一定要将下面代码注释
-            // let session = avengineKit.currentCallSession();
-            // if (session) {
-            //     console.log('current session', session.state, session);
-            //     this.session = session;
-            //     this.callState = session.state;
-            // }
-            // // end
+            let session = avengineKit.currentCallSession();
+            if (session) {
+                console.log('current session', session.state, session);
+                this.session = session;
+                this.callState = session.state;
+            }
 
             let participantProfiles = avengineKit.getParticipantProfiles(this.session.callId);
             for (const p of participantProfiles) {

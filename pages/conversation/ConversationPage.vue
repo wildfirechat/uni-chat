@@ -7,6 +7,12 @@
               :dummy_just_for_reactive="currentVoiceMessage"
         >
             <view class="message-list-container">
+                <view v-if="ongoingCalls && ongoingCalls.length > 0" class="ongoing-call-container">
+                    <view v-for="(value, index) in ongoingCalls" :key="index" class="ongoing-call-item">
+                        <text>{{ value.messageContent.digest(value) }}</text>
+                        <button @click="joinMultiCall(value)">加入</button>
+                    </view>
+                </view>
                 <scroll-view ref="conversationMessageList" class="message-list" scroll-y="true" :scroll-top="scrollTop"
                              refresher-enabled="true" :refresher-triggered="triggered"
                              :refresher-threshold="45" @refresherpulling="onPulling"
@@ -93,6 +99,9 @@ import Config from "../../config";
 import RichNotificationMessageContent from "../../wfc/messages/notification/richNotificationMessageContent";
 import ArticlesMessageContent from "../../wfc/messages/articlesMessageContent";
 import ContextableNotificationMessageContentContainerView from "./message/ContextableNotificationMessageContentContainerView.vue";
+import EventType from "../../wfc/client/wfcEvent";
+import MultiCallOngoingMessageContent from "../../wfc/av/messages/multiCallOngoingMessageContent";
+import JoinCallRequestMessageContent from "../../wfc/av/messages/joinCallRequestMessageContent";
 
 var innerAudioContext;
 export default {
@@ -134,6 +143,8 @@ export default {
 
             triggered: false,
 
+            ongoingCalls: [],
+            ongoingCallTimer: 0,
         };
     },
 
@@ -490,6 +501,41 @@ export default {
             this.$refs.messageInputView.mention(message.conversation.target, message.from);
         },
 
+        onReceiveMessage(message, hasMore) {
+            if (this.conversationInfo && this.conversationInfo.conversation.equal(message.conversation)
+                && message.messageContent instanceof MultiCallOngoingMessageContent
+                && Config.ENABLE_MULTI_CALL_AUTO_JOIN
+            ) {
+                // 自己是不是已经在通话中
+                // console.log('MultiCallOngoingMessageContent', message.messageContent)
+                if (message.messageContent.targets.indexOf(wfc.getUserId()) >= 0) {
+                    return;
+                }
+                let index = this.ongoingCalls.findIndex(call => call.messageContent.callId === message.messageContent.callId);
+                if (index > -1) {
+                    this.ongoingCalls[index] = message;
+                } else {
+                    this.ongoingCalls.push(message);
+                }
+                if (!this.ongoingCallTimer) {
+                    this.ongoingCallTimer = setInterval(() => {
+                        this.ongoingCalls = this.ongoingCalls.filter(call => {
+                            return (new Date().getTime() - (numberValue(call.timestamp) - numberValue(wfc.getServerDeltaTime()))) < 3 * 1000;
+                        })
+                        if (this.ongoingCalls.length === 0) {
+                            clearInterval(this.ongoingCallTimer);
+                            this.ongoingCallTimer = 0;
+                        }
+                        console.log('ongoing calls', this.ongoingCalls.length);
+                    }, 1000)
+                }
+            }
+        },
+
+        joinMultiCall(message) {
+            let request = new JoinCallRequestMessageContent(message.messageContent.callId, wfc.getClientId());
+            wfc.sendConversationMessage(this.conversationInfo.conversation, request);
+        },
 
         onTouchStart(e) {
             this.isScroll = false
@@ -700,10 +746,13 @@ export default {
         this.$eventBus.$on('openMessageContextMenu', ([event, message]) => {
             this.showMessageContextMenu(event, message)
         });
+
+        wfc.eventEmitter.on(EventType.ReceiveMessage, this.onReceiveMessage)
     },
 
     unmounted() {
         this.$eventBus.$off('openMessageContextMenu')
+        wfc.eventEmitter.removeListener(EventType.ReceiveMessage, this.onReceiveMessage)
     },
 
     beforeUpdate() {
@@ -712,7 +761,7 @@ export default {
         if (!this.sharedConversationState.currentConversationInfo) {
             return;
         }
-        console.log('conversationView updated', this.sharedConversationState.shouldAutoScrollToBottom)
+        // console.log('conversationView updated', this.sharedConversationState.shouldAutoScrollToBottom)
         if (this.sharedConversationState.shouldAutoScrollToBottom) {
             this.scrollToBottom();
         } else {
@@ -794,6 +843,34 @@ export default {
     height: 3px;
     border-top: 1px solid #e2e2e2;
     margin: 0 auto;
+}
+
+.conversation-content-container .ongoing-call-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: white;
+}
+
+.ongoing-call-item {
+    padding: 10px 20px;
+    display: flex;
+    border-bottom: 1px solid lightgrey;
+    align-items: center;
+}
+
+.ongoing-call-item text {
+    flex: 1;
+}
+
+.ongoing-call-item button {
+    //padding: 5px 10px;
+    border: 1px solid #e5e5e5;
+    border-radius: 3px;
+}
+
+.ongoing-call-item button:active {
+    border: 1px solid #4168e0;
 }
 
 .message-list-container {
