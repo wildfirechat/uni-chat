@@ -1549,20 +1549,6 @@ export class WfcManager {
     }
 
     /**
-     * 根据会话线路，获取远程历史消息，仅 web 端有效
-     * @param {number} line 会话线路
-     * @param {number | Long} beforeUid 消息uid，表示拉取本条消息之前的消息
-     * @param {[number]} contentTypes 消息类型列表，可选值参考{@link MessageContentType}
-     * @param {number} count
-     * @param {boolean} filterLocalMessage 是否过滤本地已经存在的消息
-     * @param {function ([Message])} successCB
-     * @param failCB
-     */
-    loadRemoteLineMessages(line, contentTypes, beforeUid, count, filterLocalMessage, successCB, failCB) {
-        impl.loadRemoteLineMessages(line, contentTypes, beforeUid, count, successCB, failCB, filterLocalMessage)
-    }
-
-    /**
      * 根据消息 uid，获取远程消息
      * @param {Long} messageUid 消息uid
      * @param {function ([Message])} successCB
@@ -2066,15 +2052,6 @@ export class WfcManager {
 
     clearAllNotification() {
         impl.clearAllNotification();
-    }
-
-    /**
-     * 设置推送 token
-     * @param {number} type
-     * @param {string} token
-     */
-    setDeviceToken(type, token) {
-        impl.setDeviceToken(7, token);
     }
 
     chooseFile(type, successCB, failCB) {
