@@ -356,7 +356,7 @@
             },
 
             setupVideoViews() {
-                console.log('setupVideoViews')
+                console.log('setupVideoViews', this.audioOnly)
                 if (!this.audioOnly) {
                     this.$nextTick(() => {
                         let videoViewsReady = true;
@@ -364,7 +364,7 @@
                             videoViewsReady = false;
                         }
                         for (const u of this.participantUserInfos) {
-                            if (!u._isVideoMuted && !this.$refs['remoteVideo-' + u.uid][0]) {
+                            if (!u._isVideoMuted && this.$refs['remoteVideo-' + u.uid] && !this.$refs['remoteVideo-' + u.uid][0]) {
                                 videoViewsReady = false;
                                 break;
                             }
