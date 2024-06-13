@@ -371,7 +371,7 @@
                         }
 
                         if (videoViewsReady) {
-                            console.log('videoViews are ready, setup')
+                            console.log('videoViews are ready, setup', this.participantUserInfos.length)
                             if (this.setupVideoViewsTimer){
                                 clearInterval(this.setupVideoViewsTimer);
                                 this.setupVideoViewsTimer = 0;
@@ -380,6 +380,8 @@
                             this.participantUserInfos.forEach(u => {
                                 if (!u._isVideoMuted) {
                                     avengineKit.setRemoteVideoView(this.session.callId, u.uid, this.$refs['remoteVideo-' + u.uid][0].ref, false)
+                                }else {
+                                    console.log(`${u.uid} isVideoMuted`)
                                 }
                             });
                         } else {
