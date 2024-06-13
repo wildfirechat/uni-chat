@@ -43,11 +43,16 @@ export class AVEngineKit {
             if (func) {
                 func(...args.slice(1));
             }
+        } else {
+            console.warn('_handleNativeAVEngineEvent avengineCallback is null', args)
         }
     }
 
     _handleNativeCallSessionEvent(e) {
         let args = e.args;
+        if (args[0] !== 'didReportAudioVolume'){
+            console.log('_handleNativeCallSessionEvent', args)
+        }
         if (args[0] === 'resumeVoipPage') {
             let session = this.currentCallSession();
             if (session) {
@@ -67,6 +72,8 @@ export class AVEngineKit {
                     func(...args.slice(1));
                 }
             }
+        } else {
+            console.warn('_handleNativeCallSessionEvent sessionCallback is null', args)
         }
     }
 

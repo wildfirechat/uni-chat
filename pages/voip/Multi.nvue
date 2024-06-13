@@ -359,33 +359,32 @@
                 console.log('setupVideoViews', this.audioOnly)
                 if (!this.audioOnly) {
                     this.$nextTick(() => {
-                        let videoViewsReady = true;
-                        if (!this.selfUserInfo._isVideoMuted && !this.$refs.localVideo){
-                            videoViewsReady = false;
-                        }
-                        for (const u of this.participantUserInfos) {
-                            if (!u._isVideoMuted && this.$refs['remoteVideo-' + u.uid] && !this.$refs['remoteVideo-' + u.uid][0]) {
-                                videoViewsReady = false;
-                                break;
-                            }
+                        let allVideoViewsReady = true;
+
+                        if (this.$refs.localVideo && !this.session._selfVideoViewSet){
+                            avengineKit.setLocalVideoView(this.session.callId, this.$refs.localVideo.ref)
+                            this.session._selfVideoViewSet = true
+                        } else {
+                            allVideoViewsReady = false
                         }
 
-                        if (videoViewsReady) {
-                            console.log('videoViews are ready, setup', this.participantUserInfos.length)
+                        this.participantUserInfos.forEach(u => {
+                            if (!u._isVideoMuted && this.$refs['remoteVideo-' + u.uid] && this.$refs['remoteVideo-' + u.uid][0] && !u._videoViewSet) {
+                                avengineKit.setRemoteVideoView(this.session.callId, u.uid, this.$refs['remoteVideo-' + u.uid][0].ref, false)
+                                u._videoViewSet = true;
+                            }else {
+                                console.log(`${u.uid} isVideoMuted or not connected`)
+                                allVideoViewsReady = false
+                            }
+                        });
+
+                        if (allVideoViewsReady) {
                             if (this.setupVideoViewsTimer){
-                                clearInterval(this.setupVideoViewsTimer);
+                                clearTimeout(this.setupVideoViewsTimer);
                                 this.setupVideoViewsTimer = 0;
                             }
-                            avengineKit.setLocalVideoView(this.session.callId, this.$refs.localVideo.ref)
-                            this.participantUserInfos.forEach(u => {
-                                if (!u._isVideoMuted) {
-                                    avengineKit.setRemoteVideoView(this.session.callId, u.uid, this.$refs['remoteVideo-' + u.uid][0].ref, false)
-                                }else {
-                                    console.log(`${u.uid} isVideoMuted`)
-                                }
-                            });
                         } else {
-                            console.log('videoViews are not ready, setTimeout')
+                            console.log('allVideoViews are not ready, setTimeout')
                             clearTimeout(this.setupVideoViewsTimer);
                             this.setupVideoViewsTimer = setTimeout(this.setupVideoViews, 100);
                         }
@@ -465,12 +464,12 @@
             }
             this.setupSessionCallback();
 
-            let session = avengineKit.currentCallSession();
-            if (session) {
-                console.log('current session', session.state, session);
-                this.session = session;
-                this.callState = session.state;
-            }
+                let session = avengineKit.currentCallSession();
+                if (session) {
+                    console.log('current session', session.state, session);
+                    this.session = session;
+                    this.callState = session.state;
+                }
 
             let participantProfiles = avengineKit.getParticipantProfiles(this.session.callId);
             for (const p of participantProfiles) {
