@@ -10,6 +10,11 @@
         <div class="about" @click="showApiTest">
             <text>API测试</text>
         </div>
+        <div>
+            <text>
+                {{ info }}
+            </text>
+        </div>
         <button class="logout-button" @click="logout">退出登录</button>
     </div>
 
@@ -19,12 +24,27 @@
 import wfc from "../../wfc/client/wfc";
 import {clear} from "../util/storageHelper";
 import store from "../../store";
+import avengineKit from "../../wfc/av/engine/avengineKit";
+import Config from "../../config";
 
 export default {
     name: "MePage",
     data() {
         return {
             user: store.state.contact.selfUserInfo,
+            info: ''
+        }
+    },
+    mounted() {
+        if (avengineKit.isAVEngineKitEnable()) {
+            if (avengineKit.isSupportConference()) {
+                this.info += '高级版音视频\n'
+            } else {
+                this.info += '多人版音视频\n'
+                Config.ICE_SERVERS.forEach(obj => {
+                    this.info += obj.uri + ' ' + obj.userName + ' ' + obj.password;
+                })
+            }
         }
     },
     methods: {
@@ -47,7 +67,7 @@ export default {
             clear();
             uni.reLaunch(
                 {
-                    url:'/pages/login/login'
+                    url: '/pages/login/login'
                 }
             );
         },
@@ -59,7 +79,7 @@ export default {
                 }
             });
         },
-        showApiTest(){
+        showApiTest() {
             uni.navigateTo({
                 url: '/pages/misc/ApiTestPage',
                 fail: (e) => {
