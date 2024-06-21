@@ -314,6 +314,7 @@
                 let toMute = !this.session.videoMuted;
                 this.session.videoMuted = toMute;
                 this.selfUserInfo._isVideoMuted = toMute;
+                this.session._selfVideoViewSet = false;
                 avengineKit.muteVideo(this.session.callId, toMute)
             },
 
