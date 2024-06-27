@@ -44,7 +44,7 @@ export default {
             } else {
                 console.log('preview', message.messageContent.remotePath);
                 uni.navigateTo({
-                    url: `/pages/misc/PreviewVideoPage?url=${encodeURIComponent(message.messageContent.remotePath)})`,
+                    url: `/pages/misc/PreviewVideoPage?url=${encodeURIComponent(message.messageContent.remotePath)}`,
                     fail: (e) => {
                         console.log('navigate to PreviewVideoPage error', e)
                     }
