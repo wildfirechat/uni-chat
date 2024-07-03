@@ -57,7 +57,6 @@ import store from "../../store";
 import ConversationType from "../../wfc/model/conversationType";
 import Conversation from "../../wfc/model/conversation";
 import wfc from "../../wfc/client/wfc";
-import avenginekitproxy from "../../wfc/av/engine/avenginekitproxy";
 import avengineKit from "../../wfc/av/engine/avengineKit";
 
 export default {
