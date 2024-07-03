@@ -32,8 +32,22 @@
             </ul>
         </div>
         <div class="footer">
-            <a v-if="isFriend" @click="chat">{{ $t('message.send_message') }}</a>
-            <a v-else-if="!isSelf" @click="addFriend">添加好友</a>
+            <div class="action" @click="chat">
+                <i class="icon-ion-ios-chatboxes-outline"></i>
+                <a>{{ $t('message.send_message') }}</a>
+            </div>
+            <div class="action" @click="startAudioCall">
+                <i class="icon-ion-ios-telephone-outline"></i>
+                <a>语音通话</a>
+            </div>
+            <div class="action" @click="startVideoCall">
+                <i class="icon-ion-ios-videocam-outline"></i>
+                <a>视频通话</a>
+            </div>
+            <div v-if="!isFriend && !isSelf" class="action" @click="addFriend">
+                <i class="icon-ion-person-add"></i>
+                <a>添加好友</a>
+            </div>
         </div>
     </div>
 </template>
@@ -43,6 +57,8 @@ import store from "../../store";
 import ConversationType from "../../wfc/model/conversationType";
 import Conversation from "../../wfc/model/conversation";
 import wfc from "../../wfc/client/wfc";
+import avenginekitproxy from "../../wfc/av/engine/avenginekitproxy";
+import avengineKit from "../../wfc/av/engine/avengineKit";
 
 export default {
     name: "UserDetailPage",
@@ -83,7 +99,7 @@ export default {
                     })
             }
         },
-        addFriend(){
+        addFriend() {
             let userInfo = wfc.getUserInfo(wfc.getUserId());
             let reason = '你好，我是' + userInfo.displayName;
             wfc.sendFriendRequest(this.user.uid, reason, '', () => {
@@ -102,13 +118,27 @@ export default {
                     icon: 'none'
                 });
             })
+        },
+        startAudioCall() {
+            let callSession = avengineKit.startSingleCall(this.user.uid, true)
+            if (callSession) {
+                let url = `/pages/voip/Single?session=${JSON.stringify(callSession)}`
+                this.$navigateToPage(url);
+            }
+        },
+        startVideoCall() {
+            let callSession = avengineKit.startSingleCall(this.user.uid, false)
+            if (callSession) {
+                let url = `/pages/voip/Single?session=${JSON.stringify(callSession)}`
+                this.$navigateToPage(url);
+            }
         }
     },
     computed: {
         name: function () {
             let name;
             let friend = this.sharedStateContact.currentFriend;
-            if (!friend){
+            if (!friend) {
                 return null;
             }
             if (friend.displayName) {
@@ -121,7 +151,7 @@ export default {
         isFriend() {
             return wfc.isMyFriend(this.user.uid);
         },
-        isSelf(){
+        isSelf() {
             return this.user.uid === wfc.getUserId();
         }
     }
@@ -196,20 +226,32 @@ export default {
 
 .footer {
     display: flex;
+    flex-direction: row;
     justify-content: center;
-}
-
-.footer a {
-    margin-top: 30px;
-    color: white;
-    padding: 10px 40px;
-    background-color: #7497f1;
-    border-radius: 5px;
-    border: 1px solid transparent;
+    padding-top: 30px;
+    border-top: 1px solid #e6e6e6;
 }
 
 .footer a:active {
     background-color: #4168e0;
+}
+
+.footer .action {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    color: #5d7ce8;
+}
+
+.footer .action a {
+    font-size: 10px;
+    padding-top: 1px;
+}
+
+.footer .action i {
+    font-size: 20px;
 }
 
 </style>
