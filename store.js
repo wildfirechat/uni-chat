@@ -164,17 +164,19 @@ let store = {
             if (miscState.connectionStatus === ConnectionStatus.ConnectionStatusReceiveing) {
                 return;
             }
+
+            if (msg.messageContent instanceof DismissGroupNotification
+                || (msg.messageContent instanceof KickoffGroupMemberNotification && msg.messageContent.kickedMembers.indexOf(wfc.getUserId()) >= 0)
+                || (msg.messageContent instanceof QuitGroupNotification && msg.messageContent.operator === wfc.getUserId())
+            ) {
+                this.setCurrentConversationInfo(null);
+                return;
+            }
+
             if (!hasMore) {
                 this._reloadConversation(msg.conversation)
             }
             if (conversationState.currentConversationInfo && msg.conversation.equal(conversationState.currentConversationInfo.conversation)) {
-                if (msg.messageContent instanceof DismissGroupNotification
-                    || (msg.messageContent instanceof KickoffGroupMemberNotification && msg.messageContent.kickedMembers.indexOf(wfc.getUserId()) >= 0)
-                    || (msg.messageContent instanceof QuitGroupNotification && msg.messageContent.operator === wfc.getUserId())
-                ) {
-                    this.setCurrentConversationInfo(null);
-                    return;
-                }
                 // 移动端，目前只有单聊会发送typing消息
                 if (msg.messageContent.type === MessageContentType.Typing) {
                     let groupId = msg.conversation.type === 1 ? msg.conversation.target : '';
@@ -610,8 +612,19 @@ let store = {
     quitGroup(groupId) {
         wfc.quitGroup(groupId, [0], null, () => {
             this.setCurrentConversationInfo(null)
+            let conversation = new Conversation(ConversationType.Group, groupId, 0);
+            conversationState.conversationInfoList = conversationState.conversationInfoList.filter(info => !info.conversation.equal(conversation));
         }, (err) => {
             console.log('quit group error', err)
+        })
+    },
+    dismissGroup(groupId) {
+        wfc.dismissGroup(groupId, [0], null, () => {
+            this.setCurrentConversationInfo(null)
+            let conversation = new Conversation(ConversationType.Group, groupId, 0);
+            conversationState.conversationInfoList = conversationState.conversationInfoList.filter(info => !info.conversation.equal(conversation));
+        }, (err) => {
+            console.log('dismiss group error', err)
         })
     },
     subscribeChannel(channelId, subscribe) {
@@ -1230,7 +1243,7 @@ let store = {
     _patchCurrentConversationOnlineStatus() {
         let convInfo = conversationState.currentConversationInfo;
         if (convInfo && convInfo.conversation.type === ConversationType.Single) {
-            conversationState.currentConversationInfo.conversation._targetOnlineStateDesc =  this.getUserOnlineState(convInfo.conversation.target);
+            conversationState.currentConversationInfo.conversation._targetOnlineStateDesc = this.getUserOnlineState(convInfo.conversation.target);
         } else {
             //TODO
         }

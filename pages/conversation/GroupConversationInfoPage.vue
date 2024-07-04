@@ -44,12 +44,15 @@
                 <p>{{ $t('conversation.remove_member') }}</p>
             </div>
             <UserListView :users="users"
-                         :show-category-label="false"
-                         :padding-left="'20px'"
+                          :show-category-label="false"
+                          :padding-left="'20px'"
             />
         </div>
-        <div @click="quitGroup" class="quit-group-item">
+        <div @click="quitGroup(false)" class="quit-group-item">
             {{ $t('conversation.quit_group') }}
+        </div>
+        <div v-if="isOwner" @click="quitGroup(true)" class="quit-group-item">
+            解散群组
         </div>
     </div>
 </template>
@@ -204,10 +207,9 @@ export default {
                 })
         },
 
-        quitGroup() {
-            let groupInfo = this.conversationInfo.conversation._target;
-            if (groupInfo.owner === store.state.contact.selfUserInfo.uid) {
-                store.quitGroup(this.conversationInfo.conversation.target)
+        quitGroup(dismiss) {
+            if (dismiss) {
+                store.dismissGroup(this.conversationInfo.conversation.target)
             } else {
                 store.quitGroup(this.conversationInfo.conversation.target)
             }
@@ -284,6 +286,12 @@ export default {
             } else {
                 return this.groupMemberUserInfos;
             }
+        },
+
+        isOwner() {
+            let selfUid = wfc.getUserId();
+            let groupInfo = this.conversationInfo.conversation._target;
+            return groupInfo.owner === selfUid
         }
     },
 };
