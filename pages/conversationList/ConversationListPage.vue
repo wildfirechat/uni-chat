@@ -39,12 +39,10 @@ export default {
             contextMenuX: 0,
             contextMenuY: 0,
             contextMenuItems: [],
-            isPageHidden: false,
         };
     },
 
     onShow() {
-        this.isPageHidden = false;
         console.log('conversationList onShow', this.sharedConversationState.conversationInfoList.length)
         let userId = getItem('userId');
         if (!userId) {
@@ -60,12 +58,13 @@ export default {
             if (!permision.isIOS){
                 permision.requestAndroid(['android.permission.RECORD_AUDIO']);
             }
+
+            this.updateTabBarBadge();
         }
     },
 
     onHide() {
         console.log('conversationList onHide');
-        this.isPageHidden = true;
         this.$refs.mainActionMenu.hide();
     },
 
@@ -168,6 +167,20 @@ export default {
                     break;
 
             }
+        },
+
+        updateTabBarBadge() {
+            let newValue = this.unread;
+            if (newValue > 0) {
+                uni.setTabBarBadge({
+                    index: 0,
+                    text: '' + newValue
+                })
+            } else {
+                uni.removeTabBarBadge({
+                    index: 0
+                })
+            }
         }
     },
     activated() {
@@ -207,22 +220,8 @@ export default {
         }
     },
 
-    watch: {
-        unread(newValue, oldValue) {
-            if (this.isPageHidden){
-                return
-            }
-            if (newValue > 0) {
-                uni.setTabBarBadge({
-                    index: 0,
-                    text: '' + newValue
-                })
-            } else {
-                uni.removeTabBarBadge({
-                    index: 0
-                })
-            }
-        }
+    updated() {
+        console.log('updated xxx')
     },
 
     components: {
