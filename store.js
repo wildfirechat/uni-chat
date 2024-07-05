@@ -432,7 +432,7 @@ let store = {
         if (index >= 0) {
             Object.assign(conversationState.conversationInfoList[index], conversationInfo);
         } else {
-            if (insertIfNoExist && conversation.type !== ConversationType.ChatRoom) {
+            if (insertIfNoExist && gt(conversationInfo.timestamp, 0) && conversation.type !== ConversationType.ChatRoom) {
                 conversationState.conversationInfoList.push(conversationInfo);
             } else {
                 return conversationInfo;
