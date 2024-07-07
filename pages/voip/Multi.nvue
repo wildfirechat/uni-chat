@@ -447,6 +447,20 @@
         },
 
         mounted() {
+            let session = avengineKit.currentCallSession();
+            console.log('voip/Multi mounted',  session)
+            if (!session || session.state === 0){
+                console.log('av call already hangup')
+                uni.navigateBack({
+                    delta: 1,
+                    fail: err => {
+                        console.log('nav back to conversationView err', err);
+                    }
+                });
+                return;
+            }
+            this.session = curSession;
+
             let supportConference = avengineKit.startConference !== undefined
             if (!supportConference) {
                 let host = window.location.host;
@@ -465,12 +479,11 @@
             }
             this.setupSessionCallback();
 
-                let session = avengineKit.currentCallSession();
-                if (session) {
-                    console.log('current session', session.state, session);
-                    this.session = session;
-                    this.callState = session.state;
-                }
+            if (session) {
+                console.log('current session', session.state, session);
+                this.session = session;
+                this.callState = session.state;
+            }
 
             let participantProfiles = avengineKit.getParticipantProfiles(this.session.callId);
             for (const p of participantProfiles) {

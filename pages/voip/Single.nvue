@@ -356,7 +356,19 @@
         },
 
         mounted() {
-            console.log('voip/Single mounted', this.callState, this.session)
+            let curSession = avengineKit.currentCallSession();
+            console.log('voip/Single mounted',  curSession)
+            if (!curSession || curSession.state === 0){
+                console.log('av call already hangup')
+                uni.navigateBack({
+                    delta: 1,
+                    fail: err => {
+                        console.log('nav back to conversationView err', err);
+                    }
+                });
+                return;
+            }
+            this.session = curSession;
             // let supportConference = avenginekit.startConference !== undefined
             // if (!supportConference) {
             //     let host = window.location.host;
