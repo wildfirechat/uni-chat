@@ -459,7 +459,7 @@
                 });
                 return;
             }
-            this.session = curSession;
+            this.session = session;
 
             let supportConference = avengineKit.startConference !== undefined
             if (!supportConference) {
