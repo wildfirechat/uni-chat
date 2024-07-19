@@ -46,7 +46,8 @@
         },
         "App": {
           "app-android": "u",
-          "app-ios": "u"
+          "app-ios": "u",
+		  "app-harmony": "u"
         },
         "H5-mobile": {
           "Safari": "u",
