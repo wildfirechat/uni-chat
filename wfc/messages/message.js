@@ -73,8 +73,8 @@ export default class Message {
         if (!obj.conversation.target) {
             return null;
         }
-        // iOS，Android，Windows，OSX
-        if ([1, 2, 3, 4, 7, 8, 9].indexOf(Config.getWFCPlatform()) >= 0) {
+        // iOS，Android，Windows，OSX，Harmony
+        if ([1, 2, 3, 4, 7, 8, 9, 10, 11, 12].indexOf(Config.getWFCPlatform()) >= 0) {
             let msg = Object.assign(new Message(), obj);
             // big integer to number
             msg.messageId = Number(msg.messageId);

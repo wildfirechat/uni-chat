@@ -569,7 +569,9 @@ export function sendFriendRequest(userId: string, reason: string, extra: string,
 export function sendMessage(conversation: string, messagePayload: string, toUsers: string[], expireDuration: number, prepareCB: (value: object) => void, progressCB: (value: object) => void, successCB: (value: object) => void, failCB: FailCallback): void {
     // TODO
     // uploadedCallback
-    clientModule.sendMessage(conversation, messagePayload, toUsers, expireDuration, variableParamsToArrayParamCallback(progressCB), variableParamsToArrayParamCallback(progressCB), null, variableParamsToArrayParamCallback(successCB), numberCallback(failCB))
+    clientModule.sendMessage(conversation, messagePayload, toUsers, expireDuration, variableParamsToArrayParamCallback(progressCB), variableParamsToArrayParamCallback(progressCB),  (...params: object[]) => {
+        console.log('send message uploaded', ...params)
+    }, variableParamsToArrayParamCallback(successCB), numberCallback(failCB))
 }
 
 export function setBackupAddress(backupHost: string, backupPort: number): void {
