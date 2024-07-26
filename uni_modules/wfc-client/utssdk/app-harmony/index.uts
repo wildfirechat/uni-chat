@@ -298,7 +298,7 @@ export function dismissGroup(groupId: string, lines: number[], messagePayload: s
 }
 
 export function getAuthorizedMediaUrl(messaggeUid: string, mediaType: number, mediaPath: string, successCB: (value: object) => void, failCB: FailCallback): void {
-    clientModule.getAuthorizedMediaUrl(messaggeUid, mediaType, mediaPath, variableArgsCallback(successCB), numberCallback(failCB))
+    clientModule.getAuthorizedMediaUrl(messaggeUid, mediaType, mediaPath, variableParamsToArrayParamCallback(successCB), numberCallback(failCB))
 }
 
 export function getBlackList(refresh: boolean): string {
@@ -362,7 +362,7 @@ export function getUnreadCount(types: number[], lines: number[]): string {
 }
 
 export function getUploadMediaUrl(fileName: string, mediaType: number, contentType: string, successCB: (value: object) => void, failCB: FailCallback): void {
-    clientModule.getUploadMediaUrl(fileName, mediaType, contentType, variableArgsCallback(successCB), numberCallback(failCB))
+    clientModule.getUploadMediaUrl(fileName, mediaType, contentType, variableParamsToArrayParamCallback(successCB), numberCallback(failCB))
 }
 
 export function getUserInfoEx(userId: string, refresh: boolean, successCB: StringCallback, failCB: FailCallback): void {
@@ -569,7 +569,7 @@ export function sendFriendRequest(userId: string, reason: string, extra: string,
 export function sendMessage(conversation: string, messagePayload: string, toUsers: string[], expireDuration: number, prepareCB: (value: object) => void, progressCB: (value: object) => void, successCB: (value: object) => void, failCB: FailCallback): void {
     // TODO
     // uploadedCallback
-    clientModule.sendMessage(conversation, messagePayload, toUsers, expireDuration, variableArgsCallback(progressCB), variableArgsCallback(progressCB), null, variableArgsCallback(successCB), numberCallback(failCB))
+    clientModule.sendMessage(conversation, messagePayload, toUsers, expireDuration, variableParamsToArrayParamCallback(progressCB), variableParamsToArrayParamCallback(progressCB), null, variableParamsToArrayParamCallback(successCB), numberCallback(failCB))
 }
 
 export function setBackupAddress(backupHost: string, backupPort: number): void {
@@ -726,7 +726,7 @@ function genWfcEventListener(event: string): (...args: Object[]) => void {
     }
 }
 
-function variableArgsCallback(cb: (value: object) => void) {
+function variableParamsToArrayParamCallback(cb: (value: object) => void) {
     return (...params: object[]) => {
         cb(params)
     }
