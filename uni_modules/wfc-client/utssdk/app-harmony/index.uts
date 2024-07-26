@@ -124,8 +124,7 @@ export function addMembers(groupId: string, memberIds: string[], extra: string, 
 }
 
 export function getConversationInfos(types: number[], lines: number[]): string {
-    let str = clientModule.getConversationInfos(types, lines)
-    return str;
+    return clientModule.getConversationInfos(types, lines);
 }
 
 export function getUserSettings(scope: number): string {
