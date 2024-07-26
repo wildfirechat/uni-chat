@@ -41,27 +41,27 @@
             }
         },
         // TODO 打开之后，白屏，奇怪
-//        {
-//            "path": "pages/conversation/ConversationPage",
-//            "style": {
-//                "navigationBarTitleText": "会话详情",
-//                "enablePullDownRefresh": false,
-//                "disableScroll": true,
-//                "app-plus": {
-//                    "titleNView": {
-//                        "buttons": [
-//                            {
-//                                "text": "\ue623",
-//                                "fontSrc": "/static/iconfonts/wx_iconfont.ttf",
-//                                "fontSize": "28px"
-//                            }
-//                        ]
-//                    },
-//                    "softinputMode": "adjustResize",
-//                    "bounce": "none"
-//                }
-//            }
-//        },
+        {
+            "path": "pages/conversation/ConversationPage",
+            "style": {
+                "navigationBarTitleText": "会话详情",
+                "enablePullDownRefresh": false,
+                "disableScroll": true,
+                "app-plus": {
+                    "titleNView": {
+                        "buttons": [
+                            {
+                                "text": "\ue623",
+                                "fontSrc": "/static/iconfonts/wx_iconfont.ttf",
+                                "fontSize": "28px"
+                            }
+                        ]
+                    },
+                    "softinputMode": "adjustResize",
+                    "bounce": "none"
+                }
+            }
+        },
         {
             "path": "pages/conversation/message/CompositeMessagePage",
             "style": {
