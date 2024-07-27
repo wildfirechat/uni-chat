@@ -1,10 +1,15 @@
 /* 引入 interface.uts 文件中定义的变量 */
 
 import clientModule from 'marswrapper'
+import {_pinyin} from 'marswrapper'
 import {FailCallback, StringCallback, SuccessCallback, VoidCallback} from "../interface.uts";
 
 
 let wfcEventListener: null | ((value: object) => void) = null
+
+export function pinyin(str: string, options: object): string[] {
+    return _pinyin(str, options)
+}
 
 export function initProto(): void {
     // TODO
@@ -568,7 +573,7 @@ export function sendFriendRequest(userId: string, reason: string, extra: string,
 export function sendMessage(conversation: string, messagePayload: string, toUsers: string[], expireDuration: number, prepareCB: (value: object) => void, progressCB: (value: object) => void, successCB: (value: object) => void, failCB: FailCallback): void {
     // TODO
     // uploadedCallback
-    clientModule.sendMessage(conversation, messagePayload, toUsers, expireDuration, variableParamsToArrayParamCallback(prepareCB), variableParamsToArrayParamCallback(progressCB),  (...params: object[]) => {
+    clientModule.sendMessage(conversation, messagePayload, toUsers, expireDuration, variableParamsToArrayParamCallback(prepareCB), variableParamsToArrayParamCallback(progressCB), (...params: object[]) => {
         console.log('send message uploaded', ...params)
     }, variableParamsToArrayParamCallback(successCB), numberCallback(failCB))
 }

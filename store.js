@@ -4,7 +4,12 @@ import EventType from "./wfc/client/wfcEvent";
 import ConversationType from "./wfc/model/conversationType";
 import {eq, gt, numberValue, stringValue} from "./wfc/util/longUtil";
 import helper from "./pages/util/helper";
-// import pinyin from 'pinyin/esm/pinyin'
+// #ifdef APP-HARMONY
+import {pinyin} from "@/uni_modules/wfc-client"
+// #else
+import pinyin from 'pinyin/esm/pinyin'
+// #endif
+
 import GroupType from "./wfc/model/groupType";
 // import {imageThumbnail, videoDuration, videoThumbnail} from "./ui/util/imageUtil";
 import MessageContentMediaType from "./wfc/messages/messageContentMediaType";
@@ -37,9 +42,6 @@ import CallStartMessageContent from "./wfc/av/messages/callStartMessageContent";
 import {storeToRefs} from "pinia";
 import {pstore} from "./pstore";
 
-function pinyin(str, options) {
-    return [str]
-}
 /**
  * 一些说明
  * _开头的字段，是为了UI层展示方便，而打补丁上出去的
