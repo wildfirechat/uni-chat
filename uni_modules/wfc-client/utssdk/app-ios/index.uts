@@ -10,6 +10,7 @@ import { MyApiOptions, MyApiResult, MyApi, MyApiSync } from '../interface.uts';
 /* 引入 unierror.uts 文件中定义的变量 */
 import { MyApiFailImpl } from '../unierror';
 
+import { WFClientModule} from 'WFClientUniPlugin';
 /**
  * 引入三方库
  * [可选实现，按需引入]
@@ -80,6 +81,641 @@ export const myApiSync : MyApiSync = function (paramA : boolean) : MyApiResult {
   return res;
 }
 
+let clientModule: WFClientModule = WFClientModule();
+let wfcEventListener: null | ((value: object) => void) = null
+
+export function initProto(): void {
+    // clientModule.initProto();
+	
+    clientModule.setEventListener((channel: string, value: object) => {
+        if (channel == 'wfc-event') {
+            wfcEventListener?.(value)
+        } else {
+
+        }
+    })
+}
+
+export function setWfcEventListener(listener: (args: object) => void) {
+    wfcEventListener = listener
+}
+
+export const getClientId = function (): string {
+    return clientModule.getClientId();
+}
+
+export function connect(imHost: string, userId: string, token: string): void {
+    clientModule.connect(imHost, userId=userId, token=token)
+}
+
+export function getConnectionStatus(): number {
+    return clientModule.getConnectionStatus();
+}
+
+export function registerMessageFlag(type: number, flag: number) {
+    clientModule.registerMessageFlag(type.toInt32(), flag=flag.toInt32())
+}
+
+export function useSM4() {
+    clientModule.useSM4()
+}
+
+export function setProxyInfo(host: string, ip: string, port: number, userName: string, password: string) {
+    clientModule.setProxyInfo(host, ip=ip, port=port.toInt32(), username=userName, password=password)
+}
+
+
+export function disconnect(disablePush: boolean, clearSession: boolean) {
+    clientModule.disconnect(disablePush, clearSession=clearSession)
+}
+
+export const getUserId = function (): string {
+    return clientModule.getUserId();
+}
+
+export function addHttpHeader(header: string, value: string) {
+    clientModule.addHttpHeader(header, value=value)
+}
+
+
+export function addMembers(groupId: string, memberIds: string[], extra: string, notifyLines: number[], messagePayload: string,  @escaping  @escaping successCB: () => void,  @escaping failCB: (err: object) => void) {
+    clientModule.addMembers(groupId, memberIds=memberIds, extra=extra, lines=notifyLines, messagePayload=messagePayload, success=(_: object) => {
+        successCB()
+    }, error=failCB)
+}
+
+export function getConversationInfos(types: number[], lines: number[]): string {
+    let str = clientModule.getConversationInfos(types, lines=lines)
+    return str;
+}
+
+export function getUserSettings(scope: number): string {
+    return clientModule.getUserSettings(scope.toInt32())
+}
+
+export function getGroupInfo(groupId: string, refresh: boolean): string {
+    return clientModule.getGroupInfo(groupId, refresh=refresh)
+}
+
+export function getUserInfo(userId: string, refresh: boolean, groupId: string): string {
+    return clientModule.getUserInfo(userId, refresh=refresh, groupId=groupId)
+}
+
+export function getGroupMembers(groupId: string, refresh: boolean): string {
+    return clientModule.getGroupMembers(groupId, refresh=refresh);
+}
+
+export function getUserInfos(userIds: string[], groupId: string): string {
+    return clientModule.getUserInfos(userIds, groupId=groupId);
+}
+
+export function getConversationInfo(conversation: string): string {
+    return clientModule.getConversationInfo(conversation)
+}
+
+export function getListenedChannels(): string {
+    return clientModule.getListenedChannels();
+}
+
+export function getChannelInfo(channelId: string, refresh: boolean): string {
+    return clientModule.getChannelInfo(channelId, refresh=refresh)
+}
+
+export function getMyFriendList(refresh: boolean): string {
+    return clientModule.getMyFriendList(refresh)
+}
+
+export function getFavGroups(): string {
+    return clientModule.getFavGroups()
+}
+
+export function getFavUsers(): string {
+    return clientModule.getFavUsers();
+}
+
+export function getIncommingFriendRequest(): string {
+    return clientModule.getIncommingFriendRequest();
+}
+
+export function getGroupInfos(groupIds: string[], refresh: boolean): string {
+    return clientModule.getGroupInfos(groupIds, refresh=refresh)
+    // return ''
+}
+
+export function getUnreadFriendRequestStatus(): number {
+    return clientModule.getUnreadFriendRequestStatus()
+}
+
+export function isFavGroup(groupId: string): boolean {
+    return clientModule.isFavGroup(groupId)
+}
+
+export function getAuthCode(appId: string, appType: Int32, host: string,  @escaping  @escaping successCB: StringCallback,  @escaping failCB: (err: object) => void) {
+    clientModule.getAuthCode(appId, appType=appType, host=host, success=(value: object) => {
+        successCB(value as string)
+    }, error=failCB)
+}
+
+export function isMyFriend(userId: string): boolean {
+    return clientModule.isMyFriend(userId)
+}
+
+export function isReceiptEnabled(): boolean {
+    return clientModule.isReceiptEnabled()
+}
+
+export function watchOnlineState(conversationType: number, targets: string[], duration: number,  @escaping  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.watchOnlineState(conversationType.toInt32(), targets=targets, duration=duration.toInt32(), success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function isSupportBigFilesUpload(): boolean {
+    return clientModule.isSupportBigFilesUpload()
+}
+
+export function isUserReceiptEnabled(): boolean {
+    return clientModule.isUserReceiptEnabled()
+}
+
+export function allowGroupMember(groupId: string, isSet: boolean, memberIds: string[], notifyLines: number[], messagePayload: string,  @escaping  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.allowGroupMember(groupId, isSet=isSet, memberIds=memberIds, lines=notifyLines, messagePayload=messagePayload, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function clearAllNotification(): void {
+    clientModule.clearAllNotification()
+}
+
+export function clearAllUnreadStatus(): void {
+    clientModule.clearAllUnreadStatus()
+}
+
+export function clearMessages(conversation: string): void {
+    clientModule.clearMessages(conversation)
+}
+
+export function clearMessagesByTime(conversation: string, before: number): void {
+    clientModule.clearMessages(byTime=conversation, before=before.toInt64())
+}
+
+export function clearRemoteConversationMessages(conversation: string,  @escaping  @escaping successCB: SuccessCallback,  @escaping failCB: FailCallback): void {
+    clientModule.clearRemoteConversationMessages(conversation, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function clearUnreadFriendRequestStatus(): void {
+    clientModule.clearUnreadFriendRequestStatus()
+}
+
+export function clearUnreadStatus(conversation: string): void {
+    clientModule.clearUnreadStatus(conversation)
+}
+
+export function configApplication(appId: string, appType: number, timestamp: number, nonceStr: string, signature: string,  @escaping  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.configApplication(appId, appType=appType.toInt32(), timestamp=timestamp.toInt64(), nonceStr=nonceStr, signature=signature, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function createChannel(name: string, portrait: string, status: number, desc: string, extra: string,  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.createChannel(name, portrait=portrait, status=status.toInt32(), desc=desc, extra=extra, success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function createGroup(groupId: string, groupType: number, name: string, portrait: string, groupExtra: string, memberIds: string[], memberExtra: string, lines: number[], messagePayload: string,  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.createGroup(groupId, type=groupType.toInt32(), name=name, portrait=portrait, groupExtra=groupExtra, memberIds=memberIds, memberExtra=memberExtra, lines=lines, messagePayload=messagePayload, success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function deleteFileRecord(messageUid: string,  @escaping successCB: SuccessCallback,  @escaping failCB: FailCallback): void {
+    clientModule.deleteFileRecord(messageUid, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+
+export function getMessagesV2(conversation: string, fromIndex: number, before: boolean, count: number, withUser: string,  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.getMessagesV2(conversation, from=fromIndex.toInt32(), before=before, count=count.toInt32(), withUser=withUser, success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function getConversationRead(conversation: string): string {
+    return clientModule.getConversationRead(conversation)
+}
+
+export function deleteFriend(userId: string,  @escaping successCB: SuccessCallback,  @escaping failCB: FailCallback): void {
+    clientModule.deleteFriend(userId, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function deleteMessage(messageId: number): void {
+    clientModule.deleteMessage(messageId.toInt32())
+}
+
+export function deleteRemoteMessage(messageUid: string,  @escaping successCB: SuccessCallback,  @escaping failCB: FailCallback): void {
+    clientModule.deleteRemoteMessage(messageUid, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function destoryChannel(channelId: string,  @escaping successCB: SuccessCallback,  @escaping failCB: FailCallback): void {
+    clientModule.destoryChannel(channelId, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+
+export function dismissGroup(groupId: string, lines: number[], messagePayload: string,  @escaping successCB: SuccessCallback,  @escaping failCB: FailCallback): void {
+    clientModule.dismissGroup(groupId, lines=lines, messagePayload=messagePayload, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function getAuthorizedMediaUrl(messaggeUid: string, mediaType: number, mediaPath: string,  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.getAuthorizedMediaUrl(messaggeUid, mediaType=mediaType.toInt32(), mediaPath=mediaPath, success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function getBlackList(): string {
+    return clientModule.getBlackList()
+}
+
+export function getChatroomInfo(chatroomId: string, updateDt: number,  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.getChatroomInfo(chatroomId, updateDt=updateDt.toInt64(), success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function getChatroomMemberInfo(chatroomId: string, maxCount: number,  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.getChatroomMemberInfo(chatroomId, maxCount=maxCount.toInt32(), updateDt=0, success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function getConversationFiles(conversation: string, fromUser: string, beforeUid: string, count: number,  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.getConversationFiles(conversation, fromUser=fromUser, beforeUid=beforeUid, count=count.toInt32(), success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function getConversationFirstUnreadMessageId(conversation: string): number {
+    return clientModule.getConversationFirstUnreadMessageId(conversation)
+}
+
+export function getConversationUnreadCount(conversation: string): string {
+    return clientModule.getConversationUnreadCount(conversation)
+}
+
+export function getFriendAlias(userId: string): string {
+    return clientModule.getFriendAlias(userId)
+}
+
+export function getFriendList(refresh: boolean): string {
+    return clientModule.getFriendList(refresh)
+}
+
+// no add
+export function getMyFiles(beforeUid: string, count: number,  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.getMyFiles(beforeUid, count=count.toInt32(), success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function getOutgoingFriendRequest(): string {
+    return clientModule.getOutgoingFriendRequest()
+}
+
+export function getRemoteMessage(messageUid: string,  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.getRemoteMessage(messageUid, success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function getRemoteMessages(conversation: string, beforeUid: string, count: number,  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.getRemoteMessages(conversation, beforeUid=beforeUid, count=count.toInt32(), success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function getServerDeltaTime(): number {
+    return clientModule.getServerDeltaTime()
+}
+
+export function getUnreadCount(types: number[], lines: number[]): string {
+    return clientModule.getUnreadCount(types, lines=lines)
+}
+
+export function getUploadMediaUrl(fileName: string, mediaType: number, contentType: string,  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.getUploadMediaUrl(fileName, mediaType=mediaType.toInt32(), contentType=contentType, success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function getUserInfoEx(userId: string, refresh: boolean,  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.getUserInfoEx(userId, refresh=refresh, success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function getUserMessages(userId: string, conversation: string, contentTypes: number[], fromIndex: number, before: boolean, count: number): string {
+    return clientModule.getUserMessages(userId, conversation=conversation, types=contentTypes, from=fromIndex.toInt32(), before=before, count=count.toInt32())
+}
+
+export function getUserMessagesEx(userId: string, conversationTypes: number[], lines: number[], contentTypes: number[], fromIndex: number, before: boolean, count: number): string {
+    return clientModule.getUserMessagesEx(userId, convTypes=conversationTypes, lines=lines, contentTypes=contentTypes, from=fromIndex.toInt32(), before=before, count=count.toInt32())
+}
+
+export function getUserMessagesExV2(userId: string, conversationTypes: number[], lines: number[], fromIndex: number, before: boolean, count: number, contentTypes: number[],  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.getUserMessagesExV2(userId, conversationTypes=conversationTypes, lines=lines, from=fromIndex.toInt32(), before=before, count=count.toInt32(), contentTypes=contentTypes, success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function getUserMessagesV2(userId: string, conversation: string, fromIndex: number, before: boolean, count: number,  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.getUserMessagesV2(userId, conversation=conversation, from=fromIndex.toInt32(), before=before, count=count.toInt32(), contentTypes=[], success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function getUserSetting(scope: number, key: string): string {
+    return clientModule.getUserSetting(scope.toInt32(), key=key)
+}
+
+export function handleFriendRequest(userId: string, accept: boolean,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback, extra: string): void {
+    clientModule.handleFriendRequest(userId, accept=accept, success=voidCallback(successCB), error=numberCallback(failCB), extra=extra)
+}
+
+export function insertMessage(conversation: string, sender: string, messagePayload: string, status: number, notify: boolean, toUsers: string[], serverTime: number): void {
+    clientModule.insertMessage(conversation, sender=sender, messagePayload=messagePayload, status=status.toInt32(), notify=notify, toUsers=toUsers, serverTime=serverTime.toInt64());
+}
+
+export function isBlackListed(userId: string): boolean {
+    return clientModule.isBlackListed(userId)
+}
+
+export function isCommercialServer(): boolean {
+    return clientModule.isCommercialServer()
+}
+
+export function isEnableUserOnlineState(): boolean {
+    return clientModule.isEnableUserOnlineState()
+}
+
+export function isFavUser(userId: string): boolean {
+    return clientModule.isFavUser(userId)
+}
+
+export function isGlobalDisableSyncDraft(): boolean {
+    return clientModule.isGlobalDisableSyncDraft()
+}
+
+export function isGlobalSlient(): boolean {
+    return clientModule.isGlobalSlient()
+}
+
+export function isHiddenNotificationDetail(): boolean {
+    return clientModule.isHiddenNotificationDetail()
+}
+
+export function isListenedChannel(channelId: string): boolean {
+    return clientModule.isListenedChannel(channelId)
+}
+
+export function joinChatroom(chatroomId: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.joinChatroom(chatroomId, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function kickoffMembers(groupId: string, memberIds: string[], notifyLines: number[], messagePayload: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.kickoffMembers(groupId, memberIds=memberIds, lines=notifyLines, messagePayload=messagePayload, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function listenChannel(channelId: string, listen: boolean,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.listenChannel(channelId, listen=listen, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function loadFriendRequestFromRemote(): void {
+    clientModule.loadFriendRequestFromRemote()
+}
+
+export function modifyChannelInfo(channelId: string, type: number, newValue: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.modifyChannelInfo(channelId, type=type.toInt32(), newValue=newValue, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function modifyGroupAlias(groupId: string, alias: string, lines: number[], messagePayload: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.modifyGroupAlias(groupId, alias=alias, lines=lines, messagePayload=messagePayload, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function modifyGroupInfo(groupId: string, type: number, newValue: string, lines: number[], messagePayload: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.modifyGroupInfo(groupId, type=type.toInt32(), newValue=newValue, lines=lines, messagePayload=messagePayload, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function modifyGroupMemberAlias(groupId: string, memberId: string, alias: string, lines: number[], messagePayload: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.modifyGroupMemberAlias(groupId, memberId=memberId, alias=alias, lines=lines, messagePayload=messagePayload, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function modifyGroupMemberExtra(groupId: string, memberId: string, extra: string, lines: number[], messagePayload: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.modifyGroupMemberExtra(groupId, memberId=memberId, extra=extra, lines=lines, messagePayload=messagePayload, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function modifyMyInfo(type: number, value: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.modifyMyInfo(type.toInt32(), value=value, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function muteGroupMember(groupId: string, isSet: boolean, memberIds: string[], notifyLines: number[], messagePayload: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.muteGroupMember(groupId, isSet=isSet, memberIds=memberIds, lines=notifyLines, messagePayload=messagePayload, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function quitChatroom(chatroomId: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.quitChatroom(chatroomId, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function quitGroup(groupId: string, lines: number[], messagePayload: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.quitGroup(groupId, lines=lines, messagePayload=messagePayload, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function quitGroupEx(groupId: string, keepMessage: boolean, lines: number[], messagePayload: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.quitGroupEx(groupId, keepMessage=keepMessage, lines=lines, messagePayload=messagePayload, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function recall(messageUid: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.recall(messageUid, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function removeConversation(conversation: string, clearMsg: boolean): void {
+    clientModule.removeConversation(conversation, clearMsg=clearMsg)
+}
+
+export function searchChannel(keyword: string,  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.searchChannel(keyword, success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function searchConversation(keyword: string, types: number[], lines: number[]): string {
+    return clientModule.searchConversation(keyword, types=types, lines=lines)
+}
+
+export function searchFiles(keyword: string, conversation: string, fromUser: string, beforeMessageId: string, count: number,  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.searchFiles(keyword, conversation=conversation, fromUser=fromUser, beforeUid=beforeMessageId, count=count.toInt32(), success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function searchFriends(keyword: string): string {
+    return clientModule.searchFriends(keyword)
+}
+
+export function searchGroups(keyword: string): string {
+    return clientModule.searchGroups(keyword)
+}
+
+export function searchMessage(conversation: string, keyword: string, withUser: string): string {
+    return clientModule.searchMessage(conversation, keyword=keyword, withUser=withUser)
+}
+
+export function searchMessageByTypes(conversation: string, keyword: string, contentTypes: number[], desc: boolean, limit: number, offset: number, withUser: string): string {
+    return clientModule.searchMessage(byTypes=conversation, keyword=keyword, contentTypes=contentTypes, desc=desc, limit=limit.toInt32(), offset=offset.toInt32(), withUser=withUser)
+}
+
+export function searchMessageByTypesAndTimes(conversation: string, keyword: string, contentTypes: number[], startTime: number, endTime: number, desc: boolean, limit: number, offset: number, withUser: string): string {
+    return clientModule.searchMessage(byTypesAndTimes=conversation, keyword=keyword, contentTypes=contentTypes, startTime=startTime.toInt64(), endTime=endTime.toInt64(), desc=desc, limit=limit.toInt32(), offset=offset.toInt32(), withUser=withUser)
+}
+
+export function searchMessageEx(conversation: string, keyword: string, desc: boolean, limit: number, offset: number, withUser: string): string {
+    return clientModule.searchMessageEx(conversation, keyword=keyword, desc=desc, limit=limit.toInt32(), offset=offset.toInt32(), withUser=withUser)
+}
+
+export function searchMessageEx2(conversationTypes: number[], lines: number[], contentTypes: number[], keyword: string, fromIndex: number, desc: boolean, count: number, withUser: string): string {
+    return clientModule.searchMessageEx2(conversationTypes, lines=lines, contentTypes=contentTypes, keyword=keyword, from=fromIndex.toInt32(), desc=desc, count=count.toInt32(), withUser=withUser)
+}
+
+export function searchMyFiles(keyword: string, beforeMessageUid: string, count: number,  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.searchMyFiles(keyword, beforeUid=beforeMessageUid, count=count.toInt32(), success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function searchUser(keyword: string, searchType: number, page: number,  @escaping successCB: StringCallback,  @escaping failCB: FailCallback): void {
+    clientModule.searchUser(keyword, searchType=searchType.toInt32(), page=page.toInt32(), success=stringCallback(successCB), error=numberCallback(failCB))
+}
+
+export function sendConferenceRequest(sessionId: number, roomId: string, request: string, data: string, advance: boolean,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.sendConferenceRequest(sessionId.toInt64(), roomId=roomId, request=request, data=data, advance=advance, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function sendFriendRequest(userId: string, reason: string, extra: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.sendFriendRequest(userId, reason=reason, extra=extra, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function sendMessage(conversation: string, messagePayload: string, toUsers: string[], expireDuration: number, prepareCB: (value: object) => void, progressCB: (value: object) => void,  @escaping successCB: (value: object) => void,  @escaping failCB: FailCallback): void {
+    clientModule.sendMessage(conversation, messagePayload=messagePayload, toUsers=toUsers, expireDuration=expireDuration.toInt32(), prepared=prepareCB, progress=progressCB, success=successCB, error=numberCallback(failCB))
+}
+
+export function setBackupAddress(backupHost: string, backupPort: number): void {
+    clientModule.setBackupAddress(backupHost, backupPort=backupPort.toInt32());
+}
+
+export function setBackupAddressStrategy(strategy: number): void {
+    clientModule.setBackupAddressStrategy(strategy.toInt32())
+}
+
+export function setBlackList(userId: string, block: boolean,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.setBlackList(userId, block=block, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function setConversationDraft(conversation: string, draft: string): void {
+    clientModule.setConversationDraft(conversation, draft=draft)
+}
+
+export function setConversationSlient(conversation: string, silent: boolean,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.setConversationSlient(conversation, silent=silent, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function setConversationTimestamp(conversation: string, timestamp: string): void {
+    clientModule.setConversationTimestamp(conversation, timestamp=timestamp)
+}
+
+export function setConversationTop(conversation: string, top: number,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.setConversationTop(conversation, top=top.toInt32(), success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function setDeviceToken(type: number, token: string): void {
+    clientModule.setDeviceToken(type.toInt32(), token=token)
+}
+
+export function setFavGroup(groupId: string, fav: boolean,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.setFavGroup(groupId, fav=fav, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function setFavUser(userId: string, fav: boolean,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.setFavUser(userId, isFav=fav, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function setFriendAlias(userId: string, alias: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.setFriendAlias(userId, alias=alias, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function setGlobalSlient(silent: boolean,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.setGlobalSlient(silent, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function setGroupManager(groupId: string, isSet: boolean, memberIds: string[], lines: number[], messagePayload: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.setGroupManager(groupId, isSet=isSet, memberIds=memberIds, lines=lines, messagePayload=messagePayload, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function setHiddenNotificationDetail(hide: boolean,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.setHiddenNotificationDetail(hide, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function setLastReceivedMessageUnRead(conversation: string, messageUid: string, timestamp: string): void {
+    clientModule.setLastReceivedMessageUnRead(conversation, messageUid=messageUid, timestamp=timestamp)
+}
+
+export function setMediaMessagePlayed(messageId: number): void {
+    clientModule.setMediaMessagePlayed(messageId.toInt32())
+}
+
+export function setMessageLocalExtra(messageId: number, extra: string): void {
+    clientModule.setMessageLocalExtra(messageId.toInt32(), extra=extra)
+}
+
+export function setUserAgent(userAgent: string): void {
+    clientModule.setUserAgent(userAgent)
+}
+
+export function setUserReceiptEnable(enable: boolean,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.setUserReceiptEnable(enable, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function setUserSetting(scope: number, key: string, value: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.setUserSetting(scope.toInt32(), key=key, value=value, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function transferGroup(groupId: string, newOwner: string, lines: number[], messagePayload: string,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.transferGroup(groupId, newOwner=newOwner, lines=lines, messagePayload=messagePayload, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function unwatchOnlineState(conversationType: number, targets: string[],  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.unwatchOnlineState(conversationType.toInt32(), targets=targets, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function updateMessage(messageId: number, messagePayload: string): void {
+    clientModule.updateMessage(messageId.toInt(), messagePayload=messagePayload)
+}
+
+export function updateMessageStatus(messageId: number, status: number): void {
+    clientModule.updateMessageStatus(messageId.toInt(), status=status.toInt32())
+}
+
+export function updateRemoteMessageContent(messageUid: string, messagePayload: string, distribute: boolean, updateLocal: boolean,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback): void {
+    clientModule.updateRemoteMessageContent(messageUid, messagePayload=messagePayload, distribute=distribute, updateLocal=updateLocal, success=voidCallback(successCB), error=numberCallback(failCB))
+}
+
+export function uploadMedia(fileName: string, data: string, mediaType: number,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback, progressCB: (value: object) => void): void {
+    clientModule.uploadMedia(fileName, data=data, mediaType=mediaType.toInt32(), success=voidCallback(successCB), error=numberCallback(failCB), progress=progressCB)
+}
+
+export function getMessage(messageId: number): string {
+    return clientModule.getMessage(messageId.toInt32())
+}
+
+export function getMessageByUid(messageUid: string): string {
+    return clientModule.getMessageByUid(messageUid)
+}
+
+export function getGroupMember(groupId: string, memberId: string): string {
+    return clientModule.getGroupMember(groupId, memberId=memberId)
+}
+
+/*
+export function chooseFile()
+export function notify(title, content);
+
+
+ */
+
+export type StringCallback = (value : string) => void
+export type VoidCallback = () => void
+export type SuccessCallback = VoidCallback
+export type FailCallback = (error: number) => void
+
+function voidCallback(@escaping cb: VoidCallback): (value: any) => void {
+	function testVoid(value: any):void {  
+        cb()  
+    } 
+	return testVoid
+}
+
+
+function stringCallback(@escaping cb: StringCallback): (value: any) => void {
+	function testVoid(value: any):void {
+	    cb(value as string)
+	} 
+	return testVoid
+}
+
+function numberCallback(@escaping cb: FailCallback): (value: any) => void {
+	function testVoid(value: any):void {
+	    cb(value as number)
+	} 
+	return testVoid
+}
 /**
  * 更多插件开发的信息详见：https://uniapp.dcloud.net.cn/plugin/uts-plugin.html
  */

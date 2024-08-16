@@ -1,0 +1,6 @@
+framework module WFClientUniPlugin {
+  umbrella header "WFClientUniPlugin.h"
+  export *
+
+  module * { export * }
+}
