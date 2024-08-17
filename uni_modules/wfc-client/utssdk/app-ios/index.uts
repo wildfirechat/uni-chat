@@ -5,7 +5,7 @@
  */
 
 /* 引入 interface.uts 文件中定义的变量 */
-import { MyApiOptions, MyApiResult, MyApi, MyApiSync } from '../interface.uts';
+import {MyApiOptions, MyApiResult, MyApi, MyApiSync, Callback, StringCallback, VoidCallback, FailCallback, SuccessCallback} from '../interface.uts';
 
 /* 引入 unierror.uts 文件中定义的变量 */
 import { MyApiFailImpl } from '../unierror';
@@ -82,22 +82,22 @@ export const myApiSync : MyApiSync = function (paramA : boolean) : MyApiResult {
 }
 
 let clientModule: WFClientModule = WFClientModule();
-let wfcEventListener: null | ((value: object) => void) = null
+let eventListener: null | ((value?: any) => void) = null
 
 export function initProto(): void {
-    // clientModule.initProto();
-	
-    clientModule.setEventListener((channel: string, value: object) => {
+    clientModule.initProto();
+
+    clientModule.setEventListener((channel: string, value: any) => {
         if (channel == 'wfc-event') {
-            wfcEventListener?.(value)
+            eventListener?.(value)
         } else {
 
         }
     })
 }
 
-export function setWfcEventListener(listener: (args: object) => void) {
-    wfcEventListener = listener
+export function setWfcEventListener(listener: (args?: any) => void) {
+    eventListener = listener
 }
 
 export const getClientId = function (): string {
@@ -138,8 +138,8 @@ export function addHttpHeader(header: string, value: string) {
 }
 
 
-export function addMembers(groupId: string, memberIds: string[], extra: string, notifyLines: number[], messagePayload: string,  @escaping  @escaping successCB: () => void,  @escaping failCB: (err: object) => void) {
-    clientModule.addMembers(groupId, memberIds=memberIds, extra=extra, lines=notifyLines, messagePayload=messagePayload, success=(_: object) => {
+export function addMembers(groupId: string, memberIds: string[], extra: string, notifyLines: number[], messagePayload: string,  @escaping  successCB: () => void,  @escaping failCB: (err: any) => void) {
+    clientModule.addMembers(groupId, memberIds=memberIds, extra=extra, lines=notifyLines, messagePayload=messagePayload, success=(_: any) => {
         successCB()
     }, error=failCB)
 }
@@ -210,8 +210,8 @@ export function isFavGroup(groupId: string): boolean {
     return clientModule.isFavGroup(groupId)
 }
 
-export function getAuthCode(appId: string, appType: Int32, host: string,  @escaping  @escaping successCB: StringCallback,  @escaping failCB: (err: object) => void) {
-    clientModule.getAuthCode(appId, appType=appType, host=host, success=(value: object) => {
+export function getAuthCode(appId: string, appType: Int32, host: string,  @escaping  @escaping successCB: StringCallback,  @escaping failCB: (err: any) => void) {
+    clientModule.getAuthCode(appId, appType=appType, host=host, success=(value: any) => {
         successCB(value as string)
     }, error=failCB)
 }
@@ -563,7 +563,7 @@ export function sendFriendRequest(userId: string, reason: string, extra: string,
     clientModule.sendFriendRequest(userId, reason=reason, extra=extra, success=voidCallback(successCB), error=numberCallback(failCB))
 }
 
-export function sendMessage(conversation: string, messagePayload: string, toUsers: string[], expireDuration: number, prepareCB: (value: object) => void, progressCB: (value: object) => void,  @escaping successCB: (value: object) => void,  @escaping failCB: FailCallback): void {
+export function sendMessage(conversation: string, messagePayload: string, toUsers: string[], expireDuration: number, prepareCB: (value: any) => void, progressCB: (value: any) => void,  @escaping successCB: (value: any) => void,  @escaping failCB: FailCallback): void {
     clientModule.sendMessage(conversation, messagePayload=messagePayload, toUsers=toUsers, expireDuration=expireDuration.toInt32(), prepared=prepareCB, progress=progressCB, success=successCB, error=numberCallback(failCB))
 }
 
@@ -667,7 +667,7 @@ export function updateRemoteMessageContent(messageUid: string, messagePayload: s
     clientModule.updateRemoteMessageContent(messageUid, messagePayload=messagePayload, distribute=distribute, updateLocal=updateLocal, success=voidCallback(successCB), error=numberCallback(failCB))
 }
 
-export function uploadMedia(fileName: string, data: string, mediaType: number,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback, progressCB: (value: object) => void): void {
+export function uploadMedia(fileName: string, data: string, mediaType: number,  @escaping successCB: VoidCallback,  @escaping failCB: FailCallback, progressCB: (value: any) => void): void {
     clientModule.uploadMedia(fileName, data=data, mediaType=mediaType.toInt32(), success=voidCallback(successCB), error=numberCallback(failCB), progress=progressCB)
 }
 
@@ -690,15 +690,10 @@ export function notify(title, content);
 
  */
 
-export type StringCallback = (value : string) => void
-export type VoidCallback = () => void
-export type SuccessCallback = VoidCallback
-export type FailCallback = (error: number) => void
-
 function voidCallback(@escaping cb: VoidCallback): (value: any) => void {
-	function testVoid(value: any):void {  
-        cb()  
-    } 
+	function testVoid(value: any):void {
+        cb()
+    }
 	return testVoid
 }
 
@@ -706,14 +701,14 @@ function voidCallback(@escaping cb: VoidCallback): (value: any) => void {
 function stringCallback(@escaping cb: StringCallback): (value: any) => void {
 	function testVoid(value: any):void {
 	    cb(value as string)
-	} 
+	}
 	return testVoid
 }
 
 function numberCallback(@escaping cb: FailCallback): (value: any) => void {
 	function testVoid(value: any):void {
 	    cb(value as number)
-	} 
+	}
 	return testVoid
 }
 /**
