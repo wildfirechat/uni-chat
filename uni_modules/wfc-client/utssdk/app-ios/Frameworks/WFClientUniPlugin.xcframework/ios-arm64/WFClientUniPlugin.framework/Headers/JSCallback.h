@@ -10,6 +10,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void(^JSCallback)(id value);
+typedef void(^JSCallback)(id _Nullable value);
 
 NS_ASSUME_NONNULL_END

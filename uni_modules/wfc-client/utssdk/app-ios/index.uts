@@ -690,24 +690,24 @@ export function notify(title, content);
 
  */
 
-function voidCallback(@escaping cb: VoidCallback): (value: any) => void {
-	function testVoid(value: any):void {
+function voidCallback(@escaping cb: VoidCallback): (value?: any) => void {
+	function testVoid(value?: any):void {
         cb()
     }
 	return testVoid
 }
 
 
-function stringCallback(@escaping cb: StringCallback): (value: any) => void {
-	function testVoid(value: any):void {
-	    cb(value as string)
+function stringCallback(@escaping cb: StringCallback): (value?: any) => void {
+	function testVoid(value?: any):void {
+	    cb(value! as string)
 	}
 	return testVoid
 }
 
 function numberCallback(@escaping cb: FailCallback): (value: any) => void {
-	function testVoid(value: any):void {
-	    cb(value as number)
+	function testVoid(value?: any):void {
+	    cb(value! as number)
 	}
 	return testVoid
 }
