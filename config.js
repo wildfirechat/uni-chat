@@ -39,7 +39,7 @@ export default class Config {
     // 使用高级版音视频 SDK 时，不用配置!
     // !!! 我们提供的服务仅供用户测试和体验，为了保证测试可用，我们会不定期的更改密码. !!!
     // 上线时，请一定要切换为你们自己部署的服务
-    static ICE_SERVERS = [{uri: 'turn:turn.wildfirechat.net:3478', userName: 'wfchat', password: 'wfchat1'}];
+    static ICE_SERVERS = [{uri: 'turn:turn.wildfirechat.net:3478', userName: 'wfchat', password: 'wfchat123'}];
     static LANGUAGE = 'zh_CN';
 
     // 允许主动加入多人音视频通话
