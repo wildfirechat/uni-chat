@@ -145,7 +145,8 @@ import {
     getMessageByUid,
     getGroupMember,
     addMembers,
-    getMessage
+    getMessage,
+    disconnect
 
 } from "@/uni_modules/wfc-client";
 
@@ -297,6 +298,7 @@ class UtsWfcClient {
     getGroupMember = getGroupMember
     addMembers = addMembers
     getMessage = getMessage
+    disconnect = disconnect
 }
 
 const utsWfcClient = new UtsWfcClient()
