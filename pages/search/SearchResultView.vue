@@ -9,7 +9,7 @@
                             <div class="search-result-item contact">
                                 <img :src="user.portrait">
                                 <span>{{ user.displayName }}</span>
-                                <button style="margin-right: 0; margin-left: auto; border: none" size="mini" @click.stop="addFriend(user)">{{ $t('common.add') }}</button>
+                                <button v-if="!isFriend(user)" style="margin-right: 0; margin-left: auto; border: none" size="mini" @click.stop="addFriend(user)">{{ $t('common.add') }}</button>
                             </div>
                         </li>
                     </ul>
@@ -149,6 +149,9 @@ export default {
     },
 
     methods: {
+        isFriend(user){
+          return user.uid === wfc.getUserId() || wfc.isMyFriend(user.uid)
+        },
         addFriend(user) {
             console.log('add friend', user);
             wfc.sendFriendRequest(user.uid, '你好', '', () => {
