@@ -361,6 +361,13 @@ export default {
             if (!await checkVoipPermissions(audioOnly)) {
                 return;
             }
+            if(avengineKit.currentCallSession()){
+                uni.showToast({
+                    title: '音视频通话正在进行中...',
+                    icon: 'none'
+                })
+                return;
+            }
 
             if (this.conversationInfo.conversation.type === ConversationType.Single) {
                 let callSession = avengineKit.startSingleCall(this.conversationInfo.conversation.target, audioOnly)
