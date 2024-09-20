@@ -1588,7 +1588,7 @@ let store = {
         let userId = wfc.getUserId();
         // 默认允许通知
         let setting = getItem(userId + '-' + 'notification');
-        miscState.enableNotification = setting === null || setting === '1'
+        miscState.enableNotification = setting === null || setting === '' || setting === '1'
         setting = getItem(userId + '-' + 'notificationDetail');
         miscState.enableNotificationMessageDetail = setting === null || setting === '1'
     },
