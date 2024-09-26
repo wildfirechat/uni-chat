@@ -1,0 +1,173 @@
+@font-face {
+    font-family: "customicons"; /* Project id 2878519 */
+    src: url('/static/iconfonts/customicons.ttf') format('truetype');
+}
+
+.customicons {
+    font-family: "customicons" !important;
+}
+
+.game:before {
+    content: "\e60e";
+}
+
+.file:before {
+    content: "\e60f";
+}
+
+.forward:before {
+    content: "\e610";
+}
+
+@font-face {
+    font-family: "wxfont";
+    src: url('/static/iconfonts/wx_iconfont.ttf') format('truetype');
+}
+
+.wxfont {
+    font-family: "wxfont" !important;
+}
+
+.image:before {
+    content: "\e626";
+}
+
+.dot2:before {
+    content: "\e600";
+}
+
+.star:before {
+    content: "\e6CD";
+}
+
+.comment:before {
+    content: "\e662";
+}
+
+.phone:before {
+    content: "\e629";
+}
+
+.webcam:before {
+    content: "\e7dd";
+}
+
+.message:before {
+    content: "\e61c";
+}
+
+.camera:before {
+    content: "\e603";
+}
+
+.new_friend:before {
+    content: "\e611";
+}
+
+.message2:before {
+    content: "\e69e";
+}
+
+.qr_code:before {
+    content: "\e60a";
+}
+
+.male:before {
+    content: "\e609";
+}
+
+.femal:before {
+    content: "\e608";
+}
+
+.msglist:before {
+    content: "\e6f4";
+}
+
+.add2:before {
+    content: "\e657";
+}
+
+.location:before {
+    content: "\e7e6";
+}
+
+.location2:before {
+    content: "\e675";
+}
+
+.user_card:before {
+    content: "\e63c";
+}
+
+.fav:before {
+    content: "\e646";
+}
+
+.warn:before {
+    content: "\e61a";
+}
+
+.voice_playing:before {
+    content: "\e8c4";
+}
+
+.yrecord:before {
+    content: "\e79d";
+}
+
+.voice:before {
+    content: "\e66c";
+}
+
+.keyboard:before {
+    content: "\e661";
+}
+
+.play:before {
+    content: "\e6a6";
+}
+
+.download:before {
+    content: "\e617";
+}
+
+.wxcopy:before {
+    content: "\e75f";
+}
+
+.wxdelete:before {
+    content: "\e63f";
+}
+
+.add:before {
+    content: "\e620";
+}
+
+.minus:before {
+    content: "\e621";
+}
+
+.group:before {
+    content: "\e612";
+}
+
+.webcam2:before {
+    content: "\e670";
+}
+
+.voip:before {
+    content: "\e658";
+}
+
+.file:before {
+    content: "\e68f";
+}
+
+.voip_v:before {
+    content: "\e670";
+}
+
+.emoji:before {
+    content: "\e60b";
+}

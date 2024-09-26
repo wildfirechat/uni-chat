@@ -1,0 +1,347 @@
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.uni-popup-dialog[data-v-d78c88b7] {
+  width: 300px;
+  border-radius: 11px;
+  background-color: #fff;
+}
+.uni-dialog-title[data-v-d78c88b7] {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding-top: 25px;
+}
+.uni-dialog-title-text[data-v-d78c88b7] {
+  font-size: 16px;
+  font-weight: 500;
+}
+.uni-dialog-content[data-v-d78c88b7] {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.uni-dialog-content-text[data-v-d78c88b7] {
+  font-size: 14px;
+  color: #6C6C6C;
+}
+.uni-dialog-button-group[data-v-d78c88b7] {
+  display: flex;
+  flex-direction: row;
+  border-top-color: #f5f5f5;
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+.uni-dialog-button[data-v-d78c88b7] {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 45px;
+}
+.uni-border-left[data-v-d78c88b7] {
+  border-left-color: #f0f0f0;
+  border-left-style: solid;
+  border-left-width: 1px;
+}
+.uni-dialog-button-text[data-v-d78c88b7] {
+  font-size: 16px;
+  color: #333;
+}
+.uni-button-color[data-v-d78c88b7] {
+  color: #007aff;
+}
+.uni-dialog-input[data-v-d78c88b7] {
+  flex: 1;
+  font-size: 14px;
+  border: 1px #eee solid;
+  height: 40px;
+  padding: 0 10px;
+  border-radius: 5px;
+  color: #555;
+}
+.uni-popup__success[data-v-d78c88b7] {
+  color: #4cd964;
+}
+.uni-popup__warn[data-v-d78c88b7] {
+  color: #f0ad4e;
+}
+.uni-popup__error[data-v-d78c88b7] {
+  color: #dd524d;
+}
+.uni-popup__info[data-v-d78c88b7] {
+  color: #909399;
+}
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.uni-popup[data-v-4dd3c44b] {
+  position: fixed;
+  z-index: 99;
+}
+.uni-popup.top[data-v-4dd3c44b], .uni-popup.left[data-v-4dd3c44b], .uni-popup.right[data-v-4dd3c44b] {
+  top: 0;
+}
+.uni-popup .uni-popup__wrapper[data-v-4dd3c44b] {
+  display: block;
+  position: relative;
+  /* iphonex 等安全区设置，底部安全区适配 */
+}
+.uni-popup .uni-popup__wrapper.left[data-v-4dd3c44b], .uni-popup .uni-popup__wrapper.right[data-v-4dd3c44b] {
+  padding-top: 0;
+  flex: 1;
+}
+.fixforpc-z-index[data-v-4dd3c44b] {
+  z-index: 999;
+}
+.fixforpc-top[data-v-4dd3c44b] {
+  top: 0;
+}
+
+.iconfont[data-v-2a59d2e7] {
+        font-family: icomoon;
+}
+.participant-video-item[data-v-2a59d2e7] {
+        display: flex;
+        position: relative;
+        width: 200px;
+        height: 200px;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid black;
+        background: #2d3033;
+}
+.participant-video-item .video[data-v-2a59d2e7] {
+        width: 200px;
+        height: 200px;
+}
+.participant-video-item.highlight[data-v-2a59d2e7] {
+        border: 2px solid #1FCA6A;
+}
+.participant-video-item .video-stream-tip-container[data-v-2a59d2e7] {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 0;
+}
+.participant-video-item .avatar-container[data-v-2a59d2e7] {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        background: #2d3033;
+}
+.avatar[data-v-2a59d2e7] {
+        width: 80px;
+        height: 80px;
+        border-radius: 50px;
+}
+.participant-video-item .info-container[data-v-2a59d2e7] {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: row;
+        background: gray;
+        border-radius: 1px;
+        padding: 5px 10px;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+}
+.info-container .name[data-v-2a59d2e7] {
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        font-size: 14px;
+        padding-left: 5px;
+}
+.participant-video-item > uni-video[data-v-2a59d2e7] {
+        max-width: 200px;
+        max-height: 200px;
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+}
+.participant-video-item p[data-v-2a59d2e7] {
+        max-height: 20px;
+        color: white;
+}
+
+
+
+.iconfont[data-v-b3fbeb70] {
+    font-family: icomoon;
+}
+.main-slider-container[data-v-b3fbeb70] {
+    width: 23.4375rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.content-container[data-v-b3fbeb70] {
+    width: 23.4375rem;
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    background: #2d3033;
+    align-content: center;
+     /* 其实 nvue 不支持此属性，所以 三个人以上时，不能居中 https://uniapp.dcloud.net.cn/tutorial/nvue-css.html#flex-%E5%AE%B9%E5%99%A8 ! */
+}
+.main-slider-container .grid[data-v-b3fbeb70] {
+    flex-direction: row;
+}
+.main-slider-container .focus[data-v-b3fbeb70] {
+    --participant-video-item-width: 200px;
+    --participant-video-item-height: 100px;
+    flex-direction: column;
+}
+.participant-audio-item[data-v-b3fbeb70] {
+    display: flex;
+    flex-direction: column;
+    width: 7.8125rem;
+    height: 7.8125rem;
+    justify-content: center;
+    align-items: center;
+}
+.participant-audio-item .indicator[data-v-b3fbeb70] {
+    width: 18px;
+    height: 28px;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    color: white;
+    text-align: center;
+    vertical-align: center;
+    border-radius: 14px;
+    background: #d6d6d6;
+    transform: translateX(-50%) translateY(25%);
+}
+.participant-audio-item .desc[data-v-b3fbeb70] {
+    padding-top: 8px;
+    font-size: 15px;
+}
+.duration-action-container[data-v-b3fbeb70] {
+    width: 23.4375rem;
+    height: 140px;
+    background: #808080;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.duration-action-container .desc[data-v-b3fbeb70] {
+    color: white;
+    padding: 0 5px 0 0;
+}
+.action-container[data-v-b3fbeb70] {
+    /*width: 100%;*/
+    width: 23.4375rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.action-container .action[data-v-b3fbeb70] {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 12px;
+    color: white;
+    padding: 0 25px 0 25px;
+}
+.avatar[data-v-b3fbeb70] {
+    width: 90px;
+    height: 90px;
+    border-radius: 45px;
+}
+.avatar.highlight[data-v-b3fbeb70] {
+    //border: 2px solid #1FCA6A;
+}
+.action-img[data-v-b3fbeb70] {
+    width: 40px;
+    height: 40px;
+}
+.voip-title-container[data-v-b3fbeb70] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 23.4375rem;
+    display: flex;
+    margin-top: 2rem;
+    padding: 0 1.25rem;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 2.75rem;
+}
+.voip-title-container .title[data-v-b3fbeb70] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 23.4375rem;
+    height: 2.75rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.desc[data-v-b3fbeb70] {
+    color: white;
+    font-size: 15px;
+    padding: 5px 0;
+}
+

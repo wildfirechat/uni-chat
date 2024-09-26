@@ -1,0 +1,42 @@
+
+.me-container[data-v-491d9929] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: var(--page-full-height-without-header-and-tabbar);
+    background: #fafafa;
+}
+.user-info[data-v-491d9929] {
+    width: 100%;
+    padding: 10px;
+    height: 80px;
+    display: flex;
+    background: white;
+    align-items: center;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+.user-info[data-v-491d9929]:active {
+    background: #d6d6d6;
+}
+.user-info .portrait[data-v-491d9929] {
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+}
+.user-info .name[data-v-491d9929] {
+    margin-left: 10px;
+}
+.about[data-v-491d9929] {
+    width: 100%;
+    padding: 15px 10px;
+    background: white;
+}
+.about[data-v-491d9929]:active {
+    background: #d6d6d6;
+}
+.logout-button[data-v-491d9929] {
+    margin-top: 20px;
+}
+

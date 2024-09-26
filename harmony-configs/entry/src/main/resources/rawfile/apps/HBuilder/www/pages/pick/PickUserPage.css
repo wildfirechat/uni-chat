@@ -1,0 +1,169 @@
+
+.contact-item[data-v-394c372f] {
+    --user-item-padding-left: 30px;
+}
+ul[data-v-394c372f] {
+    list-style: none;
+    width: 100%;
+}
+.avatar[data-v-394c372f] {
+    width: 40px;
+    height: 40px;
+    border-radius: 3px;
+}
+.checkbox[data-v-394c372f] {
+    margin-right: 10px;
+}
+.contact-item[data-v-394c372f] {
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+    align-items: flex-start;
+}
+.contact-item .label[data-v-394c372f] {
+    width: 100%;
+    background-color: #fafafa;
+    z-index: 9999;
+}
+.contact-item .label p[data-v-394c372f] {
+    padding: 5px 5px 5px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+.contact-item .label.sticky[data-v-394c372f] {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+}
+.contact-item .content[data-v-394c372f] {
+    padding: 5px 5px 5px 0;
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+.contact-item .content span[data-v-394c372f] {
+    margin-left: 10px;
+}
+.contact-item .content.active[data-v-394c372f] {
+    background-color: #d6d6d6;
+}
+.contact-item .content[data-v-394c372f]:active {
+    background-color: #d6d6d6;
+}
+.disabled[data-v-394c372f] {
+    pointer-events: none;
+}
+
+
+.pick-contact-container[data-v-cd12c8d6] {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: var(--page-full-height-without-header);
+    width: 100%;
+    overflow: hidden;
+}
+.contact-list-container[data-v-cd12c8d6] {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background-color: #f7f7f7;
+    margin-bottom: 150px;
+    overflow: auto;
+}
+.contact-list-container .input-container[data-v-cd12c8d6] {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-top: 10px;
+}
+.input-container uni-input[data-v-cd12c8d6] {
+    height: 35px;
+    flex: 1;
+    border-radius: 3px;
+    border: 1px solid #ededed;
+    background-color: white;
+    margin: 0 15px;
+    padding-left: 20px;
+    text-align: left;
+    outline: none;
+}
+
+/*.input-container input:active {*/
+/*    border: 1px solid #4168e0;*/
+/*}*/
+
+/*.input-container input:focus {*/
+/*    border: 1px solid #4168e0;*/
+/*}*/
+.input-container i[data-v-cd12c8d6] {
+    position: absolute;
+    left: 20px;
+}
+.contact-list-container .friend-list-container[data-v-cd12c8d6] {
+    height: 100%;
+    overflow: auto;
+}
+.checked-contact-list-container[data-v-cd12c8d6] {
+    height: 150px;
+    width: 100%;
+    display: flex;
+    background: white;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
+.checked-contact-list-container header[data-v-cd12c8d6] {
+    height: 55px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.checked-contact-list-container header span[data-v-cd12c8d6] {
+    font-size: 14px;
+    margin-left: 20px;
+}
+.checked-contact-list-container header uni-button[data-v-cd12c8d6] {
+    border-style: none;
+    margin-right: 20px;
+    color: #4168e0;
+}
+.checked-contact-list-container .content[data-v-cd12c8d6] {
+    height: 100%;
+    flex: 1;
+    display: flex;
+    padding: 0 10px;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    overflow: scroll;
+}
+.checked-contact-list-container .content .picked-user[data-v-cd12c8d6] {
+    display: flex;
+    flex-direction: column;
+    column-count: 1;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 5px;
+}
+.checked-contact-list-container .content .picked-user .name[data-v-cd12c8d6] {
+    font-size: 12px;
+}
+.checked-contact-list-container .content .picked-user .avatar-container[data-v-cd12c8d6] {
+    position: relative;
+    height: 65px;
+    width: 65px;
+}
+.checked-contact-list-container .content .avatar[data-v-cd12c8d6] {
+    width: 45px;
+    height: 45px;
+    margin: 10px 10px;
+    border-radius: 3px;
+}
+.disabled[data-v-cd12c8d6] {
+    color: lightgrey !important;
+}
+
