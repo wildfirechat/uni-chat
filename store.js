@@ -36,6 +36,7 @@ import NullChannelInfo from "./wfc/model/NullChannelInfo";
 import CallStartMessageContent from "./wfc/av/messages/callStartMessageContent";
 import {storeToRefs} from "pinia";
 import {pstore} from "./pstore";
+import SoundMessageContent from "./wfc/messages/soundMessageContent";
 
 /**
  * 一些说明
@@ -682,6 +683,7 @@ let store = {
                         })
 
                     } else {
+                        message.messageContent = this._filterForwardMessageContent(message)
                         wfc.sendConversationMessage(conversation, message.messageContent);
                     }
                 });
@@ -697,7 +699,11 @@ let store = {
                     title = '群的聊天记录';
                 }
                 compositeMessageContent.title = title;
-                compositeMessageContent.setMessages(messages);
+                let msgs = messages.map(m => {
+                    m.messageContent = this._filterForwardMessageContent(m)
+                    return m
+                })
+                compositeMessageContent.setMessages(msgs);
 
                 wfc.sendConversationMessage(conversation, compositeMessageContent);
             }
@@ -1740,6 +1746,16 @@ let store = {
             wfc.notify(tip, miscState.enableNotificationMessageDetail ? content.digest(msg) : '')
         }
     },
+
+    _filterForwardMessageContent(message) {
+        let content = message.messageContent
+        if (content instanceof CallStartMessageContent) {
+            content = new TextMessageContent(content.digest(message))
+        } else if (content instanceof SoundMessageContent) {
+            content = new TextMessageContent(content.digest(message) + ' ' + content.duration + "''");
+        }
+        return content
+    }
 
 }
 
