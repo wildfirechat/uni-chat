@@ -48,6 +48,10 @@
                 <i class="icon-ion-person-add"></i>
                 <a>添加好友</a>
             </div>
+            <div v-if="isFriend && !isSelf" class="action" style="color: red" @click="deleteFriend">
+                <i class="icon-ion-android-remove-circle"></i>
+                <a>删除好友</a>
+            </div>
         </div>
     </div>
 </template>
@@ -97,6 +101,27 @@ export default {
                         // do nothing
                     })
             }
+        },
+        deleteFriend() {
+            console.log('start deleteFriend')
+            wfc.deleteFriend(this.user.uid, () => {
+                console.log('deleteFriend success')
+                uni.showToast({
+                    title: '删除好友成功',
+                    icon: 'none'
+                });
+                setTimeout(() => {
+                    uni.navigateBack({
+                        delta: 1
+                    })
+                }, 1000)
+            }, err => {
+                console.log('deleteFriend fail ', err)
+                uni.showToast({
+                    title: '删除好友失败' + err,
+                    icon: 'none'
+                });
+            })
         },
         addFriend() {
             let userInfo = wfc.getUserInfo(wfc.getUserId());
