@@ -19,7 +19,9 @@ import SoundMessageContent from "../../../wfc/messages/soundMessageContent";
 import permision from "@/common/permission.js"
 // #endif
 
+// #ifndef APP-HARMONY
 const recorderManager = uni.getRecorderManager();
+// #endif
 export default {
     name: 'AudioInputView',
     props: {

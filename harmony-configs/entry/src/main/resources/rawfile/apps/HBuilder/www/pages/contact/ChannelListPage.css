@@ -1,0 +1,20 @@
+
+.channel-item[data-v-09f99ef0] {
+    height: 50px;
+    padding: 5px 10px;
+    display: flex;
+    font-size: 13px;
+    align-items: center;
+}
+.channel-item[data-v-09f99ef0]:active {
+    background: #d6d6d6;
+}
+.channel-item span[data-v-09f99ef0] {
+    margin-left: 10px;
+}
+.avatar[data-v-09f99ef0] {
+    width: 40px;
+    height: 40px;
+    border-radius: 3px;
+}
+

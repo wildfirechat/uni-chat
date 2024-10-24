@@ -116,24 +116,25 @@ app.config.globalProperties.$eventBus = eventBus
 app.config.globalProperties.$set = (obj, key, value) => obj[key] = value
 
 wfc.init();
+console.log('xxxxxxxx proto init end')
 CustomMessageConfig.registerCustomMessages();
-// 如果不进行初始化，则无法弹出音视频通话界面，不能进行音视频通话。
-if (avengineKit.isAVEngineKitEnable()) {
-    avengineKit.init();
-    if (Config.ICE_SERVERS) {
-        Config.ICE_SERVERS.forEach(iceServer => {
-            avengineKit.addICEServer(iceServer.uri, iceServer.userName, iceServer.password);
-        })
-    }
-}
-if (pttClient.isPttClientEnable()) {
-    pttClient.init();
-}
+// // 如果不进行初始化，则无法弹出音视频通话界面，不能进行音视频通话。
+// if (avengineKit.isAVEngineKitEnable()) {
+//     avengineKit.init();
+//     if (Config.ICE_SERVERS) {
+//         Config.ICE_SERVERS.forEach(iceServer => {
+//             avengineKit.addICEServer(iceServer.uri, iceServer.userName, iceServer.password);
+//         })
+//     }
+// }
+// if (pttClient.isPttClientEnable()) {
+//     pttClient.init();
+// }
 
 store.init();
 
-// app.store = store;
-// app.use(store)
+app.store = store;
+app.use(store)
 export function createApp() {
     return {
         app

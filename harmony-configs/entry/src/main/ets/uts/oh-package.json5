@@ -1,0 +1,8 @@
+{
+ "name": "@dcloudio/uts-harmony",
+ "version": "1.0.0",
+ "description": "",
+ "main": "index.ets",
+ "author": "DCloud",
+ "dependencies": {}
+}

@@ -33,14 +33,14 @@
 import store from "../../store";
 import Conversation from "../../wfc/model/conversation";
 import ConversationType from "../../wfc/model/conversationType";
-import avengineKit from "../../wfc/av/engine/avengineKit";
+// import avengineKit from "../../wfc/av/engine/avengineKit";
 
 export default {
     name: "DiscoveryPage",
     data() {
         return {
             user: store.state.contact.selfUserInfo,
-            supportConference: avengineKit.isSupportConference(),
+            supportConference: false
         }
     },
     methods: {

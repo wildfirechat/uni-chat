@@ -1,0 +1,1 @@
+import '../../resources/rawfile/apps/HBuilder/www/app-service';

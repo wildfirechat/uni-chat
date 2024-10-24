@@ -1,0 +1,8 @@
+{
+ "name": "@dcloudio/uni-app-harmony-framework",
+ "version": "1.0.0",
+ "description": "",
+ "main": "uni-app-harmony-framework-dev.js",
+ "author": "DCloud",
+ "dependencies": {}
+}

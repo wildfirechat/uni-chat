@@ -4,7 +4,12 @@ import EventType from "./wfc/client/wfcEvent";
 import ConversationType from "./wfc/model/conversationType";
 import {eq, gt, numberValue, stringValue} from "./wfc/util/longUtil";
 import helper from "./pages/util/helper";
+// #ifdef APP-HARMONY
+import {pinyin} from "@/uni_modules/wfc-client"
+// #else
 import pinyin from 'pinyin/esm/pinyin'
+// #endif
+
 import GroupType from "./wfc/model/groupType";
 // import {imageThumbnail, videoDuration, videoThumbnail} from "./ui/util/imageUtil";
 import MessageContentMediaType from "./wfc/messages/messageContentMediaType";

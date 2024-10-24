@@ -82,13 +82,13 @@ export default class Config {
             return Config.platform;
         }
         let info = uni.getSystemInfoSync();
-        console.log('systemInfo', info);
+        console.log('systemInfo', JSON.stringify(info));
         if (info.osName === 'ios' || info.platform === 'ios') {
             Config.platform = info.deviceType !== 'phone' ? 8 : 1;
         } else if (info.osName === 'android' || info.platform === 'android') {
             Config.platform = info.deviceType !== 'phone' ? 9 : 2;
         } else {
-            Config.platform = 0;
+            Config.platform = 10;
         }
         return Config.platform;
     }

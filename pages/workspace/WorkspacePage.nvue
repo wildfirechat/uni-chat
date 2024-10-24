@@ -30,6 +30,10 @@ export default {
     },
 
     methods: {
+        // TODO
+        // fixme
+        // harmony next 下，尚不支持 @onPostMessage
+        // https://uniapp.dcloud.net.cn/component/web-view.html#web-view
         handlePostMessage(event) {
             let data = event.detail.data[0];
             console.log('onWebViewMessage data', data.obj)
