@@ -6,8 +6,8 @@
   "author": "",
   "license": "",
   "dependencies": {
-//    "@wfc/marswrapper": "file:./libs/marswrapper.har"
-      "marswrapper": "file:../marswrapper"
+    "@wfc/marswrapper": "file:./libs/marswrapper.har"
+//      "@wfc/marswrapper": "file:../marswrapper"
   },
   "devDependencies": {
 }

@@ -1,7 +1,7 @@
 ## 项目说明
 
 1. `uni-chat` 项目，运行到鸿蒙，等待提示`Cannot find module 'marswrapper' or its corresponding type declarations`，并提示打包失败
-2. 拷贝`app-harmony@x.y.x/entry/src/main/resources/rawfile`目录 到`entry/src/main/resources` 目录下
+2. 拷贝`unpackage/debug/app-harmony@x.y.x/entry/src/main/resources/rawfile`目录 到`entry/src/main/resources` 目录下
 3. 用 DevEco Studio 打开 `harmony-config`
 4. 运行
 

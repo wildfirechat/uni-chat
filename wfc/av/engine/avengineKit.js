@@ -4,7 +4,8 @@ import ParticipantProfile from "./participantProfile";
 import ConversationType from "../../model/conversationType";
 import Config from "../../../config";
 
-const avengineKitPlugin = Config.ENABLE_VOIP ? uni.requireNativePlugin("wf-uni-wfc-avclient") : null;
+// const avengineKitPlugin = Config.ENABLE_VOIP ? uni.requireNativePlugin("wf-uni-wfc-avclient") : null;
+const avengineKitPlugin = null
 
 export class AVEngineKit {
 

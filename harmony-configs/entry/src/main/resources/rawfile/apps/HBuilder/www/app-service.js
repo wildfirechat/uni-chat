@@ -1714,7 +1714,7 @@ if (uni.restoreGlobal) {
         return _Config.platform;
       }
       let info = uni.getSystemInfoSync();
-      formatAppLog("log", "at config.js:82", "systemInfo", JSON.stringify(info));
+      formatAppLog("log", "at config.js:85", "systemInfo", JSON.stringify(info));
       if (info.osName === "ios" || info.platform === "ios") {
         _Config.platform = info.deviceType !== "phone" ? 8 : 1;
       } else if (info.osName === "android" || info.platform === "android") {
@@ -1786,11 +1786,14 @@ if (uni.restoreGlobal) {
   // IM SERVER 的 host 地址，一定要和 APP_SERVER 对应起来，即 APP_SERVER 上配置的 im-server 和下面所配置的im-server 是同一个
   __publicField(_Config, "IM_SERVER_HOST", "wildfirechat.net");
   __publicField(_Config, "QR_CODE_PREFIX_PC_SESSION", "wildfirechat://pcsession/");
-  // turn server 配置，可以添加多个
-  // 使用高级版音视频 SDK 时，不用配置!
-  // !!! 我们提供的服务仅供用户测试和体验，为了保证测试可用，我们会不定期的更改密码. !!!
-  // 上线时，请一定要切换为你们自己部署的服务
-  __publicField(_Config, "ICE_SERVERS", [{ uri: "turn:turn.wildfirechat.net:3478", userName: "wfchat", password: "wfchat1" }]);
+  // 如果使用的是高级版音视频 SDK，则不需要配置 ICE_SERVER，否则需要配置。<br>
+  // 请参考 src/wfc/av/internal/README.MD 切换音视频 SDK <br>
+  // turn server 配置，可以添加多个<br>
+  // 格式: [uri, 用户名, 密码]，可以添加多个<br>
+  // Turn服务配置，用户音视频通话功能，详情参考 https://docs.wildfirechat.net/webrtc/ <br>
+  // 我们提供的服务能力有限，总体带宽仅3Mbps，只能用于用户测试和体验，为了保证测试可用，我们会不定期的更改密码。<br>
+  // 上线时请一定要切换成你们自己的服务。可以购买腾讯云或者阿里云的轻量服务器，价格很便宜，可以避免影响到您的用户体验。<br>
+  __publicField(_Config, "ICE_SERVERS", [{ uri: "turn:turn.wildfirechat.net:3478", userName: "wfchat", password: "wfchat123" }]);
   __publicField(_Config, "LANGUAGE", "zh_CN");
   // 允许主动加入多人音视频通话
   __publicField(_Config, "ENABLE_MULTI_CALL_AUTO_JOIN", true);
@@ -5356,6 +5359,7 @@ if (uni.restoreGlobal) {
       __publicField(this, "getGroupMember", wfcClient_utsProxy.getGroupMember);
       __publicField(this, "addMembers", wfcClient_utsProxy.addMembers);
       __publicField(this, "getMessage", wfcClient_utsProxy.getMessage);
+      __publicField(this, "disconnect", wfcClient_utsProxy.disconnect);
     }
   }
   const utsWfcClient = new UtsWfcClient();
@@ -5567,10 +5571,10 @@ if (uni.restoreGlobal) {
       if (!self$6.isLogined) {
         return;
       }
-      let channelIdArray = JSON.parse(channelListIds);
+      let channelInfoArray = JSON.parse(channelListIds);
       let channelInfos = [];
-      channelIdArray.forEach((channelId) => {
-        channelInfos.push(self$6.getChannelInfo(channelId, false));
+      channelInfoArray.forEach((info) => {
+        channelInfos.push(Object.assign(new ChannelInfo(), info));
       });
       self$6.eventEmitter.emit(EventType.ChannelInfosUpdate, channelInfos);
     }
@@ -9194,7 +9198,7 @@ if (uni.restoreGlobal) {
   function _sfc_render$1o(_ctx, _cache, $props, $setup, $data, $options) {
     return null;
   }
-  const PagesSplashPage = /* @__PURE__ */ _export_sfc(_sfc_main$1p, [["render", _sfc_render$1o], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/SplashPage.vue"]]);
+  const PagesSplashPage = /* @__PURE__ */ _export_sfc(_sfc_main$1p, [["render", _sfc_render$1o], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/SplashPage.vue"]]);
   class FavItem {
     constructor() {
       __publicField(this, "id");
@@ -9683,7 +9687,7 @@ if (uni.restoreGlobal) {
       }, "登录", 8, ["disabled"])
     ]);
   }
-  const PagesLoginLoginPage = /* @__PURE__ */ _export_sfc(_sfc_main$1o, [["render", _sfc_render$1n], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/login/LoginPage.vue"]]);
+  const PagesLoginLoginPage = /* @__PURE__ */ _export_sfc(_sfc_main$1o, [["render", _sfc_render$1n], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/login/LoginPage.vue"]]);
   const _sfc_main$1n = {
     name: "uniList",
     "mp-weixin": {
@@ -9732,7 +9736,7 @@ if (uni.restoreGlobal) {
       })) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$1n, [["render", _sfc_render$1m], ["__scopeId", "data-v-7b0ccca2"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/components/uni-list/uni-list.vue"]]);
+  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$1n, [["render", _sfc_render$1m], ["__scopeId", "data-v-7b0ccca2"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/components/uni-list/uni-list.vue"]]);
   const _sfc_main$1m = {
     props: {
       maskBg: {
@@ -9961,7 +9965,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$1m, [["render", _sfc_render$1l], ["__scopeId", "data-v-f7a7ba25"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/components/chunLei-popups/chunLei-popups.vue"]]);
+  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$1m, [["render", _sfc_render$1l], ["__scopeId", "data-v-f7a7ba25"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/components/chunLei-popups/chunLei-popups.vue"]]);
   const helper = {
     parseXml: (text, tagName) => {
       var parser2 = new window.DOMParser();
@@ -11791,7 +11795,7 @@ This will fail in production.`);
       misc: null
     },
     init() {
-      formatAppLog("log", "at store.js:68", "init store");
+      formatAppLog("log", "at store.js:69", "init store");
       const { conversationStore, contactStore, pickStore, searchStore, miscStore } = storeToRefs(pstore());
       conversationState = conversationStore.value;
       contactState = contactStore.value;
@@ -11805,7 +11809,7 @@ This will fail in production.`);
       store.state.misc = miscState;
       wfc.eventEmitter.on(EventType.ConnectionStatusChanged, (status) => {
         miscState.connectionStatus = status;
-        formatAppLog("log", "at store.js:85", "connection status changed", status);
+        formatAppLog("log", "at store.js:86", "connection status changed", status);
         if (status === ConnectionStatus.ConnectionStatusConnected) {
           this._loadDefaultData();
         } else if (status === ConnectionStatus.ConnectionStatusLogout || status === ConnectionStatus.ConnectionStatusRejected || status === ConnectionStatus.ConnectionStatusSecretKeyMismatch || status === ConnectionStatus.ConnectionStatusKickedOff || status === ConnectionStatus.ConnectionStatusTokenIncorrect) {
@@ -11817,7 +11821,7 @@ This will fail in production.`);
         }
       });
       wfc.eventEmitter.on(EventType.UserInfosUpdate, (userInfos) => {
-        formatAppLog("log", "at store.js:104", "store UserInfosUpdate", userInfos, miscState.connectionStatus);
+        formatAppLog("log", "at store.js:105", "store UserInfosUpdate", userInfos, miscState.connectionStatus);
         this._reloadSingleConversationIfExist(userInfos);
         this._loadCurrentConversationMessages();
         this._loadFriendList();
@@ -11825,7 +11829,7 @@ This will fail in production.`);
         this._loadSelfUserInfo();
       });
       wfc.eventEmitter.on(EventType.SettingUpdate, () => {
-        formatAppLog("log", "at store.js:115", "store SettingUpdate");
+        formatAppLog("log", "at store.js:116", "store SettingUpdate");
         this._loadDefaultConversationList();
         this._loadFavContactList();
         this._loadFavGroupList();
@@ -11843,12 +11847,12 @@ This will fail in production.`);
         this._loadCurrentConversationMessages();
       });
       wfc.eventEmitter.on(EventType.GroupInfosUpdate, (groupInfos) => {
-        formatAppLog("log", "at store.js:137", "store GroupInfosUpdate", groupInfos);
+        formatAppLog("log", "at store.js:138", "store GroupInfosUpdate", groupInfos);
         this._reloadGroupConversationIfExist(groupInfos);
         this._loadFavGroupList();
       });
       wfc.eventEmitter.on(EventType.GroupMembersUpdate, (groupId, members) => {
-        formatAppLog("log", "at store.js:146", "store GroupMembersUpdate", groupId);
+        formatAppLog("log", "at store.js:147", "store GroupMembersUpdate", groupId);
         this._reloadGroupConversationIfExist([new NullGroupInfo(groupId)]);
       });
       wfc.eventEmitter.on(EventType.ChannelInfosUpdate, (groupInfos) => {
@@ -11904,7 +11908,7 @@ This will fail in production.`);
           });
           if (msgIndex > -1) {
             conversationState.currentConversationMessageList.splice(msgIndex, 1, msg);
-            formatAppLog("log", "at store.js:225", "msg duplicate", msg.messageId, msg.messageUid);
+            formatAppLog("log", "at store.js:226", "msg duplicate", msg.messageId, msg.messageUid);
             return;
           }
           conversationState.currentConversationMessageList.push(msg);
@@ -11964,7 +11968,7 @@ This will fail in production.`);
           return;
         }
         if (!conversationState.currentConversationInfo || !message2.conversation.equal(conversationState.currentConversationInfo.conversation)) {
-          formatAppLog("log", "at store.js:297", "not current conv");
+          formatAppLog("log", "at store.js:298", "not current conv");
           return;
         }
         let index = conversationState.currentConversationMessageList.findIndex((m) => m.messageId === message2.messageId);
@@ -11981,12 +11985,12 @@ This will fail in production.`);
         conversationState.currentConversationMessageList.push(message2);
       });
       wfc.eventEmitter.on(EventType.MessageStatusUpdate, (message2) => {
-        formatAppLog("log", "at store.js:316", "message status update", message2);
+        formatAppLog("log", "at store.js:317", "message status update", message2);
         if (!this._isDisplayMessage(message2)) {
           return;
         }
         if (!conversationState.currentConversationInfo || !message2.conversation.equal(conversationState.currentConversationInfo.conversation)) {
-          formatAppLog("log", "at store.js:321", "not current conv");
+          formatAppLog("log", "at store.js:322", "not current conv");
           return;
         }
         let index = conversationState.currentConversationMessageList.findIndex((m) => m.messageId === message2.messageId);
@@ -12010,7 +12014,7 @@ This will fail in production.`);
       miscState.connectionStatus = wfc.getConnectionStatus();
     },
     _loadDefaultData() {
-      formatAppLog("log", "at store.js:354", "store.js", "_loadDefaultData");
+      formatAppLog("log", "at store.js:355", "store.js", "_loadDefaultData");
       this._loadFavGroupList();
       this._loadChannelList();
       this._loadFriendList();
@@ -12035,7 +12039,7 @@ This will fail in production.`);
       let conversationList = wfc.getConversationList(conversationType, lines);
       let toLoadUserIdSet = /* @__PURE__ */ new Set();
       let toLoadGroupIds = [];
-      formatAppLog("log", "at store.js:384", "_loadConversationList size", conversationList.length);
+      formatAppLog("log", "at store.js:385", "_loadConversationList size", conversationList.length);
       conversationList.forEach((info) => {
         if (info.conversation.type === ConversationType.Single) {
           toLoadUserIdSet.add(info.conversation.target);
@@ -12057,7 +12061,7 @@ This will fail in production.`);
       toLoadGroupIds.forEach((gid) => {
         groupInfoMap.set(gid, new NullGroupInfo(gid));
       });
-      formatAppLog("log", "at store.js:407", "to load userIds", toLoadUserIdSet.size);
+      formatAppLog("log", "at store.js:408", "to load userIds", toLoadUserIdSet.size);
       wfc.getUserInfos([...toLoadUserIdSet], "").forEach((u) => {
         userInfoMap.set(u.uid, u);
       });
@@ -12204,7 +12208,7 @@ This will fail in production.`);
           });
           this._patchCurrentConversationOnlineStatus();
         }, (err) => {
-          formatAppLog("log", "at store.js:575", "watchOnlineState error", err);
+          formatAppLog("log", "at store.js:576", "watchOnlineState error", err);
         });
       }
       if (conversation2.type === ConversationType.Channel) {
@@ -12244,7 +12248,7 @@ This will fail in production.`);
         let conversation2 = new Conversation(ConversationType.Group, groupId, 0);
         conversationState.conversationInfoList = conversationState.conversationInfoList.filter((info) => !info.conversation.equal(conversation2));
       }, (err) => {
-        formatAppLog("log", "at store.js:621", "quit group error", err);
+        formatAppLog("log", "at store.js:622", "quit group error", err);
       });
     },
     dismissGroup(groupId) {
@@ -12253,13 +12257,13 @@ This will fail in production.`);
         let conversation2 = new Conversation(ConversationType.Group, groupId, 0);
         conversationState.conversationInfoList = conversationState.conversationInfoList.filter((info) => !info.conversation.equal(conversation2));
       }, (err) => {
-        formatAppLog("log", "at store.js:630", "dismiss group error", err);
+        formatAppLog("log", "at store.js:631", "dismiss group error", err);
       });
     },
     subscribeChannel(channelId, subscribe) {
       wfc.listenChannel(channelId, subscribe, () => {
       }, (err) => {
-        formatAppLog("log", "at store.js:637", "unsubscribe channel error", err);
+        formatAppLog("log", "at store.js:638", "unsubscribe channel error", err);
       });
     },
     toggleMessageMultiSelection(message2) {
@@ -12301,6 +12305,7 @@ This will fail in production.`);
                 wfc.sendConversationMessage(conversation2, lm);
               });
             } else {
+              message2.messageContent = this._filterForwardMessageContent(message2);
               wfc.sendConversationMessage(conversation2, message2.messageContent);
             }
           });
@@ -12315,7 +12320,11 @@ This will fail in production.`);
             title = "群的聊天记录";
           }
           compositeMessageContent.title = title;
-          compositeMessageContent.setMessages(messages2);
+          let msgs = messages2.map((m) => {
+            m.messageContent = this._filterForwardMessageContent(m);
+            return m;
+          });
+          compositeMessageContent.setMessages(msgs);
           wfc.sendConversationMessage(conversation2, compositeMessageContent);
         }
         if (extraMessageText) {
@@ -12331,7 +12340,7 @@ This will fail in production.`);
           this.forwardMessage(forwardType, [conversation2], messages2, extraMessageText);
         },
         (err) => {
-          formatAppLog("error", "at store.js:721", "createConversation error", err);
+          formatAppLog("error", "at store.js:727", "createConversation error", err);
         }
       );
     },
@@ -12353,13 +12362,13 @@ This will fail in production.`);
         autoplay
       });
       conversationState.previewMediaIndex = 0;
-      formatAppLog("log", "at store.js:744", "preview media", conversationState.previewMediaItems, conversationState.previewMediaIndex);
+      formatAppLog("log", "at store.js:750", "preview media", conversationState.previewMediaItems, conversationState.previewMediaIndex);
     },
     previewMedias(mediaItems, index) {
       conversationState.previewMediaItems.length = 0;
       conversationState.previewMediaItems.push(...mediaItems);
       conversationState.previewMediaIndex = index;
-      formatAppLog("log", "at store.js:750", "preview medias", conversationState.previewMediaItems, conversationState.previewMediaIndex);
+      formatAppLog("log", "at store.js:756", "preview medias", conversationState.previewMediaItems, conversationState.previewMediaIndex);
     },
     playVoice(message2) {
       if (conversationState.currentVoiceMessage) {
@@ -12424,7 +12433,7 @@ This will fail in production.`);
     async sendFile(conversation2, file) {
       if (file.size && file.size > 100 * 1024 * 1024) {
         if (!wfc.isSupportBigFilesUpload() || conversation2.type === ConversationType.SecretChat) {
-          formatAppLog("log", "at store.js:821", "file too big, and not support upload big file");
+          formatAppLog("log", "at store.js:827", "file too big, and not support upload big file");
           return true;
         }
       }
@@ -12463,7 +12472,7 @@ This will fail in production.`);
           messageContent = new FileMessageContent(fileOrLocalPath, remotePath);
           break;
         default:
-          formatAppLog("log", "at store.js:864", "not support file");
+          formatAppLog("log", "at store.js:870", "not support file");
           return false;
       }
       msg.messageContent = messageContent;
@@ -12471,7 +12480,7 @@ This will fail in production.`);
         msg,
         (messageId) => {
           msg.messageId = messageId;
-          formatAppLog("log", "at store.js:871", "sf, pr", messageId);
+          formatAppLog("log", "at store.js:877", "sf, pr", messageId);
         },
         (progress, total) => {
           let sm = conversationState.sendingMessages.find((e) => e.messageId === msg.messageId);
@@ -12483,11 +12492,11 @@ This will fail in production.`);
           }
         },
         (messageUid) => {
-          formatAppLog("log", "at store.js:885", "sf s", messageUid);
+          formatAppLog("log", "at store.js:891", "sf s", messageUid);
           conversationState.sendingMessages = conversationState.sendingMessages.filter((e) => e.messageId !== msg.messageId);
         },
         (error) => {
-          formatAppLog("log", "at store.js:890", "sf e", error);
+          formatAppLog("log", "at store.js:896", "sf e", error);
           conversationState.sendingMessages = conversationState.sendingMessages.filter((e) => e.messageId !== msg.messageId);
         }
       );
@@ -12512,7 +12521,7 @@ This will fail in production.`);
         msgs = msgs.map((m) => this._patchMessage(m, 0));
         callback && callback(msgs);
       }, (err) => {
-        formatAppLog("error", "at store.js:920", "getMessageV2 error", err);
+        formatAppLog("error", "at store.js:926", "getMessageV2 error", err);
         callback && callback([]);
       });
     },
@@ -12525,7 +12534,7 @@ This will fail in production.`);
       });
     },
     _loadCurrentConversationMessages() {
-      formatAppLog("log", "at store.js:935", "_loadCurrentConversationMessages");
+      formatAppLog("log", "at store.js:941", "_loadCurrentConversationMessages");
       if (!conversationState.currentConversationInfo) {
         return;
       }
@@ -12542,9 +12551,9 @@ This will fail in production.`);
             break;
           }
         }
-        formatAppLog("log", "at store.js:952", "_loadCurrentConversationMessages success", conversation2, msgs);
+        formatAppLog("log", "at store.js:958", "_loadCurrentConversationMessages success", conversation2, msgs);
       }, (err) => {
-        formatAppLog("error", "at store.js:954", "_loadCurrentConversationMessages error", err);
+        formatAppLog("error", "at store.js:960", "_loadCurrentConversationMessages error", err);
       });
     },
     _patchCurrentConversationMessages() {
@@ -12579,7 +12588,7 @@ This will fail in production.`);
         return;
       }
       let conversation2 = conversationState.currentConversationInfo.conversation;
-      formatAppLog("log", "at store.js:992", "loadConversationHistoryMessage", conversation2, conversationState.currentConversationOldestMessageId, stringValue(conversationState.currentConversationOldestMessageUid));
+      formatAppLog("log", "at store.js:998", "loadConversationHistoryMessage", conversation2, conversationState.currentConversationOldestMessageId, stringValue(conversationState.currentConversationOldestMessageUid));
       let loadRemoteHistoryMessageFunc = () => {
         wfc.loadRemoteConversationMessages(
           conversation2,
@@ -12587,7 +12596,7 @@ This will fail in production.`);
           conversationState.currentConversationOldestMessageUid,
           20,
           (msgs, hasMore) => {
-            formatAppLog("log", "at store.js:996", "loadRemoteConversationMessages response", msgs.length);
+            formatAppLog("log", "at store.js:1002", "loadRemoteConversationMessages response", msgs.length);
             if (msgs.length === 0) {
               if (hasMore) {
                 loadedCB();
@@ -12639,7 +12648,7 @@ This will fail in production.`);
           this._reloadConversation(conversation2);
         },
         (err) => {
-          formatAppLog("log", "at store.js:1050", "setConversationTop error", err);
+          formatAppLog("log", "at store.js:1056", "setConversationTop error", err);
         }
       );
     },
@@ -12651,7 +12660,7 @@ This will fail in production.`);
           this._reloadConversation(conversation2);
         },
         (err) => {
-          formatAppLog("log", "at store.js:1060", "setConversationSilent error", err);
+          formatAppLog("log", "at store.js:1066", "setConversationSilent error", err);
         }
       );
     },
@@ -12722,7 +12731,7 @@ This will fail in production.`);
         wfc.getChatroomInfo(info.conversation.target, 0, (chatRoomInfo) => {
           info.conversation._target = chatRoomInfo;
         }, (err) => {
-          formatAppLog("log", "at store.js:1149", "get chatRoomInfo error", err);
+          formatAppLog("log", "at store.js:1155", "get chatRoomInfo error", err);
           info.conversation._target = {};
         });
       }
@@ -12747,7 +12756,7 @@ This will fail in production.`);
         progress: 0,
         total: Number.MAX_SAFE_INTEGER
       });
-      formatAppLog("log", "at store.js:1185", "add downloading");
+      formatAppLog("log", "at store.js:1191", "add downloading");
     },
     isDownloadingMessage(messageId) {
       return conversationState.downloadingMessages.findIndex((dm) => dm.messageId === messageId) >= 0;
@@ -12914,7 +12923,7 @@ This will fail in production.`);
     setSearchQuery(query, options) {
       searchState.query = query;
       if (query) {
-        formatAppLog("log", "at store.js:1382", "search", query, options);
+        formatAppLog("log", "at store.js:1388", "search", query, options);
         if (options.contact) {
           searchState.contactSearchResult = this.filterContact(query);
         }
@@ -12936,14 +12945,14 @@ This will fail in production.`);
       }
     },
     searchUser(query) {
-      formatAppLog("log", "at store.js:1408", "search user", query);
+      formatAppLog("log", "at store.js:1414", "search user", query);
       wfc.searchUser(query, SearchType.General, 0, (keyword, userInfos) => {
-        formatAppLog("log", "at store.js:1410", "search user result", query, userInfos);
+        formatAppLog("log", "at store.js:1416", "search user result", query, userInfos);
         if (searchState.query === keyword) {
           searchState.userSearchResult = userInfos.filter((u) => !wfc.isMyFriend(u.uid));
         }
       }, (err) => {
-        formatAppLog("log", "at store.js:1415", "search user error", query, err);
+        formatAppLog("log", "at store.js:1421", "search user error", query, err);
         if (searchState.query === query) {
           searchState.userSearchResult = [];
         }
@@ -12954,7 +12963,7 @@ This will fail in production.`);
       let result = contactState.friendList.filter((u) => {
         return u._displayName.indexOf(query) > -1 || u._firstLetters.indexOf(query.toLowerCase()) > -1 || u._pinyin.indexOf(query.toLowerCase()) > -1;
       });
-      formatAppLog("log", "at store.js:1428", "friend searchResult", result);
+      formatAppLog("log", "at store.js:1434", "friend searchResult", result);
       return result;
     },
     searchFiles(keyword, beforeMessageUid, successCB, failCB) {
@@ -12973,7 +12982,7 @@ This will fail in production.`);
           successCB && successCB(files);
         },
         (errorCode) => {
-          formatAppLog("log", "at store.js:1442", "search file error", errorCode);
+          formatAppLog("log", "at store.js:1448", "search file error", errorCode);
           failCB && failCB(errorCode);
         }
       );
@@ -12991,13 +13000,13 @@ This will fail in production.`);
     // TODO 匹配类型，是群名称匹配上了，还是群成员的名称匹配上了？
     // 目前只搜索群名称
     filterFavGroup(query) {
-      formatAppLog("log", "at store.js:1463", "to search group", contactState.favGroupList);
+      formatAppLog("log", "at store.js:1469", "to search group", contactState.favGroupList);
       let queryPinyin = wfcClient_utsProxy.pinyin(query, { style: 0 }).join("").trim().toLowerCase();
       let result = contactState.favGroupList.filter((g) => {
         let groupNamePinyin = wfcClient_utsProxy.pinyin(g.name, { style: 0 }).join("").trim().toLowerCase();
         return g.name.indexOf(query) > -1 || g.name.indexOf(queryPinyin) > -1 || groupNamePinyin.indexOf(query) > -1 || groupNamePinyin.indexOf(queryPinyin) > -1;
       });
-      formatAppLog("log", "at store.js:1471", "group searchResult", result);
+      formatAppLog("log", "at store.js:1477", "group searchResult", result);
       return result;
     },
     // TODO
@@ -13100,7 +13109,7 @@ This will fail in production.`);
           successCB && successCB(conversation2);
         },
         (error) => {
-          formatAppLog("log", "at store.js:1585", "create group error", error);
+          formatAppLog("log", "at store.js:1591", "create group error", error);
           failCB && failCB(error);
         }
       );
@@ -13108,7 +13117,7 @@ This will fail in production.`);
     _loadUserLocalSettings() {
       let userId = wfc.getUserId();
       let setting2 = getItem(userId + "-notification");
-      miscState.enableNotification = setting2 === null || setting2 === "1";
+      miscState.enableNotification = setting2 === null || setting2 === "" || setting2 === "1";
       setting2 = getItem(userId + "-notificationDetail");
       miscState.enableNotificationMessageDetail = setting2 === null || setting2 === "1";
     },
@@ -13181,7 +13190,7 @@ This will fail in production.`);
         wfc.removeConversation(conv, true);
         conversationState.conversationInfoList = conversationState.conversationInfoList.filter((info) => !info.conversation.equal(conv));
       }, (err) => {
-        formatAppLog("log", "at store.js:1676", "deleteFriend error", err);
+        formatAppLog("log", "at store.js:1682", "deleteFriend error", err);
       });
     },
     _patchFileRecords(fileRecords) {
@@ -13243,6 +13252,15 @@ This will fail in production.`);
         }
         wfc.notify(tip, miscState.enableNotificationMessageDetail ? content.digest(msg) : "");
       }
+    },
+    _filterForwardMessageContent(message2) {
+      let content = message2.messageContent;
+      if (content instanceof CallStartMessageContent) {
+        content = new TextMessageContent(content.digest(message2));
+      } else if (content instanceof SoundMessageContent) {
+        content = new TextMessageContent(content.digest(message2) + " " + content.duration + "''");
+      }
+      return content;
     }
   };
   function _reset() {
@@ -13449,7 +13467,7 @@ This will fail in production.`);
       /* NEED_HYDRATION */
     )) : vue.createCommentVNode("v-if", true);
   }
-  const __easycom_1$1 = /* @__PURE__ */ _export_sfc(_sfc_main$1l, [["render", _sfc_render$1k], ["__scopeId", "data-v-234a7099"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/components/main-action-menu/main-action-menu.vue"]]);
+  const __easycom_1$1 = /* @__PURE__ */ _export_sfc(_sfc_main$1l, [["render", _sfc_render$1k], ["__scopeId", "data-v-234a7099"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/components/main-action-menu/main-action-menu.vue"]]);
   class Draft {
     static setConversationDraft(conversation2, draftText, quoteInfo, mentions = null) {
       if (!draftText && !quoteInfo) {
@@ -13643,7 +13661,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const ConversationItemView = /* @__PURE__ */ _export_sfc(_sfc_main$1k, [["render", _sfc_render$1j], ["__scopeId", "data-v-15885850"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversationList/ConversationItemView.vue"]]);
+  const ConversationItemView = /* @__PURE__ */ _export_sfc(_sfc_main$1k, [["render", _sfc_render$1j], ["__scopeId", "data-v-15885850"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversationList/ConversationItemView.vue"]]);
   class OrganizationServerError extends Error {
     constructor(errorCode, message2) {
       super(message2);
@@ -14292,7 +14310,7 @@ This will fail in production.`);
       /* NEED_HYDRATION */
     );
   }
-  const PagesConversationListConversationListPage = /* @__PURE__ */ _export_sfc(_sfc_main$1j, [["render", _sfc_render$1i], ["__scopeId", "data-v-15c1bdfd"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversationList/ConversationListPage.vue"]]);
+  const PagesConversationListConversationListPage = /* @__PURE__ */ _export_sfc(_sfc_main$1j, [["render", _sfc_render$1i], ["__scopeId", "data-v-15c1bdfd"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversationList/ConversationListPage.vue"]]);
   const emojiStickerConfig = [
     {
       category: "emoji",
@@ -14526,7 +14544,7 @@ This will fail in production.`);
       /* NEED_HYDRATION */
     );
   }
-  const AudioInputView = /* @__PURE__ */ _export_sfc(_sfc_main$1i, [["render", _sfc_render$1h], ["__scopeId", "data-v-3e75fb0b"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/AudioInputView.vue"]]);
+  const AudioInputView = /* @__PURE__ */ _export_sfc(_sfc_main$1i, [["render", _sfc_render$1h], ["__scopeId", "data-v-3e75fb0b"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/AudioInputView.vue"]]);
   class PttEventType {
   }
   //某人开始在频道中讲话
@@ -14914,7 +14932,7 @@ This will fail in production.`);
       /* NEED_HYDRATION */
     );
   }
-  const PttAudioInputView = /* @__PURE__ */ _export_sfc(_sfc_main$1h, [["render", _sfc_render$1g], ["__scopeId", "data-v-738674c6"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/PttAudioInputView.vue"]]);
+  const PttAudioInputView = /* @__PURE__ */ _export_sfc(_sfc_main$1h, [["render", _sfc_render$1g], ["__scopeId", "data-v-738674c6"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/PttAudioInputView.vue"]]);
   class CallSession {
     constructor() {
       //通话ID
@@ -14977,8 +14995,11 @@ This will fail in production.`);
   __publicField(CallSession, "kWFAVCallEndReasonRoomNotExist", 14);
   __publicField(CallSession, "kWFAVCallEndReasonRoomParticipantsFull", 15);
   class AvengineCallback {
+    constructor() {
+      __publicField(this, "innerAudioContext");
+    }
     onReceiveCall(session) {
-      formatAppLog("log", "at wfc/av/engine/avengineCallback.js:6", "onReceiveCall", session);
+      formatAppLog("log", "at wfc/av/engine/avengineCallback.js:8", "onReceiveCall", session);
       if (typeof session === "string") {
         session = Object.assign(new CallSession(), JSON.parse(session));
       }
@@ -14993,25 +15014,38 @@ This will fail in production.`);
         uni.navigateTo({
           url,
           success: (res) => {
-            formatAppLog("log", "at wfc/av/engine/avengineCallback.js:22", `navigate to ${url} success`);
+            formatAppLog("log", "at wfc/av/engine/avengineCallback.js:24", `navigate to ${url} success`);
             res.eventChannel.emit("options", {
               callSession: session
             });
           },
           fail: (e) => {
-            formatAppLog("log", "at wfc/av/engine/avengineCallback.js:28", `navigate to ${url} error`, e);
+            formatAppLog("log", "at wfc/av/engine/avengineCallback.js:30", `navigate to ${url} error`, e);
           }
         });
       }
     }
     shouldStartRing(isIncoming) {
-      formatAppLog("log", "at wfc/av/engine/avengineCallback.js:35", "shouldStartRing", isIncoming);
+      self$3.innerAudioContext = uni.createInnerAudioContext();
+      self$3.innerAudioContext.src = isIncoming ? "/static/audios/incoming_call_ring.mp3" : "/static/audios/outgoing_call_ring.mp3";
+      self$3.innerAudioContext.autoplay = true;
+      self$3.innerAudioContext.loop = true;
+      self$3.innerAudioContext.play();
+      self$3.innerAudioContext.onPlay(() => {
+        formatAppLog("log", "at wfc/av/engine/avengineCallback.js:43", "开始播放");
+      });
+      self$3.innerAudioContext.onError((e) => {
+        formatAppLog("error", "at wfc/av/engine/avengineCallback.js:46", "播放响铃失败", e);
+      });
     }
     shouldStopRing() {
-      formatAppLog("log", "at wfc/av/engine/avengineCallback.js:40", "shouldStopRing");
+      formatAppLog("log", "at wfc/av/engine/avengineCallback.js:51", "shouldStopRing");
+      self$3.innerAudioContext.stop();
+      self$3.innerAudioContext.destroy();
+      self$3.innerAudioContext = null;
     }
     didCallEnded(reason, duration) {
-      formatAppLog("log", "at wfc/av/engine/avengineCallback.js:46", "didCallEnded", reason, duration);
+      formatAppLog("log", "at wfc/av/engine/avengineCallback.js:59", "didCallEnded", reason, duration);
       let pages = getCurrentPages();
       let singleVoipRoute = "pages/voip/Single";
       let multiVoipRoute = "pages/voip/Multi";
@@ -15021,7 +15055,7 @@ This will fail in production.`);
         uni.navigateBack({
           delta: 1,
           fail: (err) => {
-            formatAppLog("log", "at wfc/av/engine/avengineCallback.js:57", "nav back to conversationView err", err);
+            formatAppLog("log", "at wfc/av/engine/avengineCallback.js:70", "nav back to conversationView err", err);
           }
         });
       }
@@ -15041,7 +15075,7 @@ This will fail in production.`);
       __publicField(this, "screenSharing", false);
     }
   }
-  const avengineKitPlugin = Config.ENABLE_VOIP ? requireNativePlugin("wf-uni-wfc-avclient") : null;
+  const avengineKitPlugin = null;
   class AVEngineKit {
     constructor() {
       __publicField(this, "avengineCallback", self$3);
@@ -15071,13 +15105,13 @@ This will fail in production.`);
           func(...args.slice(1));
         }
       } else {
-        formatAppLog("warn", "at wfc/av/engine/avengineKit.js:47", "_handleNativeAVEngineEvent avengineCallback is null", args);
+        formatAppLog("warn", "at wfc/av/engine/avengineKit.js:48", "_handleNativeAVEngineEvent avengineCallback is null", args);
       }
     }
     _handleNativeCallSessionEvent(e) {
       let args = e.args;
       if (args[0] !== "didReportAudioVolume") {
-        formatAppLog("log", "at wfc/av/engine/avengineKit.js:54", "_handleNativeCallSessionEvent", args);
+        formatAppLog("log", "at wfc/av/engine/avengineKit.js:55", "_handleNativeCallSessionEvent", args);
       }
       if (args[0] === "resumeVoipPage") {
         let session = this.currentCallSession();
@@ -15098,11 +15132,11 @@ This will fail in production.`);
           }
         }
       } else {
-        formatAppLog("warn", "at wfc/av/engine/avengineKit.js:76", "_handleNativeCallSessionEvent sessionCallback is null", args);
+        formatAppLog("warn", "at wfc/av/engine/avengineKit.js:77", "_handleNativeCallSessionEvent sessionCallback is null", args);
       }
     }
     _resumeVoipPage(session) {
-      formatAppLog("log", "at wfc/av/engine/avengineKit.js:81", "_resumeVoipPage", session);
+      formatAppLog("log", "at wfc/av/engine/avengineKit.js:82", "_resumeVoipPage", session);
       let url;
       if (session.conference) {
         url = "/pages/voip/conference/ConferencePage";
@@ -15116,10 +15150,10 @@ This will fail in production.`);
         uni.navigateTo({
           url,
           success: (res) => {
-            formatAppLog("log", "at wfc/av/engine/avengineKit.js:95", `navigate to ${url} success`);
+            formatAppLog("log", "at wfc/av/engine/avengineKit.js:96", `navigate to ${url} success`);
           },
           fail: (e) => {
-            formatAppLog("log", "at wfc/av/engine/avengineKit.js:98", `navigate to ${url} error`, e);
+            formatAppLog("log", "at wfc/av/engine/avengineKit.js:99", `navigate to ${url} error`, e);
           }
         });
       }
@@ -15219,7 +15253,7 @@ This will fail in production.`);
      * @param {number} videoType 视频流类型，可选值参考{@link VideoType}
      */
     setParticipantVideoType(callId, userId, screenSharing, videoType) {
-      formatAppLog("log", "at wfc/av/engine/avengineKit.js:207", "setParticipantVideoType", userId, screenSharing, videoType);
+      formatAppLog("log", "at wfc/av/engine/avengineKit.js:208", "setParticipantVideoType", userId, screenSharing, videoType);
       avengineKitPlugin.setParticipantVideoType(callId, userId, screenSharing, videoType);
     }
     /**
@@ -15674,6 +15708,14 @@ This will fail in production.`);
         if (!await checkVoipPermissions()) {
           return;
         }
+        let session = self$2.currentCallSession();
+        if (session && session.state !== 0) {
+          uni.showToast({
+            title: "音视频通话正在进行中...",
+            icon: "none"
+          });
+          return;
+        }
         if (this.conversationInfo.conversation.type === ConversationType.Single) {
           let callSession = self$2.startSingleCall(this.conversationInfo.conversation.target, audioOnly);
           if (callSession) {
@@ -15710,7 +15752,7 @@ This will fail in production.`);
           sourceType: ["camera"],
           sizeType: ["original", "compressed"],
           success: async (e) => {
-            formatAppLog("log", "at pages/conversation/MessageInputView.vue:404", "choose video", e);
+            formatAppLog("log", "at pages/conversation/MessageInputView.vue:412", "choose video", e);
             let duration = e.duration;
             e.tempFilePath;
             let filePath;
@@ -15722,7 +15764,7 @@ This will fail in production.`);
         wfc.chooseFile(
           "all",
           async (file) => {
-            formatAppLog("log", "at pages/conversation/MessageInputView.vue:429", "choose file", file);
+            formatAppLog("log", "at pages/conversation/MessageInputView.vue:437", "choose file", file);
             file.path;
             let filePath;
             file.path = filePath;
@@ -15742,10 +15784,10 @@ This will fail in production.`);
         if (!draft) {
           return;
         }
-        formatAppLog("log", "at pages/conversation/MessageInputView.vue:466", "restore draft", this.conversationInfo, draft);
+        formatAppLog("log", "at pages/conversation/MessageInputView.vue:474", "restore draft", this.conversationInfo, draft);
         store.quoteMessage(draft.quotedMessage);
         if (this.text) {
-          formatAppLog("log", "at pages/conversation/MessageInputView.vue:469", "inputting, ignore", draft.text);
+          formatAppLog("log", "at pages/conversation/MessageInputView.vue:477", "inputting, ignore", draft.text);
         } else {
           this.text = draft.text;
         }
@@ -16010,7 +16052,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const MessageInputView = /* @__PURE__ */ _export_sfc(_sfc_main$1g, [["render", _sfc_render$1f], ["__scopeId", "data-v-28a1c5e3"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/MessageInputView.vue"]]);
+  const MessageInputView = /* @__PURE__ */ _export_sfc(_sfc_main$1g, [["render", _sfc_render$1f], ["__scopeId", "data-v-28a1c5e3"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/MessageInputView.vue"]]);
   const _sfc_main$1f = {
     name: "FriendRequestView",
     props: {
@@ -16106,7 +16148,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const FriendRequestView = /* @__PURE__ */ _export_sfc(_sfc_main$1f, [["render", _sfc_render$1e], ["__scopeId", "data-v-a7f616a9"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/contact/FriendRequestView.vue"]]);
+  const FriendRequestView = /* @__PURE__ */ _export_sfc(_sfc_main$1f, [["render", _sfc_render$1e], ["__scopeId", "data-v-a7f616a9"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/contact/FriendRequestView.vue"]]);
   class ModifyMyInfoEntry {
     constructor() {
       /**
@@ -16349,7 +16391,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const UserCardView = /* @__PURE__ */ _export_sfc(_sfc_main$1e, [["render", _sfc_render$1d], ["__scopeId", "data-v-a7ee62b9"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/user/UserCardView.vue"]]);
+  const UserCardView = /* @__PURE__ */ _export_sfc(_sfc_main$1e, [["render", _sfc_render$1d], ["__scopeId", "data-v-a7ee62b9"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/user/UserCardView.vue"]]);
   var node = {};
   var dictionary = {};
   var tlds = {};
@@ -16906,7 +16948,7 @@ This will fail in production.`);
       /* CLASS */
     );
   }
-  const TextMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$1d, [["render", _sfc_render$1c], ["__scopeId", "data-v-aac4a595"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/content/TextMessageContentView.vue"]]);
+  const TextMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$1d, [["render", _sfc_render$1c], ["__scopeId", "data-v-aac4a595"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/content/TextMessageContentView.vue"]]);
   var resizeImage = { exports: {} };
   (function(module, exports) {
     (function(root, factory) {
@@ -17048,7 +17090,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const ImageMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$1c, [["render", _sfc_render$1b], ["__scopeId", "data-v-98f58e83"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/content/ImageMessageContentView.vue"]]);
+  const ImageMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$1c, [["render", _sfc_render$1b], ["__scopeId", "data-v-98f58e83"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/content/ImageMessageContentView.vue"]]);
   const _sfc_main$1b = {
     name: "VideoMessageContentView",
     props: {
@@ -17099,7 +17141,7 @@ This will fail in production.`);
       })
     ]);
   }
-  const VideoMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$1b, [["render", _sfc_render$1a], ["__scopeId", "data-v-344f8ed5"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/content/VideoMessageContentView.vue"]]);
+  const VideoMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$1b, [["render", _sfc_render$1a], ["__scopeId", "data-v-344f8ed5"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/content/VideoMessageContentView.vue"]]);
   const _sfc_main$1a = {
     name: "UnsupportMessageContentView",
     props: {
@@ -17131,7 +17173,7 @@ This will fail in production.`);
       /* CLASS */
     );
   }
-  const UnsupportMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$1a, [["render", _sfc_render$19], ["__scopeId", "data-v-c1fb531c"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/content/UnsupportMessageContentView.vue"]]);
+  const UnsupportMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$1a, [["render", _sfc_render$19], ["__scopeId", "data-v-c1fb531c"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/content/UnsupportMessageContentView.vue"]]);
   const _sfc_main$19 = {
     name: "FileMessageContentView",
     props: {
@@ -17251,7 +17293,7 @@ This will fail in production.`);
       /* CLASS */
     );
   }
-  const FileMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$19, [["render", _sfc_render$18], ["__scopeId", "data-v-676fc298"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/content/FileMessageContentView.vue"]]);
+  const FileMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$19, [["render", _sfc_render$18], ["__scopeId", "data-v-676fc298"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/content/FileMessageContentView.vue"]]);
   const _sfc_main$18 = {
     name: "StickerMessageContentView",
     props: {
@@ -17291,7 +17333,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const StickerMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$18, [["render", _sfc_render$17], ["__scopeId", "data-v-15236c72"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/content/StickerMessageContentView.vue"]]);
+  const StickerMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$18, [["render", _sfc_render$17], ["__scopeId", "data-v-15236c72"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/content/StickerMessageContentView.vue"]]);
   const _sfc_main$17 = {
     name: "CallStartMessageContentView",
     props: {
@@ -17339,7 +17381,7 @@ This will fail in production.`);
       /* CLASS */
     );
   }
-  const CallStartMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$17, [["render", _sfc_render$16], ["__scopeId", "data-v-3a6d23e2"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/content/CallStartMessageContentView.vue"]]);
+  const CallStartMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$17, [["render", _sfc_render$16], ["__scopeId", "data-v-3a6d23e2"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/content/CallStartMessageContentView.vue"]]);
   const _sfc_main$16 = {
     name: "AudioMessageContentView",
     props: {
@@ -17445,7 +17487,7 @@ This will fail in production.`);
       /* STYLE */
     );
   }
-  const AudioMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$16, [["render", _sfc_render$15], ["__scopeId", "data-v-45bd7476"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/content/AudioMessageContentViewAMR.vue"]]);
+  const AudioMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$16, [["render", _sfc_render$15], ["__scopeId", "data-v-45bd7476"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/content/AudioMessageContentViewAMR.vue"]]);
   const _sfc_main$15 = {
     name: "CompositeMessageContentView",
     props: {
@@ -17526,7 +17568,7 @@ This will fail in production.`);
       /* CLASS */
     );
   }
-  const CompositeMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$15, [["render", _sfc_render$14], ["__scopeId", "data-v-c6af3edd"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/content/CompositeMessageContentView.vue"]]);
+  const CompositeMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$15, [["render", _sfc_render$14], ["__scopeId", "data-v-c6af3edd"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/content/CompositeMessageContentView.vue"]]);
   const _sfc_main$14 = {
     name: "UserCardMessageContentView",
     props: {
@@ -17593,7 +17635,7 @@ This will fail in production.`);
       }, 8, ["to"])
     ], 8, ["name"]);
   }
-  const UserCardMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$14, [["render", _sfc_render$13], ["__scopeId", "data-v-84be12b6"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/content/UserCardMessageContentView.vue"]]);
+  const UserCardMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$14, [["render", _sfc_render$13], ["__scopeId", "data-v-84be12b6"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/content/UserCardMessageContentView.vue"]]);
   const _sfc_main$13 = {
     name: "ConferenceInviteMessageContentView",
     props: {
@@ -17671,7 +17713,7 @@ This will fail in production.`);
       /* CLASS */
     );
   }
-  const ConferenceInviteMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$13, [["render", _sfc_render$12], ["__scopeId", "data-v-1e3ac39f"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/content/ConferenceInviteMessageContentView.vue"]]);
+  const ConferenceInviteMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$13, [["render", _sfc_render$12], ["__scopeId", "data-v-1e3ac39f"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/content/ConferenceInviteMessageContentView.vue"]]);
   const _sfc_main$12 = {
     name: "UnknownMessageContentView",
     props: {
@@ -17703,7 +17745,7 @@ This will fail in production.`);
       /* CLASS */
     );
   }
-  const UnknowntMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$12, [["render", _sfc_render$11], ["__scopeId", "data-v-c5cd18c6"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/content/UnknownMessageContentView.vue"]]);
+  const UnknowntMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$12, [["render", _sfc_render$11], ["__scopeId", "data-v-c5cd18c6"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/content/UnknownMessageContentView.vue"]]);
   const _sfc_main$11 = {
     name: "LoadingView"
   };
@@ -17720,7 +17762,7 @@ This will fail in production.`);
       vue.createElementVNode("div", { class: "circlebg" })
     ]);
   }
-  const LoadingView = /* @__PURE__ */ _export_sfc(_sfc_main$11, [["render", _sfc_render$10], ["__scopeId", "data-v-88408487"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/common/LoadingView.vue"]]);
+  const LoadingView = /* @__PURE__ */ _export_sfc(_sfc_main$11, [["render", _sfc_render$10], ["__scopeId", "data-v-88408487"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/common/LoadingView.vue"]]);
   const _sfc_main$10 = {
     name: "StreamingTextMessageContentView",
     components: { LoadingView },
@@ -17779,7 +17821,7 @@ This will fail in production.`);
       /* CLASS */
     );
   }
-  const StreamingTextMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$10, [["render", _sfc_render$$], ["__scopeId", "data-v-44a6ed1b"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/content/StreamingTextMessageContentView.vue"]]);
+  const StreamingTextMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$10, [["render", _sfc_render$$], ["__scopeId", "data-v-44a6ed1b"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/content/StreamingTextMessageContentView.vue"]]);
   const _sfc_main$$ = {
     name: "TestCustomMessageContentView",
     props: {
@@ -17835,7 +17877,7 @@ This will fail in production.`);
       /* CLASS */
     );
   }
-  const TestCustomMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$$, [["render", _sfc_render$_], ["__scopeId", "data-v-56860826"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/content/TestCustomMessageContentView.vue"]]);
+  const TestCustomMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$$, [["render", _sfc_render$_], ["__scopeId", "data-v-56860826"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/content/TestCustomMessageContentView.vue"]]);
   class CustomMessageContentType {
   }
   // 1000 以下为内部消息保留，自定义消息需使用 1000 以上的数字
@@ -17979,7 +18021,7 @@ This will fail in production.`);
       /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
     );
   }
-  const MessageContentContainerView = /* @__PURE__ */ _export_sfc(_sfc_main$_, [["render", _sfc_render$Z], ["__scopeId", "data-v-8f711883"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/MessageContentContainerView.vue"]]);
+  const MessageContentContainerView = /* @__PURE__ */ _export_sfc(_sfc_main$_, [["render", _sfc_render$Z], ["__scopeId", "data-v-8f711883"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/MessageContentContainerView.vue"]]);
   const _sfc_main$Z = {
     name: "previewQuotedMessageView",
     props: {
@@ -18002,7 +18044,7 @@ This will fail in production.`);
       }, null, 8, ["innerHTML"])
     ]);
   }
-  const PreviewQuotedMessageView = /* @__PURE__ */ _export_sfc(_sfc_main$Z, [["render", _sfc_render$Y], ["__scopeId", "data-v-eb41f80a"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/PreviewQuotedMessageView.vue"]]);
+  const PreviewQuotedMessageView = /* @__PURE__ */ _export_sfc(_sfc_main$Z, [["render", _sfc_render$Y], ["__scopeId", "data-v-eb41f80a"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/PreviewQuotedMessageView.vue"]]);
   const _sfc_main$Y = {
     name: "QuoteMessageView",
     props: {
@@ -18124,7 +18166,7 @@ This will fail in production.`);
       })) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const QuoteMessageView = /* @__PURE__ */ _export_sfc(_sfc_main$Y, [["render", _sfc_render$X], ["__scopeId", "data-v-12efedfc"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/QuoteMessageView.vue"]]);
+  const QuoteMessageView = /* @__PURE__ */ _export_sfc(_sfc_main$Y, [["render", _sfc_render$X], ["__scopeId", "data-v-12efedfc"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/QuoteMessageView.vue"]]);
   const _sfc_main$X = {
     name: "NormalOutMessageContentView",
     props: {
@@ -18346,7 +18388,7 @@ This will fail in production.`);
       )
     ]);
   }
-  const NormalOutMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$X, [["render", _sfc_render$W], ["__scopeId", "data-v-527e4029"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/NormalOutMessageContentContainerView.vue"]]);
+  const NormalOutMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$X, [["render", _sfc_render$W], ["__scopeId", "data-v-527e4029"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/NormalOutMessageContentContainerView.vue"]]);
   const _sfc_main$W = {
     name: "NormalInMessageContentView",
     props: {
@@ -18480,7 +18522,7 @@ This will fail in production.`);
       )
     ]);
   }
-  const NormalInMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$W, [["render", _sfc_render$V], ["__scopeId", "data-v-fad8b9b4"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/NormalInMessageContentContainerView.vue"]]);
+  const NormalInMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$W, [["render", _sfc_render$V], ["__scopeId", "data-v-fad8b9b4"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/NormalInMessageContentContainerView.vue"]]);
   const _sfc_main$V = {
     name: "NotificationMessageContentView",
     props: {
@@ -18502,7 +18544,7 @@ This will fail in production.`);
       )
     ]);
   }
-  const NotificationMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$V, [["render", _sfc_render$U], ["__scopeId", "data-v-7445324b"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/NotificationMessageContentView.vue"]]);
+  const NotificationMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$V, [["render", _sfc_render$U], ["__scopeId", "data-v-7445324b"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/NotificationMessageContentView.vue"]]);
   const _sfc_main$U = {
     name: "RecallNotificationMessageContentView",
     props: {
@@ -18543,7 +18585,7 @@ This will fail in production.`);
       }, "重新编辑")) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const RecallNotificationMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$U, [["render", _sfc_render$T], ["__scopeId", "data-v-d07b485c"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/RecallNotificationMessageContentView.vue"]]);
+  const RecallNotificationMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$U, [["render", _sfc_render$T], ["__scopeId", "data-v-d07b485c"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/RecallNotificationMessageContentView.vue"]]);
   const _sfc_main$T = {
     name: "MessageMultiSelectionActionView",
     data() {
@@ -18663,7 +18705,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const MultiSelectActionView = /* @__PURE__ */ _export_sfc(_sfc_main$T, [["render", _sfc_render$S], ["__scopeId", "data-v-442d1f59"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/MessageMultiSelectActionView.vue"]]);
+  const MultiSelectActionView = /* @__PURE__ */ _export_sfc(_sfc_main$T, [["render", _sfc_render$S], ["__scopeId", "data-v-442d1f59"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/MessageMultiSelectActionView.vue"]]);
   class GroupMemberType {
   }
   __publicField(GroupMemberType, "Normal", 0);
@@ -18750,7 +18792,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const RichNotificationMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$S, [["render", _sfc_render$R], ["__scopeId", "data-v-fb8a3f13"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/RichNotificationMessageContentView.vue"]]);
+  const RichNotificationMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$S, [["render", _sfc_render$R], ["__scopeId", "data-v-fb8a3f13"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/RichNotificationMessageContentView.vue"]]);
   const _sfc_main$R = {
     name: "ArticlesMessageContentView",
     props: {
@@ -18824,7 +18866,7 @@ This will fail in production.`);
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const ArticlesMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$R, [["render", _sfc_render$Q], ["__scopeId", "data-v-badb3497"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/ArticlesMessageContentView.vue"]]);
+  const ArticlesMessageContentView = /* @__PURE__ */ _export_sfc(_sfc_main$R, [["render", _sfc_render$Q], ["__scopeId", "data-v-badb3497"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/ArticlesMessageContentView.vue"]]);
   const _sfc_main$Q = {
     name: "ContextableNotificationMessageContentContainerView",
     components: { ArticlesMessageContentView, RichNotificationMessageContentView },
@@ -18910,7 +18952,7 @@ This will fail in production.`);
       )
     ]);
   }
-  const ContextableNotificationMessageContentContainerView = /* @__PURE__ */ _export_sfc(_sfc_main$Q, [["render", _sfc_render$P], ["__scopeId", "data-v-9d64c5ba"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/ContextableNotificationMessageContentContainerView.vue"]]);
+  const ContextableNotificationMessageContentContainerView = /* @__PURE__ */ _export_sfc(_sfc_main$Q, [["render", _sfc_render$P], ["__scopeId", "data-v-9d64c5ba"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/ContextableNotificationMessageContentContainerView.vue"]]);
   var innerAudioContext;
   const _sfc_main$P = {
     name: "ConversationPage",
@@ -19556,7 +19598,7 @@ This will fail in production.`);
       ], 8, ["dummy_just_for_reactive"]))
     ]);
   }
-  const PagesConversationConversationPage = /* @__PURE__ */ _export_sfc(_sfc_main$P, [["render", _sfc_render$O], ["__scopeId", "data-v-06e23daa"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/ConversationPage.vue"]]);
+  const PagesConversationConversationPage = /* @__PURE__ */ _export_sfc(_sfc_main$P, [["render", _sfc_render$O], ["__scopeId", "data-v-06e23daa"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/ConversationPage.vue"]]);
   const _sfc_main$O = {
     name: "CompositeMessagePage",
     data() {
@@ -19736,7 +19778,7 @@ This will fail in production.`);
       ]))
     ]);
   }
-  const PagesConversationMessageCompositeMessagePage = /* @__PURE__ */ _export_sfc(_sfc_main$O, [["render", _sfc_render$N], ["__scopeId", "data-v-dc442ec0"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/CompositeMessagePage.vue"]]);
+  const PagesConversationMessageCompositeMessagePage = /* @__PURE__ */ _export_sfc(_sfc_main$O, [["render", _sfc_render$N], ["__scopeId", "data-v-dc442ec0"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/CompositeMessagePage.vue"]]);
   const _sfc_main$N = {
     name: "UserListView",
     props: {
@@ -19951,7 +19993,7 @@ This will fail in production.`);
       /* STABLE */
     });
   }
-  const UserListView = /* @__PURE__ */ _export_sfc(_sfc_main$N, [["render", _sfc_render$M], ["__scopeId", "data-v-7b8a04d3"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/user/UserListView.vue"]]);
+  const UserListView = /* @__PURE__ */ _export_sfc(_sfc_main$N, [["render", _sfc_render$M], ["__scopeId", "data-v-7b8a04d3"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/user/UserListView.vue"]]);
   const _sfc_main$M = {
     name: "SingleConversationInfoPage",
     data() {
@@ -20021,7 +20063,7 @@ This will fail in production.`);
       }, null, 8, ["users"])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesConversationSingleConversationInfoPage = /* @__PURE__ */ _export_sfc(_sfc_main$M, [["render", _sfc_render$L], ["__scopeId", "data-v-4176fb07"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/SingleConversationInfoPage.vue"]]);
+  const PagesConversationSingleConversationInfoPage = /* @__PURE__ */ _export_sfc(_sfc_main$M, [["render", _sfc_render$L], ["__scopeId", "data-v-4176fb07"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/SingleConversationInfoPage.vue"]]);
   const _sfc_main$L = {
     name: "ForwardMessageView",
     props: {
@@ -20109,7 +20151,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const ForwardMessageView = /* @__PURE__ */ _export_sfc(_sfc_main$L, [["render", _sfc_render$K], ["__scopeId", "data-v-aae82120"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/forward/ForwardMessageView.vue"]]);
+  const ForwardMessageView = /* @__PURE__ */ _export_sfc(_sfc_main$L, [["render", _sfc_render$K], ["__scopeId", "data-v-aae82120"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/forward/ForwardMessageView.vue"]]);
   const _sfc_main$K = {
     name: "ForwardMessageByPickConversationView",
     props: {
@@ -20320,7 +20362,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const ForwardMessageByPickConversationView = /* @__PURE__ */ _export_sfc(_sfc_main$K, [["render", _sfc_render$J], ["__scopeId", "data-v-f30a00ba"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/forward/ForwardMessageByPickConversationView.vue"]]);
+  const ForwardMessageByPickConversationView = /* @__PURE__ */ _export_sfc(_sfc_main$K, [["render", _sfc_render$J], ["__scopeId", "data-v-f30a00ba"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/forward/ForwardMessageByPickConversationView.vue"]]);
   const _sfc_main$J = {
     name: "CheckableUserListView",
     props: {
@@ -20471,13 +20513,17 @@ This will fail in production.`);
                             style: vue.normalizeStyle($options.paddingStyle),
                             onClick: vue.withModifiers(($event) => $options.clickUserItem(user), ["stop"])
                           }, [
-                            vue.createElementVNode("checkbox", {
-                              class: "checkbox",
-                              value: user.uid,
-                              disabled: $options.isUserUncheckable(user),
-                              type: "checkbox",
-                              checked: $options.isUserChecked(user)
-                            }, null, 8, ["value", "disabled", "checked"]),
+                            vue.createElementVNode("checkbox-group", {
+                              onChange: ($event) => $options.clickUserItem(user)
+                            }, [
+                              vue.createElementVNode("checkbox", {
+                                class: "checkbox",
+                                value: user.uid,
+                                disabled: $options.isUserUncheckable(user),
+                                type: "checkbox",
+                                checked: $options.isUserChecked(user)
+                              }, null, 8, ["value", "disabled", "checked"])
+                            ], 40, ["onChange"]),
                             vue.createElementVNode("img", {
                               class: "avatar",
                               src: user.portrait,
@@ -20509,7 +20555,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const CheckableUserListView = /* @__PURE__ */ _export_sfc(_sfc_main$J, [["render", _sfc_render$I], ["__scopeId", "data-v-394c372f"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/user/CheckableUserListView.vue"]]);
+  const CheckableUserListView = /* @__PURE__ */ _export_sfc(_sfc_main$J, [["render", _sfc_render$I], ["__scopeId", "data-v-394c372f"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/user/CheckableUserListView.vue"]]);
   const _sfc_main$I = {
     name: "ForwardMessageByCreateConversationView",
     props: {
@@ -20677,7 +20723,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const ForwardMessageByCreateConversationView = /* @__PURE__ */ _export_sfc(_sfc_main$I, [["render", _sfc_render$H], ["__scopeId", "data-v-249d0aa4"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/forward/ForwardMessageByCreateConversationView.vue"]]);
+  const ForwardMessageByCreateConversationView = /* @__PURE__ */ _export_sfc(_sfc_main$I, [["render", _sfc_render$H], ["__scopeId", "data-v-249d0aa4"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/forward/ForwardMessageByCreateConversationView.vue"]]);
   const _sfc_main$H = {
     name: "ForwardMessagePage",
     components: {
@@ -20730,7 +20776,7 @@ This will fail in production.`);
       }, null, 8, ["messages", "onForwardTargetType", "forward-type"])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesConversationMessageForwardForwardMessagePage = /* @__PURE__ */ _export_sfc(_sfc_main$H, [["render", _sfc_render$G], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/message/forward/ForwardMessagePage.vue"]]);
+  const PagesConversationMessageForwardForwardMessagePage = /* @__PURE__ */ _export_sfc(_sfc_main$H, [["render", _sfc_render$G], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/message/forward/ForwardMessagePage.vue"]]);
   class ModifyGroupInfoType {
   }
   __publicField(ModifyGroupInfoType, "Modify_Group_Name", 0);
@@ -21058,7 +21104,7 @@ This will fail in production.`);
       }, " 解散群组 ")) : vue.createCommentVNode("v-if", true)
     ])) : vue.createCommentVNode("v-if", true);
   }
-  const PagesConversationGroupConversationInfoPage = /* @__PURE__ */ _export_sfc(_sfc_main$G, [["render", _sfc_render$F], ["__scopeId", "data-v-e2223d49"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/conversation/GroupConversationInfoPage.vue"]]);
+  const PagesConversationGroupConversationInfoPage = /* @__PURE__ */ _export_sfc(_sfc_main$G, [["render", _sfc_render$F], ["__scopeId", "data-v-e2223d49"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/conversation/GroupConversationInfoPage.vue"]]);
   const _sfc_main$F = {
     name: "SearchUserPage",
     components: { UserListView },
@@ -21112,7 +21158,7 @@ This will fail in production.`);
       }, "没有搜索到用户")) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesContactSearchUserPage = /* @__PURE__ */ _export_sfc(_sfc_main$F, [["render", _sfc_render$E], ["__scopeId", "data-v-bfa12f83"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/contact/SearchUserPage.vue"]]);
+  const PagesContactSearchUserPage = /* @__PURE__ */ _export_sfc(_sfc_main$F, [["render", _sfc_render$E], ["__scopeId", "data-v-bfa12f83"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/contact/SearchUserPage.vue"]]);
   const _sfc_main$E = {
     name: "OrganizationTreeView",
     props: {},
@@ -21246,7 +21292,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const PagesContactOrganizationTreePage = /* @__PURE__ */ _export_sfc(_sfc_main$E, [["render", _sfc_render$D], ["__scopeId", "data-v-0a6ca894"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/contact/OrganizationTreePage.vue"]]);
+  const PagesContactOrganizationTreePage = /* @__PURE__ */ _export_sfc(_sfc_main$E, [["render", _sfc_render$D], ["__scopeId", "data-v-0a6ca894"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/contact/OrganizationTreePage.vue"]]);
   const _sfc_main$D = {
     name: "GroupListView",
     props: {},
@@ -21293,7 +21339,7 @@ This will fail in production.`);
       ))
     ]);
   }
-  const PagesContactChannelListPage = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$C], ["__scopeId", "data-v-09f99ef0"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/contact/ChannelListPage.vue"]]);
+  const PagesContactChannelListPage = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$C], ["__scopeId", "data-v-09f99ef0"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/contact/ChannelListPage.vue"]]);
   const _sfc_main$C = {
     name: "SearchResultView",
     props: {
@@ -21352,15 +21398,18 @@ This will fail in production.`);
       }
     },
     methods: {
+      isFriend(user) {
+        return user.uid === wfc.getUserId() || wfc.isMyFriend(user.uid);
+      },
       addFriend(user) {
-        formatAppLog("log", "at pages/search/SearchResultView.vue:153", "add friend", user);
+        formatAppLog("log", "at pages/search/SearchResultView.vue:156", "add friend", user);
         wfc.sendFriendRequest(user.uid, "你好", "", () => {
           uni.showToast({
             title: "发送好友请求成功",
             icon: "none"
           });
         }, (err) => {
-          formatAppLog("log", "at pages/search/SearchResultView.vue:160", "sendFriendRequest fail", err);
+          formatAppLog("log", "at pages/search/SearchResultView.vue:163", "sendFriendRequest fail", err);
           uni.showToast({
             title: " 发送好友请求失败",
             icon: "none"
@@ -21413,7 +21462,7 @@ This will fail in production.`);
         ipcRenderer.send(IPCRendererEventType.showMessageHistoryPage, {
           url
         });
-        formatAppLog("log", "at pages/search/SearchResultView.vue:229", IPCRendererEventType.showMessageHistoryPage, url);
+        formatAppLog("log", "at pages/search/SearchResultView.vue:232", IPCRendererEventType.showMessageHistoryPage, url);
       },
       conversationMatchDesc(convSearchResult) {
       }
@@ -21473,11 +21522,12 @@ This will fail in production.`);
                         1
                         /* TEXT */
                       ),
-                      vue.createElementVNode("button", {
+                      !$options.isFriend(user) ? (vue.openBlock(), vue.createElementBlock("button", {
+                        key: 0,
                         style: { "margin-right": "0", "margin-left": "auto", "border": "none" },
                         size: "mini",
                         onClick: vue.withModifiers(($event) => $options.addFriend(user), ["stop"])
-                      }, vue.toDisplayString(_ctx.$t("common.add")), 9, ["onClick"])
+                      }, vue.toDisplayString(_ctx.$t("common.add")), 9, ["onClick"])) : vue.createCommentVNode("v-if", true)
                     ])
                   ]);
                 }),
@@ -21661,7 +21711,7 @@ This will fail in production.`);
       ]))
     ]);
   }
-  const SearchResultView = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$B], ["__scopeId", "data-v-770e6af6"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/search/SearchResultView.vue"]]);
+  const SearchResultView = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$B], ["__scopeId", "data-v-770e6af6"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/search/SearchResultView.vue"]]);
   const _sfc_main$B = {
     name: "SearchPortalPage",
     components: { SearchResultView },
@@ -21714,7 +21764,7 @@ This will fail in production.`);
       ]))
     ]);
   }
-  const PagesSearchSearchPortalPage = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["render", _sfc_render$A], ["__scopeId", "data-v-f93be52b"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/search/SearchPortalPage.vue"]]);
+  const PagesSearchSearchPortalPage = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["render", _sfc_render$A], ["__scopeId", "data-v-f93be52b"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/search/SearchPortalPage.vue"]]);
   const _sfc_main$A = {
     name: "SearchResultView",
     data() {
@@ -21796,7 +21846,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const PagesSearchSearchConversationMessagePage = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$z], ["__scopeId", "data-v-5ff968c9"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/search/SearchConversationMessagePage.vue"]]);
+  const PagesSearchSearchConversationMessagePage = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$z], ["__scopeId", "data-v-5ff968c9"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/search/SearchConversationMessagePage.vue"]]);
   const _sfc_main$z = {
     name: "UserDetailPage",
     data() {
@@ -21824,12 +21874,33 @@ This will fail in production.`);
             this.user.uid,
             friendAlias,
             () => {
-              formatAppLog("log", "at pages/contact/UserDetailPage.vue:94", "setFriendAlias success", this.user, friendAlias);
+              formatAppLog("log", "at pages/contact/UserDetailPage.vue:98", "setFriendAlias success", this.user, friendAlias);
             },
             (error) => {
             }
           );
         }
+      },
+      deleteFriend() {
+        formatAppLog("log", "at pages/contact/UserDetailPage.vue:106", "start deleteFriend");
+        wfc.deleteFriend(this.user.uid, () => {
+          formatAppLog("log", "at pages/contact/UserDetailPage.vue:108", "deleteFriend success");
+          uni.showToast({
+            title: "删除好友成功",
+            icon: "none"
+          });
+          setTimeout(() => {
+            uni.navigateBack({
+              delta: 1
+            });
+          }, 1e3);
+        }, (err) => {
+          formatAppLog("log", "at pages/contact/UserDetailPage.vue:119", "deleteFriend fail ", err);
+          uni.showToast({
+            title: "删除好友失败" + err,
+            icon: "none"
+          });
+        });
       },
       addFriend() {
         let userInfo = wfc.getUserInfo(wfc.getUserId());
@@ -22016,11 +22087,20 @@ This will fail in production.`);
         }, [
           vue.createElementVNode("i", { class: "icon-ion-person-add" }),
           vue.createElementVNode("a", null, "添加好友")
+        ])) : vue.createCommentVNode("v-if", true),
+        $options.isFriend && !$options.isSelf ? (vue.openBlock(), vue.createElementBlock("div", {
+          key: 1,
+          class: "action",
+          style: { "color": "red" },
+          onClick: _cache[5] || (_cache[5] = (...args) => $options.deleteFriend && $options.deleteFriend(...args))
+        }, [
+          vue.createElementVNode("i", { class: "icon-ion-android-remove-circle" }),
+          vue.createElementVNode("a", null, "删除好友")
         ])) : vue.createCommentVNode("v-if", true)
       ])
     ])) : vue.createCommentVNode("v-if", true);
   }
-  const PagesContactUserDetailPage = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$y], ["__scopeId", "data-v-5caf9d17"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/contact/UserDetailPage.vue"]]);
+  const PagesContactUserDetailPage = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$y], ["__scopeId", "data-v-5caf9d17"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/contact/UserDetailPage.vue"]]);
   const _sfc_main$y = {
     name: "FriendRequestDetailPage",
     props: {},
@@ -22142,7 +22222,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const PagesContactFriendRequestDetailPage = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$x], ["__scopeId", "data-v-13018850"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/contact/FriendRequestDetailPage.vue"]]);
+  const PagesContactFriendRequestDetailPage = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$x], ["__scopeId", "data-v-13018850"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/contact/FriendRequestDetailPage.vue"]]);
   const _sfc_main$x = {
     name: "OrganizationListView",
     props: {},
@@ -22214,7 +22294,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const OrganizationListView = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$w], ["__scopeId", "data-v-766318ce"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/contact/OrganizationListView.vue"]]);
+  const OrganizationListView = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$w], ["__scopeId", "data-v-766318ce"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/contact/OrganizationListView.vue"]]);
   const _imports_0$3 = "/static/image/icon/ic_new_friend.png";
   const _imports_1$3 = "/static/image/icon/ic_group_chat.png";
   const _imports_2$3 = "/static/image/icon/ic_channel_1.png";
@@ -22396,7 +22476,7 @@ This will fail in production.`);
       )
     ]);
   }
-  const PagesContactContactListPage = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$v], ["__scopeId", "data-v-8e30f42c"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/contact/ContactListPage.vue"]]);
+  const PagesContactContactListPage = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$v], ["__scopeId", "data-v-8e30f42c"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/contact/ContactListPage.vue"]]);
   const _sfc_main$v = {
     name: "NewFriendListView",
     props: {
@@ -22519,7 +22599,7 @@ This will fail in production.`);
       ))
     ]);
   }
-  const FriendRequestListView = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$u], ["__scopeId", "data-v-b657b42c"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/contact/FriendRequestListView.vue"]]);
+  const FriendRequestListView = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$u], ["__scopeId", "data-v-b657b42c"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/contact/FriendRequestListView.vue"]]);
   const _sfc_main$u = {
     name: "ContactListPage",
     components: { UniList: __easycom_0$2, FriendRequestListView },
@@ -22559,7 +22639,7 @@ This will fail in production.`);
       })
     ]);
   }
-  const PagesContactNewFriendListPage = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$t], ["__scopeId", "data-v-b4570f09"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/contact/NewFriendListPage.vue"]]);
+  const PagesContactNewFriendListPage = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$t], ["__scopeId", "data-v-b4570f09"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/contact/NewFriendListPage.vue"]]);
   const _sfc_main$t = {
     name: "GroupListView",
     props: {},
@@ -22605,7 +22685,7 @@ This will fail in production.`);
       ))
     ]);
   }
-  const GroupListView = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$s], ["__scopeId", "data-v-38ebad1d"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/contact/GroupListView.vue"]]);
+  const GroupListView = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$s], ["__scopeId", "data-v-38ebad1d"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/contact/GroupListView.vue"]]);
   const _sfc_main$s = {
     name: "ContactListPage",
     components: { GroupListView, UniList: __easycom_0$2 },
@@ -22639,7 +22719,7 @@ This will fail in production.`);
       /* STABLE */
     });
   }
-  const PagesContactGroupListPage = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$r], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/contact/GroupListPage.vue"]]);
+  const PagesContactGroupListPage = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$r], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/contact/GroupListPage.vue"]]);
   const _sfc_main$r = {
     name: "PickUserPage",
     props: {},
@@ -22825,37 +22905,24 @@ This will fail in production.`);
       ])
     ]);
   }
-  const PagesPickPickUserPage = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$q], ["__scopeId", "data-v-cd12c8d6"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/pick/PickUserPage.vue"]]);
+  const PagesPickPickUserPage = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$q], ["__scopeId", "data-v-cd12c8d6"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/pick/PickUserPage.vue"]]);
   const _sfc_main$q = {
     name: "PickSingleUserPage",
-    props: {
-      users: {
-        type: Array,
-        required: false
-      },
-      title: {
-        type: String,
-        required: false,
-        default: ""
-      },
-      showCategoryLabel: {
-        type: Boolean,
-        required: false,
-        default: true
-      }
-    },
+    props: {},
     data() {
       return {
         sharedPickState: store.state.pick,
         filterQuery: "",
-        scrollLeft: 0
+        scrollLeft: 0,
+        users: [],
+        showCategoryLabel: true
       };
     },
     onLoad(option) {
-      formatAppLog("log", "at pages/pick/PickSingleUserPage.vue:52", "PickSingleUserPage onLoad");
+      formatAppLog("log", "at pages/pick/PickSingleUserPage.vue:40", "PickSingleUserPage onLoad");
       const eventChannel = this.getOpenerEventChannel();
       eventChannel.on("pickOptions", (options) => {
-        formatAppLog("log", "at pages/pick/PickSingleUserPage.vue:61", "pickOptions", options);
+        formatAppLog("log", "at pages/pick/PickSingleUserPage.vue:49", "pickOptions", options);
         this.users = options.users;
         this.showCategoryLabel = options.showCategoryLabel;
         this.confirmTitle = options.confirmTitle;
@@ -22863,7 +22930,7 @@ This will fail in production.`);
     },
     methods: {
       onClickUser(user) {
-        formatAppLog("log", "at pages/pick/PickSingleUserPage.vue:71", "onClick user", user);
+        formatAppLog("log", "at pages/pick/PickSingleUserPage.vue:59", "onClick user", user);
         const eventChannel = this.getOpenerEventChannel();
         eventChannel.emit("pickedUser", user);
         uni.navigateBack();
@@ -22871,7 +22938,7 @@ This will fail in production.`);
     },
     computed: {
       filterUsers() {
-        formatAppLog("log", "at pages/pick/PickSingleUserPage.vue:85", "filterUsers", this.filterQuery);
+        formatAppLog("log", "at pages/pick/PickSingleUserPage.vue:73", "filterUsers", this.filterQuery);
         if (this.filterQuery) {
           return store.filterUsers(this.users, this.filterQuery);
         } else {
@@ -22884,7 +22951,7 @@ This will fail in production.`);
   function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_UserListView = vue.resolveComponent("UserListView");
     return vue.openBlock(), vue.createElementBlock("div", { class: "pick-contact-container" }, [
-      $props.users ? (vue.openBlock(), vue.createElementBlock("section", {
+      $data.users ? (vue.openBlock(), vue.createElementBlock("section", {
         key: 0,
         class: "contact-list-container"
       }, [
@@ -22903,7 +22970,7 @@ This will fail in production.`);
             "enable-pick": true,
             users: $options.filterUsers,
             "click-user-item-func": $options.onClickUser,
-            "show-category-label": $props.showCategoryLabel && !$data.filterQuery,
+            "show-category-label": $data.showCategoryLabel && !$data.filterQuery,
             "padding-left": "20px",
             "enable-category-label-sticky": ""
           }, null, 8, ["users", "click-user-item-func", "show-category-label"])
@@ -22911,7 +22978,7 @@ This will fail in production.`);
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesPickPickSingleUserPage = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$p], ["__scopeId", "data-v-b51ec2f5"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/pick/PickSingleUserPage.vue"]]);
+  const PagesPickPickSingleUserPage = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$p], ["__scopeId", "data-v-b51ec2f5"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/pick/PickSingleUserPage.vue"]]);
   let handlers;
   let _webView;
   let mApp;
@@ -23065,7 +23132,7 @@ This will fail in production.`);
       "on:onPostMessage": _cache[0] || (_cache[0] = (...args) => $options.handlePostMessage && $options.handlePostMessage(...args))
     }, null, 40, ["src"]);
   }
-  const PagesWorkspaceWorkspacePage = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$o], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/workspace/WorkspacePage.nvue"]]);
+  const PagesWorkspaceWorkspacePage = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$o], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/workspace/WorkspacePage.nvue"]]);
   const _sfc_main$o = {
     name: "WorkspacePage",
     data() {
@@ -23106,7 +23173,7 @@ This will fail in production.`);
       onReceivedtitle: _cache[1] || (_cache[1] = (...args) => $options.onReceiveTitle && $options.onReceiveTitle(...args))
     }, null, 40, ["src"]);
   }
-  const PagesWorkspaceWorkspaceWebViewPage = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$n], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/workspace/WorkspaceWebViewPage.nvue"]]);
+  const PagesWorkspaceWorkspaceWebViewPage = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$n], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/workspace/WorkspaceWebViewPage.nvue"]]);
   const _imports_0$2 = "/static/image/icon/ic_chatroom.png";
   const _imports_1$2 = "/static/image/icon/ic_robot.png";
   const _imports_2$2 = "/static/image/icon/ic_channel.png";
@@ -23211,7 +23278,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const PagesDiscoveryDiscoveryPage = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$m], ["__scopeId", "data-v-7164f316"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/discovery/DiscoveryPage.vue"]]);
+  const PagesDiscoveryDiscoveryPage = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$m], ["__scopeId", "data-v-7164f316"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/discovery/DiscoveryPage.vue"]]);
   const _sfc_main$m = {
     name: "ChatroomListPage",
     data() {
@@ -23249,7 +23316,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const PagesDiscoveryChatroomListPage = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$l], ["__scopeId", "data-v-5fca8d1f"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/discovery/ChatroomListPage.vue"]]);
+  const PagesDiscoveryChatroomListPage = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$l], ["__scopeId", "data-v-5fca8d1f"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/discovery/ChatroomListPage.vue"]]);
   const _sfc_main$l = {
     name: "MePage",
     data() {
@@ -23355,7 +23422,7 @@ This will fail in production.`);
       }, "退出登录")
     ]);
   }
-  const PagesMeMePage = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$k], ["__scopeId", "data-v-491d9929"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/me/MePage.vue"]]);
+  const PagesMeMePage = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$k], ["__scopeId", "data-v-491d9929"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/me/MePage.vue"]]);
   const _sfc_main$k = {
     name: "WebViewPage",
     data() {
@@ -23371,7 +23438,7 @@ This will fail in production.`);
   function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("web-view", { src: $data.url }, null, 8, ["src"]);
   }
-  const PagesMiscWebViewPage = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$j], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/misc/WebViewPage.vue"]]);
+  const PagesMiscWebViewPage = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$j], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/misc/WebViewPage.vue"]]);
   const _sfc_main$j = {
     name: "PreviewVideoPage",
     data() {
@@ -23393,7 +23460,7 @@ This will fail in production.`);
       }, null, 8, ["src"])
     ]);
   }
-  const PagesMiscPreviewVideoPage = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$i], ["__scopeId", "data-v-79c50a46"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/misc/PreviewVideoPage.vue"]]);
+  const PagesMiscPreviewVideoPage = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$i], ["__scopeId", "data-v-79c50a46"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/misc/PreviewVideoPage.vue"]]);
   class CallState {
   }
   __publicField(CallState, "STATUS_IDLE", 0);
@@ -24101,7 +24168,7 @@ This will fail in production.`);
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesVoipSingle = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$h], ["__scopeId", "data-v-10473c79"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/voip/Single.nvue"]]);
+  const PagesVoipSingle = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$h], ["__scopeId", "data-v-10473c79"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/voip/Single.nvue"]]);
   const _imports_9$1 = "/static/image/av/add.png";
   const _sfc_main$h = {
     name: "Multi",
@@ -24729,7 +24796,7 @@ This will fail in production.`);
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const PagesVoipMulti = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$g], ["__scopeId", "data-v-427f5f70"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/voip/Multi.nvue"]]);
+  const PagesVoipMulti = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$g], ["__scopeId", "data-v-427f5f70"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/voip/Multi.nvue"]]);
   class ConferenceApi extends AppServerApi {
     constructor() {
       super();
@@ -25504,7 +25571,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const PagesVoipConferenceConferencePortalPage = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$f], ["__scopeId", "data-v-f31c2444"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/voip/conference/ConferencePortalPage.vue"]]);
+  const PagesVoipConferenceConferencePortalPage = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$f], ["__scopeId", "data-v-f31c2444"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/voip/conference/ConferencePortalPage.vue"]]);
   const _sfc_main$f = {
     name: "ConferenceInfoPage",
     data() {
@@ -25713,7 +25780,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const PagesVoipConferenceConferenceInfoPage = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__scopeId", "data-v-c4e15b0b"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/voip/conference/ConferenceInfoPage.vue"]]);
+  const PagesVoipConferenceConferenceInfoPage = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$e], ["__scopeId", "data-v-c4e15b0b"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/voip/conference/ConferenceInfoPage.vue"]]);
   const _sfc_main$e = {
     name: "JoinConferenceView",
     data() {
@@ -25810,7 +25877,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const PagesVoipConferenceJoinConferencePage = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$d], ["__scopeId", "data-v-0ad9b4db"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/voip/conference/JoinConferencePage.vue"]]);
+  const PagesVoipConferenceJoinConferencePage = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$d], ["__scopeId", "data-v-0ad9b4db"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/voip/conference/JoinConferencePage.vue"]]);
   class ConferenceInfo {
     constructor() {
       __publicField(this, "conferenceId");
@@ -26050,7 +26117,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const PagesVoipConferenceCreateConferencePage = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$c], ["__scopeId", "data-v-2f919e49"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/voip/conference/CreateConferencePage.vue"]]);
+  const PagesVoipConferenceCreateConferencePage = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$c], ["__scopeId", "data-v-2f919e49"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/voip/conference/CreateConferencePage.vue"]]);
   const _sfc_main$c = {
     name: "OrderConferenceView",
     data() {
@@ -26240,7 +26307,7 @@ This will fail in production.`);
       }, "预定会议", 8, ["disabled"])
     ]);
   }
-  const PagesVoipConferenceOrderConferencePage = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__scopeId", "data-v-7167c599"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/voip/conference/OrderConferencePage.vue"]]);
+  const PagesVoipConferenceOrderConferencePage = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$b], ["__scopeId", "data-v-7167c599"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/voip/conference/OrderConferencePage.vue"]]);
   const popup = {
     data() {
       return {};
@@ -26768,7 +26835,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__scopeId", "data-v-d78c88b7"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/uni_modules/uni-popup/components/uni-popup-dialog/uni-popup-dialog.vue"]]);
+  const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$a], ["__scopeId", "data-v-d78c88b7"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/uni_modules/uni-popup/components/uni-popup-dialog/uni-popup-dialog.vue"]]);
   class MPAnimation {
     constructor(options, _this) {
       this.options = options;
@@ -27145,7 +27212,7 @@ This will fail in production.`);
       [vue.vShow, $data.isShow]
     ]);
   }
-  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
+  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$9], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
   const _sfc_main$9 = {
     name: "uniPopup",
     components: {},
@@ -27533,7 +27600,7 @@ This will fail in production.`);
       /* CLASS */
     )) : vue.createCommentVNode("v-if", true);
   }
-  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__scopeId", "data-v-4dd3c44b"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
+  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$8], ["__scopeId", "data-v-4dd3c44b"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
   class CallEndReason {
   }
   __publicField(CallEndReason, "REASON_Unknown", 0);
@@ -27768,7 +27835,7 @@ This will fail in production.`);
       /* CLASS, STYLE */
     );
   }
-  const ConferenceParticipantVideoView = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-2a59d2e7"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/voip/conference/ConferenceParticipantVideoView.nvue"]]);
+  const ConferenceParticipantVideoView = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$7], ["__scopeId", "data-v-2a59d2e7"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/voip/conference/ConferenceParticipantVideoView.nvue"]]);
   const _imports_0 = "/static/image/av/av_conference_audio.png";
   const _imports_1 = "/static/image/av/av_conference_audio_mute.png";
   const _imports_6 = "/static/image/av/av_conference_handup.png";
@@ -28724,7 +28791,7 @@ This will fail in production.`);
       /* NEED_PATCH */
     );
   }
-  const PagesVoipConferenceConferencePage = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__scopeId", "data-v-b3fbeb70"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/voip/conference/ConferencePage.nvue"]]);
+  const PagesVoipConferenceConferencePage = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$6], ["__scopeId", "data-v-b3fbeb70"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/voip/conference/ConferencePage.nvue"]]);
   const _sfc_main$6 = {
     name: "ConferenceParticipantListView",
     props: {
@@ -29120,7 +29187,7 @@ This will fail in production.`);
       /* NEED_PATCH */
     );
   }
-  const ConferenceParticipantListView = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__scopeId", "data-v-74df3956"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/voip/conference/ConferenceParticipantListView.vue"]]);
+  const ConferenceParticipantListView = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$5], ["__scopeId", "data-v-74df3956"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/voip/conference/ConferenceParticipantListView.vue"]]);
   const _sfc_main$5 = {
     name: "ConferenceApplyUnmuteListView",
     data() {
@@ -29177,7 +29244,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const ConferenceHandUpListView = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__scopeId", "data-v-f0cb3afe"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/voip/conference/ConferenceHandUpListView.vue"]]);
+  const ConferenceHandUpListView = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$4], ["__scopeId", "data-v-f0cb3afe"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/voip/conference/ConferenceHandUpListView.vue"]]);
   const _sfc_main$4 = {
     name: "ConferenceApplyUnmuteVideoListView",
     data() {
@@ -29246,7 +29313,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const ConferenceApplyUnmuteVideoListView = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__scopeId", "data-v-cdd36118"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/voip/conference/ConferenceApplyUnmuteVideoListView.vue"]]);
+  const ConferenceApplyUnmuteVideoListView = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$3], ["__scopeId", "data-v-cdd36118"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/voip/conference/ConferenceApplyUnmuteVideoListView.vue"]]);
   const _sfc_main$3 = {
     name: "ConferenceApplyUnmuteAudioListView",
     data() {
@@ -29315,7 +29382,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const ConferenceApplyUnmuteAudioListView = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__scopeId", "data-v-daf1622c"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/voip/conference/ConferenceApplyUnmuteAudioListView.vue"]]);
+  const ConferenceApplyUnmuteAudioListView = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$2], ["__scopeId", "data-v-daf1622c"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/voip/conference/ConferenceApplyUnmuteAudioListView.vue"]]);
   const _sfc_main$2 = {
     name: "ConferenceManageView",
     data() {
@@ -29538,7 +29605,7 @@ This will fail in production.`);
       /* NEED_PATCH */
     );
   }
-  const PagesVoipConferenceConferenceManagePage = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__scopeId", "data-v-bc32a7c3"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/voip/conference/ConferenceManagePage.vue"]]);
+  const PagesVoipConferenceConferenceManagePage = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__scopeId", "data-v-bc32a7c3"], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/voip/conference/ConferenceManagePage.vue"]]);
   const _sfc_main$1 = {
     name: "ApiTestPage",
     methods: {
@@ -29597,7 +29664,7 @@ This will fail in production.`);
       }, "pttRequestTalk")
     ]);
   }
-  const PagesMiscApiTestPage = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/pages/misc/ApiTestPage.vue"]]);
+  const PagesMiscApiTestPage = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/pages/misc/ApiTestPage.vue"]]);
   __definePage("pages/SplashPage", PagesSplashPage);
   __definePage("pages/login/LoginPage", PagesLoginLoginPage);
   __definePage("pages/conversationList/ConversationListPage", PagesConversationListConversationListPage);
@@ -29685,7 +29752,7 @@ This will fail in production.`);
       }
     }
   };
-  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat/App.vue"]]);
+  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "/Users/jiangecho/bitbucket/wildfirechat/uni-chat-uts/App.vue"]]);
   /*!
     * @intlify/shared v9.1.9
     * (c) 2021 kazuya kawaguchi

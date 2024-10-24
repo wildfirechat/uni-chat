@@ -1,7 +1,7 @@
 /* 引入 interface.uts 文件中定义的变量 */
 
-import clientModule from 'marswrapper'
-import {_pinyin} from 'marswrapper'
+import clientModule from '@wfc/marswrapper'
+import {_pinyin} from '@wfc/marswrapper'
 import {FailCallback, StringCallback, SuccessCallback, VoidCallback} from "../interface.uts";
 
 

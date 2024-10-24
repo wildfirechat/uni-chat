@@ -1,7 +1,7 @@
 import { IUTSObject, UTSObject, UTSJSONObject } from '@dcloudio/uts-harmony'
 import { IUniError, UniError, string, ComponentPublicInstance, ComponentInternalInstance } from '@dcloudio/uni-app-harmony'
-import { _pinyin } from 'marswrapper';
-import clientModule from 'marswrapper';
+import { _pinyin } from '@wfc/marswrapper';
+import clientModule from '@wfc/marswrapper';
 type StringCallback = (value: string) => void;
 type VoidCallback = () => void;
 type SuccessCallback = VoidCallback;
