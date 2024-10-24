@@ -2,9 +2,11 @@ import ConversationType from "../../model/conversationType";
 import CallSession from "./callSession";
 
 export class AvengineCallback {
+    innerAudioContext
+
     onReceiveCall(session) {
         console.log('onReceiveCall', session)
-        if (typeof session === 'string'){
+        if (typeof session === 'string') {
             session = Object.assign(new CallSession(), JSON.parse(session));
         }
         let url;
@@ -32,13 +34,24 @@ export class AvengineCallback {
     }
 
     shouldStartRing(isIncoming) {
-        console.log('shouldStartRing', isIncoming);
-        // TODO ring
+        self.innerAudioContext = uni.createInnerAudioContext();
+        self.innerAudioContext.src = isIncoming ? '/static/audios/incoming_call_ring.mp3' : '/static/audios/outgoing_call_ring.mp3'
+        self.innerAudioContext.autoplay = true;
+        self.innerAudioContext.loop = true;
+        self.innerAudioContext.play()
+        self.innerAudioContext.onPlay(() => {
+            console.log('开始播放');
+        });
+        self.innerAudioContext.onError((e) => {
+            console.error('播放响铃失败', e)
+        })
     }
 
     shouldStopRing() {
         console.log('shouldStopRing')
-        // TODO stop ring
+        self.innerAudioContext.stop()
+        self.innerAudioContext.destroy()
+        self.innerAudioContext = null
     }
 
     didCallEnded(reason, duration) {

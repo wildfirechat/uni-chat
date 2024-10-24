@@ -35,10 +35,13 @@ export default class Config {
 
     static QR_CODE_PREFIX_PC_SESSION = "wildfirechat://pcsession/";
 
-    // turn server 配置，可以添加多个
-    // 使用高级版音视频 SDK 时，不用配置!
-    // !!! 我们提供的服务仅供用户测试和体验，为了保证测试可用，我们会不定期的更改密码. !!!
-    // 上线时，请一定要切换为你们自己部署的服务
+    // 如果使用的是高级版音视频 SDK，则不需要配置 ICE_SERVER，否则需要配置。<br>
+    // 请参考 src/wfc/av/internal/README.MD 切换音视频 SDK <br>
+    // turn server 配置，可以添加多个<br>
+    // 格式: [uri, 用户名, 密码]，可以添加多个<br>
+    // Turn服务配置，用户音视频通话功能，详情参考 https://docs.wildfirechat.net/webrtc/ <br>
+    // 我们提供的服务能力有限，总体带宽仅3Mbps，只能用于用户测试和体验，为了保证测试可用，我们会不定期的更改密码。<br>
+    // 上线时请一定要切换成你们自己的服务。可以购买腾讯云或者阿里云的轻量服务器，价格很便宜，可以避免影响到您的用户体验。<br>
     static ICE_SERVERS = [{uri: 'turn:turn.wildfirechat.net:3478', userName: 'wfchat', password: 'wfchat123'}];
     static LANGUAGE = 'zh_CN';
 
