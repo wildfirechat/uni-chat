@@ -80,8 +80,9 @@ export function initProto(): void {
     // clientModule.setSecretMessageBurnStateListener(self.onSecretMessageStartBurningListener, self.onSecretMessageBurnedListener);
 }
 
-export function setWfcEventListener(listener: (args: object) => void) {
-    wfcEventListener = listener
+@UTSJS.keepAlive
+export function setWfcEventListener(callback : (args: object) => void) {
+    wfcEventListener = callback
 }
 
 export const getClientId = function (): string {
