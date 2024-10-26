@@ -2,7 +2,7 @@
     "id": "wfc-client",
     "name": "【官方】野火即时通讯IM插件(UTS)",
     "displayName": "【官方】野火即时通讯IM插件(UTS)",
-    "version": "0.7.1",
+    "version": "0.7.2",
     "description": "野火官方发布的移动端实时音视频插件，包括Android和iOS平台，拥有完善的Demo，服务器和移动端免费使用，支持多人音频和多人视频通话，让您一步拥有完美的即时通讯软件。",
     "keywords": [
         "IM",
@@ -12,10 +12,6 @@
         "rtc"
     ],
     "dcloudext": {
-        "category": [
-            "UTS插件",
-            "API插件"
-        ],
         "contact": {
             "qq": "2973921150"
         },
@@ -24,7 +20,8 @@
             "data": "插件使用的野火IM SDK会采集数据，详情可以参考：https://www.wildfirechat.net/wildfirechat_user_privacy.html",
             "permissions": "SDCard 读写权限"
         },
-        "npmurl": ""
+        "npmurl": "",
+        "type": "uts"
     },
     "repository": "https://gitee.com/wfchat/uni-wfc-client/tree/uts/"
 }

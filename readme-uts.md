@@ -4,6 +4,11 @@
 ## 使用野火demo
 野火UniApp平台的demo地址:[uni-chat 项目 uts 分支](https://gitee.com/wfchat/uni-wfc-client/tree/uts/)。按照说明配置地址就可以直接运行，再根据产品需求进行二次开发。
 
+## 鸿蒙 5.0 特别说明
+1. 野火IM 鸿蒙 SDK 是需要付费的，鸿蒙 5.0 上，默认只能连到官方服务，需要申请试用才能连到自行部署的`im-server`
+2. 申请试用，具体请看 [试用](https://docs.wildfirechat.cn/trial/)
+3. Android、iOS 端，是免费的，可直接使用
+
 ## 现有项目使用
 ### 集成步骤：
 1. 添加野火插件到项目中。
