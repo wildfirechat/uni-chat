@@ -6,7 +6,7 @@ import {
     getConversationInfos,
     registerMessageFlag,
     getUserSettings,
-    setWfcEventListener,
+    onWfcEventListener,
     getGroupInfo,
     getUserInfo,
     getGroupMembers,
@@ -158,7 +158,7 @@ class UtsWfcClient {
     getConversationInfos = getConversationInfos
     registerMessageFlag = registerMessageFlag
     getUserSettings = getUserSettings
-    setWfcEventListener = setWfcEventListener
+    setWfcEventListener = onWfcEventListener
     getGroupInfo = getGroupInfo
     getUserInfo = getUserInfo
     getGroupMembers = getGroupMembers

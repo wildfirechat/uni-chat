@@ -111,8 +111,8 @@ export function initProto(): void {
 }
 
 @UTSJS.keepAlive
-export function setWfcEventListener(callback : (args: object) => void) {
-    wfcEventListener = callback
+export function onWfcEventListener(listener : (args: object) => void) {
+    wfcEventListener = listener
 }
 
 export const getClientId = function (): string {
