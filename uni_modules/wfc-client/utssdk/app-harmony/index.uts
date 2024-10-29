@@ -1,14 +1,15 @@
 /* 引入 interface.uts 文件中定义的变量 */
 
-import clientModule from '@wfc/marswrapper'
-import {_pinyin} from '@wfc/marswrapper'
+import clientModule from "libmarswrapper.so"
+import { pinyin4js } from '@ohos/pinyin4js';
+
 import {FailCallback, StringCallback, SuccessCallback, VoidCallback} from "../interface.uts";
-
-
 let wfcEventListener: null | ((value: object) => void) = null
 
 export function pinyin(str: string, options: object): string[] {
-    return _pinyin(str, options)
+    // return _pinyin(str, options)
+    let ch: string = pinyin4js.getShortPinyin(str.substring(0, 1)).toUpperCase() as string
+    return [ch]
 }
 
 export function initProto(): void {
