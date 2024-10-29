@@ -36,67 +36,50 @@
     ],
     "requestPermissions": [
       {
-        "name": "ohos.permission.INTERNET"
-      },
-      {
-        "name": "ohos.permission.APPROXIMATELY_LOCATION",
-        "reason": "$string:location_tips",
-        "usedScene": {}
-      },
-      {
-        "name": "ohos.permission.LOCATION",
-        "reason": "$string:location_tips",
-        "usedScene": {}
-      },
-      {
-        "name": "ohos.permission.WRITE_IMAGEVIDEO",
-        "reason": "$string:write_imagevideo_tips",
+        "name": "ohos.permission.INTERNET",
         "usedScene": {
-          "when": "inuse"
+          "when": "always"
         }
       },
       {
-        "name": "ohos.permission.GET_WIFI_INFO",
-        "reason": "$string:get_networkinfo_tips",
+        "name": "ohos.permission.WRITE_MEDIA",
+        "reason": "$string:reason_write_media",
         "usedScene": {
-          "when": "inuse"
+          "when": "always"
         }
       },
       {
-        "name": "ohos.permission.GET_NETWORK_INFO",
-        "reason": "$string:get_wifiinfo_tips",
+        "name": "ohos.permission.READ_MEDIA",
+        "reason": "$string:reason_write_media",
         "usedScene": {
-          "when": "inuse"
+          "when": "always"
         }
       },
       {
-        "name": "ohos.permission.WRITE_CONTACTS",
-        "reason": "$string:write_contacts",
+        "name": "ohos.permission.CAMERA",
+        "reason": "$string:camera_auth_reason",
         "usedScene": {
-          "when": "inuse"
+          "abilities": [
+            "FormAbility"
+          ],
+          "when": "always"
         }
       },
       {
         "name": "ohos.permission.MICROPHONE",
-        "reason": "$string:microphone",
+        "reason": "$string:reason_microphone",
         "usedScene": {
           "when": "inuse"
         }
       },
       {
-        "name": "ohos.permission.ACCESS_BIOMETRIC",
-        "reason": "$string:access_biometric",
-        "usedScene": {
-          "when": "inuse"
-        }
-      },
-      {
-        "name": "ohos.permission.READ_PASTEBOARD",
-        "reason": "$string:read_pasteboard",
+        "name": "ohos.permission.MEDIA_LOCATION",
+        "reason": "$string:reason_media_location",
         "usedScene": {
           "when": "inuse"
         }
       }
+
     ]
   }
 }
