@@ -165,75 +165,78 @@ let store = {
         });
 
 
-        wfc.eventEmitter.on(EventType.ReceiveMessage, (msg, hasMore) => {
+        wfc.eventEmitter.on(EventType.ReceiveMessages, (msgs, hasMore) => {
             //console.log('receiveMessage', msg, hasMore);
             if (miscState.connectionStatus === ConnectionStatus.ConnectionStatusReceiveing) {
                 return;
             }
 
-            if (msg.messageContent instanceof DismissGroupNotification
-                || (msg.messageContent instanceof KickoffGroupMemberNotification && msg.messageContent.kickedMembers.indexOf(wfc.getUserId()) >= 0)
-                || (msg.messageContent instanceof QuitGroupNotification && msg.messageContent.operator === wfc.getUserId())
-            ) {
-                this.setCurrentConversationInfo(null);
-                return;
-            }
+            for (const msg of msgs) {
+                if (msg.messageContent instanceof DismissGroupNotification
+                    || (msg.messageContent instanceof KickoffGroupMemberNotification && msg.messageContent.kickedMembers.indexOf(wfc.getUserId()) >= 0)
+                    || (msg.messageContent instanceof QuitGroupNotification && msg.messageContent.operator === wfc.getUserId())
+                ) {
+                    this.setCurrentConversationInfo(null);
+                    return;
+                }
 
-            if (!hasMore) {
-                this._reloadConversation(msg.conversation)
-            }
-            if (conversationState.currentConversationInfo && msg.conversation.equal(conversationState.currentConversationInfo.conversation)) {
-                // 移动端，目前只有单聊会发送typing消息
-                if (msg.messageContent.type === MessageContentType.Typing) {
-                    let groupId = msg.conversation.type === 1 ? msg.conversation.target : '';
-                    let userInfo = wfc.getUserInfo(msg.from, false, groupId)
-                    userInfo = Object.assign({}, userInfo);
-                    userInfo._displayName = wfc.getGroupMemberDisplayNameEx(userInfo);
-                    conversationState.inputtingUser = userInfo;
+                if (!hasMore) {
+                    this._reloadConversation(msg.conversation)
+                }
+                if (conversationState.currentConversationInfo && msg.conversation.equal(conversationState.currentConversationInfo.conversation)) {
+                    // 移动端，目前只有单聊会发送typing消息
+                    if (msg.messageContent.type === MessageContentType.Typing) {
+                        let groupId = msg.conversation.type === 1 ? msg.conversation.target : '';
+                        let userInfo = wfc.getUserInfo(msg.from, false, groupId)
+                        userInfo = Object.assign({}, userInfo);
+                        userInfo._displayName = wfc.getGroupMemberDisplayNameEx(userInfo);
+                        conversationState.inputtingUser = userInfo;
 
-                    if (!conversationState.inputClearHandler) {
-                        conversationState.inputClearHandler = () => {
-                            conversationState.inputtingUser = null;
+                        if (!conversationState.inputClearHandler) {
+                            conversationState.inputClearHandler = () => {
+                                conversationState.inputtingUser = null;
+                            }
                         }
+                        clearTimeout(conversationState.inputClearHandler);
+                        setTimeout(conversationState.inputClearHandler, 3000)
+                    } else {
+                        clearTimeout(conversationState.inputClearHandler);
+                        conversationState.inputtingUser = null;
                     }
-                    clearTimeout(conversationState.inputClearHandler);
-                    setTimeout(conversationState.inputClearHandler, 3000)
-                } else {
-                    clearTimeout(conversationState.inputClearHandler);
-                    conversationState.inputtingUser = null;
+
+                    if (!this._isDisplayMessage(msg) || msg.messageContent.type === MessageContentType.RecallMessage_Notification) {
+                        return;
+                    }
+
+                    // 会把下来加载更多加载的历史消息给清理了
+                    let lastTimestamp = 0;
+                    let msgListLength = conversationState.currentConversationMessageList.length;
+                    if (msgListLength > 0) {
+                        lastTimestamp = conversationState.currentConversationMessageList[msgListLength - 1].timestamp;
+                    }
+                    this._patchMessage(msg, lastTimestamp);
+                    let msgIndex = conversationState.currentConversationMessageList.findIndex(m => {
+                        return m.messageId === msg.messageId
+                            || (gt(m.messageUid, 0) && eq(m.messageUid, msg.messageUid))
+                            || (m.messageContent.type === MessageContentType.Streaming_Text_Generating
+                                && (msg.messageContent.type === MessageContentType.Streaming_Text_Generating || msg.messageContent.type === MessageContentType.Streaming_Text_Generated)
+                                && m.messageContent.streamId === msg.messageContent.streamId
+                            )
+                    })
+                    if (msgIndex > -1) {
+                        // FYI: https://v2.vuejs.org/v2/guide/reactivity#Change-Detection-Caveats
+                        conversationState.currentConversationMessageList.splice(msgIndex, 1, msg);
+                        console.log('msg duplicate', msg.messageId, msg.messageUid)
+                        return;
+                    }
+                    conversationState.currentConversationMessageList.push(msg);
                 }
 
-                if (!this._isDisplayMessage(msg) || msg.messageContent.type === MessageContentType.RecallMessage_Notification) {
-                    return;
+                // 没有使用 uikit 默认的通知处理
+                if (msg.conversation.type !== 2 && miscState.isAppHidden && (miscState.enableNotification || msg.status === MessageStatus.AllMentioned || msg.status === MessageStatus.Mentioned)) {
+                    this.notify(msg);
                 }
 
-                // 会把下来加载更多加载的历史消息给清理了
-                let lastTimestamp = 0;
-                let msgListLength = conversationState.currentConversationMessageList.length;
-                if (msgListLength > 0) {
-                    lastTimestamp = conversationState.currentConversationMessageList[msgListLength - 1].timestamp;
-                }
-                this._patchMessage(msg, lastTimestamp);
-                let msgIndex = conversationState.currentConversationMessageList.findIndex(m => {
-                    return m.messageId === msg.messageId
-                        || (gt(m.messageUid, 0) && eq(m.messageUid, msg.messageUid))
-                        || (m.messageContent.type === MessageContentType.Streaming_Text_Generating
-                            && (msg.messageContent.type === MessageContentType.Streaming_Text_Generating || msg.messageContent.type === MessageContentType.Streaming_Text_Generated)
-                            && m.messageContent.streamId === msg.messageContent.streamId
-                        )
-                })
-                if (msgIndex > -1) {
-                    // FYI: https://v2.vuejs.org/v2/guide/reactivity#Change-Detection-Caveats
-                    conversationState.currentConversationMessageList.splice(msgIndex, 1, msg);
-                    console.log('msg duplicate', msg.messageId, msg.messageUid)
-                    return;
-                }
-                conversationState.currentConversationMessageList.push(msg);
-            }
-
-            // 没有使用 uikit 默认的通知处理
-            if (msg.conversation.type !== 2 && miscState.isAppHidden && (miscState.enableNotification || msg.status === MessageStatus.AllMentioned || msg.status === MessageStatus.Mentioned)) {
-                this.notify(msg);
             }
 
         });
