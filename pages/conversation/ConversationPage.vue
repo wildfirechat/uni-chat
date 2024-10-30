@@ -17,8 +17,9 @@
                              refresher-enabled="true" :refresher-triggered="triggered"
                              :refresher-threshold="45" @refresherpulling="onPulling"
                              show-scrollbar="true"
+                             @scroll="onScroll"
                              @refresherrefresh="onRefresh" @refresherrestore="onRestore" @refresherabort="onAbort"
-                             >
+                >
                     <view v-for="(message) in sharedConversationState.currentConversationMessageList"
                           :id="'id-'+ message.messageId"
                           :key="message.messageId">
@@ -34,24 +35,16 @@
                         <NormalOutMessageContentView
                             @click.native.capture.stop="sharedConversationState.enableMessageMultiSelection? clickMessageItem($event, message) : null"
                             :message="message"
-                            @touchstart.native="onTouchStart"
-                            @touchmove.native="onTouchMove"
                             v-else-if="message.direction === 0 && sharedConversationState.enableMessageMultiSelection"/>
                         <NormalOutMessageContentView
                             :message="message"
-                            @touchstart.native="onTouchStart"
-                            @touchmove.native="onTouchMove"
                             v-else-if="message.direction === 0 && !sharedConversationState.enableMessageMultiSelection"/>
                         <NormalInMessageContentView
                             @click.native.capture.stop="sharedConversationState.enableMessageMultiSelection ? clickMessageItem($event, message) : null"
                             :message="message"
-                            @touchstart.native="onTouchStart"
-                            @touchmove.native="onTouchMove"
                             v-else-if="message.direction === 1 && sharedConversationState.enableMessageMultiSelection"/>
                         <NormalInMessageContentView
                             :message="message"
-                            @touchstart.native="onTouchStart"
-                            @touchmove.native="onTouchMove"
                             v-else/>
                     </view>
                 </scroll-view>
@@ -150,9 +143,6 @@ export default {
     },
 
     onLoad() {
-        if (true) {
-            return
-        }
         const currentWebview = this.$scope.$getAppWebview(); //此对象相当于html5plus里的plus.webview.currentWebview()。在uni-app里vue页面直接使用plus.webview.currentWebview()无效
         // currentWebview.setBounce({position:{top:'100px'},changeoffset:{top:'0px'}}); //动态重设bounce效果
         currentWebview.overrideUrlLoading({
@@ -250,6 +240,7 @@ export default {
         },
 
         onScroll(e) {
+            // console.log('@scroll', e.detail.scrollTop)
             // hide tippy userCard
             // for (const popper of document.querySelectorAll('.tippy-popper')) {
             //     const instance = popper._tippy;
@@ -270,7 +261,7 @@ export default {
             //     uni.hideKeyboard();
             // }
             // this.lastScrollTop =  e.detail.deltaY;
-            // this.showContextMenu = false;
+            this.showContextMenu = false;
         },
 
         onMessageSenderContextMenuClose() {
@@ -541,22 +532,6 @@ export default {
             wfc.sendConversationMessage(this.conversationInfo.conversation, request);
         },
 
-        onTouchStart(e) {
-            this.isScroll = false
-            this.touchStartX = e.touches[0].clientX
-            this.touchStartY = e.touches[0].clientY
-        },
-
-        onTouchMove(e) {
-            uni.hideKeyboard();
-
-            let delX = e.touches[0].clientX - this.touchStartX
-            let delY = e.touches[0].clientY - this.touchStartY
-            if (Math.abs(delX) > 5 || Math.abs(delY) > 5) {
-                this.isScroll = true
-            }
-        },
-
         showMessageContextMenu(e, message) {
             if (this.isScroll) {
                 return;
@@ -694,7 +669,7 @@ export default {
             // console.log("onpulling", e);
         },
         onRefresh() {
-            console.log('onRresh...')
+            console.log('onRefresh...')
             if (this._freshing) {
                 return;
             }
@@ -720,10 +695,7 @@ export default {
         },
 
         scrollToBottom() {
-            this.$nextTick(() => {
-                this.scrollTop = this.lastMessageId;
-                console.log('xxxxxxxxxxx scrollTop', this.scrollTop);
-            })
+            this.scrollTop = 99999 + this.lastMessageId;
         }
     },
 
@@ -880,12 +852,14 @@ export default {
 .message-list-container {
     min-height: 100px;
     flex: 1 1 auto;
-    overflow: hidden;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .message-list {
     flex: 1 1 auto;
-    overflow: hidden;
+    overflow: auto;
 }
 
 >>> .uni-scroll-view-refresher {
