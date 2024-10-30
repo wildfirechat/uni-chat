@@ -97,17 +97,9 @@ export default {
 
     /*app-plus header 和 tabbar 是原生的*/
 
-    /* #ifdef APP-PLUS */
     --uni-page-header-height: 0;
     --page-full-height-without-header-and-tabbar: 100vh;
     --page-full-height-without-header: 100vh;
-    /* #endif */
-
-    /* #ifdef H5 */
-    --uni-page-header-height: 44px;
-    --page-full-height-without-header-and-tabbar: calc(100vh - 44px - 50px);
-    --page-full-height-without-header: calc(100vh - 44px);
-    /* #endif */
 }
 
 </style>

@@ -16,8 +16,9 @@
                 <scroll-view ref="conversationMessageList" class="message-list" scroll-y="true" :scroll-top="scrollTop"
                              refresher-enabled="true" :refresher-triggered="triggered"
                              :refresher-threshold="45" @refresherpulling="onPulling"
+                             show-scrollbar="true"
                              @refresherrefresh="onRefresh" @refresherrestore="onRestore" @refresherabort="onAbort"
-                             @scroll="onScroll">
+                             >
                     <view v-for="(message) in sharedConversationState.currentConversationMessageList"
                           :id="'id-'+ message.messageId"
                           :key="message.messageId">
@@ -149,6 +150,9 @@ export default {
     },
 
     onLoad() {
+        if (true) {
+            return
+        }
         const currentWebview = this.$scope.$getAppWebview(); //此对象相当于html5plus里的plus.webview.currentWebview()。在uni-app里vue页面直接使用plus.webview.currentWebview()无效
         // currentWebview.setBounce({position:{top:'100px'},changeoffset:{top:'0px'}}); //动态重设bounce效果
         currentWebview.overrideUrlLoading({
@@ -716,7 +720,10 @@ export default {
         },
 
         scrollToBottom() {
-            this.scrollTop = 999999 + this.lastMessageId;
+            this.$nextTick(() => {
+                this.scrollTop = this.lastMessageId;
+                console.log('xxxxxxxxxxx scrollTop', this.scrollTop);
+            })
         }
     },
 
@@ -877,8 +884,8 @@ export default {
 }
 
 .message-list {
-    height: 100%;
-    overflow: auto;
+    flex: 1 1 auto;
+    overflow: hidden;
 }
 
 >>> .uni-scroll-view-refresher {
