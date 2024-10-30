@@ -118,18 +118,22 @@ app.config.globalProperties.$set = (obj, key, value) => obj[key] = value
 wfc.init();
 console.log('xxxxxxxx proto init end')
 CustomMessageConfig.registerCustomMessages();
-// // 如果不进行初始化，则无法弹出音视频通话界面，不能进行音视频通话。
-// if (avengineKit.isAVEngineKitEnable()) {
-//     avengineKit.init();
-//     if (Config.ICE_SERVERS) {
-//         Config.ICE_SERVERS.forEach(iceServer => {
-//             avengineKit.addICEServer(iceServer.uri, iceServer.userName, iceServer.password);
-//         })
-//     }
-// }
-// if (pttClient.isPttClientEnable()) {
-//     pttClient.init();
-// }
+// 如果不进行初始化，则无法弹出音视频通话界面，不能进行音视频通话。
+// #ifdef APP-HARMONY
+    console.log('鸿蒙系统，暂不支持音视频通话')
+// #else
+if (avengineKit.isAVEngineKitEnable()) {
+    avengineKit.init();
+    if (Config.ICE_SERVERS) {
+        Config.ICE_SERVERS.forEach(iceServer => {
+            avengineKit.addICEServer(iceServer.uri, iceServer.userName, iceServer.password);
+        })
+    }
+}
+if (pttClient.isPttClientEnable()) {
+    pttClient.init();
+}
+// #endif
 
 store.init();
 
