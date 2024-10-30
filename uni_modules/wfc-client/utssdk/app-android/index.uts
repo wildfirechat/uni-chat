@@ -5,12 +5,10 @@
  */
 
 /* 引入 interface.uts 文件中定义的变量 */
-import {MyApiOptions, MyApiResult, MyApi, MyApiSync, Callback, StringCallback, VoidCallback, FailCallback, SuccessCallback} from '../interface.uts';
+import {StringCallback, VoidCallback, FailCallback, SuccessCallback} from '../interface.uts';
 
 
-/* 引入 unierror.uts 文件中定义的变量 */
 
-import {MyApiFailImpl} from '../unierror';
 import ClientModule from 'cn.wildfirechat.uni.client.ClientModule';
 
 import Int from "kotlin.Int";
@@ -30,70 +28,6 @@ import Int from "kotlin.Int";
 /**
  * UTSAndroid 为平台内置对象，不需要 import 可直接调用其API，[详见](https://uniapp.dcloud.net.cn/uts/utsandroid.html#utsandroid)
  */
-
-
-/**
- * 异步方法
- *
- * uni-app项目中（vue/nvue）调用示例：
- * 1、引入方法声明 import { myApi } from "@/uni_modules/uts-api"
- * 2、方法调用
- * myApi({
- *   paramA: false,
- *   complete: (res) => {
- *      console.log(res)
- *   }
- * });
- * uni-app x项目（uvue）中调用示例：
- * 1、引入方法及参数声明 import { myApi, MyApiOptions } from "@/uni_modules/uts-api";
- * 2、方法调用
- * let options = {
- *   paramA: false,
- *   complete: (res : any) => {
- *     console.log(res)
- *   }
- * } as MyApiOptions;
- * myApi(options);
- *
- */
-export const myApi: MyApi = function (options: MyApiOptions) {
-    if (options.paramA == true) {
-        // 返回数据
-        const res: MyApiResult = {
-            fieldA: 85,
-            fieldB: true,
-            fieldC: 'some message'
-        };
-        options.success?.(res);
-        options.complete?.(res);
-    } else {
-        // 返回错误
-        const err = new MyApiFailImpl(9010001);
-        options.fail?.(err)
-        options.complete?.(err)
-    }
-}
-
-/**
- * 同步方法
- *
- * uni-app项目中（vue/nvue）调用示例：
- * 1、引入方法声明 import { myApiSync } from "@/uni_modules/uts-api"
- * 2、方法调用 myApiSync(true)
- *
- * uni-app x项目（uvue）中调用示例：
- * 1、引入方法及参数声明 import { myApiSync } from "@/uni_modules/uts-api";
- * 2、方法调用 myApiSync(true)
- */
-export const myApiSync: MyApiSync = function (paramA: boolean): MyApiResult {
-    // 返回数据，根据插件功能获取实际的返回值
-    const res: MyApiResult = {
-        fieldA: 85,
-        fieldB: paramA,
-        fieldC: 'some message'
-    };
-    return res;
-}
 
 let clientModule: ClientModule = ClientModule.getInstance();
 let wfcEventListener: null | ((value: object) => void) = null
