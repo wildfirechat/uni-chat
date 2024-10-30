@@ -6,7 +6,13 @@ export default class EventType {
     // function (message) {}
     static SendMessage = 'sendMsg';
     // function (message, hasMore) {}
+    /**
+     * @deprecated 请使用 ReceiveMessages
+     * @type {string}
+     */
     static ReceiveMessage = 'receiveMsg';
+    // function ([message], hasMore) {}
+    static ReceiveMessages = 'receiveMsgs';
     // function (Map(userId, receiveTime)) {}
     static MessageReceived = 'msgReceived';
     // function ([readEntry]) {}

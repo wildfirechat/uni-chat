@@ -501,33 +501,35 @@ export default {
             this.$refs.messageInputView.mention(message.conversation.target, message.from);
         },
 
-        onReceiveMessage(message, hasMore) {
-            if (this.conversationInfo && this.conversationInfo.conversation.equal(message.conversation)
-                && message.messageContent instanceof MultiCallOngoingMessageContent
-                && Config.ENABLE_MULTI_CALL_AUTO_JOIN
-            ) {
-                // 自己是不是已经在通话中
-                // console.log('MultiCallOngoingMessageContent', message.messageContent)
-                if (message.messageContent.targets.indexOf(wfc.getUserId()) >= 0) {
-                    return;
-                }
-                let index = this.ongoingCalls.findIndex(call => call.messageContent.callId === message.messageContent.callId);
-                if (index > -1) {
-                    this.ongoingCalls[index] = message;
-                } else {
-                    this.ongoingCalls.push(message);
-                }
-                if (!this.ongoingCallTimer) {
-                    this.ongoingCallTimer = setInterval(() => {
-                        this.ongoingCalls = this.ongoingCalls.filter(call => {
-                            return (new Date().getTime() - (numberValue(call.timestamp) - numberValue(wfc.getServerDeltaTime()))) < 3 * 1000;
-                        })
-                        if (this.ongoingCalls.length === 0) {
-                            clearInterval(this.ongoingCallTimer);
-                            this.ongoingCallTimer = 0;
-                        }
-                        console.log('ongoing calls', this.ongoingCalls.length);
-                    }, 1000)
+        onReceiveMessage(messages, hasMore) {
+            for (const message of messages) {
+                if (this.conversationInfo && this.conversationInfo.conversation.equal(message.conversation)
+                    && message.messageContent instanceof MultiCallOngoingMessageContent
+                    && Config.ENABLE_MULTI_CALL_AUTO_JOIN
+                ) {
+                    // 自己是不是已经在通话中
+                    // console.log('MultiCallOngoingMessageContent', message.messageContent)
+                    if (message.messageContent.targets.indexOf(wfc.getUserId()) >= 0) {
+                        return;
+                    }
+                    let index = this.ongoingCalls.findIndex(call => call.messageContent.callId === message.messageContent.callId);
+                    if (index > -1) {
+                        this.ongoingCalls[index] = message;
+                    } else {
+                        this.ongoingCalls.push(message);
+                    }
+                    if (!this.ongoingCallTimer) {
+                        this.ongoingCallTimer = setInterval(() => {
+                            this.ongoingCalls = this.ongoingCalls.filter(call => {
+                                return (new Date().getTime() - (numberValue(call.timestamp) - numberValue(wfc.getServerDeltaTime()))) < 3 * 1000;
+                            })
+                            if (this.ongoingCalls.length === 0) {
+                                clearInterval(this.ongoingCallTimer);
+                                this.ongoingCallTimer = 0;
+                            }
+                            console.log('ongoing calls', this.ongoingCalls.length);
+                        }, 1000)
+                    }
                 }
             }
         },
@@ -747,12 +749,12 @@ export default {
             this.showMessageContextMenu(event, message)
         });
 
-        wfc.eventEmitter.on(EventType.ReceiveMessage, this.onReceiveMessage)
+        wfc.eventEmitter.on(EventType.ReceiveMessages, this.onReceiveMessage)
     },
 
     unmounted() {
         this.$eventBus.$off('openMessageContextMenu')
-        wfc.eventEmitter.removeListener(EventType.ReceiveMessage, this.onReceiveMessage)
+        wfc.eventEmitter.removeListener(EventType.ReceiveMessages, this.onReceiveMessage)
     },
 
     beforeUpdate() {
