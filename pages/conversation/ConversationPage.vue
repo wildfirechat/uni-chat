@@ -149,7 +149,6 @@ export default {
     },
 
     onLoad() {
-        // #ifdef APP-PLUS
         const currentWebview = this.$scope.$getAppWebview(); //此对象相当于html5plus里的plus.webview.currentWebview()。在uni-app里vue页面直接使用plus.webview.currentWebview()无效
         // currentWebview.setBounce({position:{top:'100px'},changeoffset:{top:'0px'}}); //动态重设bounce效果
         currentWebview.overrideUrlLoading({
@@ -167,7 +166,6 @@ export default {
                 }
             });
         });
-        // #endif
     },
 
     onShow() {
@@ -730,7 +728,6 @@ export default {
         store.clearConversationUnreadStatus(this.conversationInfo.conversation);
 
         this.keyboardHeight = getItem('keyboardHeight');
-        // #ifdef APP-PLUS
         uni.onKeyboardHeightChange(res => {
             if (this.keyboardHeight !== res.height && res.height > 0) {
                 this.keyboardHeight = res.height;
@@ -744,7 +741,6 @@ export default {
             // currentKeyboardHeight 显示扩展面板的时候，也应当置上
             console.log('------------- keyboardHeight', this.keyboardHeight, this.currentKeyboardHeight);
         });
-        // #endif
         this.$eventBus.$on('openMessageContextMenu', ([event, message]) => {
             this.showMessageContextMenu(event, message)
         });
@@ -866,7 +862,6 @@ export default {
 }
 
 .ongoing-call-item button {
-    //padding: 5px 10px;
     border: 1px solid #e5e5e5;
     border-radius: 3px;
 }
