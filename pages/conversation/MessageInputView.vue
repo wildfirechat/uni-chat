@@ -69,8 +69,10 @@ import PttAudioInputView from "./message/PttAudioInputView.vue";
 import Draft from "../util/draft";
 import pttClient from "../../wfc/ptt/pttClient";
 import avengineKit from "../../wfc/av/engine/avengineKit";
-import permision from "../../common/permission";
 import checkVoipPermissions from "../voip/voipUtil";
+// #ifdef APP-HARMONY
+import {copyFileToAppCacheDir} from "@/uni_modules/wfc-client"
+//#endif
 
 export default {
     name: "MessageInputView",
@@ -336,22 +338,18 @@ export default {
                 success: (e) => {
                     console.log('choose image', e.tempFilePaths);
                     e.tempFilePaths.forEach(async path => {
+                        // #ifdef APP-HARMONY
+                        let dstPath = copyFileToAppCacheDir(path)
+                        store.sendFile(this.conversationInfo.conversation, dstPath);
+                        //#else
                         let filePath;
-                        // #ifdef APP-PLUS
-                        if (path.startsWith('file://')) {
+                        if (path.startsWith('file:///')) {
                             filePath = path.substring('file://'.length);
                         } else {
                             filePath = plus.io.convertLocalFileSystemURL(path)
                         }
-                        // #endif
-                        // #ifdef H5
-                        filePath = await fetch(path).then(res => res.blob())
-                            .then(blob => {
-                                let name = `${new Date().getTime()}.${blob.type.substring(blob.type.lastIndexOf('/') + 1)}`;
-                                return new File([blob], name)
-                            })
-                        // #endif
                         store.sendFile(this.conversationInfo.conversation, filePath);
+                        //#endif
                     })
                 }
             })
@@ -362,7 +360,7 @@ export default {
                 return;
             }
             let session = avengineKit.currentCallSession()
-            if(session && session.state !== 0){
+            if (session && session.state !== 0) {
                 uni.showToast({
                     title: '音视频通话正在进行中...',
                     icon: 'none'

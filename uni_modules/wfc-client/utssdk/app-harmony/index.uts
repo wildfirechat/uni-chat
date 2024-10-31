@@ -2,6 +2,7 @@
 
 import clientModule from "libmarswrapper.so"
 import { pinyin4js } from '@ohos/pinyin4js';
+import fs from '@ohos.file.fs';
 
 import {FailCallback, StringCallback, SuccessCallback, VoidCallback} from "../interface.uts";
 let wfcEventListener: null | ((value: object) => void) = null
@@ -10,6 +11,16 @@ export function pinyin(str: string, options: object): string[] {
     // return _pinyin(str, options)
     let ch: string = pinyin4js.getShortPinyin(str.substring(0, 1)).toUpperCase() as string
     return [ch]
+}
+export function copyFileToAppCacheDir(fileUri: string):string {
+    const context: Context =  getContext();
+    let dstPath = context.getApplicationContext().cacheDir + '/' + new Date().getTime() + fileUri.substring(fileUri.lastIndexOf('.'));
+    let srcFile = fs.openSync(fileUri);
+    let dstFile = fs.openSync(dstPath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE);
+    fs.copyFileSync(srcFile.fd, dstFile.fd);
+    fs.closeSync(srcFile);
+    fs.closeSync(dstFile);
+    return  dstPath
 }
 
 export function initProto(): void {
