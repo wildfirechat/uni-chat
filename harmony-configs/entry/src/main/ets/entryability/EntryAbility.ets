@@ -17,7 +17,7 @@ import { initUniModules } from '../uni_modules/index.generated'
 import { previewImage, closePreviewImage } from '../uni-app/components/ImagePreviewer'
 import { showLoading, hideLoading } from '../uni-app/components/ShowLoading'
 import '../../resources/rawfile/apps/HBuilder/www/app-config-service';
-import protoProxy from "libmarswrapper.so"
+import protoProxy from '@wfc/marswrapper'
 
 setManifest(manifest)
 setOSRuntime({

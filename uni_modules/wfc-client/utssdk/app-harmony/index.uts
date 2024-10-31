@@ -1,10 +1,12 @@
 /* 引入 interface.uts 文件中定义的变量 */
 
-import clientModule from "libmarswrapper.so"
+import clientModule from "@wfc/marswrapper"
 import { pinyin4js } from '@ohos/pinyin4js';
 import fs from '@ohos.file.fs';
 
 import {FailCallback, StringCallback, SuccessCallback, VoidCallback} from "../interface.uts";
+
+
 let wfcEventListener: null | ((value: object) => void) = null
 
 export function pinyin(str: string, options: object): string[] {
