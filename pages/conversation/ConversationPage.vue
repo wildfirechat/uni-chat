@@ -16,10 +16,8 @@
                 <scroll-view ref="conversationMessageList" class="message-list" scroll-y="true" :scroll-top="scrollTop"
                              refresher-enabled="true" :refresher-triggered="triggered"
                              :refresher-threshold="45" @refresherpulling="onPulling"
-                             show-scrollbar="true"
-                             @scroll="onScroll"
                              @refresherrefresh="onRefresh" @refresherrestore="onRestore" @refresherabort="onAbort"
-                >
+                             @scroll="onScroll">
                     <view v-for="(message) in sharedConversationState.currentConversationMessageList"
                           :id="'id-'+ message.messageId"
                           :key="message.messageId">
@@ -35,16 +33,24 @@
                         <NormalOutMessageContentView
                             @click.native.capture.stop="sharedConversationState.enableMessageMultiSelection? clickMessageItem($event, message) : null"
                             :message="message"
+                            @touchstart.native="onTouchStart"
+                            @touchmove.native="onTouchMove"
                             v-else-if="message.direction === 0 && sharedConversationState.enableMessageMultiSelection"/>
                         <NormalOutMessageContentView
                             :message="message"
+                            @touchstart.native="onTouchStart"
+                            @touchmove.native="onTouchMove"
                             v-else-if="message.direction === 0 && !sharedConversationState.enableMessageMultiSelection"/>
                         <NormalInMessageContentView
                             @click.native.capture.stop="sharedConversationState.enableMessageMultiSelection ? clickMessageItem($event, message) : null"
                             :message="message"
+                            @touchstart.native="onTouchStart"
+                            @touchmove.native="onTouchMove"
                             v-else-if="message.direction === 1 && sharedConversationState.enableMessageMultiSelection"/>
                         <NormalInMessageContentView
                             :message="message"
+                            @touchstart.native="onTouchStart"
+                            @touchmove.native="onTouchMove"
                             v-else/>
                     </view>
                 </scroll-view>
@@ -240,7 +246,6 @@ export default {
         },
 
         onScroll(e) {
-            // console.log('@scroll', e.detail.scrollTop)
             // hide tippy userCard
             // for (const popper of document.querySelectorAll('.tippy-popper')) {
             //     const instance = popper._tippy;
@@ -261,7 +266,7 @@ export default {
             //     uni.hideKeyboard();
             // }
             // this.lastScrollTop =  e.detail.deltaY;
-            this.showContextMenu = false;
+            // this.showContextMenu = false;
         },
 
         onMessageSenderContextMenuClose() {
@@ -530,6 +535,22 @@ export default {
         joinMultiCall(message) {
             let request = new JoinCallRequestMessageContent(message.messageContent.callId, wfc.getClientId());
             wfc.sendConversationMessage(this.conversationInfo.conversation, request);
+        },
+
+        onTouchStart(e) {
+            this.isScroll = false
+            this.touchStartX = e.touches[0].clientX
+            this.touchStartY = e.touches[0].clientY
+        },
+
+        onTouchMove(e) {
+            uni.hideKeyboard();
+
+            let delX = e.touches[0].clientX - this.touchStartX
+            let delY = e.touches[0].clientY - this.touchStartY
+            if (Math.abs(delX) > 5 || Math.abs(delY) > 5) {
+                this.isScroll = true
+            }
         },
 
         showMessageContextMenu(e, message) {
