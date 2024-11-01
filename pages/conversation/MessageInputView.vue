@@ -339,8 +339,7 @@ export default {
                     console.log('choose image', e.tempFilePaths);
                     e.tempFilePaths.forEach(async path => {
                         // #ifdef APP-HARMONY
-                        let dstPath = copyFileToAppCacheDir(path)
-                        store.sendFile(this.conversationInfo.conversation, dstPath);
+                        store.sendFile(this.conversationInfo.conversation, path);
                         //#else
                         let filePath;
                         if (path.startsWith('file:///')) {
@@ -407,30 +406,31 @@ export default {
                 sourceType: ['camera'],
                 sizeType: ['original', 'compressed'],
                 success: async (e) => {
-                    console.log('choose video', e);
+                    console.log('choose video', e.duration, e.size, e.tempFilePath, e.width, e.height);
                     let duration = e.duration;
                     let path = e.tempFilePath;
+                    // #ifdef APP-HARMONY
+                    store.sendFile(this.conversationInfo.conversation, path);
+                    //#else
                     let filePath;
-                    // #ifdef APP-PLUS
                     if (path.startsWith('file://')) {
                         filePath = path.substring('file://'.length);
                     } else {
                         filePath = plus.io.convertLocalFileSystemURL(path)
                     }
-                    // #endif
-                    // #ifdef H5
-                    filePath = await fetch(path).then(res => res.blob())
-                        .then(blob => {
-                            let name = `${new Date().getTime()}.${blob.type.substring(blob.type.lastIndexOf('/') + 1)}`;
-                            return new File([blob], name)
-                        })
-                    // #endif
                     store.sendFile(this.conversationInfo.conversation, filePath, duration);
+                    // #endif
                 }
             })
         },
 
         chooseFile() {
+            // #ifdef APP-HARMONY
+            uni.showToast({
+                title: 'TODO ' + '暂不支持',
+                icon: 'none'
+            })
+            //#endif
             wfc.chooseFile('all', async (file) => {
                     console.log('choose file', file);
                     let path = file.path;
