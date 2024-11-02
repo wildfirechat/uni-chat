@@ -1,10 +1,9 @@
 # 野火UniApp平台Demo
 支持Android和iOS端，使用了***野火UniApp原生插件***(在UniApp的插件市场搜索“野火IM原生插件”)。
 
-## 关于鸿蒙5.0的重要说明
-1. 由于鸿蒙不支持原生语言插件，只支持 `uts` 插件，当需要支持鸿蒙 5.0 时，请使用 `uts` 分支
-2. 野火IM 鸿蒙 SDK 是付费组件，默认只能连接官方服务，当需要连到自行部署的`im-server`时，请[申请试用鸿蒙 SDK](https://docs.wildfirechat.cn/trial/) 
-3. 当前，鸿蒙 5.0 暂不支持音视频通话
+## 关于 uts 的重要说明
+1. 本项目使用的是原生语言插件，不支持鸿蒙 5.0，如果需要支持支持鸿蒙 5.0 的话，请使用[uni-chat-uts](https://gitee.com/wfchat/uni-chat-uts)项目
+2. 由于[uni-app 官方已不在维护原生语言插件](https://nativesupport.dcloud.net.cn/NativePlugin/)，建议迁移升级[uni-chat-uts](https://gitee.com/wfchat/uni-chat-uts)，该项目使用 uts 插件，支持平滑升级，上层不需要任何改动。
 
 ## 关于分支的重要说明
 1. `main`：基于`Vue 3`开发，是未来的开发重心
