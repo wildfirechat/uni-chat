@@ -232,7 +232,7 @@ export class WfcManager {
     getFavGroupList() {
         let groupInfos = impl.getMyGroupList();
         groupInfos.map(info => {
-            if (!info.portrait || info.portrait.startsWith(Config.APP_SERVER)) {
+            if (!info.portrait) {
                 info.portrait = this.defaultGroupPortrait(info);
             }
             return info;
@@ -285,7 +285,7 @@ export class WfcManager {
      */
     getUserInfo(userId, refresh = false, groupId = '') {
         let userInfo = impl.getUserInfo(userId, refresh, groupId);
-        if (!userInfo.portrait || userInfo.portrait.startsWith(Config.APP_SERVER)) {
+        if (!userInfo.portrait) {
             userInfo.portrait = this.defaultUserPortrait(userInfo);
         }
         return userInfo;
@@ -311,7 +311,7 @@ export class WfcManager {
     getUserInfosEx(userIds, successCB, failCB) {
         impl.getUserInfosEx(userIds, userInfos => {
             userInfos.forEach((u) => {
-                if (!u.portrait || u.portrait.startsWith(Config.APP_SERVER)) {
+                if (!u.portrait) {
                     u.portrait = this.defaultUserPortrait(u);
                 }
             });
@@ -330,7 +330,7 @@ export class WfcManager {
     getUserInfos(userIds, groupId) {
         let userInfos = impl.getUserInfos(userIds, groupId);
         userInfos.forEach((u) => {
-            if (!u.portrait || u.portrait.startsWith(Config.APP_SERVER)) {
+            if (!u.portrait) {
                 u.portrait = this.defaultUserPortrait(u)
             }
         });
@@ -349,7 +349,7 @@ export class WfcManager {
     async searchUser(keyword, searchType, page, successCB, failCB) {
         impl.searchUser(keyword, searchType, page, (keyword, userInfos) => {
             userInfos.forEach((u) => {
-                if (!u.portrait || u.portrait.startsWith(Config.APP_SERVER)) {
+                if (!u.portrait) {
                     u.portrait = this.defaultUserPortrait(u)
                 }
             });
@@ -365,7 +365,7 @@ export class WfcManager {
     searchFriends(keyword) {
         let userInfos = impl.searchFriends(keyword);
         userInfos.forEach((u) => {
-            if (!u.portrait || u.portrait.startsWith(Config.APP_SERVER)) {
+            if (!u.portrait) {
                 u.portrait = this.defaultUserPortrait(u)
             }
         });
@@ -381,9 +381,9 @@ export class WfcManager {
         let results = impl.searchGroups(keyword);
         results.forEach(r => {
             let info = r.groupInfo;
-                if (!info.portrait || info.portrait.startsWith(Config.APP_SERVER)) {
-                    info.portrait = this.defaultGroupPortrait(info);
-                }
+            if (!info.portrait) {
+                info.portrait = this.defaultGroupPortrait(info);
+            }
         })
         return results;
     }
@@ -573,7 +573,7 @@ export class WfcManager {
      */
     getGroupInfo(groupId, refresh = false) {
         let info = impl.getGroupInfo(groupId, refresh);
-        if (!info.portrait || info.portrait.startsWith(Config.APP_SERVER)) {
+        if (!info.portrait) {
             info.portrait = this.defaultGroupPortrait(info);
         }
         return info;
@@ -588,7 +588,7 @@ export class WfcManager {
     getGroupInfos(groupIds, refresh = false) {
         let infos = impl.getGroupInfos(groupIds, refresh);
         infos.forEach(info => {
-            if (!info.portrait || info.portrait.startsWith(Config.APP_SERVER)) {
+            if (!info.portrait) {
                 info.portrait = this.defaultGroupPortrait(info);
             }
         })
@@ -604,7 +604,7 @@ export class WfcManager {
      */
     getGroupInfoEx(groupId, refresh = false, successCB, failCB) {
         impl.getGroupInfoEx(groupId, refresh, info => {
-            if (!info.portrait || info.portrait.startsWith(Config.APP_SERVER)) {
+            if (!info.portrait) {
                 info.portrait = this.defaultGroupPortrait(info);
             }
             successCB && successCB(info);
@@ -733,7 +733,7 @@ export class WfcManager {
     /**
      * 退出群组
      * @param groupId 群id
-	 * @param keepMessage 是否保留消息
+     * @param keepMessage 是否保留消息
      * @param {[]} lines 默认传[0]即可
      * @param {KickoffGroupMemberNotification} notifyMessageContent 默认传null即可
      * @param successCB
@@ -743,7 +743,7 @@ export class WfcManager {
     async quitGroupEx(groupId, keepMessage, lines, notifyMessageContent, successCB, failCB) {
         impl.quitGroupEx(groupId, keepMessage, lines, notifyMessageContent, successCB, failCB);
     }
-	
+
     /**
      * 解散群组
      * @param {string} groupId 群组id
@@ -2101,6 +2101,9 @@ export class WfcManager {
     }
 
     defaultUserPortrait(userInfo) {
+        if (!userInfo.updateDt) {
+            return Config.DEFAULT_PORTRAIT_URL
+        }
         return `${Config.APP_SERVER}/avatar?name=${encodeURIComponent(userInfo.displayName)}`
         // return `http://localhost:8888/avatar?name=${encodeURIComponent(userInfo.displayName)}`
     }
@@ -2114,7 +2117,7 @@ export class WfcManager {
             members: []
         }
         let pending = false;
-        members.forEach(m => {
+        for (const m of members) {
             if (m.portrait && !m.portrait.startsWith(`${Config.APP_SERVER}`)) {
                 req.members.push({
                     avatarUrl: m.portrait
@@ -2126,10 +2129,11 @@ export class WfcManager {
             }
             if (m instanceof NullUserInfo) {
                 pending = true;
+                break
             }
-        })
+        }
         if (members.length === 0 || pending) {
-            return null;
+            return Config.DEFAULT_GROUP_PORTRAIT_URL;
         }
 
         req = JSON.stringify(req, null, '');
