@@ -305,11 +305,12 @@ export class WfcManager {
     /**
      * 批量从服务端拉取用户信息
      * @param {[string]} userIds 用户ids
+     * @param {string} groupId 群id
      * @param {function ([UserInfo])} successCB 成功回调
      * @param {function (Number)} failCB 失败回调
      */
-    getUserInfosEx(userIds, successCB, failCB) {
-        impl.getUserInfosEx(userIds, userInfos => {
+    getUserInfosEx(userIds, groupId,  successCB, failCB) {
+        impl.getUserInfosEx(userIds, groupId, userInfos => {
             userInfos.forEach((u) => {
                 if (!u.portrait) {
                     u.portrait = this.defaultUserPortrait(u);
