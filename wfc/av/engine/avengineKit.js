@@ -250,7 +250,7 @@ export class AVEngineKit {
      */
     currentCallSession() {
         let result = avengineKitPlugin.currentCallSession();
-        if (result === '') {
+        if (!result) {
             return null;
         }
 
