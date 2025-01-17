@@ -997,9 +997,10 @@ let store = {
         let conversation = conversationState.currentConversationInfo.conversation;
         console.log('loadConversationHistoryMessage', conversation, conversationState.currentConversationOldestMessageId, stringValue(conversationState.currentConversationOldestMessageUid));
         let loadRemoteHistoryMessageFunc = () => {
+            console.log('loadRemoteConversationMessages request', stringValue(conversationState.currentConversationOldestMessageUid));
             wfc.loadRemoteConversationMessages(conversation, [], conversationState.currentConversationOldestMessageUid, 20,
                 (msgs, hasMore) => {
-                    console.log('loadRemoteConversationMessages response', msgs.length);
+                    console.log('loadRemoteConversationMessages response', stringValue(conversationState.currentConversationOldestMessageUid), msgs.length);
                     if (msgs.length === 0) {
                         // 拉回来的消息，本地全都有时，会走到这儿
                         if (hasMore) {
