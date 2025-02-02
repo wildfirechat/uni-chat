@@ -19,8 +19,13 @@
 ## 部署服务端
 本应用默认连接野火官方服务，也可以自己部署服务。如果想要私有部署服务，请按照 [服务器快速部署](https://docs.wildfirechat.cn/quick_start/server.html) 来部署服务到您自己的服务器。
 
+## 环境要求
+1. node: v18.19.0
+2. HBuilder X: 最新版
+
 ## 配置
 1. 插件市场搜索[野火即时通讯IM插件](https://ext.dcloud.net.cn/plugin?id=7895) 和 [野火实时音视频RTC插件](https://ext.dcloud.net.cn/plugin?id=15619) ，并购买(插件是免费的!)
+   > 购买插件时，会将插件和应用/项目绑定，后续通过 HBuilder X 制作自定义调试基座或云打包时，包名要填你在 uniapp 开发者后台配置的对应包名，否则会提示：`包名和插件绑定的不一致，请确认`
 2. HBuilderX 原生插件配置，选择云端插件，并选中购买的野火插件
 3. 如果使用野火官方服务，直接编译运行即可。如果使用自己私有部署IM服务，需要在[config.js](./config.js)配置应用服务地址和IM服务地址。修改如下配置：
     ```
@@ -37,7 +42,7 @@
 2. HBuilderX 制作自定义基座，可参考[什么是自定义调试基座及使用说明](https://ask.dcloud.net.cn/article/35115)
 3. HBuilderX，运行基座选择：自定义调试基座
 4. HBuilderX，运行到 Android App 基座 或 iOS App 基座
-> 如果没有制作并运行到自定义基座，那么野火原生插件就没有集成进去，将无法使用野火原生插件，界面会显示白屏。所以一定要严格阿照上述步骤执行。
+> 如果没有制作并运行到自定义基座，那么野火原生插件就没有集成进去，将无法使用野火原生插件，界面会显示白屏。所以一定要严格按照上述步骤执行。
 
 ## 移植到其它应用
 如果要在现有项目中使用野火原生插件，需要把[wfc](./wfc)目录和[config.js](./config.js)配置文件一同拷贝到现有项目，然后添加***野火UniApp原生插件***。现有项目使用[wfc](./wfc)目录下的[wfc.js](./wfc/client/wfc.js)接口文件。
@@ -67,6 +72,9 @@
 4. iPhone上打开会话页面报错`SyntaxError: Invalid regular expression: invalid group specifier name __ERROR`
 
     `anchorme`只能使用`2.1.2`版本，不支持`3.x`版本，可参数这个[issue](https://github.com/alexcorvi/anchorme.js/issues/133)
+5. 制作自定义调试基座或云打包时，提示`包名和插件绑定的不一致，请确认`
+ 
+   原因是购买插件时（插件本身是免费的，但 uniapp 要求走购买流程），绑定的应用/项目的包名和`Hbuilder X`里面，当前配置的不一致，修改一致即可。插件绑定的包名可以通过`manifest.json`文件`nativePlugins`部分的`android_package_name`和`ios_bundle_id`看到
 
 ## 应用截图
 会话列表
