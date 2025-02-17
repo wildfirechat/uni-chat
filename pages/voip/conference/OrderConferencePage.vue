@@ -85,7 +85,6 @@ export default {
                 .catch(err => {
                     console.log('createConference error', err)
                 })
-            this.$modal.hide('order-conference-modal')
         }
     },
     computed: {

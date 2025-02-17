@@ -32,14 +32,12 @@
 import store from "../../store";
 import Config from "../../config";
 import organizationServerApi from "../../api/organizationServerApi";
-import UserCardView from "../user/UserCardView.vue";
 import wfc from "../../wfc/client/wfc";
 
 export default {
     name: "OrganizationTreeView",
     props: {},
     components: {
-        UserCardView,
     },
     data() {
         return {

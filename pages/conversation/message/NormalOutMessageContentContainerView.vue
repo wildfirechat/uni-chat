@@ -41,7 +41,6 @@
 </template>
 
 <script>
-import UserCardView from "@/pages/user/UserCardView";
 import Message from "@/wfc/messages/message";
 import MessageContentContainerView from "@/pages/conversation/message/MessageContentContainerView";
 import store from "@/store";
@@ -73,8 +72,6 @@ export default {
         QuoteMessageView,
         LoadingView,
         MessageContentContainerView,
-        UserCardView,
-        // TextMessageContentView,
 
     },
     mounted() {

@@ -32,7 +32,6 @@
 
 <script>
 import store from "../../store";
-import UserCardView from "./UserCardView";
 import Config from "../../config";
 import UniList from "../../components/uni-list/uni-list.vue";
 
@@ -147,7 +146,6 @@ export default {
     },
     components: {
         UniList,
-        UserCardView,
     },
 }
 </script>

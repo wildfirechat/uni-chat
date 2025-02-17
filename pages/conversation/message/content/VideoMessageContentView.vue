@@ -12,7 +12,6 @@
 
 <script>
 import Message from "@/wfc/messages/message";
-import store from "@/store";
 import MessageStatus from "../../../../wfc/messages/messageStatus";
 import Config from "../../../../config";
 

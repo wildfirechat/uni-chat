@@ -82,7 +82,6 @@
 import store from "@/store";
 import Conversation from "@/wfc/model/conversation";
 import ConversationType from "@/wfc/model/conversationType";
-import FriendRequestView from "@/pages/contact/FriendRequestView";
 import wfc from "../../wfc/client/wfc";
 
 export default {
