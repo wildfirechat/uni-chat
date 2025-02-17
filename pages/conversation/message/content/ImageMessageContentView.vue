@@ -1,7 +1,7 @@
 <template>
     <div class="image-content-container">
         <img ref="thumbnail" v-show="imageLoaded === false" @click="preview(message)"
-             v-bind:src="'data:video/jpeg;base64,' + message.messageContent.thumbnail">
+             v-bind:src="previewImageUri">
         <img ref="img" v-show="imageLoaded" @click="preview(message)" @load="onImageLoaded"
              draggable="true"
              v-bind:src="message.messageContent.remotePath">
@@ -11,6 +11,7 @@
 <script>
 import Message from "../../../../wfc/messages/message";
 import {scaleDown} from "../../../util/imageUtil";
+import Config from "../../../../config";
 
 export default {
     name: "ImageMessageContentView",
@@ -19,7 +20,7 @@ export default {
             type: Message,
             required: true,
         },
-        isInCompositeView:{
+        isInCompositeView: {
             default: false,
             type: Boolean,
             required: false,
@@ -36,10 +37,12 @@ export default {
         if (iw && ih) {
             let size = scaleDown(iw, ih, 300, 300);
             if (size) {
-                this.$refs.img.style.height = size.height + 'px';
-                this.$refs.img.style.width = size.width + 'px';
-                this.$refs.thumbnail.style.height = size.height + 'px';
-                this.$refs.thumbnail.style.width = size.width + 'px';
+                this.$nextTick(() => {
+                    this.$refs.img.style.height = size.height + 'px';
+                    this.$refs.img.style.width = size.width + 'px';
+                    this.$refs.thumbnail.style.height = size.height + 'px';
+                    this.$refs.thumbnail.style.width = size.width + 'px';
+                })
             }
         }
     },
@@ -58,6 +61,17 @@ export default {
         },
         onImageLoaded() {
             this.imageLoaded = true
+        }
+    },
+    computed: {
+        previewImageUri() {
+            if (this.message.messageContent.thumbnail) {
+                return 'data:video/jpeg;base64,' + this.message.messageContent.thumbnail
+            } else if (this.message.messageContent.localPath) {
+                return 'file://' + this.message.messageContent.localPath
+            } else {
+                return Config.DEFAULT_THUMBNAIL_URL
+            }
         }
     }
 }

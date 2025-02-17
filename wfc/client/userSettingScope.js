@@ -35,6 +35,11 @@ export default class UserSettingScope {
     static PttSilent = 25;
     static GroupRemark = 26;
 
+    // 不能直接使用，协议栈内部会使用此致
+    static Privacy_Searchable = 27;
+
+    // 不能直接使用，协议栈内部会使用此致
+    static AddFriend_NoVerify = 28;
     // 用户自定义的scope需从1000开始，以防冲突
     static kUserSettingCustomBegin = 1000;
 }

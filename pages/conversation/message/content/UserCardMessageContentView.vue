@@ -1,5 +1,6 @@
 <template>
     <div ref="userCardTippy"
+         @click="userInfo"
          :name="'userCardInfoTrigger' + message.messageId"
          class="user-card-content-container">
         <div class="portrait-name-container">
@@ -7,25 +8,13 @@
             <p>{{ message.messageContent.displayName }}</p>
         </div>
         <p class="desc single-line">个人名片</p>
-        <tippy
-            :to="'userCardInfoTrigger' + message.messageId"
-            interactive
-            :animate-fill="false"
-            placement="left"
-            distant="7"
-            theme="light"
-            animation="fade"
-            trigger="click"
-        >
-            <UserCardView v-on:close="closeUserCard" :user-info="userInfo()"/>
-        </tippy>
     </div>
 </template>
 
 <script>
 import Message from "@/wfc/messages/message";
-import UserCardView from "@/pages/user/UserCardView";
 import wfc from "@/wfc/client/wfc";
+import store from "../../../../store";
 
 export default {
     name: "UserCardMessageContentView",
@@ -35,20 +24,23 @@ export default {
             type: Message,
         }
     },
-    components: {
-        UserCardView,
-    },
+    components: {},
 
     methods: {
-        closeUserCard() {
-            console.log('closeUserCard')
-            this.$refs["userCardTippy"]._tippy.hide();
-        },
         userInfo() {
             let userCard = this.message.messageContent;
-            if (userCard.cardType === 0) {
-                return wfc.getUserInfo(userCard.target)
-            }
+            let userInfo = wfc.getUserInfo(userCard.target);
+            store.setCurrentFriend(userInfo)
+            uni.navigateTo({
+                url: '/pages/contact/UserDetailPage',
+                success: () => {
+                    console.log('nav to UserDetailPage success');
+
+                },
+                fail: (err) => {
+                    console.log('nav to UserDetailPage err', err);
+                }
+            })
         }
     }
 }
