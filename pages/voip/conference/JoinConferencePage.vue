@@ -1,6 +1,5 @@
 <template>
     <div class="join-conference-container">
-        <h2>加入会议</h2>
         <div class="conf-item">
             <p>会议号</p>
             <input class="conf-item input" v-model="conferenceId" type="text" placeholder="请输入会议号">
@@ -22,10 +21,9 @@
 
 <script>
 import conferenceApi from "../../../api/conferenceApi";
-import ConferenceInfoView from "./ConferenceInfoPage.vue";
 
 export default {
-    name: "JoinConferenceView",
+    name: "JoinConferencePage",
     data() {
         return {
             conferenceId: '',
@@ -35,24 +33,17 @@ export default {
 
     methods: {
         joinConference() {
+            console.log('queryConference', this.conferenceId, this.password)
             conferenceApi.queryConferenceInfo(this.conferenceId, this.password)
                 .then(info => {
                     console.log('conferenceInfo', info);
-                    this.$modal.show(
-                        ConferenceInfoView,
-                        {
-                            conferenceInfo: info,
-                        }, {
-                            name: 'conference-info-modal',
-                            width: 320,
-                            height: 580,
-                            clickToClose: true,
-                        }, {})
-                    this.$modal.hide('join-conference-modal')
+                    this.$navigateToPage('/pages/voip/conference/ConferenceInfoPage', {
+                        conferenceId: info.conferenceId,
+                        password: info.pin,
+                    });
                 })
                 .catch(reason => {
                     console.log('queryConferenceInfo failed', reason);
-                    this.$modal.hide('join-conference-modal')
                     this.$notify({
                         text: '获取会议信息失败',
                         type: 'warn'
@@ -60,7 +51,7 @@ export default {
                 })
         },
         cancel() {
-            this.$modal.hide('join-conference-modal')
+            uni.navigateBack();
         }
     },
     watch: {
