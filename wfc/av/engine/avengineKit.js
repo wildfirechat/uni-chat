@@ -50,7 +50,7 @@ export class AVEngineKit {
 
     _handleNativeCallSessionEvent(e) {
         let args = e.args;
-        if (args[0] !== 'didReportAudioVolume'){
+        if (args[0] !== 'didReportAudioVolume') {
             console.log('_handleNativeCallSessionEvent', args)
         }
         if (args[0] === 'resumeVoipPage') {
@@ -275,6 +275,24 @@ export class AVEngineKit {
     }
 
     /**
+     * 仅 Android 端支持
+     * 开启屏幕共享
+     * @param {Object} callId 通话ID
+     */
+    startScreenShare(callId) {
+        avengineKitPlugin.startScreenShare(callId);
+    }
+
+    /**
+     * 仅 Android 端支持
+     * 停止屏幕共享
+     * @param {Object} callId 通话ID
+     */
+    stopScreenShare(callId) {
+        avengineKitPlugin.stopScreenShare(callId);
+    }
+
+    /**
      * 关闭/开启摄像头
      * @param {string} callId 通话 id
      * @param {boolean} mute 是否关闭摄像头
@@ -412,7 +430,7 @@ export class AVEngineKit {
      * @param {string} callId 通话 id
      * @param {boolean} speakerOn 是否打开扬声器
      */
-    setSpeakerOn(callId, speakerOn){
+    setSpeakerOn(callId, speakerOn) {
         avengineKitPlugin.setSpeakerOn(callId, speakerOn);
     }
 
@@ -420,7 +438,7 @@ export class AVEngineKit {
      * 切换摄像头
      * @param {string} callId
      */
-    switchCamera(callId){
+    switchCamera(callId) {
         avengineKitPlugin.switchCamera(callId);
     }
 }
