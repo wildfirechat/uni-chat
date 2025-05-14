@@ -275,7 +275,7 @@ export class AVEngineKit {
     }
 
     /**
-     * 仅 Android 端支持
+     * 仅 Android 端高级版音视频支持
      * 开启屏幕共享
      * @param {Object} callId 通话ID
      */
@@ -284,7 +284,7 @@ export class AVEngineKit {
     }
 
     /**
-     * 仅 Android 端支持
+     * 仅 Android 端高级版音视频支持
      * 停止屏幕共享
      * @param {Object} callId 通话ID
      */
