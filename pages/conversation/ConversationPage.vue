@@ -472,6 +472,7 @@ export default {
                 innerAudioContext.stop();
             }
             let voice = message.messageContent;
+            let mp3RemotePath = voice.remotePath;
             if(!voice.remotePath.endsWith(".mp3") && Config.AMR_TO_MP3_SERVER_ADDRESS){
                 mp3RemotePath = Config.AMR_TO_MP3_SERVER_ADDRESS + voice.remotePath;
             }
