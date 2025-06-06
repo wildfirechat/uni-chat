@@ -1791,7 +1791,7 @@ export class WfcManager {
     }
 
     /**
-     * 上传媒体文件
+     * 上传媒体文件，由于 uniapp 限制，不支持上传稍大的数据，稍大的文件，请使用 uploadMediaFile
      * @param {string} fileName
      * @param {string} fileOrData base64格式的dataUri
      * @param {number} mediaType 媒体类型，可选值参考{@link MessageContentMediaType}
@@ -1802,6 +1802,19 @@ export class WfcManager {
      */
     async uploadMedia(fileName, fileOrData, mediaType, successCB, failCB, progressCB) {
         impl.uploadMedia(fileName, fileOrData, mediaType, successCB, failCB, progressCB);
+    }
+
+    /**
+     * 上传媒体文件
+     * @param {string} filePath
+     * @param {number} mediaType 媒体类型，可选值参考{@link MessageContentMediaType}
+     * @param {function (string)} successCB 回调通知上传成功之后的url
+     * @param {function (number)} failCB
+     * @param {function (number, number)} progressCB
+     * @returns {Promise<void>}
+     */
+    async uploadMediaFile(filePath,  mediaType, successCB, failCB, progressCB) {
+        impl.uploadMediaFile(filePath,  mediaType, successCB, failCB, progressCB);
     }
 
     getVersion() {
