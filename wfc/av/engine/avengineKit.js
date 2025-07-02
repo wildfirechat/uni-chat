@@ -13,6 +13,11 @@ export class AVEngineKit {
     sessionCallback;
 
     /**
+     屏幕分享替换模式。为ture时，屏幕分享会替换摄像头的数据流。为false时，屏幕分享会再单独发起一路，不会影响摄像头的输入。
+     */
+    static SCREEN_SHARING_REPLACE_MODE = true;
+
+    /**
      * 判断 UIKit 原生插件是否集成
      * @return {boolean}
      */
@@ -21,7 +26,7 @@ export class AVEngineKit {
     }
 
     init() {
-        avengineKitPlugin.initAVEngineKit();
+        avengineKitPlugin.initAVEngineKit(AVEngineKit.SCREEN_SHARING_REPLACE_MODE);
         plus.globalEvent.addEventListener("wfc-av-event", (e) => {
             // console.debug('wfc-av-event', e);
             self._handleNativeAVEngineEvent(e);
