@@ -298,6 +298,15 @@ export class AVEngineKit {
     }
 
     /**
+     * 仅 Android 端高级版音视频支持
+     *  是否在进行屏幕共享
+     * @param {Object} callId 通话ID
+     */
+    isScreenSharing(callId) {
+        return avengineKitPlugin.isScreenSharing(callId);
+    }
+
+    /**
      * 关闭/开启摄像头
      * @param {string} callId 通话 id
      * @param {boolean} mute 是否关闭摄像头
