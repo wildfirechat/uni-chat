@@ -26,7 +26,8 @@ export class AVEngineKit {
     }
 
     init() {
-        avengineKitPlugin.initAVEngineKit(AVEngineKit.SCREEN_SHARING_REPLACE_MODE);
+        avengineKitPlugin.initAVEngineKit();
+        // avengineKitPlugin.setScreenShareReplaceMode(AVEngineKit.SCREEN_SHARING_REPLACE_MODE);
         plus.globalEvent.addEventListener("wfc-av-event", (e) => {
             // console.debug('wfc-av-event', e);
             self._handleNativeAVEngineEvent(e);
