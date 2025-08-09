@@ -11,6 +11,8 @@ import Config from "../../config";
 import EventType from "./wfcEvent";
 import ConnectionStatus from "./connectionStatus";
 import NullUserInfo from "../model/nullUserInfo";
+import UserSettingScope from "./userSettingScope";
+import PcOnlineInfo from "../model/pcOnlineInfo";
 
 //import avenginekit from "../av/engine/avenginekitproxy";
 
@@ -309,7 +311,7 @@ export class WfcManager {
      * @param {function ([UserInfo])} successCB 成功回调
      * @param {function (Number)} failCB 失败回调
      */
-    getUserInfosEx(userIds, groupId,  successCB, failCB) {
+    getUserInfosEx(userIds, groupId, successCB, failCB) {
         impl.getUserInfosEx(userIds, groupId, userInfos => {
             userInfos.forEach((u) => {
                 if (!u.portrait) {
@@ -1813,8 +1815,8 @@ export class WfcManager {
      * @param {function (number, number)} progressCB
      * @returns {Promise<void>}
      */
-    async uploadMediaFile(filePath,  mediaType, successCB, failCB, progressCB) {
-        impl.uploadMediaFile(filePath,  mediaType, successCB, failCB, progressCB);
+    async uploadMediaFile(filePath, mediaType, successCB, failCB, progressCB) {
+        impl.uploadMediaFile(filePath, mediaType, successCB, failCB, progressCB);
     }
 
     getVersion() {
@@ -2070,6 +2072,51 @@ export class WfcManager {
 
     chooseFile(type, successCB, failCB) {
         impl.chooseFile(type, successCB, failCB)
+    }
+
+    /**
+     * 获取 PC 段在线状态
+     * @return { PcOnlineInfo[]}
+     */
+    getPCOnlineInfos() {
+        let pcOnline = this.getUserSetting(UserSettingScope.PCOnline, "PC");
+        let webOnline = this.getUserSetting(UserSettingScope.PCOnline, "Web");
+        let wxOnline = this.getUserSetting(UserSettingScope.PCOnline, "WX");
+        let padOnline = this.getUserSetting(UserSettingScope.PCOnline, "Pad");
+        let infos = [];
+        let info = PcOnlineInfo.fromStr(pcOnline, PcOnlineInfo.PC_ONLINE_TYPE_PC_Online);
+        if (info) {
+            infos.push(info);
+        }
+        info = PcOnlineInfo.fromStr(webOnline, PcOnlineInfo.PC_ONLINE_TYPE_Web_Online);
+        if (info) {
+            infos.push(info);
+        }
+        info = PcOnlineInfo.fromStr(wxOnline, PcOnlineInfo.PC_ONLINE_TYPE_WX_Online);
+        if (info) {
+            infos.push(info);
+        }
+        info = PcOnlineInfo.fromStr(padOnline, PcOnlineInfo.PC_ONLINE_TYPE_Pad_Online);
+        if (info) {
+            infos.push(info);
+        }
+        return infos
+    }
+
+    /**
+     * PC 在线时，是否静音
+     * @return {boolean}
+     */
+    isMuteNotificationWhenPcOnline() {
+        let value = this.getUserSetting(UserSettingScope.MuteWhenPCOnline, "");
+        if (!value || value !== "1") {
+            return Config.DEFAULT_SILENT_WHEN_PC_ONLINE;
+        }
+        return !Config.DEFAULT_SILENT_WHEN_PC_ONLINE;
+
+    }
+    kickoffPCClient(pcClientId, successCB, failCB) {
+        impl.kickoffPCClient(pcClientId, successCB, failCB);
     }
 
     _getStore() {

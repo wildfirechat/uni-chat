@@ -17,7 +17,7 @@ export default class UserSettingScope {
     static My_Channel = 8;
     //不能直接使用，协议栈内会使用此值
     static Listened_Channel = 9;
-    static UserSettingPCOnline = 10;
+    static PCOnline = 10;
     static UserSettingConversationReaded = 11;
     static WebOnline = 12;
     static DisableReceipt = 13;
