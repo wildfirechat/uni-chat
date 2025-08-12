@@ -37,8 +37,8 @@ export default class PcOnlineInfo {
         if (!value || !value.trim()) {
             return null;
         }
-        let parts = value.split('\\|');
-        if (parts.length > 4) {
+        let parts = value.split('|');
+        if (parts.length >= 4) {
             let info = new PcOnlineInfo();
             info.type = pcOnlineType;
             info.timestamp = Number(parts[0]);
