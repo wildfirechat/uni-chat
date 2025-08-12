@@ -79,6 +79,8 @@ export default class Config {
 
     static platform = -1;
 
+    static DEFAULT_SILENT_WHEN_PC_ONLINE = true;
+
     static getWFCPlatform() {
         if (Config.platform > 0) {
             return Config.platform;

@@ -2113,8 +2113,24 @@ export class WfcManager {
             return Config.DEFAULT_SILENT_WHEN_PC_ONLINE;
         }
         return !Config.DEFAULT_SILENT_WHEN_PC_ONLINE;
-
     }
+
+    /**
+     * 设置 PC 在线时，是否将手机端静音
+     * @param mute
+     * @param successCB
+     * @param failCB
+     */
+    muteNotificationWhenPcOnline(mute, successCB, failCB ) {
+        this.setUserSetting(UserSettingScope.MuteWhenPCOnline, '', mute ? '0' : '1', successCB, failCB)
+    }
+
+    /**
+     * 将 PC 端踢下线
+     * @param pcClientId
+     * @param successCB
+     * @param failCB
+     */
     kickoffPCClient(pcClientId, successCB, failCB) {
         impl.kickoffPCClient(pcClientId, successCB, failCB);
     }
