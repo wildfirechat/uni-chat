@@ -553,7 +553,8 @@ export default {
                     // }
                 }
             } else {
-                if (this.session.videoMuted && !this.session.audience) {
+                let selfProfile = avengineKit.getMyProfile(this.session.callId);
+                if (this.session.videoMuted && !selfProfile.screenSharing && !this.session.audience) {
                     let result = avengineKit.switchAudience(this.session.callId, true);
                     // if (result) {
                     //     this.selfUserInfo._isAudience = true;
