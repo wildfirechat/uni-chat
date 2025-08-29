@@ -79,7 +79,9 @@ export class AVEngineKit {
                 }
             }
         } else {
-            console.warn('_handleNativeCallSessionEvent sessionCallback is null', args)
+            if(args[0] !== 'didReportAudioVolume'){
+                console.warn('_handleNativeCallSessionEvent sessionCallback is null', args)
+            }
         }
     }
 
