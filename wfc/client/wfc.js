@@ -2135,6 +2135,16 @@ export class WfcManager {
         impl.kickoffPCClient(pcClientId, successCB, failCB);
     }
 
+    /**
+     * 获取共同群组
+     * @param {string} userId
+     * @param { function (string[])} successCB
+     * @param {function (number)} failCB
+     */
+    getCommonGroups(userId, successCB, failCB) {
+        impl.getCommonGroups(userId, successCB, failCB);
+    }
+
     _getStore() {
         return impl._getStore();
     }
