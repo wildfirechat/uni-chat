@@ -17,7 +17,7 @@
 ---------
 
 # 野火UniApp平台Demo
-支持Android和iOS端，使用了***野火UniApp原生插件***(在UniApp的插件市场搜索“野火IM原生插件”)。
+支持Android和iOS端，Android 端，默认只能连到官方服务；获取无限制 Android 协议栈后，请参考[如何使用本地插件](https://gitee.com/wfchat/uni-chat/issues/I65MDF?from=project-issue)。
 
 ## 关于 uts 的重要说明
 1. 本项目使用的是原生语言插件，不支持鸿蒙 5.0，如果需要支持支持鸿蒙 5.0 的话，请使用[uni-chat-uts](https://gitee.com/wfchat/uni-chat-uts)项目
