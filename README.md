@@ -14,6 +14,8 @@
 
 **给您带来不便，敬请谅解。**
 
+> 联系官方获取到不受限制版本后，请参考[这儿](https://gitee.com/wfchat/uni-chat/issues/I65MDF?from=project-issue)使用
+
 ---------
 
 # 野火UniApp平台Demo
