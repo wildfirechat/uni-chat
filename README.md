@@ -18,6 +18,11 @@
 
 ---------
 
+**关于 uni-app x 和 鸿蒙的重要说明**
+1. 本项目不支持 uni-app x，也不支持鸿蒙
+2. [uni-chat-x](https://gitee.com/wfchat/uni-chat-x) 使用 uni-app x开发，且支持鸿蒙
+
+
 # 野火UniApp平台Demo
 支持Android和iOS端，Android 端，默认只能连到官方服务；获取无限制 Android 协议栈后，请参考[如何使用本地插件](https://gitee.com/wfchat/uni-chat/issues/I65MDF?from=project-issue)。
 
